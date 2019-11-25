@@ -57,35 +57,35 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class TestController
 {
-	@GetMapping("/hello")
-	public String hello() throws Exception
-	{
-		// 抛出异常
-		throw new Exception();
-	}
-	@GetMapping("/test")
-	public String test() throws Exception
-	{
-		// 模拟异常
-		@SuppressWarnings("unused")
-		int i = 5 / 0;
-		return "success";
-	}
-	@GetMapping("/find")
-	public String find() throws Exception
-	{
-		try
-		{
-			// 模拟异常
-			@SuppressWarnings("unused")
-			int i = 5 / 0;
-			return "success";
-		} catch (Exception e)
-		{
-			throw new SQLException("查找数据失败!");
-		}
+    @GetMapping("/hello")
+    public String hello() throws Exception
+    {
+        // 抛出异常
+        throw new Exception();
+    }
+    @GetMapping("/test")
+    public String test() throws Exception
+    {
+        // 模拟异常
+        @SuppressWarnings("unused")
+        int i = 5 / 0;
+        return "success";
+    }
+    @GetMapping("/find")
+    public String find() throws Exception
+    {
+        try
+        {
+            // 模拟异常
+            @SuppressWarnings("unused")
+            int i = 5 / 0;
+            return "success";
+        } catch (Exception e)
+        {
+            throw new SQLException("查找数据失败!");
+        }
 
-	}
+    }
 }
 ```
 `TestController`中有3个方法,分别对应`index.jsp`页面的3个请求:
@@ -108,8 +108,8 @@ http://localhost:8080/SimpleMappingExceptionResolverTest/
     xmlns:context="http://www.springframework.org/schema/context"
     xmlns:mvc="http://www.springframework.org/schema/mvc"
     xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
 
     <!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件， -->

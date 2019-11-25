@@ -33,20 +33,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class CrossOriginController
 {
-	// 只允许origins属性中指定的域的请求
-	@CrossOrigin(origins = "http://localhost:8080/VariableTest")
-	@GetMapping(value = "/welcome")
-	public String welcome()
-	{
-		System.out.println("处理跨域请求");
-		return "welcome";
-	}
+    // 只允许origins属性中指定的域的请求
+    @CrossOrigin(origins = "http://localhost:8080/VariableTest")
+    @GetMapping(value = "/welcome")
+    public String welcome()
+    {
+        System.out.println("处理跨域请求");
+        return "welcome";
+    }
 }
 ```
 `CrossOriginController`类和`welcome`方法上都使用了`@CrossOrigin`注解。 `welcome`方法接收到`跨域请求`进行简单处理后,跳转到`welcome.jsp`。
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE>
 <html>
 <head>
@@ -54,7 +54,7 @@ public class CrossOriginController
 <title>测试@CrossOrigin注解</title>
 </head>
 <body>
-	<br>恭喜您，测试跨域访问成功!
+    <br>恭喜您，测试跨域访问成功!
 </body>
 </html>
 ```

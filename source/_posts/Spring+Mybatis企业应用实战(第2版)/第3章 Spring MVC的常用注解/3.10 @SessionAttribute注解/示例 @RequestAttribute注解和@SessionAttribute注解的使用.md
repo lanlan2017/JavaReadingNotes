@@ -26,7 +26,7 @@ abbrlink: 6d3c96b0
 ## index.jsp ##
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE>
 <html>
 <head>
@@ -34,9 +34,9 @@ abbrlink: 6d3c96b0
 <title>@RequestAttribute和@SessionAttribute测试</title>
 </head>
 <body>
-	<h2>@RequestAttribute和@SessionAttribute测试</h2>
-	<a href="attrbuteTest">测试@RequestAttribute和@SessionAttribute</a>
-	<br>
+    <h2>@RequestAttribute和@SessionAttribute测试</h2>
+    <a href="attrbuteTest">测试@RequestAttribute和@SessionAttribute</a>
+    <br>
 </body>
 </html>
 ```
@@ -54,33 +54,33 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class AttributeController
 {
-	// 测试@CookieValue注解
-	// 该方法映射的请求为 /cookieValueTest
-	@GetMapping(value = "/attrbuteTest")
-	public ModelAndView attrbuteTest(ModelAndView mv)
-	{
-		System.out.println("attributeTest方法被调用...");
-		// 客户端重定向到main请求，会被自定义过滤器拦截
-		mv.setViewName("redirect:main");
-		return mv;
-	}
-	/*
-	 * 该方法映射的请求为/main
-	 * @RequestAttribute("name") String
-	 * name会获取request作用范围中名为"name"的属性的值赋给方法的参数name
-	 * @SessionAttribute("sex") String sex会获取session作用范围中名为"sex"的属性的值赋给方法的参数sex
-	 */
-	@RequestMapping("/main")
-	public String main(@RequestAttribute("name") String name,
-			@SessionAttribute("sex") String sex)
-	{
-		System.out.println("main方法被调用...");
-		// 输出@RequestAttribute获得的name
-		System.out.println("name: " + name);
-		// 输出@SessionAttribute获得的sex
-		System.out.println("sex: " + sex);
-		return "welcome";
-	}
+    // 测试@CookieValue注解
+    // 该方法映射的请求为 /cookieValueTest
+    @GetMapping(value = "/attrbuteTest")
+    public ModelAndView attrbuteTest(ModelAndView mv)
+    {
+        System.out.println("attributeTest方法被调用...");
+        // 客户端重定向到main请求，会被自定义过滤器拦截
+        mv.setViewName("redirect:main");
+        return mv;
+    }
+    /*
+     * 该方法映射的请求为/main
+     * @RequestAttribute("name") String
+     * name会获取request作用范围中名为"name"的属性的值赋给方法的参数name
+     * @SessionAttribute("sex") String sex会获取session作用范围中名为"sex"的属性的值赋给方法的参数sex
+     */
+    @RequestMapping("/main")
+    public String main(@RequestAttribute("name") String name,
+            @SessionAttribute("sex") String sex)
+    {
+        System.out.println("main方法被调用...");
+        // 输出@RequestAttribute获得的name
+        System.out.println("name: " + name);
+        // 输出@SessionAttribute获得的sex
+        System.out.println("sex: " + sex);
+        return "welcome";
+    }
 }
 ```
 `attributeTest`方法处理请求后重定向到`main`请求,`main`请求会被自定义过滤器拦截,在过滤器中会分别设置两个属性到`request`作用域和`session`作用域。在`main`方法中使用`@RequestAttribute`和`@SessionAttribute`进行赋值。
@@ -102,28 +102,28 @@ import javax.servlet.http.HttpServletRequest;
 @WebFilter(value = "/main")
 public class TestAttributeFilter implements Filter
 {
-	@Override
-	public void destroy()
-	{
-	}
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException
-	{
-		System.out.println("进入AuthFilter过滤器的doFilter方法");
-		// 将ServletRequest对象强转成HttpServletRequest对象
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		// 在request作用范围域中设置一个name属性
-		httpRequest.setAttribute("name", "小明");
-		// 在session作用范围域中设置一个sex属性
-		httpRequest.getSession().setAttribute("sex", "男");
-		// 如果还有过滤器执行过滤器，否则进入请求处理方法
-		chain.doFilter(httpRequest, response);
-	}
-	@Override
-	public void init(FilterConfig arg0) throws ServletException
-	{
-	}
+    @Override
+    public void destroy()
+    {
+    }
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response,
+            FilterChain chain) throws IOException, ServletException
+    {
+        System.out.println("进入AuthFilter过滤器的doFilter方法");
+        // 将ServletRequest对象强转成HttpServletRequest对象
+        HttpServletRequest httpRequest = (HttpServletRequest) request;
+        // 在request作用范围域中设置一个name属性
+        httpRequest.setAttribute("name", "小明");
+        // 在session作用范围域中设置一个sex属性
+        httpRequest.getSession().setAttribute("sex", "男");
+        // 如果还有过滤器执行过滤器，否则进入请求处理方法
+        chain.doFilter(httpRequest, response);
+    }
+    @Override
+    public void init(FilterConfig arg0) throws ServletException
+    {
+    }
 }
 ```
 `TestAttributeFilter`过滤器拦截`"main"`请求,在`dofilter`方法中分别设置两个属性到`request`作用域和`session`作用域。

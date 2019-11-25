@@ -30,7 +30,7 @@ abbrlink: 8ad4e730
 ## index.jsp ##
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE>
 <html>
 <head>
@@ -38,16 +38,16 @@ abbrlink: 8ad4e730
 <title>处理请求URL注解测试</title>
 </head>
 <body>
-	<h2>处理请求URL注解测试</h2>
-	<a href="pathVariableTest/1">测试@PathVariable注解</a>
-	<br>
-	<a href="matrixVariableTest/1;name=jack;age=23">测试@MatrixVariable注解</a>
-	<br>
-	<a href="productTest/computer;brand=apple,acer;low=2000;height=10000">商品条件查询（品牌，价格区间）</a>
-	<br>
-	<!-- 跨域请求 -->
-	<a href="http://localhost:8080/CrossOriginTest/welcome">测试@CrossOrigin注解</a>
-	<br>
+    <h2>处理请求URL注解测试</h2>
+    <a href="pathVariableTest/1">测试@PathVariable注解</a>
+    <br>
+    <a href="matrixVariableTest/1;name=jack;age=23">测试@MatrixVariable注解</a>
+    <br>
+    <a href="productTest/computer;brand=apple,acer;low=2000;height=10000">商品条件查询（品牌，价格区间）</a>
+    <br>
+    <!-- 跨域请求 -->
+    <a href="http://localhost:8080/CrossOriginTest/welcome">测试@CrossOrigin注解</a>
+    <br>
 </body>
 </html>
 ```
@@ -67,98 +67,98 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class VariableController
 {
 
-	// 测试@PathVariable注解
-	// 该方法映射的请求为/VariableTest/pathVariableTest/1
-	@GetMapping(value = "/pathVariableTest/{userId}")
-	public void pathVariableTest(@PathVariable Integer userId,
-			HttpServletResponse response)
-	{
-		// 直接响应不跳转页面
-		try
-		{
-			response.setContentType("text/html;charset=UTF-8");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("通过@PathVariable获得数据： userId=" + userId);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
+    // 测试@PathVariable注解
+    // 该方法映射的请求为/VariableTest/pathVariableTest/1
+    @GetMapping(value = "/pathVariableTest/{userId}")
+    public void pathVariableTest(@PathVariable Integer userId,
+            HttpServletResponse response)
+    {
+        // 直接响应不跳转页面
+        try
+        {
+            response.setContentType("text/html;charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("通过@PathVariable获得数据： userId=" + userId);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	// 测试@MatrixVariable注解
-	// 该方法映射的请求为/VariableTest/matrixVariableTest/1;name=jack;age=23
-	@GetMapping(value = "/matrixVariableTest/{userId}")
-	public void matrixVariableTest(@PathVariable Integer userId,
-			@MatrixVariable(value = "name", pathVar = "userId") String name,
-			@MatrixVariable(value = "age", pathVar = "userId") Integer age,
-			HttpServletResponse response)
-	{
-		// 直接响应不跳转页面
-		try
-		{
-			response.setContentType("text/html;charset=UTF-8");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().write("通过@PathVariable获得数据： userId=" + userId);
-			response.getWriter().write(
-					"通过@MatrixVariable获得数据： name=" + name + " age=" + age);
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
+    // 测试@MatrixVariable注解
+    // 该方法映射的请求为/VariableTest/matrixVariableTest/1;name=jack;age=23
+    @GetMapping(value = "/matrixVariableTest/{userId}")
+    public void matrixVariableTest(@PathVariable Integer userId,
+            @MatrixVariable(value = "name", pathVar = "userId") String name,
+            @MatrixVariable(value = "age", pathVar = "userId") Integer age,
+            HttpServletResponse response)
+    {
+        // 直接响应不跳转页面
+        try
+        {
+            response.setContentType("text/html;charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write("通过@PathVariable获得数据： userId=" + userId);
+            response.getWriter().write(
+                    "通过@MatrixVariable获得数据： name=" + name + " age=" + age);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 
-	// 测试@MatrixVariable注解的复杂例子
-	// 该方法映射的请求为//VariableTest/productTest/computer;brand=apple,acer;low=2000;height=10000
-	@GetMapping(value = "/productTest/{goods}")
-	public void productTest(@PathVariable String goods,
-			@MatrixVariable(value = "brand", pathVar = "goods") List<String> brand,
-			@MatrixVariable(value = "low", pathVar = "goods") Integer low,
-			@MatrixVariable(value = "height", pathVar = "goods") Integer height,
-			HttpServletResponse response)
-	{
-		// 直接响应不跳转页面
-		try
-		{
-			response.setContentType("text/html;charset=UTF-8");
-			response.setCharacterEncoding("UTF-8");
-			response.getWriter().println("通过@PathVariable获得数据： goods=" + goods+"<br>");
-			response.getWriter().println("通过@MatrixVariable获得数据：brand=" + brand+"<br>");
-			response.getWriter().println(
-					"通过@MatrixVariable获得数据： low=" + low + " height=" + height+"<br>");
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
+    // 测试@MatrixVariable注解的复杂例子
+    // 该方法映射的请求为//VariableTest/productTest/computer;brand=apple,acer;low=2000;height=10000
+    @GetMapping(value = "/productTest/{goods}")
+    public void productTest(@PathVariable String goods,
+            @MatrixVariable(value = "brand", pathVar = "goods") List<String> brand,
+            @MatrixVariable(value = "low", pathVar = "goods") Integer low,
+            @MatrixVariable(value = "height", pathVar = "goods") Integer height,
+            HttpServletResponse response)
+    {
+        // 直接响应不跳转页面
+        try
+        {
+            response.setContentType("text/html;charset=UTF-8");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().println("通过@PathVariable获得数据： goods=" + goods+"<br>");
+            response.getWriter().println("通过@MatrixVariable获得数据：brand=" + brand+"<br>");
+            response.getWriter().println(
+                    "通过@MatrixVariable获得数据： low=" + low + " height=" + height+"<br>");
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
 }
 ```
 ## springmvc-config.xml ##
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:p="http://www.springframework.org/schema/p"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:mvc="http://www.springframework.org/schema/mvc"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件， 如果扫描到有Spring的相关注解的类，则把这些类注册为Spring的bean -->
-	<context:component-scan
-		base-package="org.fkit.controller" />
-	<!-- 默认装配方案 -->
-	<!-- @MatrixVariable注解功能在SpringMVC中默认是不启用的 -->
-	<!-- 启用它需要设置enable-matrix-variables="true" -->
-	<mvc:annotation-driven
-		enable-matrix-variables="true" />
-	<!-- 静态资源处理 -->
-	<mvc:default-servlet-handler />
+    <!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件， 如果扫描到有Spring的相关注解的类，则把这些类注册为Spring的bean -->
+    <context:component-scan
+        base-package="org.fkit.controller" />
+    <!-- 默认装配方案 -->
+    <!-- @MatrixVariable注解功能在SpringMVC中默认是不启用的 -->
+    <!-- 启用它需要设置enable-matrix-variables="true" -->
+    <mvc:annotation-driven
+        enable-matrix-variables="true" />
+    <!-- 静态资源处理 -->
+    <mvc:default-servlet-handler />
 
-	<!-- 视图解析器 p:prefix属性表示前缀 p:suffix 表示后缀 -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
-		p:prefix="/WEB-INF/content/" p:suffix=".jsp" />
+    <!-- 视图解析器 p:prefix属性表示前缀 p:suffix 表示后缀 -->
+    <bean id="viewResolver"
+        class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+        p:prefix="/WEB-INF/content/" p:suffix=".jsp" />
 
 </beans>
 ```

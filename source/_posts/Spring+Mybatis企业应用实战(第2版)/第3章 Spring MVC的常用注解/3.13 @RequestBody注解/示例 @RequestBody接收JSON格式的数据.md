@@ -37,42 +37,42 @@ abbrlink: 78f2a207
 <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="js/json2.js"></script>
 <script type="text/javascript">
-	// DOM加载完毕后就直接发送请求
-	$(document).ready(function() {
-		testRequestBody();
-	});
-	function testRequestBody() {
-		//发送ajax请求
-		$.ajax(// 发送请求的URL字符串。
-		"${pageContext.request.contextPath}/json/testRequestBody", {
-			// 预期服务器返回的数据类型。
-			dataType : "json",
-			//  请求方式 POST或GET
-			type : "post",
-			//  发送信息至服务器时的内容编码类型
-			contentType : "application/json",
-			// 发送到服务器的数据。
-			data : JSON.stringify({
-				id : 1,
-				name : "一本书的名字"
-			}),
-			// 默认设置为true，此时所有请求均为异步请求。
-			// 如果设置为false，则发送同步请求
-			async : true,
-			// 请求成功后的回调函数。
-			success : function(data) {
-				console.log(data);
-				//使用接收到的数据更新网页内容
-				$("#id").html(data.id);
-				$("#name").html(data.name);
-				$("#author").html(data.author);
-			},
-			// 请求出错时调用的函数
-			error : function() {
-				alert("数据发送失败");
-			}
-		});
-	}
+    // DOM加载完毕后就直接发送请求
+    $(document).ready(function() {
+        testRequestBody();
+    });
+    function testRequestBody() {
+        //发送ajax请求
+        $.ajax(// 发送请求的URL字符串。
+        "${pageContext.request.contextPath}/json/testRequestBody", {
+            // 预期服务器返回的数据类型。
+            dataType : "json",
+            //  请求方式 POST或GET
+            type : "post",
+            //  发送信息至服务器时的内容编码类型
+            contentType : "application/json",
+            // 发送到服务器的数据。
+            data : JSON.stringify({
+                id : 1,
+                name : "一本书的名字"
+            }),
+            // 默认设置为true，此时所有请求均为异步请求。
+            // 如果设置为false，则发送同步请求
+            async : true,
+            // 请求成功后的回调函数。
+            success : function(data) {
+                console.log(data);
+                //使用接收到的数据更新网页内容
+                $("#id").html(data.id);
+                $("#name").html(data.name);
+                $("#author").html(data.author);
+            },
+            // 请求出错时调用的函数
+            error : function() {
+                alert("数据发送失败");
+            }
+        });
+    }
 </script>
 </head>
 <body>
@@ -109,26 +109,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping("/json")
 public class BookController
 {
-	// @RequestBody根据json数据，转换成对应的Object
-	@RequestMapping(value = "/testRequestBody")
-	// @RequestBody Book book:使用@RequestBody获取JSON数据,
-	// 然后将JSON数据设置到对应的Book对象的属性之中.
-	// 第二个参数 HttpServletResponse response用来输出响应数据到客户端
-	public void setJson(@RequestBody Book book, HttpServletResponse response)
-	        throws Exception
-	{
-		// ObjectMapper类是Jackson库的主要类。
-		// 它提供一些功能将Java对象转换成对应的JSON格式的数据
-		ObjectMapper mapper = new ObjectMapper();
-		// 将book对象转换成json,并输出到控制台
-		System.out.println(mapper.writeValueAsString(book));
-		// 设置完整的信息
-		book.setAuthor("小明");
-		// 设置响应类型
-		response.setContentType("text/html;charset=UTF-8");
-		// 将book对象转换成json写出到客户端
-		response.getWriter().println(mapper.writeValueAsString(book));
-	}
+    // @RequestBody根据json数据，转换成对应的Object
+    @RequestMapping(value = "/testRequestBody")
+    // @RequestBody Book book:使用@RequestBody获取JSON数据,
+    // 然后将JSON数据设置到对应的Book对象的属性之中.
+    // 第二个参数 HttpServletResponse response用来输出响应数据到客户端
+    public void setJson(@RequestBody Book book, HttpServletResponse response)
+            throws Exception
+    {
+        // ObjectMapper类是Jackson库的主要类。
+        // 它提供一些功能将Java对象转换成对应的JSON格式的数据
+        ObjectMapper mapper = new ObjectMapper();
+        // 将book对象转换成json,并输出到控制台
+        System.out.println(mapper.writeValueAsString(book));
+        // 设置完整的信息
+        book.setAuthor("小明");
+        // 设置响应类型
+        response.setContentType("text/html;charset=UTF-8");
+        // 将book对象转换成json写出到客户端
+        response.getWriter().println(mapper.writeValueAsString(book));
+    }
 }
 ```
 ## BookController.java ##
@@ -146,26 +146,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping("/json")
 public class BookController
 {
-	// @RequestBody根据json数据，转换成对应的Object
-	@RequestMapping(value = "/testRequestBody")
-	// @RequestBody Book book:使用@RequestBody获取JSON数据,
-	// 然后将JSON数据设置到对应的Book对象的属性之中.
-	// 第二个参数 HttpServletResponse response用来输出响应数据到客户端
-	public void setJson(@RequestBody Book book, HttpServletResponse response)
-	        throws Exception
-	{
-		// ObjectMapper类是Jackson库的主要类。
-		// 它提供一些功能将Java对象转换成对应的JSON格式的数据
-		ObjectMapper mapper = new ObjectMapper();
-		// 将book对象转换成json,并输出到控制台
-		System.out.println(mapper.writeValueAsString(book));
-		// 设置完整的信息
-		book.setAuthor("小明");
-		// 设置响应类型
-		response.setContentType("text/html;charset=UTF-8");
-		// 将book对象转换成json写出到客户端
-		response.getWriter().println(mapper.writeValueAsString(book));
-	}
+    // @RequestBody根据json数据，转换成对应的Object
+    @RequestMapping(value = "/testRequestBody")
+    // @RequestBody Book book:使用@RequestBody获取JSON数据,
+    // 然后将JSON数据设置到对应的Book对象的属性之中.
+    // 第二个参数 HttpServletResponse response用来输出响应数据到客户端
+    public void setJson(@RequestBody Book book, HttpServletResponse response)
+            throws Exception
+    {
+        // ObjectMapper类是Jackson库的主要类。
+        // 它提供一些功能将Java对象转换成对应的JSON格式的数据
+        ObjectMapper mapper = new ObjectMapper();
+        // 将book对象转换成json,并输出到控制台
+        System.out.println(mapper.writeValueAsString(book));
+        // 设置完整的信息
+        book.setAuthor("小明");
+        // 设置响应类型
+        response.setContentType("text/html;charset=UTF-8");
+        // 将book对象转换成json写出到客户端
+        response.getWriter().println(mapper.writeValueAsString(book));
+    }
 }
 ```
 `setJson`方法中的第一个参数`@RequestBody Book book`表示,使用`@RequestBody`注解获取`JSON`数据后,将`JSON`数据设置到对应的`Book`对象的属性当中。第二个参数是`HttpServletResponse`对象,用来输出响应数据到客户端。
@@ -179,39 +179,39 @@ import java.io.Serializable;
 
 public class Book implements Serializable
 {
-	private static final long serialVersionUID = 1L;
-	private Integer id;
-	private String name;
-	private String author;
-	public Integer getId()
-	{
-		return id;
-	}
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
-	public String getName()
-	{
-		return name;
-	}
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	public String getAuthor()
-	{
-		return author;
-	}
-	public void setAuthor(String author)
-	{
-		this.author = author;
-	}
-	@Override
-	public String toString()
-	{
-		return "Book [id=" + id + ", name=" + name + ", author=" + author + "]";
-	}
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private String name;
+    private String author;
+    public Integer getId()
+    {
+        return id;
+    }
+    public void setId(Integer id)
+    {
+        this.id = id;
+    }
+    public String getName()
+    {
+        return name;
+    }
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    public String getAuthor()
+    {
+        return author;
+    }
+    public void setAuthor(String author)
+    {
+        this.author = author;
+    }
+    @Override
+    public String toString()
+    {
+        return "Book [id=" + id + ", name=" + name + ", author=" + author + "]";
+    }
 }
 ```
 在`Book`类中定义了3个属性:`id`、`name`和`author`,用于接收向`JSP`页面传入的`JSON`数据`toString`方法用来输出获取的数据对象信息.
@@ -223,8 +223,8 @@ public class Book implements Serializable
     xmlns:mvc="http://www.springframework.org/schema/mvc"
     xmlns:p="http://www.springframework.org/schema/p"
     xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
     <!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件， -->
     <!-- 如果扫描到有Spring的相关注解的类，则把这些类注册为Spring的bean -->

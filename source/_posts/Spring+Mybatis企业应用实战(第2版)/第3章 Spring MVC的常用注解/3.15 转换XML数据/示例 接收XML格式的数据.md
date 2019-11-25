@@ -38,20 +38,20 @@ abbrlink: bcd788ad
 <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="js/json2.js"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		sendxml();
-	});
-	function sendxml() {
-		var xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><book><id>1</id><name>书的名称</name><author>作者</author></book>";
-		$.ajax("${pageContext.request.contextPath}/sendxml",// 发送请求的URL字符串。
-		{
-			type : "POST", //  请求方式 POST或GET
-			contentType : "application/xml", //  发送信息至服务器时的内容编码类型
-			// 发送到服务器的数据。
-			data : xmlData,
-			async : true, // 默认设置下，所有请求均为异步请求。如果设置为false，则发送同步请求
-		});
-	}
+    $(document).ready(function() {
+        sendxml();
+    });
+    function sendxml() {
+        var xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><book><id>1</id><name>书的名称</name><author>作者</author></book>";
+        $.ajax("${pageContext.request.contextPath}/sendxml",// 发送请求的URL字符串。
+        {
+            type : "POST", //  请求方式 POST或GET
+            contentType : "application/xml", //  发送信息至服务器时的内容编码类型
+            // 发送到服务器的数据。
+            data : xmlData,
+            async : true, // 默认设置下，所有请求均为异步请求。如果设置为false，则发送同步请求
+        });
+    }
 </script>
 </head>
 <body>
@@ -78,55 +78,55 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class Book implements Serializable
 {
-	private static final long serialVersionUID = 1L;
-	private Integer id;
-	private String name;
-	private String author;
-	public Book()
-	{
-		super();
-	}
-	public Book(Integer id, String name, String author)
-	{
-		super();
-		this.id = id;
-		this.name = name;
-		this.author = author;
-	}
-	public Integer getId()
-	{
-		return id;
-	}
-	// 该属性作为xml的element
-	@XmlElement
-	public void setId(Integer id)
-	{
-		this.id = id;
-	}
+    private static final long serialVersionUID = 1L;
+    private Integer id;
+    private String name;
+    private String author;
+    public Book()
+    {
+        super();
+    }
+    public Book(Integer id, String name, String author)
+    {
+        super();
+        this.id = id;
+        this.name = name;
+        this.author = author;
+    }
+    public Integer getId()
+    {
+        return id;
+    }
+    // 该属性作为xml的element
+    @XmlElement
+    public void setId(Integer id)
+    {
+        this.id = id;
+    }
 
-	public String getName()
-	{
-		return name;
-	}
-	@XmlElement
-	public void setName(String name)
-	{
-		this.name = name;
-	}
-	public String getAuthor()
-	{
-		return author;
-	}
-	@XmlElement
-	public void setAuthor(String author)
-	{
-		this.author = author;
-	}
-	@Override
-	public String toString()
-	{
-		return "Book [id=" + id + ", name=" + name + ", author=" + author + "]";
-	}
+    public String getName()
+    {
+        return name;
+    }
+    @XmlElement
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+    public String getAuthor()
+    {
+        return author;
+    }
+    @XmlElement
+    public void setAuthor(String author)
+    {
+        this.author = author;
+    }
+    @Override
+    public String toString()
+    {
+        return "Book [id=" + id + ", name=" + name + ", author=" + author + "]";
+    }
 }
 ```
 在`Book`类中定义了3个属性:`id`、`nane`和`author`,分别对应`XML`的元素。 `toString`方法用来输出获取的数据对象信息。
@@ -145,30 +145,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class BookController
 {
-	// @RequestBody Book book会将传递的xml数据自动绑定到Book对象
-	@PostMapping(value = "/sendxml")
-	public void sendxml(@RequestBody Book book)
-	{
-		System.out.println("接收XML数据成功");
-		System.out.println(book);
-	}
-	// @ResponseBody 会将Book自动转成XML数据返回
-	@PostMapping(value = "/readxml")
-	// @ResponseBody注解把方法返回的Book对象转换成XML并发给客户端.
-	@ResponseBody
-	public Book readXml() throws Exception
-	{
-		// 通过JAXBContext的newInstance方法，传递一个class就可以获得一个上下文
-		JAXBContext context = JAXBContext.newInstance(Book.class);
-		// 创建一个Unmarshall对象
-		Unmarshaller unmar = context.createUnmarshaller();
-		// 读取资源目录下的文件
-		InputStream is = this.getClass().getResourceAsStream("/book.xml");
-		// Unmarshall对象的unmarshal方法可以进行xml到Java对象的转换
-		Book book = (Book) unmar.unmarshal(is);
-		System.out.println(book);
-		return book;
-	}
+    // @RequestBody Book book会将传递的xml数据自动绑定到Book对象
+    @PostMapping(value = "/sendxml")
+    public void sendxml(@RequestBody Book book)
+    {
+        System.out.println("接收XML数据成功");
+        System.out.println(book);
+    }
+    // @ResponseBody 会将Book自动转成XML数据返回
+    @PostMapping(value = "/readxml")
+    // @ResponseBody注解把方法返回的Book对象转换成XML并发给客户端.
+    @ResponseBody
+    public Book readXml() throws Exception
+    {
+        // 通过JAXBContext的newInstance方法，传递一个class就可以获得一个上下文
+        JAXBContext context = JAXBContext.newInstance(Book.class);
+        // 创建一个Unmarshall对象
+        Unmarshaller unmar = context.createUnmarshaller();
+        // 读取资源目录下的文件
+        InputStream is = this.getClass().getResourceAsStream("/book.xml");
+        // Unmarshall对象的unmarshal方法可以进行xml到Java对象的转换
+        Book book = (Book) unmar.unmarshal(is);
+        System.out.println(book);
+        return book;
+    }
 }
 ```
 `sendxml`方法中的第一个参数`@RequestBody Book book`表示,使用`@RequestBody`注解获取到`XML`数据后,将`XML`数据设置到`Book`对象的对应属性中。为了测试接收数据,将接收到XML数据的`Book`对象打印在控制台上。
@@ -197,33 +197,33 @@ Book [id=1, name=书的名称, author=作者]
 <script type="text/javascript" src="js/jquery-1.11.0.min.js"></script>
 <script type="text/javascript" src="js/json2.js"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		readxml();
-	});
-	function readxml() {
-		$.ajax("${pageContext.request.contextPath}/readxml",// 发送请求的URL字符串。
-		{
-			dataType : "text", // 预期服务器返回的数据类型。
-			type : "POST", //  请求方式 POST或GET
-			async : true, // 默认设置下，所有请求均为异步请求。如果设置为false，则发送同步请求
-			// 请求成功后的回调函数。
-			success : function(xml) {
-				// 获得xml数据的id，name，author
-				var id = $("id", xml).text();
-				var name = $("name", xml).text();
-				var author = $("author", xml).text();
-				var tr = $("<tr align='center'/>");
-				$("<td/>").html(id).appendTo(tr);
-				$("<td/>").html(name).appendTo(tr);
-				$("<td/>").html(author).appendTo(tr);
-				$("#booktable").append(tr);
-			},
-			// 请求出错时调用的函数
-			error : function() {
-				alert("数据接收失败");
-			}
-		});
-	}
+    $(document).ready(function() {
+        readxml();
+    });
+    function readxml() {
+        $.ajax("${pageContext.request.contextPath}/readxml",// 发送请求的URL字符串。
+        {
+            dataType : "text", // 预期服务器返回的数据类型。
+            type : "POST", //  请求方式 POST或GET
+            async : true, // 默认设置下，所有请求均为异步请求。如果设置为false，则发送同步请求
+            // 请求成功后的回调函数。
+            success : function(xml) {
+                // 获得xml数据的id，name，author
+                var id = $("id", xml).text();
+                var name = $("name", xml).text();
+                var author = $("author", xml).text();
+                var tr = $("<tr align='center'/>");
+                $("<td/>").html(id).appendTo(tr);
+                $("<td/>").html(name).appendTo(tr);
+                $("<td/>").html(author).appendTo(tr);
+                $("#booktable").append(tr);
+            },
+            // 请求出错时调用的函数
+            error : function() {
+                alert("数据接收失败");
+            }
+        });
+    }
 </script>
 </head>
 <body>
@@ -248,8 +248,8 @@ http://localhost:8080/XmlTest/readxml.jsp
 ```
 浏览器显示内容如下:
 ```
-编号 	书名 	作者
-1	书的名称	书的作者
+编号     书名     作者
+1    书的名称    书的作者
 ```
 这表示`Spring MVC`成功将`XML`数据返回到客户端。
 <!--SSTStop-->

@@ -44,19 +44,19 @@ import com.alibaba.fastjson.JSONObject;
 @RequestMapping("/json")
 public class BookController
 {
-	// @RequestBody可以将json数据转换成对应的Object
-	@RequestMapping(value = "/testRequestBody")
-	public void setJson(@RequestBody Book book, HttpServletResponse response)
-	        throws Exception
-	{
-		// JSONObject-lib包是一个beans,collections,maps,java arrays和xml和JSON互相转换的包。
-		// 使用JSONObject将book对象转换成json输出
-		System.out.println(JSONObject.toJSONString(book));
-		book.setAuthor("作者名字");
-		response.setContentType("text/html;charset=UTF-8");
-		// 将book对象转换成json写出到客户端
-		response.getWriter().println(JSONObject.toJSONString(book));
-	}
+    // @RequestBody可以将json数据转换成对应的Object
+    @RequestMapping(value = "/testRequestBody")
+    public void setJson(@RequestBody Book book, HttpServletResponse response)
+            throws Exception
+    {
+        // JSONObject-lib包是一个beans,collections,maps,java arrays和xml和JSON互相转换的包。
+        // 使用JSONObject将book对象转换成json输出
+        System.out.println(JSONObject.toJSONString(book));
+        book.setAuthor("作者名字");
+        response.setContentType("text/html;charset=UTF-8");
+        // 将book对象转换成json写出到客户端
+        response.getWriter().println(JSONObject.toJSONString(book));
+    }
 }
 ```
 ## springmvc-config.xml ##

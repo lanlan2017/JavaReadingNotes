@@ -60,24 +60,24 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TestController
 {
-	@GetMapping("/test")
-	public String test() throws Exception
-	{
-		// 模拟异常,调用本类中定义的异常处理方法
-		@SuppressWarnings("unused")
-		int i = 5 / 0;
-		return "success";
-	}
-	// 在异常抛出的时候，Controller会使用@ExceptionHandler注解的方法去处理异常
-	// value=Exception.class表示处理所有的Exception类型异常。
-	@ExceptionHandler(value = Exception.class)
-	public ModelAndView testErrorHandler(Exception e)
-	{
-		ModelAndView mav = new ModelAndView();
-		mav.setViewName("error");
-		mav.addObject("ex", e);
-		return mav;
-	}
+    @GetMapping("/test")
+    public String test() throws Exception
+    {
+        // 模拟异常,调用本类中定义的异常处理方法
+        @SuppressWarnings("unused")
+        int i = 5 / 0;
+        return "success";
+    }
+    // 在异常抛出的时候，Controller会使用@ExceptionHandler注解的方法去处理异常
+    // value=Exception.class表示处理所有的Exception类型异常。
+    @ExceptionHandler(value = Exception.class)
+    public ModelAndView testErrorHandler(Exception e)
+    {
+        ModelAndView mav = new ModelAndView();
+        mav.setViewName("error");
+        mav.addObject("ex", e);
+        return mav;
+    }
 }
 ```
 `TestController`中`test()`方法是`index.jsp`页面的超链接`"@ExceptionHandler处理异常`"的请求处理方法,模拟了一个除数不能为0的异常。
@@ -115,19 +115,19 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 public class BaseExceptionController
 {
-	// 表示这是一个异常处理方法
-	// value = Exception.class表示处理的异常类型为Exception
-	// 也就是处理所有的异常
-	@ExceptionHandler(value = Exception.class)
-	public ModelAndView defaultErrorHandler(Exception e) throws Exception
-	{
-		ModelAndView mav = new ModelAndView();
-		// 设置模型数据
-		mav.addObject("ex", e);
-		// 设置视图
-		mav.setViewName("error");
-		return mav;
-	}
+    // 表示这是一个异常处理方法
+    // value = Exception.class表示处理的异常类型为Exception
+    // 也就是处理所有的异常
+    @ExceptionHandler(value = Exception.class)
+    public ModelAndView defaultErrorHandler(Exception e) throws Exception
+    {
+        ModelAndView mav = new ModelAndView();
+        // 设置模型数据
+        mav.addObject("ex", e);
+        // 设置视图
+        mav.setViewName("error");
+        return mav;
+    }
 }
 ```
 `BaseController`作为父类,定义了一个`@ExceptionHandler`注解修饰的方法。
@@ -141,16 +141,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class UserController extends BaseExceptionController
 {
-	@GetMapping("/login")
-	public String login(String username) throws Exception
-	{
-		if (username == null)
-		{
-			// 调用本类的异常处理方法
-			throw new NullPointerException("用户名不存在!");
-		}
-		return "success";
-	}
+    @GetMapping("/login")
+    public String login(String username) throws Exception
+    {
+        if (username == null)
+        {
+            // 调用本类的异常处理方法
+            throw new NullPointerException("用户名不存在!");
+        }
+        return "success";
+    }
 }
 ```
 `UserController`继承`BaseController`,如果抛出异常,将使用父类的`ExceptionHandler`注解修饰的方法处理异常。
@@ -164,20 +164,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class BookController extends BaseExceptionController
 {
-	@GetMapping("/find")
-	public String find() throws Exception
-	{
-		try
-		{
-			// 除零异常,调用继承得到的异常处理方法
-			@SuppressWarnings("unused")
-			int i = 5 / 0;
-			return "success";
-		} catch (Exception e)
-		{
-			throw new SQLException("查找图书信息失败!");
-		}
-	}
+    @GetMapping("/find")
+    public String find() throws Exception
+    {
+        try
+        {
+            // 除零异常,调用继承得到的异常处理方法
+            @SuppressWarnings("unused")
+            int i = 5 / 0;
+            return "success";
+        } catch (Exception e)
+        {
+            throw new SQLException("查找图书信息失败!");
+        }
+    }
 }
 ```
 `BookController`继承`BaseController`,如果抛出异常,将使用父类的`@ExceptionHandler`注解修饰的方法处理异常.

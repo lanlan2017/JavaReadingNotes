@@ -101,11 +101,11 @@ E:\workspace_shizhan\SpringMVCTest\WebContent\WEB-INF\lib
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
-	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
-	http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" 
-	id="WebApp_ID" version="3.1">
-	<!-- 定义Spring MVC的前端控制器 -->
+    xmlns="http://xmlns.jcp.org/xml/ns/javaee" 
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+    http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" 
+    id="WebApp_ID" version="3.1">
+    <!-- 定义Spring MVC的前端控制器 -->
     <servlet>
         <!-- 默认去应用程序文件夹下的`WEB-INF`文件夹下査找对应的`springmvc-servlet.xml`作为配置文件 -->
         <servlet-name>springmvc</servlet-name>
@@ -138,14 +138,14 @@ E:\workspace_shizhan\SpringMVCTest\WebContent\WEB-INF\lib
     <!-- 配置Handle，映射"/hello"请求 -->
     <bean name="/hello" class="org.fkit.controller.HelloController"/>
 
-	<!-- 处理映射器将bean的name作为url进行查找，需要在配置Handle时指定name（即url） -->
-	<bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
+    <!-- 处理映射器将bean的name作为url进行查找，需要在配置Handle时指定name（即url） -->
+    <bean class="org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"/>
 
-	<!-- SimpleControllerHandlerAdapter是一个处理器适配器，所有处理适配器都要实现 HandlerAdapter接口-->
-	<bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
-	
-	<!-- 视图解析器 -->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>
+    <!-- SimpleControllerHandlerAdapter是一个处理器适配器，所有处理适配器都要实现 HandlerAdapter接口-->
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+    
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"/>
 </beans>
 ```
 `springmvc-config.xml`文件声明了`HelloController`业务控制器类,并将其映射到`/hello`请求。
@@ -165,25 +165,25 @@ import org.springframework.web.servlet.mvc.Controller;
  */
 public class HelloController implements Controller
 {
-	/**
-	 * handleRequest是Controller接口必须实现的方法。
-	 * 该方法的参数是对应请求的HttpServletRequest和对应响应的HttpServletResponse。
-	 * 该方法必须返回一个包含视图路径或视图路径和模型的ModelAndView对象。
-	 */
-	@Override
-	public ModelAndView handleRequest(HttpServletRequest request,
-			HttpServletResponse response) throws Exception
-	{
-		System.out.println("handleRequest 被调用");
-		// 创建准备返回的ModelAndView对象，该对象通常包含了返回视图的路径、模型的名称以及模型对象
-		ModelAndView mv = new ModelAndView();
-		// 添加模型数据 可以是任意的POJO对象
-		mv.addObject("message", "Hello World!");
-		// 设置逻辑视图名，视图解析器会根据该名字解析到具体的视图页面
-		mv.setViewName("/WEB-INF/content/welcome.jsp");
-		// 返回ModelAndView对象。
-		return mv;
-	}
+    /**
+     * handleRequest是Controller接口必须实现的方法。
+     * 该方法的参数是对应请求的HttpServletRequest和对应响应的HttpServletResponse。
+     * 该方法必须返回一个包含视图路径或视图路径和模型的ModelAndView对象。
+     */
+    @Override
+    public ModelAndView handleRequest(HttpServletRequest request,
+            HttpServletResponse response) throws Exception
+    {
+        System.out.println("handleRequest 被调用");
+        // 创建准备返回的ModelAndView对象，该对象通常包含了返回视图的路径、模型的名称以及模型对象
+        ModelAndView mv = new ModelAndView();
+        // 添加模型数据 可以是任意的POJO对象
+        mv.addObject("message", "Hello World!");
+        // 设置逻辑视图名，视图解析器会根据该名字解析到具体的视图页面
+        mv.setViewName("/WEB-INF/content/welcome.jsp");
+        // 返回ModelAndView对象。
+        return mv;
+    }
 }
 ```
 `HelloController`是一个实现`Controller`接口的控制器,它可以处理一个单的请求动作。 `handleRequest`是`Controller`接口必须实现的方法, `Controller`调用该方法来处理请求。该方法的参数是对应请求的`HttpServletRequest`和`HttpServletResponse`,该方法必须返回一个包含视图名或视图名和模型的`ModelAndView`对象。本例返回的模型中包含了一个名为`message`的字符串对象,返回的视图路径为`/WEB-INF/content/welcome.jsp`,因此,请求将被转发到`welcome.jsp`页面。
@@ -194,7 +194,7 @@ public class HelloController implements Controller
 此处的`JSP`页面使用了`EL`表达式来简化页面开发,关于`EL`表达式的使用可参考附录A `EL`表达式和`JSTL`标签库"的内容
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 <!DOCTYPE>
 <html>
 <head>
@@ -202,8 +202,8 @@ public class HelloController implements Controller
 <title>欢迎页面</title>
 </head>
 <body>
-	<!-- 页面可以访问Controller传递传递出来的message -->
-	${requestScope.message}
+    <!-- 页面可以访问Controller传递传递出来的message -->
+    ${requestScope.message}
 </body>
 </html>
 ```
