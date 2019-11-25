@@ -5,14 +5,16 @@ categories:
   - 第一部分 Servlets和JSP
   - 第5章 JSTL
 date: 2019-03-31 22:32:59
-updated: 2019-11-02 01:38:59
+updated: 2019-11-02 10:12:04
 abbrlink: 44f74318
 ---
-- [第5章 JSTL](/ReadingNotes/44f74318/#第5章-JSTL)
+<div id='my_toc'>
 
+- [第5章 JSTL](/JavaReadingNotes/44f74318/#第5章-JSTL)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 ## 第5章 JSTL ##

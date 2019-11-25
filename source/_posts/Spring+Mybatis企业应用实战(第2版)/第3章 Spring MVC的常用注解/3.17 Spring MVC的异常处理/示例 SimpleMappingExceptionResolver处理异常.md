@@ -5,18 +5,20 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.17 Spring MVC的异常处理
 date: 2019-08-21 12:21:58
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 463618c5
 ---
-- [示例 SimpleMappingExceptionResolver处理异常](/ReadingNotes/463618c5/#示例-SimpleMappingExceptionResolver处理异常)
-    - [index.jsp](/ReadingNotes/463618c5/#index-jsp)
-    - [TestController.java](/ReadingNotes/463618c5/#TestController-java)
-    - [error.jsp](/ReadingNotes/463618c5/#error-jsp)
-    - [sqlerror.jsp](/ReadingNotes/463618c5/#sqlerror-jsp)
+<div id='my_toc'>
 
+- [示例 SimpleMappingExceptionResolver处理异常](/JavaReadingNotes/463618c5/#示例-SimpleMappingExceptionResolver处理异常)
+    - [index.jsp](/JavaReadingNotes/463618c5/#index-jsp)
+    - [TestController.java](/JavaReadingNotes/463618c5/#TestController-java)
+    - [error.jsp](/JavaReadingNotes/463618c5/#error-jsp)
+    - [sqlerror.jsp](/JavaReadingNotes/463618c5/#sqlerror-jsp)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

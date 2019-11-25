@@ -5,15 +5,17 @@ categories:
   - 第8章 Bootstrap的JS插件
   - 8.0 前言
 date: 2019-08-05 23:09:30
-updated: 2019-11-02 01:39:02
+updated: 2019-11-02 10:12:08
 abbrlink: '181137e2'
 ---
-- [第8章 Bootstrap的JS插件](/ReadingNotes/181137e2/#第8章-Bootstrap的JS插件)
-    - [本章要点](/ReadingNotes/181137e2/#本章要点)
+<div id='my_toc'>
 
+- [第8章 Bootstrap的JS插件](/JavaReadingNotes/181137e2/#第8章-Bootstrap的JS插件)
+    - [本章要点](/JavaReadingNotes/181137e2/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

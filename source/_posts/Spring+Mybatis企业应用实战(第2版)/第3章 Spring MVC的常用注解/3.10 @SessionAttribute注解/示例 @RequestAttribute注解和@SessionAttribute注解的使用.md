@@ -5,17 +5,19 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.10 @SessionAttribute注解
 date: 2019-08-19 19:42:55
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 6d3c96b0
 ---
-- [示例 @RequestAttribute注解和@SessionAttribute注解的使用](/ReadingNotes/6d3c96b0/#示例-RequestAttribute注解和-SessionAttribute注解的使用)
-    - [index.jsp](/ReadingNotes/6d3c96b0/#index-jsp)
-    - [AttributeController.java](/ReadingNotes/6d3c96b0/#AttributeController-java)
-    - [TestAttributeFilter.java](/ReadingNotes/6d3c96b0/#TestAttributeFilter-java)
+<div id='my_toc'>
 
+- [示例 @RequestAttribute注解和@SessionAttribute注解的使用](/JavaReadingNotes/6d3c96b0/#示例-RequestAttribute注解和-SessionAttribute注解的使用)
+    - [index.jsp](/JavaReadingNotes/6d3c96b0/#index-jsp)
+    - [AttributeController.java](/JavaReadingNotes/6d3c96b0/#AttributeController-java)
+    - [TestAttributeFilter.java](/JavaReadingNotes/6d3c96b0/#TestAttributeFilter-java)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

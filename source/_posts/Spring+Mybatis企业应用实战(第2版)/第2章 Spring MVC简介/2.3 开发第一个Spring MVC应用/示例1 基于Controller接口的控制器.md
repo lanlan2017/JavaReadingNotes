@@ -5,22 +5,24 @@ categories:
   - 第2章 Spring MVC简介
   - 2.3 开发第一个Spring MVC应用
 date: 2019-08-16 22:39:26
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 3447f8a3
 ---
-- [示例1:基于Controller接口的控制器](/ReadingNotes/3447f8a3/#示例1-基于Controller接口的控制器)
-    - [1.增加Spring的支持](/ReadingNotes/3447f8a3/#1-增加Spring的支持)
-        - [复制Spring的jar包到项目lib目录](/ReadingNotes/3447f8a3/#复制Spring的jar包到项目lib目录)
-        - [复制commons-logging的jar包到项目lib目录](/ReadingNotes/3447f8a3/#复制commons-logging的jar包到项目lib目录)
-    - [2. 配置前端控制器DispatcherServlet](/ReadingNotes/3447f8a3/#2-配置前端控制器DispatcherServlet)
-    - [3 配置Spring MVC的Controller](/ReadingNotes/3447f8a3/#3-配置Spring-MVC的Controller)
-    - [4. Controller类的实现](/ReadingNotes/3447f8a3/#4-Controller类的实现)
-    - [5. View页面](/ReadingNotes/3447f8a3/#5-View页面)
-    - [6.测试应用](/ReadingNotes/3447f8a3/#6-测试应用)
+<div id='my_toc'>
 
+- [示例1:基于Controller接口的控制器](/JavaReadingNotes/3447f8a3/#示例1-基于Controller接口的控制器)
+    - [1.增加Spring的支持](/JavaReadingNotes/3447f8a3/#1-增加Spring的支持)
+        - [复制Spring的jar包到项目lib目录](/JavaReadingNotes/3447f8a3/#复制Spring的jar包到项目lib目录)
+        - [复制commons-logging的jar包到项目lib目录](/JavaReadingNotes/3447f8a3/#复制commons-logging的jar包到项目lib目录)
+    - [2. 配置前端控制器DispatcherServlet](/JavaReadingNotes/3447f8a3/#2-配置前端控制器DispatcherServlet)
+    - [3 配置Spring MVC的Controller](/JavaReadingNotes/3447f8a3/#3-配置Spring-MVC的Controller)
+    - [4. Controller类的实现](/JavaReadingNotes/3447f8a3/#4-Controller类的实现)
+    - [5. View页面](/JavaReadingNotes/3447f8a3/#5-View页面)
+    - [6.测试应用](/JavaReadingNotes/3447f8a3/#6-测试应用)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

@@ -5,21 +5,23 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.6 @CrossOrigin注解
 date: 2019-08-19 13:23:24
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 8ad4e730
 ---
-- [示例 @PathVariable注解和@MatrixVariable注解的使用](/ReadingNotes/8ad4e730/#示例-PathVariable注解和-MatrixVariable注解的使用)
-    - [index.jsp](/ReadingNotes/8ad4e730/#index-jsp)
-    - [VariableController.java](/ReadingNotes/8ad4e730/#VariableController-java)
-    - [springmvc-config.xml](/ReadingNotes/8ad4e730/#springmvc-config-xml)
-    - [测试](/ReadingNotes/8ad4e730/#测试)
-        - [测试@PathVariable注解](/ReadingNotes/8ad4e730/#测试-PathVariable注解)
-        - [测试@MatrixVariable注解](/ReadingNotes/8ad4e730/#测试-MatrixVariable注解)
-        - [@MatrixVariable注解完成复杂的参数注入](/ReadingNotes/8ad4e730/#-MatrixVariable注解完成复杂的参数注入)
+<div id='my_toc'>
 
+- [示例 @PathVariable注解和@MatrixVariable注解的使用](/JavaReadingNotes/8ad4e730/#示例-PathVariable注解和-MatrixVariable注解的使用)
+    - [index.jsp](/JavaReadingNotes/8ad4e730/#index-jsp)
+    - [VariableController.java](/JavaReadingNotes/8ad4e730/#VariableController-java)
+    - [springmvc-config.xml](/JavaReadingNotes/8ad4e730/#springmvc-config-xml)
+    - [测试](/JavaReadingNotes/8ad4e730/#测试)
+        - [测试@PathVariable注解](/JavaReadingNotes/8ad4e730/#测试-PathVariable注解)
+        - [测试@MatrixVariable注解](/JavaReadingNotes/8ad4e730/#测试-MatrixVariable注解)
+        - [@MatrixVariable注解完成复杂的参数注入](/JavaReadingNotes/8ad4e730/#-MatrixVariable注解完成复杂的参数注入)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

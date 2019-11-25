@@ -5,15 +5,17 @@ categories:
   - 第8章 深入使用Spring
   - 8.0 本章要点
 date: 2019-08-31 09:55:21
-updated: 2019-11-02 01:39:03
+updated: 2019-11-02 10:12:08
 abbrlink: 4676c7d7
 ---
-- [第8章 深入使用Spring](/ReadingNotes/4676c7d7/#第8章-深入使用Spring)
-    - [本章要点](/ReadingNotes/4676c7d7/#本章要点)
+<div id='my_toc'>
 
+- [第8章 深入使用Spring](/JavaReadingNotes/4676c7d7/#第8章-深入使用Spring)
+    - [本章要点](/JavaReadingNotes/4676c7d7/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

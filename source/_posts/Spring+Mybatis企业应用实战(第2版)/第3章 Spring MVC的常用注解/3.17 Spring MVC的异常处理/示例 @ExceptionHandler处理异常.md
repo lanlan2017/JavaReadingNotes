@@ -5,21 +5,23 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.17 Spring MVC的异常处理
 date: 2019-08-21 15:45:26
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: a0f3b85b
 ---
-- [示例 @ExceptionHandler处理异常](/ReadingNotes/a0f3b85b/#示例-ExceptionHandler处理异常)
-    - [index.jsp](/ReadingNotes/a0f3b85b/#index-jsp)
-    - [TestController.java](/ReadingNotes/a0f3b85b/#TestController-java)
-    - [error.jsp](/ReadingNotes/a0f3b85b/#error-jsp)
-- [更好一点的做法](/ReadingNotes/a0f3b85b/#更好一点的做法)
-    - [BaseExceptionController.java](/ReadingNotes/a0f3b85b/#BaseExceptionController-java)
-    - [UserController.java](/ReadingNotes/a0f3b85b/#UserController-java)
-    - [BookController.java](/ReadingNotes/a0f3b85b/#BookController-java)
+<div id='my_toc'>
 
+- [示例 @ExceptionHandler处理异常](/JavaReadingNotes/a0f3b85b/#示例-ExceptionHandler处理异常)
+    - [index.jsp](/JavaReadingNotes/a0f3b85b/#index-jsp)
+    - [TestController.java](/JavaReadingNotes/a0f3b85b/#TestController-java)
+    - [error.jsp](/JavaReadingNotes/a0f3b85b/#error-jsp)
+- [更好一点的做法](/JavaReadingNotes/a0f3b85b/#更好一点的做法)
+    - [BaseExceptionController.java](/JavaReadingNotes/a0f3b85b/#BaseExceptionController-java)
+    - [UserController.java](/JavaReadingNotes/a0f3b85b/#UserController-java)
+    - [BookController.java](/JavaReadingNotes/a0f3b85b/#BookController-java)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

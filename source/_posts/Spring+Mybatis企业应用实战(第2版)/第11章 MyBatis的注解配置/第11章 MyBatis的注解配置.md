@@ -4,15 +4,17 @@ categories:
   - Spring+Mybatis企业应用实战(第2版)
   - 第11章 MyBatis的注解配置
 date: 2019-06-13 18:29:24
-updated: 2019-11-02 01:38:59
+updated: 2019-11-02 10:12:05
 abbrlink: 408525dd
 ---
-- [第11章 MyBatis的注解配置](/ReadingNotes/408525dd/#第11章-MyBatis的注解配置)
-    - [本章要点](/ReadingNotes/408525dd/#本章要点)
+<div id='my_toc'>
 
+- [第11章 MyBatis的注解配置](/JavaReadingNotes/408525dd/#第11章-MyBatis的注解配置)
+    - [本章要点](/JavaReadingNotes/408525dd/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 # 第11章 MyBatis的注解配置 #

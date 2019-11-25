@@ -5,14 +5,16 @@ categories:
   - 第二部分 SpringMVC
   - 第17章 SpringMVC介绍
 date: 2019-05-15 11:17:33
-updated: 2019-11-02 01:38:59
+updated: 2019-11-02 10:12:05
 abbrlink: 489657c9
 ---
-- [第17章 SpringMVC介绍](/ReadingNotes/489657c9/#第17章-SpringMVC介绍)
+<div id='my_toc'>
 
+- [第17章 SpringMVC介绍](/JavaReadingNotes/489657c9/#第17章-SpringMVC介绍)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 # 第17章 SpringMVC介绍 #

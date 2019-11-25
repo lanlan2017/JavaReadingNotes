@@ -4,17 +4,19 @@ categories:
   - Serlet JSP和Spring MVC初学指南
   - 前言
 date: 2019-04-25 14:56:06
-updated: 2019-11-02 10:13:00
+updated: 2019-11-02 11:18:54
 abbrlink: 8b8be5cf
 ---
-- [前言-2-HTTP](/ReadingNotes/8b8be5cf/#前言-2-HTTP)
-    - [HTTP](/ReadingNotes/8b8be5cf/#HTTP)
-        - [HTTP请求](/ReadingNotes/8b8be5cf/#HTTP请求)
-        - [**HTTP**响应](/ReadingNotes/8b8be5cf/#HTTP响应)
+<div id='my_toc'>
 
+- [前言-2-HTTP](/JavaReadingNotes/8b8be5cf/#前言-2-HTTP)
+    - [HTTP](/JavaReadingNotes/8b8be5cf/#HTTP)
+        - [HTTP请求](/JavaReadingNotes/8b8be5cf/#HTTP请求)
+        - [**HTTP**响应](/JavaReadingNotes/8b8be5cf/#HTTP响应)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 # 前言-2-HTTP #

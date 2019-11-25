@@ -5,16 +5,18 @@ categories:
   - 第6章 Bootstrap全局样式
   - 6.1 Bootstrap
 date: 2019-07-27 20:45:51
-updated: 2019-11-02 01:39:02
+updated: 2019-11-02 10:12:07
 abbrlink: ac5bb668
 ---
-- [第6章 Bootstrap全局样式](/ReadingNotes/ac5bb668/#第6章-Bootstrap全局样式)
-    - [本章要点](/ReadingNotes/ac5bb668/#本章要点)
-    - [Bootstrap简介](/ReadingNotes/ac5bb668/#Bootstrap简介)
+<div id='my_toc'>
 
+- [第6章 Bootstrap全局样式](/JavaReadingNotes/ac5bb668/#第6章-Bootstrap全局样式)
+    - [本章要点](/JavaReadingNotes/ac5bb668/#本章要点)
+    - [Bootstrap简介](/JavaReadingNotes/ac5bb668/#Bootstrap简介)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

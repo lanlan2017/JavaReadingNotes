@@ -5,17 +5,19 @@ categories:
   - 第一部分 Servlets和JSP
   - 第3章 Java Server Pages(JSP)
 date: 2019-03-25 11:05:01
-updated: 2019-11-02 01:38:59
+updated: 2019-11-02 10:12:04
 abbrlink: 9cc208c7
 ---
-- [第3章 Java Server Pages(JSP)概述](/ReadingNotes/9cc208c7/#第3章-Java-Server-Pages-JSP-概述)
-    - [Servlet的缺点](/ReadingNotes/9cc208c7/#Servlet的缺点)
-    - [JSP](/ReadingNotes/9cc208c7/#JSP)
-    - [本章概述](/ReadingNotes/9cc208c7/#本章概述)
+<div id='my_toc'>
 
+- [第3章 Java Server Pages(JSP)概述](/JavaReadingNotes/9cc208c7/#第3章-Java-Server-Pages-JSP-概述)
+    - [Servlet的缺点](/JavaReadingNotes/9cc208c7/#Servlet的缺点)
+    - [JSP](/JavaReadingNotes/9cc208c7/#JSP)
+    - [本章概述](/JavaReadingNotes/9cc208c7/#本章概述)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 ## 第3章 Java Server Pages(JSP)概述 ##

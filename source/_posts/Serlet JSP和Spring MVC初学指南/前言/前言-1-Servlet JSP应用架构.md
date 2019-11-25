@@ -4,14 +4,16 @@ categories:
   - Serlet JSP和Spring MVC初学指南
   - 前言
 date: 2019-04-25 14:51:26
-updated: 2019-11-02 10:12:45
+updated: 2019-11-02 11:18:54
 abbrlink: 17e72ee2
 ---
-- [前言 1Servlet/JSP应用架构](/ReadingNotes/17e72ee2/#前言-1Servlet-JSP应用架构)
+<div id='my_toc'>
 
+- [前言 1Servlet/JSP应用架构](/JavaReadingNotes/17e72ee2/#前言-1Servlet-JSP应用架构)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 ## 前言 1Servlet/JSP应用架构 ##

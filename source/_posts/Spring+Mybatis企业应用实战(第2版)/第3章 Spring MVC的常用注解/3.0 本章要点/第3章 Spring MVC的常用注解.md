@@ -5,15 +5,17 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.0 本章要点
 date: 2019-08-17 09:20:20
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 7ae44303
 ---
-- [第3章 Spring MVC的常用注解](/ReadingNotes/7ae44303/#第3章-Spring-MVC的常用注解)
-    - [本章要点](/ReadingNotes/7ae44303/#本章要点)
+<div id='my_toc'>
 
+- [第3章 Spring MVC的常用注解](/JavaReadingNotes/7ae44303/#第3章-Spring-MVC的常用注解)
+    - [本章要点](/JavaReadingNotes/7ae44303/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

@@ -4,25 +4,27 @@ categories:
   - 疯狂前端开发讲义JQuery AngularJS Bootstrap前端开发实战
   - 第1章 前端开发与Ajax技术
 date: 2019-05-29 17:31:30
-updated: 2019-11-02 01:39:01
+updated: 2019-11-02 10:12:07
 abbrlink: a5bcd8d
 ---
-- [同步](/ReadingNotes/a5bcd8d/#同步)
-- [异步](/ReadingNotes/a5bcd8d/#异步)
-- [Ajax应用的工作过程](/ReadingNotes/a5bcd8d/#Ajax应用的工作过程)
-- [JavaScript 使用Ajax过程](/ReadingNotes/a5bcd8d/#JavaScript-使用Ajax过程)
-- [使用XMLHttpRequest对象发送请求步骤](/ReadingNotes/a5bcd8d/#使用XMLHttpRequest对象发送请求步骤)
-- [传统Web应用发送请求形式](/ReadingNotes/a5bcd8d/#传统Web应用发送请求形式)
-- [获取服务器响应生成的文本](/ReadingNotes/a5bcd8d/#获取服务器响应生成的文本)
-- [获取服务器响应的状态码](/ReadingNotes/a5bcd8d/#获取服务器响应的状态码)
-- [传统Web编程和Ajax编程的区别](/ReadingNotes/a5bcd8d/#传统Web编程和Ajax编程的区别)
-    - [1.客户端发送请求的方式不同](/ReadingNotes/a5bcd8d/#1-客户端发送请求的方式不同)
-    - [2.服务器生成的响应不同](/ReadingNotes/a5bcd8d/#2-服务器生成的响应不同)
-    - [3.客户端加载响应的方式不同](/ReadingNotes/a5bcd8d/#3-客户端加载响应的方式不同)
+<div id='my_toc'>
 
+- [同步](/JavaReadingNotes/a5bcd8d/#同步)
+- [异步](/JavaReadingNotes/a5bcd8d/#异步)
+- [Ajax应用的工作过程](/JavaReadingNotes/a5bcd8d/#Ajax应用的工作过程)
+- [JavaScript 使用Ajax过程](/JavaReadingNotes/a5bcd8d/#JavaScript-使用Ajax过程)
+- [使用XMLHttpRequest对象发送请求步骤](/JavaReadingNotes/a5bcd8d/#使用XMLHttpRequest对象发送请求步骤)
+- [传统Web应用发送请求形式](/JavaReadingNotes/a5bcd8d/#传统Web应用发送请求形式)
+- [获取服务器响应生成的文本](/JavaReadingNotes/a5bcd8d/#获取服务器响应生成的文本)
+- [获取服务器响应的状态码](/JavaReadingNotes/a5bcd8d/#获取服务器响应的状态码)
+- [传统Web编程和Ajax编程的区别](/JavaReadingNotes/a5bcd8d/#传统Web编程和Ajax编程的区别)
+    - [1.客户端发送请求的方式不同](/JavaReadingNotes/a5bcd8d/#1-客户端发送请求的方式不同)
+    - [2.服务器生成的响应不同](/JavaReadingNotes/a5bcd8d/#2-服务器生成的响应不同)
+    - [3.客户端加载响应的方式不同](/JavaReadingNotes/a5bcd8d/#3-客户端加载响应的方式不同)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 # 同步 #

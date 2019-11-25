@@ -5,14 +5,16 @@ categories:
   - 第二部分 SpringMVC
   - 第15章Spring框架
 date: 2019-04-24 15:33:32
-updated: 2019-11-02 01:38:59
+updated: 2019-11-02 10:12:05
 abbrlink: b263deb0
 ---
-- [第15章 Spring框架](/ReadingNotes/b263deb0/#第15章-Spring框架)
+<div id='my_toc'>
 
+- [第15章 Spring框架](/JavaReadingNotes/b263deb0/#第15章-Spring框架)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 # 第15章 Spring框架 #

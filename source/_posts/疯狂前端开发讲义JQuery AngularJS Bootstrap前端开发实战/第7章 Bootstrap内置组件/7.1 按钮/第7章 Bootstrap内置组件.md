@@ -5,15 +5,17 @@ categories:
   - 第7章 Bootstrap内置组件
   - 7.1 按钮
 date: 2019-07-29 16:59:00
-updated: 2019-11-02 01:39:02
+updated: 2019-11-02 10:12:08
 abbrlink: a1a8d717
 ---
-- [第7章 Bootstrap内置组件](/ReadingNotes/a1a8d717/#第7章-Bootstrap内置组件)
-    - [本章要点](/ReadingNotes/a1a8d717/#本章要点)
+<div id='my_toc'>
 
+- [第7章 Bootstrap内置组件](/JavaReadingNotes/a1a8d717/#第7章-Bootstrap内置组件)
+    - [本章要点](/JavaReadingNotes/a1a8d717/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

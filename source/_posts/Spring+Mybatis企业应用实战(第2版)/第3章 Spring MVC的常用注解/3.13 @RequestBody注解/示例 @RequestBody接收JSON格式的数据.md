@@ -5,19 +5,21 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.13 @RequestBody注解
 date: 2019-08-20 18:45:02
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 78f2a207
 ---
-- [示例 @RequestBody接收JSON格式的数据](/ReadingNotes/78f2a207/#示例-RequestBody接收JSON格式的数据)
-    - [index.jsp](/ReadingNotes/78f2a207/#index-jsp)
-    - [BookController.java](/ReadingNotes/78f2a207/#BookController-java)
-    - [BookController.java](/ReadingNotes/78f2a207/#BookController-java)
-    - [Book.java](/ReadingNotes/78f2a207/#Book-java)
-    - [个人总结](/ReadingNotes/78f2a207/#个人总结)
+<div id='my_toc'>
 
+- [示例 @RequestBody接收JSON格式的数据](/JavaReadingNotes/78f2a207/#示例-RequestBody接收JSON格式的数据)
+    - [index.jsp](/JavaReadingNotes/78f2a207/#index-jsp)
+    - [BookController.java](/JavaReadingNotes/78f2a207/#BookController-java)
+    - [BookController.java](/JavaReadingNotes/78f2a207/#BookController-java)
+    - [Book.java](/JavaReadingNotes/78f2a207/#Book-java)
+    - [个人总结](/JavaReadingNotes/78f2a207/#个人总结)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

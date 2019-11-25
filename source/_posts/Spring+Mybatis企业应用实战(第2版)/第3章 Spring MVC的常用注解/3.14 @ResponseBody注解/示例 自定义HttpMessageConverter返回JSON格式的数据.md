@@ -5,14 +5,16 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.14 @ResponseBody注解
 date: 2019-08-20 21:55:02
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 830b4262
 ---
-- [示例 自定义HttpMessageConverter返回JSON格式的数据](/ReadingNotes/830b4262/#示例-自定义HttpMessageConverter返回JSON格式的数据)
+<div id='my_toc'>
 
+- [示例 自定义HttpMessageConverter返回JSON格式的数据](/JavaReadingNotes/830b4262/#示例-自定义HttpMessageConverter返回JSON格式的数据)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

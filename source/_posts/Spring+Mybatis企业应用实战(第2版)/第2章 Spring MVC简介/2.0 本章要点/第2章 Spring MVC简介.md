@@ -5,15 +5,17 @@ categories:
   - 第2章 Spring MVC简介
   - 2.0 本章要点
 date: 2019-07-02 18:20:39
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: db6869c6
 ---
-- [第2章 Spring MVC简介](/ReadingNotes/db6869c6/#第2章-Spring-MVC简介)
-    - [本章要点](/ReadingNotes/db6869c6/#本章要点)
+<div id='my_toc'>
 
+- [第2章 Spring MVC简介](/JavaReadingNotes/db6869c6/#第2章-Spring-MVC简介)
+    - [本章要点](/JavaReadingNotes/db6869c6/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

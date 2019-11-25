@@ -5,18 +5,20 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.13 @RequestBody注解
 date: 2019-08-20 20:47:02
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: 6ba634ae
 ---
-- [示例 自定义HttpMessageConverter 接收JSON格式的数据](/ReadingNotes/6ba634ae/#示例-自定义HttpMessageConverter-接收JSON格式的数据)
-    - [下载Fastjson](/ReadingNotes/6ba634ae/#下载Fastjson)
-- [项目示例](/ReadingNotes/6ba634ae/#项目示例)
-    - [BookController.java](/ReadingNotes/6ba634ae/#BookController-java)
-    - [springmvc-config.xml](/ReadingNotes/6ba634ae/#springmvc-config-xml)
+<div id='my_toc'>
 
+- [示例 自定义HttpMessageConverter 接收JSON格式的数据](/JavaReadingNotes/6ba634ae/#示例-自定义HttpMessageConverter-接收JSON格式的数据)
+    - [下载Fastjson](/JavaReadingNotes/6ba634ae/#下载Fastjson)
+- [项目示例](/JavaReadingNotes/6ba634ae/#项目示例)
+    - [BookController.java](/JavaReadingNotes/6ba634ae/#BookController-java)
+    - [springmvc-config.xml](/JavaReadingNotes/6ba634ae/#springmvc-config-xml)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

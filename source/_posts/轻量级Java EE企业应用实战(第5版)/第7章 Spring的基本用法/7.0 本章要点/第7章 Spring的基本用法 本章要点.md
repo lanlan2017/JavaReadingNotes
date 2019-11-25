@@ -5,15 +5,17 @@ categories:
   - 第7章 Spring的基本用法
   - 7.0 本章要点
 date: 2019-08-24 12:07:43
-updated: 2019-11-02 01:39:03
+updated: 2019-11-02 10:12:08
 abbrlink: eb51ab14
 ---
-- [第7章 Spring的基本用法](/ReadingNotes/eb51ab14/#第7章-Spring的基本用法)
-    - [本章要点](/ReadingNotes/eb51ab14/#本章要点)
+<div id='my_toc'>
 
+- [第7章 Spring的基本用法](/JavaReadingNotes/eb51ab14/#第7章-Spring的基本用法)
+    - [本章要点](/JavaReadingNotes/eb51ab14/#本章要点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

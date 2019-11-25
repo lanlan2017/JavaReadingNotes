@@ -5,18 +5,20 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.15 转换XML数据
 date: 2019-08-21 00:20:01
-updated: 2019-11-02 01:39:00
+updated: 2019-11-02 10:12:05
 abbrlink: bcd788ad
 ---
-- [示例 接收XML格式的数据](/ReadingNotes/bcd788ad/#示例-接收XML格式的数据)
-    - [sendxml.jsp](/ReadingNotes/bcd788ad/#sendxml-jsp)
-    - [Book.java](/ReadingNotes/bcd788ad/#Book-java)
-- [示例 返回XML格式的数据](/ReadingNotes/bcd788ad/#示例-返回XML格式的数据)
-    - [readxml.jsp](/ReadingNotes/bcd788ad/#readxml-jsp)
+<div id='my_toc'>
 
+- [示例 接收XML格式的数据](/JavaReadingNotes/bcd788ad/#示例-接收XML格式的数据)
+    - [sendxml.jsp](/JavaReadingNotes/bcd788ad/#sendxml-jsp)
+    - [Book.java](/JavaReadingNotes/bcd788ad/#Book-java)
+- [示例 返回XML格式的数据](/JavaReadingNotes/bcd788ad/#示例-返回XML格式的数据)
+    - [readxml.jsp](/JavaReadingNotes/bcd788ad/#readxml-jsp)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->

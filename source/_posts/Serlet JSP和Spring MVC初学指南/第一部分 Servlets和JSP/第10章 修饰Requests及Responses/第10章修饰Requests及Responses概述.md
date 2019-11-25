@@ -5,14 +5,16 @@ categories:
   - 第一部分 Servlets和JSP
   - 第10章 修饰Requests及Responses
 date: 2019-04-19 09:10:09
-updated: 2019-11-02 01:38:59
+updated: 2019-11-02 10:12:04
 abbrlink: 318f3b47
 ---
-- [第10章修饰Requests及Responses概述](/ReadingNotes/318f3b47/#第10章修饰Requests及Responses概述)
+<div id='my_toc'>
 
+- [第10章修饰Requests及Responses概述](/JavaReadingNotes/318f3b47/#第10章修饰Requests及Responses概述)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 # 第10章修饰Requests及Responses概述 #

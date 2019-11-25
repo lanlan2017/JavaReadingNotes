@@ -5,19 +5,21 @@ categories:
   - 第8章 Java集合
   - 8.0 本章要点
 date: 2019-07-06 12:58:24
-updated: 2019-11-02 01:39:01
+updated: 2019-11-25 11:30:04
 abbrlink: 7956ffc8
 ---
-- [第8章 Java集合 本章要点](/ReadingNotes/7956ffc8/#第8章-Java集合-本章要点)
-    - [java集合用途](/ReadingNotes/7956ffc8/#java集合用途)
-    - [java集合分类](/ReadingNotes/7956ffc8/#java集合分类)
-    - [java集合中来存放对象的引用](/ReadingNotes/7956ffc8/#java集合中来存放对象的引用)
-    - [Java5对集合的增强](/ReadingNotes/7956ffc8/#Java5对集合的增强)
-    - [本章重点](/ReadingNotes/7956ffc8/#本章重点)
+<div id='my_toc'>
 
+- [第8章 Java集合 本章要点](/JavaReadingNotes/7956ffc8/#第8章-Java集合-本章要点)
+    - [java集合用途](/JavaReadingNotes/7956ffc8/#java集合用途)
+    - [java集合分类](/JavaReadingNotes/7956ffc8/#java集合分类)
+    - [java集合中来存放对象的引用](/JavaReadingNotes/7956ffc8/#java集合中来存放对象的引用)
+    - [Java5对集合的增强](/JavaReadingNotes/7956ffc8/#Java5对集合的增强)
+    - [本章重点](/JavaReadingNotes/7956ffc8/#本章重点)
+
+</div>
 <!--more-->
-<script src="https://cdn.bootcss.com/jquery/3.4.0/jquery.slim.min.js"></script>
-<script>$(document).ready(function () {$(".post-body > ul:nth-child(1)").hide();});</script>
+<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
 
 <!--end-->
 <!--SSTStart-->
