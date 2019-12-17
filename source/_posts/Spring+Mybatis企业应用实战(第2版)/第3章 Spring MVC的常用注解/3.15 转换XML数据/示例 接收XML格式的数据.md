@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.15 转换XML数据
 date: 2019-08-21 00:20:01
-updated: 2019-11-25 12:55:51
+updated: 2019-12-17 01:45:46
 abbrlink: bcd788ad
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/bcd788ad/#示例-接收XML格式的数据" class="header_1">示例 接收XML格式的数据</a><br><a href="/JavaReadingNotes/bcd788ad/#sendxml.jsp" class="header_2">sendxml.jsp</a><br><a href="/JavaReadingNotes/bcd788ad/#Book.java" class="header_2">Book.java</a><br><a href="/JavaReadingNotes/bcd788ad/#示例-返回XML格式的数据" class="header_1">示例 返回XML格式的数据</a><br><a href="/JavaReadingNotes/bcd788ad/#readxml.jsp" class="header_2">readxml.jsp</a><br></div>

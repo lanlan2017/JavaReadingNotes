@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.17 Spring MVC的异常处理
 date: 2019-08-21 15:45:26
-updated: 2019-11-25 12:55:51
+updated: 2019-12-17 01:45:46
 abbrlink: a0f3b85b
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/a0f3b85b/#示例-@ExceptionHandler处理异常" class="header_1">示例 @ExceptionHandler处理异常</a><br><a href="/JavaReadingNotes/a0f3b85b/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/a0f3b85b/#TestController.java" class="header_2">TestController.java</a><br><a href="/JavaReadingNotes/a0f3b85b/#error.jsp" class="header_2">error.jsp</a><br><a href="/JavaReadingNotes/a0f3b85b/#更好一点的做法" class="header_1">更好一点的做法</a><br><a href="/JavaReadingNotes/a0f3b85b/#BaseExceptionController.java" class="header_2">BaseExceptionController.java</a><br><a href="/JavaReadingNotes/a0f3b85b/#UserController.java" class="header_2">UserController.java</a><br><a href="/JavaReadingNotes/a0f3b85b/#BookController.java" class="header_2">BookController.java</a><br></div>

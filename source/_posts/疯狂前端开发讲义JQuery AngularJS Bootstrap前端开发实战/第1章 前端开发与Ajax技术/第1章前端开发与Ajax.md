@@ -4,7 +4,7 @@ categories:
   - 疯狂前端开发讲义JQuery AngularJS Bootstrap前端开发实战
   - 第1章 前端开发与Ajax技术
 date: 2019-05-29 17:31:30
-updated: 2019-11-25 11:30:20
+updated: 2019-12-17 01:45:47
 abbrlink: a5bcd8d
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/a5bcd8d/#同步" class="header_1">同步</a><br><a href="/JavaReadingNotes/a5bcd8d/#异步" class="header_1">异步</a><br><a href="/JavaReadingNotes/a5bcd8d/#Ajax应用的工作过程" class="header_1">Ajax应用的工作过程</a><br><a href="/JavaReadingNotes/a5bcd8d/#JavaScript-使用Ajax过程" class="header_1">JavaScript 使用Ajax过程</a><br><a href="/JavaReadingNotes/a5bcd8d/#使用XMLHttpRequest对象发送请求步骤" class="header_1">使用XMLHttpRequest对象发送请求步骤</a><br><a href="/JavaReadingNotes/a5bcd8d/#传统Web应用发送请求形式" class="header_1">传统Web应用发送请求形式</a><br><a href="/JavaReadingNotes/a5bcd8d/#获取服务器响应生成的文本" class="header_1">获取服务器响应生成的文本</a><br><a href="/JavaReadingNotes/a5bcd8d/#获取服务器响应的状态码" class="header_1">获取服务器响应的状态码</a><br><a href="/JavaReadingNotes/a5bcd8d/#传统Web编程和Ajax编程的区别" class="header_1">传统Web编程和Ajax编程的区别</a><br><a href="/JavaReadingNotes/a5bcd8d/#1.客户端发送请求的方式不同" class="header_2">1.客户端发送请求的方式不同</a><br><a href="/JavaReadingNotes/a5bcd8d/#2.服务器生成的响应不同" class="header_2">2.服务器生成的响应不同</a><br><a href="/JavaReadingNotes/a5bcd8d/#3.客户端加载响应的方式不同" class="header_2">3.客户端加载响应的方式不同</a><br></div>

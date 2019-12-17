@@ -5,7 +5,7 @@ categories:
   - 第5章 Hibernate的基本用法
   - 5.0 前言
 date: 2019-08-09 22:56:57
-updated: 2019-11-25 11:30:20
+updated: 2019-12-17 01:45:48
 abbrlink: ecadf082
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/ecadf082/#第5章-Hibernate的基本用法" class="header_1">第5章 Hibernate的基本用法</a><br><a href="/JavaReadingNotes/ecadf082/#本章要点" class="header_2">本章要点</a><br></div>

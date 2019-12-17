@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.14 @ResponseBody注解
 date: 2019-08-20 21:55:02
-updated: 2019-11-25 11:30:18
+updated: 2019-12-17 01:45:46
 abbrlink: 830b4262
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/830b4262/#示例-自定义HttpMessageConverter返回JSON格式的数据" class="header_1">示例 自定义HttpMessageConverter返回JSON格式的数据</a><br></div>

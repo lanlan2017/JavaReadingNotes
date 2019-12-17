@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.13 @RequestBody注解
 date: 2019-08-20 20:47:02
-updated: 2019-11-25 12:55:51
+updated: 2019-12-17 01:45:46
 abbrlink: 6ba634ae
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/6ba634ae/#示例-自定义HttpMessageConverter-接收JSON格式的数据" class="header_1">示例 自定义HttpMessageConverter 接收JSON格式的数据</a><br><a href="/JavaReadingNotes/6ba634ae/#下载Fastjson" class="header_2">下载Fastjson</a><br><a href="/JavaReadingNotes/6ba634ae/#项目示例" class="header_1">项目示例</a><br><a href="/JavaReadingNotes/6ba634ae/#BookController.java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/6ba634ae/#springmvc-config.xml" class="header_2">springmvc-config.xml</a><br></div>

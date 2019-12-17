@@ -4,7 +4,7 @@ categories:
   - Serlet JSP和Spring MVC初学指南
   - 前言
 date: 2019-04-25 14:56:06
-updated: 2019-11-25 11:30:16
+updated: 2019-12-17 01:45:45
 abbrlink: 8b8be5cf
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/8b8be5cf/#前言-2-HTTP" class="header_1">前言-2-HTTP</a><br><a href="/JavaReadingNotes/8b8be5cf/#HTTP" class="header_2">HTTP</a><br><a href="/JavaReadingNotes/8b8be5cf/#HTTP请求" class="header_3">HTTP请求</a><br><a href="/JavaReadingNotes/8b8be5cf/#-HTTP-响应" class="header_3">`HTTP`响应</a><br></div>

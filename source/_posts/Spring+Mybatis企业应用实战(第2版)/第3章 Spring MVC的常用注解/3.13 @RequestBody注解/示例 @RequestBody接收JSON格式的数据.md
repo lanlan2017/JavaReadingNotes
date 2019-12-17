@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.13 @RequestBody注解
 date: 2019-08-20 18:45:02
-updated: 2019-11-25 12:55:51
+updated: 2019-12-17 01:45:46
 abbrlink: 78f2a207
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/78f2a207/#示例-@RequestBody接收JSON格式的数据" class="header_1">示例 @RequestBody接收JSON格式的数据</a><br><a href="/JavaReadingNotes/78f2a207/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/78f2a207/#BookController.java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/78f2a207/#BookController.java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/78f2a207/#Book.java" class="header_2">Book.java</a><br><a href="/JavaReadingNotes/78f2a207/#个人总结" class="header_2">个人总结</a><br></div>

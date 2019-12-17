@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.6 @CrossOrigin注解
 date: 2019-08-19 13:23:24
-updated: 2019-11-25 12:55:51
+updated: 2019-12-17 01:45:46
 abbrlink: 8ad4e730
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/8ad4e730/#示例-@PathVariable注解和@MatrixVariable注解的使用" class="header_1">示例 @PathVariable注解和@MatrixVariable注解的使用</a><br><a href="/JavaReadingNotes/8ad4e730/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/8ad4e730/#VariableController.java" class="header_2">VariableController.java</a><br><a href="/JavaReadingNotes/8ad4e730/#springmvc-config.xml" class="header_2">springmvc-config.xml</a><br><a href="/JavaReadingNotes/8ad4e730/#测试" class="header_2">测试</a><br><a href="/JavaReadingNotes/8ad4e730/#测试@PathVariable注解" class="header_3">测试@PathVariable注解</a><br><a href="/JavaReadingNotes/8ad4e730/#测试@MatrixVariable注解" class="header_3">测试@MatrixVariable注解</a><br><a href="/JavaReadingNotes/8ad4e730/#@MatrixVariable注解完成复杂的参数注入" class="header_3">@MatrixVariable注解完成复杂的参数注入</a><br></div>

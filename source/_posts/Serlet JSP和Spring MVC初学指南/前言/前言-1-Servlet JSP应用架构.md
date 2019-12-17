@@ -4,7 +4,7 @@ categories:
   - Serlet JSP和Spring MVC初学指南
   - 前言
 date: 2019-04-25 14:51:26
-updated: 2019-11-25 11:30:16
+updated: 2019-12-17 01:45:45
 abbrlink: 17e72ee2
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/17e72ee2/#前言-1Servlet/JSP应用架构" class="header_2">前言 1Servlet/JSP应用架构</a><br></div>

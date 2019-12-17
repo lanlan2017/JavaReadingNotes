@@ -5,7 +5,7 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.6 @CrossOrigin注解
 date: 2019-08-19 16:49:35
-updated: 2019-11-25 12:55:51
+updated: 2019-12-17 01:45:46
 abbrlink: 559cdc31
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/559cdc31/#示例-@CrossOrigin注解的使用" class="header_1">示例 @CrossOrigin注解的使用</a><br><a href="/JavaReadingNotes/559cdc31/#总结" class="header_2">总结</a><br></div>
