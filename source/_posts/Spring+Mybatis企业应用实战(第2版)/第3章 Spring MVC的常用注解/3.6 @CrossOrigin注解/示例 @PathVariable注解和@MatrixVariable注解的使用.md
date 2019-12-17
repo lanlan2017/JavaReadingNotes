@@ -5,23 +5,34 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.6 @CrossOrigin注解
 date: 2019-08-19 13:23:24
-updated: 2019-11-02 10:12:05
+updated: 2019-11-25 12:55:51
 abbrlink: 8ad4e730
 ---
-<div id='my_toc'>
-
-- [示例 @PathVariable注解和@MatrixVariable注解的使用](/JavaReadingNotes/8ad4e730/#示例-PathVariable注解和-MatrixVariable注解的使用)
-    - [index.jsp](/JavaReadingNotes/8ad4e730/#index-jsp)
-    - [VariableController.java](/JavaReadingNotes/8ad4e730/#VariableController-java)
-    - [springmvc-config.xml](/JavaReadingNotes/8ad4e730/#springmvc-config-xml)
-    - [测试](/JavaReadingNotes/8ad4e730/#测试)
-        - [测试@PathVariable注解](/JavaReadingNotes/8ad4e730/#测试-PathVariable注解)
-        - [测试@MatrixVariable注解](/JavaReadingNotes/8ad4e730/#测试-MatrixVariable注解)
-        - [@MatrixVariable注解完成复杂的参数注入](/JavaReadingNotes/8ad4e730/#-MatrixVariable注解完成复杂的参数注入)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/8ad4e730/#示例-@PathVariable注解和@MatrixVariable注解的使用" class="header_1">示例 @PathVariable注解和@MatrixVariable注解的使用</a><br><a href="/JavaReadingNotes/8ad4e730/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/8ad4e730/#VariableController.java" class="header_2">VariableController.java</a><br><a href="/JavaReadingNotes/8ad4e730/#springmvc-config.xml" class="header_2">springmvc-config.xml</a><br><a href="/JavaReadingNotes/8ad4e730/#测试" class="header_2">测试</a><br><a href="/JavaReadingNotes/8ad4e730/#测试@PathVariable注解" class="header_3">测试@PathVariable注解</a><br><a href="/JavaReadingNotes/8ad4e730/#测试@MatrixVariable注解" class="header_3">测试@MatrixVariable注解</a><br><a href="/JavaReadingNotes/8ad4e730/#@MatrixVariable注解完成复杂的参数注入" class="header_3">@MatrixVariable注解完成复杂的参数注入</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 <!--SSTStart-->

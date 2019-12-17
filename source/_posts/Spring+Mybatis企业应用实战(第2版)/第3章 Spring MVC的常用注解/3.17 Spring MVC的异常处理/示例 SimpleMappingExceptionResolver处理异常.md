@@ -5,20 +5,34 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.17 Spring MVC的异常处理
 date: 2019-08-21 12:21:58
-updated: 2019-11-02 10:12:05
+updated: 2019-11-25 12:55:51
 abbrlink: 463618c5
 ---
-<div id='my_toc'>
-
-- [示例 SimpleMappingExceptionResolver处理异常](/JavaReadingNotes/463618c5/#示例-SimpleMappingExceptionResolver处理异常)
-    - [index.jsp](/JavaReadingNotes/463618c5/#index-jsp)
-    - [TestController.java](/JavaReadingNotes/463618c5/#TestController-java)
-    - [error.jsp](/JavaReadingNotes/463618c5/#error-jsp)
-    - [sqlerror.jsp](/JavaReadingNotes/463618c5/#sqlerror-jsp)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/463618c5/#示例-SimpleMappingExceptionResolver处理异常" class="header_1">示例 SimpleMappingExceptionResolver处理异常</a><br><a href="/JavaReadingNotes/463618c5/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/463618c5/#TestController.java" class="header_2">TestController.java</a><br><a href="/JavaReadingNotes/463618c5/#error.jsp" class="header_2">error.jsp</a><br><a href="/JavaReadingNotes/463618c5/#sqlerror.jsp" class="header_2">sqlerror.jsp</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 <!--SSTStart-->

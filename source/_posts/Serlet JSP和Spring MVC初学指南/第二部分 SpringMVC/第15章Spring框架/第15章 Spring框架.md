@@ -5,16 +5,34 @@ categories:
   - 第二部分 SpringMVC
   - 第15章Spring框架
 date: 2019-04-24 15:33:32
-updated: 2019-11-02 10:12:05
+updated: 2019-11-25 11:30:17
 abbrlink: b263deb0
 ---
-<div id='my_toc'>
-
-- [第15章 Spring框架](/JavaReadingNotes/b263deb0/#第15章-Spring框架)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/b263deb0/#第15章-Spring框架" class="header_1">第15章 Spring框架</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 # 第15章 Spring框架 #

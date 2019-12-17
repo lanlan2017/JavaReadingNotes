@@ -5,17 +5,34 @@ categories:
   - 第7章 Spring的基本用法
   - 7.0 本章要点
 date: 2019-08-24 12:07:43
-updated: 2019-11-02 10:12:08
+updated: 2019-11-25 11:30:20
 abbrlink: eb51ab14
 ---
-<div id='my_toc'>
-
-- [第7章 Spring的基本用法](/JavaReadingNotes/eb51ab14/#第7章-Spring的基本用法)
-    - [本章要点](/JavaReadingNotes/eb51ab14/#本章要点)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/eb51ab14/#第7章-Spring的基本用法" class="header_1">第7章 Spring的基本用法</a><br><a href="/JavaReadingNotes/eb51ab14/#本章要点" class="header_2">本章要点</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 <!--SSTStart-->

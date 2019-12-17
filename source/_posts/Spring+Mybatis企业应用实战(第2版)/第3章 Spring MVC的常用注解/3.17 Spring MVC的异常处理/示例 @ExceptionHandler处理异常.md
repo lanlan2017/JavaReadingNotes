@@ -5,23 +5,34 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.17 Spring MVC的异常处理
 date: 2019-08-21 15:45:26
-updated: 2019-11-02 10:12:05
+updated: 2019-11-25 12:55:51
 abbrlink: a0f3b85b
 ---
-<div id='my_toc'>
-
-- [示例 @ExceptionHandler处理异常](/JavaReadingNotes/a0f3b85b/#示例-ExceptionHandler处理异常)
-    - [index.jsp](/JavaReadingNotes/a0f3b85b/#index-jsp)
-    - [TestController.java](/JavaReadingNotes/a0f3b85b/#TestController-java)
-    - [error.jsp](/JavaReadingNotes/a0f3b85b/#error-jsp)
-- [更好一点的做法](/JavaReadingNotes/a0f3b85b/#更好一点的做法)
-    - [BaseExceptionController.java](/JavaReadingNotes/a0f3b85b/#BaseExceptionController-java)
-    - [UserController.java](/JavaReadingNotes/a0f3b85b/#UserController-java)
-    - [BookController.java](/JavaReadingNotes/a0f3b85b/#BookController-java)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/a0f3b85b/#示例-@ExceptionHandler处理异常" class="header_1">示例 @ExceptionHandler处理异常</a><br><a href="/JavaReadingNotes/a0f3b85b/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/a0f3b85b/#TestController.java" class="header_2">TestController.java</a><br><a href="/JavaReadingNotes/a0f3b85b/#error.jsp" class="header_2">error.jsp</a><br><a href="/JavaReadingNotes/a0f3b85b/#更好一点的做法" class="header_1">更好一点的做法</a><br><a href="/JavaReadingNotes/a0f3b85b/#BaseExceptionController.java" class="header_2">BaseExceptionController.java</a><br><a href="/JavaReadingNotes/a0f3b85b/#UserController.java" class="header_2">UserController.java</a><br><a href="/JavaReadingNotes/a0f3b85b/#BookController.java" class="header_2">BookController.java</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 <!--SSTStart-->

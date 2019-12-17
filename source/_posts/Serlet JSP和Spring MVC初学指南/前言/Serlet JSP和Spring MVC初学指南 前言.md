@@ -4,16 +4,34 @@ categories:
   - Serlet JSP和Spring MVC初学指南
   - 前言
 date: 2019-03-14 20:46:47
-updated: 2019-11-02 11:18:54
+updated: 2019-11-25 11:30:16
 abbrlink: 7819a34e
 ---
-<div id='my_toc'>
-
-- [前言](/JavaReadingNotes/7819a34e/#前言)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/7819a34e/#前言" class="header_2">前言</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 ## 前言 ##

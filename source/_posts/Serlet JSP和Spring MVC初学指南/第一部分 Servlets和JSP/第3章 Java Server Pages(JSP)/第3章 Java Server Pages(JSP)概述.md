@@ -5,19 +5,34 @@ categories:
   - 第一部分 Servlets和JSP
   - 第3章 Java Server Pages(JSP)
 date: 2019-03-25 11:05:01
-updated: 2019-11-02 10:12:04
+updated: 2019-11-25 11:30:17
 abbrlink: 9cc208c7
 ---
-<div id='my_toc'>
-
-- [第3章 Java Server Pages(JSP)概述](/JavaReadingNotes/9cc208c7/#第3章-Java-Server-Pages-JSP-概述)
-    - [Servlet的缺点](/JavaReadingNotes/9cc208c7/#Servlet的缺点)
-    - [JSP](/JavaReadingNotes/9cc208c7/#JSP)
-    - [本章概述](/JavaReadingNotes/9cc208c7/#本章概述)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/9cc208c7/#第3章-Java-Server-Pages(JSP)概述" class="header_2">第3章 Java Server Pages(JSP)概述</a><br><a href="/JavaReadingNotes/9cc208c7/#Servlet的缺点" class="header_3">Servlet的缺点</a><br><a href="/JavaReadingNotes/9cc208c7/#JSP" class="header_3">JSP</a><br><a href="/JavaReadingNotes/9cc208c7/#本章概述" class="header_3">本章概述</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 ## 第3章 Java Server Pages(JSP)概述 ##

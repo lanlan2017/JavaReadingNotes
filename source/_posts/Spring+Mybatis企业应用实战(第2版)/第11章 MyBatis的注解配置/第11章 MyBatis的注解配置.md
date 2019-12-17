@@ -4,17 +4,34 @@ categories:
   - Spring+Mybatis企业应用实战(第2版)
   - 第11章 MyBatis的注解配置
 date: 2019-06-13 18:29:24
-updated: 2019-11-02 10:12:05
+updated: 2019-11-25 11:30:18
 abbrlink: 408525dd
 ---
-<div id='my_toc'>
-
-- [第11章 MyBatis的注解配置](/JavaReadingNotes/408525dd/#第11章-MyBatis的注解配置)
-    - [本章要点](/JavaReadingNotes/408525dd/#本章要点)
-
-</div>
+<div id='my_toc'><a href="/JavaReadingNotes/408525dd/#第11章-MyBatis的注解配置" class="header_1">第11章 MyBatis的注解配置</a><br><a href="/JavaReadingNotes/408525dd/#本章要点" class="header_2">本章要点</a><br></div>
+<style>
+    .header_1{
+        margin-left: 1em;
+    }
+    .header_2{
+        margin-left: 2em;
+    }
+    .header_3{
+        margin-left: 3em;
+    }
+    .header_4{
+        margin-left: 4em;
+    }
+    .header_5{
+        margin-left: 5em;
+    }
+    .header_6{
+        margin-left: 6em;
+    }
+</style>
 <!--more-->
-<script>if (navigator.platform.toLowerCase() == 'win32'){document.getElementById('my_toc').style.display = 'none';}</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
+var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
+</script>
 
 <!--end-->
 # 第11章 MyBatis的注解配置 #
