@@ -5,34 +5,13 @@ categories:
   - 第10章 jQuery+Bootstrap整合开发 电子拍卖系统
   - 10.0 前言
 date: 2019-08-09 23:21:57
-updated: 2019-12-17 01:45:47
+updated: 2019-12-22 08:26:36
 abbrlink: 7599622e
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/7599622e/#第10章-jQuery+Bootstrap-整合开发-电子拍卖系统" class="header_1">第10章 jQuery+Bootstrap 整合开发:电子拍卖系统</a><br><a href="/JavaReadingNotes/7599622e/#本章要点" class="header_2">本章要点</a><br></div>
-<style>
-    .header_1{
-        margin-left: 1em;
-    }
-    .header_2{
-        margin-left: 2em;
-    }
-    .header_3{
-        margin-left: 3em;
-    }
-    .header_4{
-        margin-left: 4em;
-    }
-    .header_5{
-        margin-left: 5em;
-    }
-    .header_6{
-        margin-left: 6em;
-    }
-</style>
+<div id='my_toc'><a href="/JavaReadingNotes/7599622e/#第10章-jQuery-Bootstrap-整合开发-电子拍卖系统" class="header_1">第10章 jQuery+Bootstrap 整合开发:电子拍卖系统</a><br><a href="/JavaReadingNotes/7599622e/#本章要点" class="header_2">本章要点</a><br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
-var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
-</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
 # 第10章 jQuery+Bootstrap 整合开发:电子拍卖系统 #

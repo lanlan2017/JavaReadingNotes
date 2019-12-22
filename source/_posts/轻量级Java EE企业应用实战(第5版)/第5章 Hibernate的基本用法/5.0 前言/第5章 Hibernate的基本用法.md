@@ -5,34 +5,13 @@ categories:
   - 第5章 Hibernate的基本用法
   - 5.0 前言
 date: 2019-08-09 22:56:57
-updated: 2019-12-17 01:45:48
+updated: 2019-12-22 08:26:36
 abbrlink: ecadf082
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/ecadf082/#第5章-Hibernate的基本用法" class="header_1">第5章 Hibernate的基本用法</a><br><a href="/JavaReadingNotes/ecadf082/#本章要点" class="header_2">本章要点</a><br></div>
-<style>
-    .header_1{
-        margin-left: 1em;
-    }
-    .header_2{
-        margin-left: 2em;
-    }
-    .header_3{
-        margin-left: 3em;
-    }
-    .header_4{
-        margin-left: 4em;
-    }
-    .header_5{
-        margin-left: 5em;
-    }
-    .header_6{
-        margin-left: 6em;
-    }
-</style>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
-var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
-</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
 <!--SSTStart-->

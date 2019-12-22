@@ -5,34 +5,13 @@ categories:
   - 第8章 Java集合
   - 8.0 本章要点
 date: 2019-07-06 12:58:24
-updated: 2019-12-17 01:45:47
+updated: 2019-12-22 08:26:36
 abbrlink: 7956ffc8
 ---
 <div id='my_toc'><a href="/JavaReadingNotes/7956ffc8/#第8章-Java集合-本章要点" class="header_1">第8章 Java集合 本章要点</a><br><a href="/JavaReadingNotes/7956ffc8/#java集合用途" class="header_2">java集合用途</a><br><a href="/JavaReadingNotes/7956ffc8/#java集合分类" class="header_2">java集合分类</a><br><a href="/JavaReadingNotes/7956ffc8/#java集合中来存放对象的引用" class="header_2">java集合中来存放对象的引用</a><br><a href="/JavaReadingNotes/7956ffc8/#Java5对集合的增强" class="header_2">Java5对集合的增强</a><br><a href="/JavaReadingNotes/7956ffc8/#本章重点" class="header_2">本章重点</a><br></div>
-<style>
-    .header_1{
-        margin-left: 1em;
-    }
-    .header_2{
-        margin-left: 2em;
-    }
-    .header_3{
-        margin-left: 3em;
-    }
-    .header_4{
-        margin-left: 4em;
-    }
-    .header_5{
-        margin-left: 5em;
-    }
-    .header_6{
-        margin-left: 6em;
-    }
-</style>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
-var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
-</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
 <!--SSTStart-->

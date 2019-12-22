@@ -5,34 +5,13 @@ categories:
   - 第2章 Spring MVC简介
   - 2.3 开发第一个Spring MVC应用
 date: 2019-08-16 22:39:26
-updated: 2019-12-17 01:45:46
+updated: 2019-12-22 08:26:35
 abbrlink: 3447f8a3
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/3447f8a3/#示例1-基于Controller接口的控制器" class="header_1">示例1:基于Controller接口的控制器</a><br><a href="/JavaReadingNotes/3447f8a3/#1.增加Spring的支持" class="header_2">1.增加Spring的支持</a><br><a href="/JavaReadingNotes/3447f8a3/#复制Spring的jar包到项目lib目录" class="header_3">复制Spring的jar包到项目lib目录</a><br><a href="/JavaReadingNotes/3447f8a3/#复制commons-logging的jar包到项目lib目录" class="header_3">复制commons-logging的jar包到项目lib目录</a><br><a href="/JavaReadingNotes/3447f8a3/#2.-配置前端控制器DispatcherServlet" class="header_2">2. 配置前端控制器DispatcherServlet</a><br><a href="/JavaReadingNotes/3447f8a3/#3-配置Spring-MVC的Controller" class="header_2">3 配置Spring MVC的Controller</a><br><a href="/JavaReadingNotes/3447f8a3/#4.-Controller类的实现" class="header_2">4. Controller类的实现</a><br><a href="/JavaReadingNotes/3447f8a3/#5.-View页面" class="header_2">5. View页面</a><br><a href="/JavaReadingNotes/3447f8a3/#6.测试应用" class="header_2">6.测试应用</a><br></div>
-<style>
-    .header_1{
-        margin-left: 1em;
-    }
-    .header_2{
-        margin-left: 2em;
-    }
-    .header_3{
-        margin-left: 3em;
-    }
-    .header_4{
-        margin-left: 4em;
-    }
-    .header_5{
-        margin-left: 5em;
-    }
-    .header_6{
-        margin-left: 6em;
-    }
-</style>
+<div id='my_toc'><a href="/JavaReadingNotes/3447f8a3/#示例1-基于Controller接口的控制器" class="header_1">示例1:基于Controller接口的控制器</a><br><a href="/JavaReadingNotes/3447f8a3/#1-增加Spring的支持" class="header_2">1.增加Spring的支持</a><br><a href="/JavaReadingNotes/3447f8a3/#复制Spring的jar包到项目lib目录" class="header_3">复制Spring的jar包到项目lib目录</a><br><a href="/JavaReadingNotes/3447f8a3/#复制commons-logging的jar包到项目lib目录" class="header_3">复制commons-logging的jar包到项目lib目录</a><br><a href="/JavaReadingNotes/3447f8a3/#2-配置前端控制器DispatcherServlet" class="header_2">2. 配置前端控制器DispatcherServlet</a><br><a href="/JavaReadingNotes/3447f8a3/#3-配置Spring-MVC的Controller" class="header_2">3 配置Spring MVC的Controller</a><br><a href="/JavaReadingNotes/3447f8a3/#4-Controller类的实现" class="header_2">4. Controller类的实现</a><br><a href="/JavaReadingNotes/3447f8a3/#5-View页面" class="header_2">5. View页面</a><br><a href="/JavaReadingNotes/3447f8a3/#6-测试应用" class="header_2">6.测试应用</a><br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
-var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
-</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
 <!--SSTStart-->

@@ -5,34 +5,13 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.13 @RequestBody注解
 date: 2019-08-20 18:45:02
-updated: 2019-12-17 01:45:46
+updated: 2019-12-22 08:26:35
 abbrlink: 78f2a207
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/78f2a207/#示例-@RequestBody接收JSON格式的数据" class="header_1">示例 @RequestBody接收JSON格式的数据</a><br><a href="/JavaReadingNotes/78f2a207/#index.jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/78f2a207/#BookController.java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/78f2a207/#BookController.java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/78f2a207/#Book.java" class="header_2">Book.java</a><br><a href="/JavaReadingNotes/78f2a207/#个人总结" class="header_2">个人总结</a><br></div>
-<style>
-    .header_1{
-        margin-left: 1em;
-    }
-    .header_2{
-        margin-left: 2em;
-    }
-    .header_3{
-        margin-left: 3em;
-    }
-    .header_4{
-        margin-left: 4em;
-    }
-    .header_5{
-        margin-left: 5em;
-    }
-    .header_6{
-        margin-left: 6em;
-    }
-</style>
+<div id='my_toc'><a href="/JavaReadingNotes/78f2a207/#示例-@RequestBody接收JSON格式的数据" class="header_1">示例 @RequestBody接收JSON格式的数据</a><br><a href="/JavaReadingNotes/78f2a207/#index-jsp" class="header_2">index.jsp</a><br><a href="/JavaReadingNotes/78f2a207/#BookController-java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/78f2a207/#BookController-java" class="header_2">BookController.java</a><br><a href="/JavaReadingNotes/78f2a207/#Book-java" class="header_2">Book.java</a><br><a href="/JavaReadingNotes/78f2a207/#个人总结" class="header_2">个人总结</a><br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}
-var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}
-</script>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
 <!--SSTStart-->
