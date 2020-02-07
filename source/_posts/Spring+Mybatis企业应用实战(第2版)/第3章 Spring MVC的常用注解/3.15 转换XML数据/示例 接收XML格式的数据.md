@@ -5,10 +5,10 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.15 转换XML数据
 date: 2019-08-21 00:20:01
-updated: 2019-12-22 08:26:35
+updated: 2019-12-23 12:01:12
 abbrlink: bcd788ad
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/bcd788ad/#示例-接收XML格式的数据" class="header_1">示例 接收XML格式的数据</a><br><a href="/JavaReadingNotes/bcd788ad/#sendxml-jsp" class="header_2">sendxml.jsp</a><br><a href="/JavaReadingNotes/bcd788ad/#Book-java" class="header_2">Book.java</a><br><a href="/JavaReadingNotes/bcd788ad/#示例-返回XML格式的数据" class="header_1">示例 返回XML格式的数据</a><br><a href="/JavaReadingNotes/bcd788ad/#readxml-jsp" class="header_2">readxml.jsp</a><br></div>
+<div id='my_toc'><a href="/JavaReadingNotes/bcd788ad/#示例-接收XML格式的数据" class="header_1">示例 接收XML格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#sendxml-jsp" class="header_2">sendxml.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#Book-java" class="header_2">Book.java</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#示例-返回XML格式的数据" class="header_1">示例 返回XML格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#readxml-jsp" class="header_2">readxml.jsp</a>&nbsp;<br></div>
 <style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>

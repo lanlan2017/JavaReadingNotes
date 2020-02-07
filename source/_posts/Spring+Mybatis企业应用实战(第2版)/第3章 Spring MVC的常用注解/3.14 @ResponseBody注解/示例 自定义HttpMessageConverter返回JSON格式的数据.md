@@ -5,10 +5,10 @@ categories:
   - 第3章 Spring MVC的常用注解
   - 3.14 @ResponseBody注解
 date: 2019-08-20 21:55:02
-updated: 2019-12-22 08:26:35
+updated: 2019-12-23 12:01:12
 abbrlink: 830b4262
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/830b4262/#示例-自定义HttpMessageConverter返回JSON格式的数据" class="header_1">示例 自定义HttpMessageConverter返回JSON格式的数据</a><br></div>
+<div id='my_toc'><a href="/JavaReadingNotes/830b4262/#示例-自定义HttpMessageConverter返回JSON格式的数据" class="header_1">示例 自定义HttpMessageConverter返回JSON格式的数据</a>&nbsp;<br></div>
 <style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>

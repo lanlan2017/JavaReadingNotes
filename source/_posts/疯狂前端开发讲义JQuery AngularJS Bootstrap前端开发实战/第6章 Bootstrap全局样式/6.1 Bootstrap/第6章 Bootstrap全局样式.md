@@ -5,10 +5,10 @@ categories:
   - 第6章 Bootstrap全局样式
   - 6.1 Bootstrap
 date: 2019-07-27 20:45:51
-updated: 2019-12-22 08:26:36
+updated: 2019-12-23 12:01:13
 abbrlink: ac5bb668
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/ac5bb668/#第6章-Bootstrap全局样式" class="header_1">第6章 Bootstrap全局样式</a><br><a href="/JavaReadingNotes/ac5bb668/#本章要点" class="header_2">本章要点</a><br><a href="/JavaReadingNotes/ac5bb668/#Bootstrap简介" class="header_2">Bootstrap简介</a><br></div>
+<div id='my_toc'><a href="/JavaReadingNotes/ac5bb668/#第6章-Bootstrap全局样式" class="header_1">第6章 Bootstrap全局样式</a>&nbsp;<br><a href="/JavaReadingNotes/ac5bb668/#本章要点" class="header_2">本章要点</a>&nbsp;<br><a href="/JavaReadingNotes/ac5bb668/#Bootstrap简介" class="header_2">Bootstrap简介</a>&nbsp;<br></div>
 <style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>

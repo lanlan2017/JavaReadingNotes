@@ -5,10 +5,10 @@ categories:
   - 第2章 Spring MVC简介
   - 2.0 本章要点
 date: 2019-07-02 18:20:39
-updated: 2019-12-22 08:26:35
+updated: 2019-12-23 12:01:12
 abbrlink: db6869c6
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/db6869c6/#第2章-Spring-MVC简介" class="header_1">第2章 Spring MVC简介</a><br><a href="/JavaReadingNotes/db6869c6/#本章要点" class="header_2">本章要点</a><br></div>
+<div id='my_toc'><a href="/JavaReadingNotes/db6869c6/#第2章-Spring-MVC简介" class="header_1">第2章 Spring MVC简介</a>&nbsp;<br><a href="/JavaReadingNotes/db6869c6/#本章要点" class="header_2">本章要点</a>&nbsp;<br></div>
 <style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
