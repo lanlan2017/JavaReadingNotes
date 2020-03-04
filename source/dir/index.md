@@ -1,8 +1,6 @@
 ---
 title: 网站目录
-abbrlink: 508a2e34
 date: 2019-12-17 04:08:18
-top: true
 ---
 # [Serlet JSP和Spring MVC初学指南](/JavaReadingNotes/categories/Serlet-JSP和Spring-MVC初学指南)
 
