@@ -258,7 +258,7 @@ date: 2019-12-17 04:08:18
 - [15.2 理解Java的IO流](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-2-理解Java的IO流)
 - [15.3 字节流和字符流](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-3-字节流和字符流)
 - [15.4 输入输出流体系](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-4-输入输出流体系)
-- [15.5 重定向标准输入 输出](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-5-重定向标准输入-输出)
+- [15.5 重定向标准输入输出](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-5-重定向标准输入输出)
 - [15.6 Java虚拟机读写其他进程的数据](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-6-Java虚拟机读写其他进程的数据)
 - [15.7 RandomAccessFile](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-7-RandomAccessFile)
 - [15.8 Java9改进的对象序列化](/JavaReadingNotes/categories/疯狂Java讲义-第4版/第15章-输入输出/15-8-Java9改进的对象序列化)
