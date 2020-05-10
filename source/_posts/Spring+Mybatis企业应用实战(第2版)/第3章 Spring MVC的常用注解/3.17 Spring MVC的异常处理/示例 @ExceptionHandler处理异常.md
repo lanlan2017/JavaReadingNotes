@@ -14,10 +14,9 @@ abbrlink: a0f3b85b
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
-<!--SSTStart-->
-# 示例 @ExceptionHandler处理异常 #
+# 示例 @ExceptionHandler处理异常
 新建一个项目`ExceptionHandlerTest`,加入所需的`jar`文件,示例代码如下:
-## index.jsp ##
+## index.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -38,7 +37,7 @@ abbrlink: a0f3b85b
 </html>
 ```
 `index.jsp`中有3个超链接,分别用于测试`@ExceptionHandler`异常处理和使用父级`Controller`异常处理。
-## TestController.java ##
+## TestController.java
 ```java
 package org.fkit.controller;
 
@@ -72,7 +71,7 @@ public class TestController
 ```
 `TestController`中`test()`方法是`index.jsp`页面的超链接`"@ExceptionHandler处理异常`"的请求处理方法,模拟了一个除数不能为0的异常。
 `testErrorHandler()`方法使用了`@ExceptionHandler`注解, `value = Exception.class`表示处理所有的`Exception`类型异常。**当`TestController`类抛出异常的时候,会使用`@ExceptionHandler`注解的方法去处理异常,而不会直接抛给浏览器**。 `testErrorHandler()`方法将捕捉到的异常对象保存到`ModelAndView`当中,传递到`JSP`页面。
-## error.jsp ##
+## error.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -95,9 +94,9 @@ http://localhost:8080/ExceptionHandlerTest/
 单击`"@ExceptionHandler处理异常`"超链接,发送`"test"`请求,`TestController`的`test()`方方法在处理请求抛出异常,异常会被同一类中的`@ExceptionHandler`注解修饰的`testErrorHandler`方法捕获,处理之后跳转到`error.jsp`页面。
 
 
-# 更好一点的做法 #
+# 更好一点的做法
 基于`Controller`的`@ExceptionHandler`注解方法在进行异常处理时,对于每个`Controller`都需要写`@ExceptionHandler`注解的异常处理方法,在实际开发当中这非常烦琐。可以写一个父类,在父类中完成`@ExceptionHandler`注解的异常处理方法,所有的`Controller`继承这个父类,则所有的`Controller`就都拥有了`@ExceptionHandler`注解的异常处理方法。
-## BaseExceptionController.java ##
+## BaseExceptionController.java
 ```java
 package org.fkit.controller;
 
@@ -121,7 +120,7 @@ public class BaseExceptionController
 }
 ```
 `BaseController`作为父类,定义了一个`@ExceptionHandler`注解修饰的方法。
-## UserController.java ##
+## UserController.java
 ```java
 package org.fkit.controller;
 
@@ -144,7 +143,7 @@ public class UserController extends BaseExceptionController
 }
 ```
 `UserController`继承`BaseController`,如果抛出异常,将使用父类的`ExceptionHandler`注解修饰的方法处理异常。
-## BookController.java ##
+## BookController.java
 ```java
 package org.fkit.controller;
 
@@ -181,5 +180,3 @@ public class BookController extends BaseExceptionController
 异常处理页面
 抛出异常信息：查找图书信息失败! 
 ```
-<!--SSTStop-->
-

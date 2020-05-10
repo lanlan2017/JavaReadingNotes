@@ -14,10 +14,9 @@ abbrlink: 463618c5
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
-<!--SSTStart-->
-# 示例 SimpleMappingExceptionResolver处理异常 #
+# 示例 SimpleMappingExceptionResolver处理异常
 新建一个项目`SimpleMappingExceptionResolverTest`,加入所需的`jar`文件,示例代码如下:
-## index.jsp ##
+## index.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -39,7 +38,7 @@ abbrlink: 463618c5
 </html>
 ```
 `index.jsp`中有3个超链接,分别测试`没有异常处理`、`有异常处理`、`特定异常处理`3种情况。
-## TestController.java ##
+## TestController.java
 ```java
 package org.fkit.controller;
 
@@ -147,7 +146,7 @@ http://localhost:8080/SimpleMappingExceptionResolverTest/
 
 <!--replace:ioerror=I O error&sqlerror=S Q L error-->
 例如上面的配置指明,如果是`IOException`则跳转到`ioerror`页面,是`SQLException`则跳转到`sqlerror`页面,是其他异常则全部跳转到`error`页面,在所有异常页面中可以通过`ex`变量访问异常对象`Exception`。
-## error.jsp ##
+## error.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -163,7 +162,7 @@ http://localhost:8080/SimpleMappingExceptionResolverTest/
 </body>
 </html>
 ```
-## sqlerror.jsp ##
+## sqlerror.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -185,5 +184,3 @@ http://localhost:8080/SimpleMappingExceptionResolverTest/
 ```
 单击"`使用简单异常处理器处理异常`"超链接,发送`"test"`请求抛出的异常被`SimpleMappingExceptionResolver`捕获,转发到异常处理页面`error.jsp`
 单击"`使用简单异常处理器处理特定异常`"超链接,发送`"find"`请求,请求处理方法抛出的是`SQLException`异常,被`SimpleMappingExceptionResolver`捕获,转发到异常处理页面`sqlerror.jsp`。
-<!--SSTStop-->
-

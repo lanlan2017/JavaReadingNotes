@@ -15,8 +15,8 @@ abbrlink: 7ae44303
 
 <!--end-->
 <!--SSTStart-->
-# 第3章 Spring MVC的常用注解 #
-## 本章要点 ##
+# 第3章 Spring MVC的常用注解
+## 本章要点
 - `@Controller`注解
 - `@RequestMapping`注解
 - `@GetMapping`注解

@@ -15,9 +15,56 @@ abbrlink: 8ad4e730
 
 <!--end-->
 <!--SSTStart-->
-# 示例 @PathVariable注解和@MatrixVariable注解的使用 #
-新建一个项目`VariableTest`,加入所需的`jar`文件,示例代码如下:
-## index.jsp ##
+# 示例 @PathVariable注解和@MatrixVariable注解的使用
+新建一个项目`VariableTest`,加入所需的`jar`文件:
+## 项目结构
+
+<details><summary>展开/折叠</summary>
+
+```
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\VariableTest
+├─src\
+│ └─org\
+│   └─fkit\
+│     └─controller\
+│       └─VariableController.java
+└─WebContent\
+  ├─index.jsp
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+
+```
+
+</details>
+
+示例代码如下:
+## index.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -41,7 +88,7 @@ abbrlink: 8ad4e730
 </body>
 </html>
 ```
-## VariableController.java ##
+## VariableController.java
 ```java
 package org.fkit.controller;
 
@@ -122,7 +169,7 @@ public class VariableController
     }
 }
 ```
-## springmvc-config.xml ##
+## springmvc-config.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
@@ -130,11 +177,15 @@ public class VariableController
     xmlns:p="http://www.springframework.org/schema/p"
     xmlns:mvc="http://www.springframework.org/schema/mvc"
     xmlns:context="http://www.springframework.org/schema/context"
-    xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
-        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+    xsi:schemaLocation="http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件， 如果扫描到有Spring的相关注解的类，则把这些类注册为Spring的bean -->
+    <!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件， -->
+    <!-- 如果扫描到有Spring的相关注解的类，则把这些类注册为Spring的bean -->
     <context:component-scan
         base-package="org.fkit.controller" />
     <!-- 默认装配方案 -->
@@ -158,37 +209,35 @@ public class VariableController
 http://localhost:8080/VariableTest/
 ```
 此时`Spring MVC`会跳转到`index.jsp`
-## 测试 ##
-### 测试@PathVariable注解 ###
-`VariableController`类的`pathVariableTest`方法用于测试`@PathVariable`注解,它会将请求路径`/pathVariableTest/1"`中`userId`的值"1"赋给方法参数的`userId`变量。单击"`测试@PathVariable注解`"超链接发送请求,将调用`pathVariableTest`方法,此时浏览器显示效果如下:
+## 测试
+### 测试@PathVariable注解
+`VariableController`类的`pathVariableTest`方法用于测试`@PathVariable`注解,它会将请求路径`/pathVariableTest/1"`中`userId`的值“1”赋给方法参数的`userId`变量。单击"`测试@PathVariable注解`"超链接发送请求,将调用`pathVariableTest`方法,此时浏览器显示如下文字:
 ```
 通过@PathVariable获得数据： userId=1
 ```
-### 测试@MatrixVariable注解 ###
-`VariableController`类的`matrixVariableTest`方法用于测试`@MatrixVariable`注解,它会将请求路径`"/matrixVariableTest/1;name=jack;age=23"`中的`name`参数的值`"jack"`赋给方法形式参数`name`,将`age`参数的值`23`赋给方法参数的形式参数`age`。单击"`测试@Matrixvariable注解`"超链接发送请求,将调用`matrixVariableTest`方方法.此时浏览器显示的效果如下:
+### 测试@MatrixVariable注解
+`VariableController`类的`matrixVariableTest`方法用于测试`@MatrixVariable`注解,它会将请求路径`"/matrixVariableTest/1;name=jack;age=23"`中的`name`参数的值`"jack"`赋给方法形式参数`name`,将`age`参数的值`23`赋给方法参数的形式参数`age`。单击“`测试@Matrixvariable注解`”超链接发送请求,将调用`matrixVariableTest`方法.此时浏览器显示的如下文字:
 ```
 通过@PathVariable获得数据： userId=1通过@MatrixVariable获得数据： name=jack age=23
 ```
-可以看到,`< a href=" matrixVariableTest/1;name=jack;age=23">测试MatrixVariable注解</a>`的参数`name`的值`"jack"`被传递到方法形式参数`name`,参数`age`的值"23"被传递到方法的`age`变量,并显示在浏览器上.
-### @MatrixVariable注解完成复杂的参数注入 ###
+可以看到,`<a href=" matrixVariableTest/1;name=jack;age=23">测试MatrixVariable注解</a>`的参数`name`的值`"jack"`被传递到方法形式参数`name`,参数`age`的值“23”被传递到方法的`age`变量,并显示在浏览器上。
+#### 多条件组合查询
 `MatrixVariable`注解还可以完成复杂的参数注入,非常方便地进行`多条件组合查询`。本例以商品查询为例,详细介绍`MatrixVariable`的使用。
 `VariableController`类的`productTest`方法用于商品条件查询,传递的参数包括`商品`、`品牌`和`价格区间`,它会将请求路径`"/productTest/computer;brand=apple,acer;low=2000;height=10000"`之中的:
-- `brand`参数的值`" apple,acer"`赋给方法参数的`brand`变量,该变量是一个`List`集合;
+- `brand`参数的值`"apple,acer"`赋给方法参数的`brand`变量,该变量是一个`List`集合;
 - 将`low`参数的值`"2000"`赋给方法参数的`low`变量;
 - 将`height`参数的值`"10000"`赋给方法参数的`height`变量。
 
 该请求表示一个商品的条件组合查询,商品名称是`computer`,查询的品牌是`apple`和`acer`,价格区间是从`2000`到`10000`
 
-单击"商品条件査询(品牌,价格区间)"超链接发送请求,将调用`product Test`方,浏览器显示结果如下:
+单击“商品条件査询(品牌,价格区间)”超链接发送请求,将调用`productTest`方,浏览器显示结果如下:
 ```
 通过@PathVariable获得数据： goods=computer
 通过@MatrixVariable获得数据：brand=[apple, acer]
 通过@MatrixVariable获得数据： low=2000 height=10000
 ```
-可以看到,`< a href="productTest/computer;brand=apple,acer;low=2000;height=10000">商品条件查询(品牌,价格区间)</a>`的:
-- 参数`brand`的值`" apple,acer"`被传递到方法的`brand`集合变量,
-- 参数`low`的值"2000"被传递到方法的`low`变量参数
-- 参数`height`的值"10000"被传递到方法的`height`变量,最后输出在浏览器上
+可以看到,`<a href="productTest/computer;brand=apple,acer;low=2000;height=10000">商品条件查询(品牌,价格区间)</a>`的:
+- 参数`brand`的值`"apple,acer"`被传递到方法的`brand`集合变量,
+- 参数`low`的值`"2000"`被传递到方法的`low`变量参数
+- 参数`height`的值`"10000"`被传递到方法的`height`变量,最后输出在浏览器上
 <!--SSTStop-->
-
-

@@ -15,8 +15,56 @@ abbrlink: 559cdc31
 
 <!--end-->
 <!--SSTStart-->
-# 示例 @CrossOrigin注解的使用 #
-接下来测试跨域发送请求,再新建一个项目`CrossOriginTest`,加入所需的`jar`文件,示例代码如下:
+# 示例 @CrossOrigin注解的使用
+接下来测试跨域发送请求,再新建一个项目`CrossOriginTest`,加入所需的`jar`文件.
+## 项目结构
+
+<details><summary>展开/折叠</summary>
+
+```
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\CrossOriginTest
+├─src\
+│ └─org\
+│   └─fkit\
+│     └─controller\
+│       └─CrossOriginController.java
+└─WebContent\
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─content\
+    │ └─welcome.jsp
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+
+```
+
+</details>
+
+## CrossOriginController.java
 ```java
 package org.fkit.controller;
 
@@ -40,6 +88,7 @@ public class CrossOriginController
 }
 ```
 `CrossOriginController`类和`welcome`方法上都使用了`@CrossOrigin`注解。 `welcome`方法接收到`跨域请求`进行简单处理后,跳转到`welcome.jsp`。
+## welcome.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -55,11 +104,12 @@ public class CrossOriginController
 </html>
 ```
 此外,还需要在`web.xml`文件中配置`Spring MVC`的前端控制器`DispatcherServlet`,因为每次配置基本一致,此处不再赘述,读者可自行配置。
+## 部署测试
 同时部署`VariableTest`和`CrossOriginTest`两个`Web`应用,在浏览器中输入如下`URL`来测试进入`VariableTest`应用:
 ```
 http://localhost:8080/VariableTest/
 ```
-然后`测试@CrossOrigin注解`超链接:
+然后点击`测试@CrossOrigin注解`超链接:
 ```html
 <!-- 跨域请求 -->
 <a href="http://localhost:8080/CrossOriginTest/welcome">测试@CrossOrigin注解</a>
@@ -70,7 +120,6 @@ http://localhost:8080/VariableTest/
 ```
 同时浏览器上将显示`CrossOriginTest`应用的`welcome.jsp`页面。
 
-## 总结 ##
+## 总结
 `@CrossOrigin`注解可以接收从另一个`Web`应用发来的跨域请求。
 <!--SSTStop-->
-

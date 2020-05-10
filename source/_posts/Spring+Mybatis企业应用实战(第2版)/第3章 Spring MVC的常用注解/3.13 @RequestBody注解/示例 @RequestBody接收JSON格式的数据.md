@@ -15,9 +15,63 @@ abbrlink: 78f2a207
 
 <!--end-->
 <!--SSTStart-->
-# 示例 @RequestBody接收JSON格式的数据 #
+# 示例 @RequestBody接收JSON格式的数据
 创建一个`RequestBodyTest`项目,在`WebContent`目录下创建一个`js`目录,加入`jQuery`和`json2`的`js`文件,在`WEB-INF/lib`目录中加入`Jackson`的`jar`文件。
-## index.jsp ##
+## 项目结构
+<details><summary>展开/折叠</summary>
+
+```
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\ResponseBodyTest
+├─src\
+│ └─org\
+│   └─fkit\
+│     ├─controller\
+│     │ └─BookController.java
+│     └─domain\
+│       └─Book.java
+└─WebContent\
+  ├─index.jsp
+  ├─js\
+  │ ├─jquery-1.11.0.min.js
+  │ ├─jquery-migrate-1.2.1.min.js
+  │ └─json2.js
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─jackson-annotations-2.9.2.jar
+    │ ├─jackson-core-2.9.2.jar
+    │ ├─jackson-databind-2.9.2.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+
+```
+
+</details>
+
+## index.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -81,12 +135,14 @@ abbrlink: 78f2a207
 `index.jsp`页面代码分析如下:
 (1)页面使用`jQuery`发送`JSON`数据,在页面的`<head>`部分,引入了`jQuery`和`json2`的`js`文件。
 (2)页面载入时调用`testRequestBody`函数。
-(3)`testRequestBody`函数的第一个参数表示要请求的URL是:`"json/testRequestBody"`,第二个参数是这次请求相关的一些设置选项,这些选项解释如下:
-- `contentType`选项:`contentType : "application/json",`,其表示发送的内容编码格式为`JSON`
-- `data`选项:`data : JSON.stringify({id : 1,name : "一本书的名字"}),`表示发送一个`JSON`数据;
-- `success`选项表示:如果请求成功则将接到的`JSON`数据设置到页面的`<span>`当中
+(3)`testRequestBody`函数的
+- 第一个参数表示要请求的`URL`是:`"json/testRequestBody"`,
+- 第二个参数是这次请求相关的一些设置选项,这些选项解释如下:
+  - `contentType`选项:`contentType:"application/json",`,其表示发送的内容编码格式为`JSON`
+  - `data`选项:`data : JSON.stringify({id : 1,name : "一本书的名字"}),`表示发送一个`JSON`数据;
+  - `success`选项表示:如果请求成功则将接到的`JSON`数据设置到页面的`<span>`当中
 
-## BookController.java ##
+## BookController.java
 ```java
 package org.fkit.controller;
 
@@ -123,47 +179,13 @@ public class BookController
     }
 }
 ```
-## BookController.java ##
-```java
-package org.fkit.controller;
+`setJson`方法中的
+- 第一个参数`@RequestBody Book book`表示,使用`@RequestBody`注解获取`JSON`数据后,将`JSON`数据设置到对应的`Book`对象的属性当中。
+- 第二个参数是`HttpServletResponse`对象,用来输出响应数据到客户端。
 
-import javax.servlet.http.HttpServletResponse;
-import org.fkit.domain.Book;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@Controller
-@RequestMapping("/json")
-public class BookController
-{
-    // @RequestBody根据json数据，转换成对应的Object
-    @RequestMapping(value = "/testRequestBody")
-    // @RequestBody Book book:使用@RequestBody获取JSON数据,
-    // 然后将JSON数据设置到对应的Book对象的属性之中.
-    // 第二个参数 HttpServletResponse response用来输出响应数据到客户端
-    public void setJson(@RequestBody Book book, HttpServletResponse response)
-            throws Exception
-    {
-        // ObjectMapper类是Jackson库的主要类。
-        // 它提供一些功能将Java对象转换成对应的JSON格式的数据
-        ObjectMapper mapper = new ObjectMapper();
-        // 将book对象转换成json,并输出到控制台
-        System.out.println(mapper.writeValueAsString(book));
-        // 设置完整的信息
-        book.setAuthor("小明");
-        // 设置响应类型
-        response.setContentType("text/html;charset=UTF-8");
-        // 将book对象转换成json写出到客户端
-        response.getWriter().println(mapper.writeValueAsString(book));
-    }
-}
-```
-`setJson`方法中的第一个参数`@RequestBody Book book`表示,使用`@RequestBody`注解获取`JSON`数据后,将`JSON`数据设置到对应的`Book`对象的属性当中。第二个参数是`HttpServletResponse`对象,用来输出响应数据到客户端。
 向前台`JSP`页面的`JSON`数据中传入了`id`和`name`,为了测试接收数据,使用`System.out.println(mapper.writeValueAsString(book));`代码将接收到的`JSON`数据中的`book`对象打印在控制台上。
 为了测试传递数据到`JSP`页面,在该方法中还给`book`对象的`author`对象设置了个值,并将其写出到客户端.
-## Book.java ##
+## Book.java
 ```java
 package org.fkit.domain;
 
@@ -233,12 +255,12 @@ public class Book implements Serializable
 </beans>
 ```
 在引入静态文件,例如`jQuery.js`时,需要加入`<mvc:default-servlet-handler />`从而使用默认的`Servlet`来响应静态文件。如果没有加入该配置,则执行时页面会报404错误,而控制台会提出警告:
-
+## 测试
 部署`RequestBodyTest`这个`Web`应用,在浏览器中输入如下`URL`来测试应用:
 ```
 http://localhost:8080/RequestBodyTest/
 ```
-载入`index.jsp`页面时会发送`Ajax`请求,并传递`JSON`数据, `BookController`接收到请求后,`@Request body`注解会将接收到的`JSON`数据设置到`Book`形式参数对应的属性当中。控制台输出如下:
+载入`index.jsp`页面时会发送`Ajax`请求,并传递`JSON`数据, `BookController`接收到请求后,`@RequestBody`注解会将接收到的`JSON`数据设置到`Book`形式参数对应的属性当中。控制台输出如下:
 ```
 {"id":1,"name":"一本书的名字","author":null}
 ```
@@ -251,13 +273,10 @@ http://localhost:8080/RequestBodyTest/
 ```
 这表示`Spring MVC`成功将`Book`对象被以`JSON`数据格式成功写到客户端了。
 
-## 个人总结 ##
+## 个人总结
 使用`JSON`交换的步骤:
 1. 使用`jQuery`发送`ajax`请求,并将数据以`JSON`格式发送.
 2. 引入`Jackson`的`jar`包,使用`@RequstBody`接收数据,该注解可以解析请求体中的`JSON`数据,并设置到其后面的对象上。
-3. 使用`Jackson`包中的`ObjectMapper`对象`.writeValueAsString(Java`对象)方法,将`Java`对象转为`JSON`字符串.
+3. 使用`Jackson`包中的`ObjectMapper`对象`.writeValueAsString(Java对象)`方法,将`Java`对象转为`JSON`字符串.
 4. 使用`HttpServletResponse`写到客户端即可.
-5. `jQuery`根据接收到的`JSON`数据操作`DOM`即可。
-
-<!--SSTStop-->
-
+5. 使用`jQuery`根据接收到的`JSON`数据操作`DOM`即可。

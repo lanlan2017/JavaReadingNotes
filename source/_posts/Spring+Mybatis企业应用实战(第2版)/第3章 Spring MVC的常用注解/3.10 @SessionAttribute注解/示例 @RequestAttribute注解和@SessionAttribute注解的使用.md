@@ -14,10 +14,59 @@ abbrlink: 6d3c96b0
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
-<!--SSTStart-->
-# 示例 @RequestAttribute注解和@SessionAttribute注解的使用 #
+# 示例 @RequestAttribute注解和@SessionAttribute注解的使用
 新建一个项目`AttributeTest`,加入所需的`jar`文件,示例代码如下:
-## index.jsp ##
+## 项目结构
+
+<details><summary>展开/折叠</summary>
+
+```
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\AttributeTest
+├─src\
+│ └─org\
+│   └─fkit\
+│     ├─controller\
+│     │ └─AttributeController.java
+│     └─filter\
+│       └─TestAttributeFilter.java
+└─WebContent\
+  ├─index.jsp
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─content\
+    │ └─welcome.jsp
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+
+```
+
+</details>
+
+## index.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -34,7 +83,7 @@ abbrlink: 6d3c96b0
 </body>
 </html>
 ```
-## AttributeController.java ##
+## AttributeController.java
 ```java
 package org.fkit.controller;
 
@@ -60,9 +109,8 @@ public class AttributeController
     }
     /*
      * 该方法映射的请求为/main
-     * @RequestAttribute("name") String
-     * name会获取request作用范围中名为"name"的属性的值赋给方法的参数name
-     * @SessionAttribute("sex") String sex会获取session作用范围中名为"sex"的属性的值赋给方法的参数sex
+     * @RequestAttribute("name") String name---将request作用范围中"name"属性的值赋给方法的参数name
+     * @SessionAttribute("sex") String sex---将session作用范围中"sex"属性的值赋给方法的参数sex
      */
     @RequestMapping("/main")
     public String main(@RequestAttribute("name") String name,
@@ -77,8 +125,12 @@ public class AttributeController
     }
 }
 ```
-`attributeTest`方法处理请求后重定向到`main`请求,`main`请求会被自定义过滤器拦截,在过滤器中会分别设置两个属性到`request`作用域和`session`作用域。在`main`方法中使用`@RequestAttribute`和`@SessionAttribute`进行赋值。
-## TestAttributeFilter.java ##
+- `attributeTest`方法处理请求后重定向到`main`请求,
+- **`main`请求会被自定义过滤器拦截**,
+- 在过滤器中会分别设置两个属性到`request`作用域和`session`作用域。
+- 在`main`方法中使用`@RequestAttribute`和`@SessionAttribute`进行赋值。
+
+## TestAttributeFilter.java
 ```java
 package org.fkit.filter;
 
@@ -121,6 +173,7 @@ public class TestAttributeFilter implements Filter
 }
 ```
 `TestAttributeFilter`过滤器拦截`"main"`请求,在`dofilter`方法中分别设置两个属性到`request`作用域和`session`作用域。
+## 测试
 部署`AttributeTest`这个`Web`应用,在浏览器中输入如下`URL`来测试应用:
 ```
 http://localhost:8080/AttributeTest/
@@ -138,6 +191,4 @@ sex: 男
 name:小明
 sex:男 
 ```
-可以看到, `request`作用域中的`name`的值被传递到请求处理方法`main`的`name`变量, `session`作用域中的`sex`的值被传递到请求处理方法`main`的`sex`变量,并输出打印在控制台。
-<!--SSTStop-->
-
+可以看到,**`request`作用域中的`name`的值被传递到请求处理方法`main`的`name`变量**, **`session`作用域中的`sex`的值被传递到请求处理方法`main`的`sex`变量**,并输出打印在控制台。

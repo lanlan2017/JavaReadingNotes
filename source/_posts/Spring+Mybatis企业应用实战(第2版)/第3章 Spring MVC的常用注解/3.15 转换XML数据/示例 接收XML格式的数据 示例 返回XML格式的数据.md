@@ -1,26 +1,71 @@
 ---
-title: 示例 接收XML格式的数据
+title: 示例 接收XML格式的数据 示例 返回XML格式的数据
 categories: 
   - Spring+Mybatis企业应用实战(第2版)
   - 第3章 Spring MVC的常用注解
   - 3.15 转换XML数据
 date: 2019-08-21 00:20:01
-updated: 2019-12-23 12:01:12
-abbrlink: bcd788ad
+updated: 2020-05-10 02:46:04
+abbrlink: 6010f5ad
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/bcd788ad/#示例-接收XML格式的数据" class="header_1">示例 接收XML格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#sendxml-jsp" class="header_2">sendxml.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#Book-java" class="header_2">Book.java</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#示例-返回XML格式的数据" class="header_1">示例 返回XML格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/bcd788ad/#readxml-jsp" class="header_2">readxml.jsp</a>&nbsp;<br></div>
+<div id='my_toc'><a href="/JavaReadingNotes/6010f5ad/#示例-接收XML格式的数据" class="header_1">示例 接收XML格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#sendxml-jsp" class="header_2">sendxml.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#分析" class="header_3">分析</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#Book-java" class="header_2">Book.java</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#分析" class="header_3">分析</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#BookController-java" class="header_2">BookController.java</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#分析" class="header_3">分析</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#测试" class="header_2">测试</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#示例-返回XML格式的数据" class="header_1">示例 返回XML格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#readxml-jsp" class="header_2">readxml.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#分析" class="header_3">分析</a>&nbsp;<br><a href="/JavaReadingNotes/6010f5ad/#测试" class="header_2">测试</a>&nbsp;<br></div>
 <style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
 <!--more-->
 <script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
 <!--end-->
-<!--SSTStart-->
-# 示例 接收XML格式的数据 #
+# 示例 接收XML格式的数据
 创建一个`XmlTest`项目,在`WebContent`目录下创建一个`js`目录,加入`jQuery`和`json2`的`js`文件。
-<!--replace:sendxml=send XML&xml=X M L-->
+## 项目结构
+<details><summary>展开/折叠</summary><pre>
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\XmlTest
+├─src\
+│ ├─book.xml
+│ └─org\
+│   └─fkit\
+│     ├─controller\
+│     │ └─<a href="#BookController-java">BookController.java</a>
+│     └─domain\
+│       └─<a href="#Book-java">Book.java</a>
+└─WebContent\
+  ├─js\
+  │ ├─jquery-1.11.0.min.js
+  │ ├─jquery-migrate-1.2.1.min.js
+  │ └─json2.js
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  ├─<a href="#readxml-jsp">readxml.jsp</a>
+  ├─<a href="#sendxml-jsp">sendxml.jsp</a>
+  └─WEB-INF\
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+</pre></details>
 
-## sendxml.jsp ##
-```jsp
+## sendxml.jsp
+```xml
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -35,7 +80,8 @@ abbrlink: bcd788ad
         sendxml();
     });
     function sendxml() {
-        var xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><book><id>1</id><name>书的名称</name><author>作者</author></book>";
+        var xmlData = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"+
+            "<book><id>1</id><name>书的名称</name><author>作者</author></book>";
         $.ajax("${pageContext.request.contextPath}/sendxml",// 发送请求的URL字符串。
         {
             type : "POST", //  请求方式 POST或GET
@@ -51,7 +97,7 @@ abbrlink: bcd788ad
 </body>
 </html>
 ```
-<!--replace:sendxml=send xml-->
+### 分析
 `sendxml.jsp`页面代码分析如下:
 (1)页面使用`jQuery`发送`JSON`数据,在页面的`<head>`部分,引入了`jQuery`和`json2`的js文件
 (2)载入页面时调用`sendxml`函数。
@@ -59,7 +105,7 @@ abbrlink: bcd788ad
 - `ajax`方法的contentType选项:`contentType:"application/xml"`表示发送的内容编码格式为`XML`;
 - `ajax`方法的`data`选项表示要发送的数据是`XML`数据。
 
-## Book.java ##
+## Book.java
 ```java
 package org.fkit.domain;
 
@@ -122,7 +168,9 @@ public class Book implements Serializable
     }
 }
 ```
+### 分析
 在`Book`类中定义了3个属性:`id`、`nane`和`author`,分别对应`XML`的元素。 `toString`方法用来输出获取的数据对象信息。
+## BookController.java
 ```java
 package org.fkit.controller;
 
@@ -164,21 +212,22 @@ public class BookController
     }
 }
 ```
+### 分析
 `sendxml`方法中的第一个参数`@RequestBody Book book`表示,使用`@RequestBody`注解获取到`XML`数据后,将`XML`数据设置到`Book`对象的对应属性中。为了测试接收数据,将接收到XML数据的`Book`对象打印在控制台上。
 `springmvc-config.xml`文件和`JsonRequestTest`项目的一致,重点在于`<mvc:annotation-driven />`,该配置默认装配了`Jaxb2RootElementHttpMessageConverter`来处理`XML`数据的转换。
+## 测试
 部署`XmlTest`这个`Web`应用,在浏览器中输入如下`URL`来测试应用:
 ```
 http://localhost:8080/XmlTest/sendxml.jsp
 ```
-载λ `sendxml.jsp`页面时会发送`Ajax`请求,传递`XML`数据。`BookController`接收到请求后,`@RequestBody`注解会将`XML`数据设置到`Book`参数对应的属性中。控制台输出如下:
+载入`sendxml.jsp`页面时会发送`Ajax`请求,传递`XML`数据。`BookController`接收到请求后,`@RequestBody`注解会将`XML`数据设置到`Book`参数对应的属性中。控制台输出如下:
 ```
 接收XML数据成功
 Book [id=1, name=书的名称, author=作者]
 ```
 可以看到,`XML`数据传递的`id`、`name`、 `author`元素被赋值到了`Book`对象对应的属性当中。
-# 示例 返回XML格式的数据 #
-<!--replace:readxml=read X M L-->
-## readxml.jsp ##
+# 示例 返回XML格式的数据
+## readxml.jsp
 ```jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
@@ -230,11 +279,13 @@ Book [id=1, name=书的名称, author=作者]
 </body>
 </html>
 ```
+### 分析
 `readxml.jsp`页面代码分析如下:
 (1)页面使用`jQuery`发送M数据,在页面的`<head>`部分,引入了`jQuery`和`json2`的js文件。
 (2)载入页面时调用`readxml`函数。
 (3) `readxml`函数发送异步请求到`readxml`,请求成功将返回一个`XML`数据,接到返回的数据后将`XML`数据中的元素读取出来并将其设置到页面的`<span>`中。
 `BookController`的`readxml`方法使用`JAXB`读取一个`XML`文件的数据并生成一个`Book`对象返回。`@ResponseBody`会将`Book`对象转换成`XML`数据返回到前台`JSP`页面。
+## 测试
 在浏览器中输入如下`URL`来测试应用:
 ```
 http://localhost:8080/XmlTest/readxml.jsp
@@ -245,5 +296,3 @@ http://localhost:8080/XmlTest/readxml.jsp
 1    书的名称    书的作者
 ```
 这表示`Spring MVC`成功将`XML`数据返回到客户端。
-<!--SSTStop-->
-
