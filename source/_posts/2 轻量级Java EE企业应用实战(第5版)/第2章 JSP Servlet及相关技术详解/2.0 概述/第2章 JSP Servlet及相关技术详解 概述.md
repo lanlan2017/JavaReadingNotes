@@ -1,13 +1,19 @@
 ---
 title: 第2章 JSP Servlet及相关技术详解 概述
-categories:
+categories: 
   - 2 轻量级Java EE企业应用实战(第5版)
   - 第2章 JSP Servlet及相关技术详解
   - 2.0 概述
-abbrlink: bc21eebe
 date: 2020-06-05 03:56:40
-updated: 2020-06-05 03:56:40
+updated: 2020-06-10 05:51:10
+abbrlink: bc21eebe
 ---
+<div id='my_toc'><a href="/JavaReadingNotes/bc21eebe/#第2章-JSP-Servlet及相关技术详解-概述" class="header_1">第2章 JSP Servlet及相关技术详解 概述</a>&nbsp;<br><a href="/JavaReadingNotes/bc21eebe/#本章要点" class="header_2">本章要点</a>&nbsp;<br><a href="/JavaReadingNotes/bc21eebe/#概述" class="header_2">概述</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<!--more-->
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
 # 第2章 JSP Servlet及相关技术详解 概述
 ## 本章要点
 - `Web`应用的基本结构和`web.xml`文件
