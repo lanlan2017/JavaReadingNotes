@@ -224,6 +224,10 @@ date: 2019-12-17 04:08:18
 - [2.9 Filter介绍](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-9-Filter介绍)
 - [2.10 Listener介绍](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-10-Listener介绍)
 - [2.11 JSP2特性](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-11-JSP2特性)
+- [2.12 Servlet3新特性](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-12-Servlet3新特性)
+- [2.13 Servlet3.1新增的非阻塞式IO](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-13-Servlet3-1新增的非阻塞式IO)
+- [2.14 Tomcat8.5的WebSocket支持](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-14-Tomcat8-5的WebSocket支持)
+- [2.15 本章小结](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第2章-JSP-Servlet及相关技术详解/2-15-本章小结)
 
 ## [第5章 Hibernate的基本用法](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第5章-Hibernate的基本用法)
 - [5.0 前言](/JavaReadingNotes/categories/2-轻量级Java-EE企业应用实战-第5版/第5章-Hibernate的基本用法/5-0-前言)
