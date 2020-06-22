@@ -18,6 +18,48 @@ abbrlink: 3447f8a3
 # 示例1:基于Controller接口的控制器
 ## 1.增加Spring的支持
 首先,使用`Eclipse`新建一个`Dynamic Web Pro ject`,也就是新建一个动态`Web`项目,命名为`SpringMVCTest`。
+### 项目结构
+<details><summary>展开/折叠</summary><pre>
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\02\SpringMVCTest
+├─mytree
+├─src\
+│ └─org\
+│   └─fkit\
+│     └─controller\
+│       └─HelloController.java
+└─WebContent\
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─content\
+    │ └─welcome.jsp
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+</pre></details>
+
 ### 复制Spring的jar包到项目lib目录
 为了让`Web`应用具有`Spring`支持的功能,将`spring-framework-5.0.1.RELEASE`解压文件夹下的`libs`文件夹下所有`Spring`框架的`class`文件的`jar`包和`Spring`所依赖的`commons-logging-1.2.jar`复制到`Web`应用的`lib`文件夹下,也就是`SpringMVCTest\WebContent\WEB-INF`路径下.
 可以在`libs`目录下打开`cmd`,使用如下`copy`命令复制即可:
