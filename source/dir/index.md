@@ -369,6 +369,7 @@ date: 2019-12-17 04:08:18
 - [9.5 本章小结](/JavaReadingNotes/categories/4-Spring-Mybatis企业应用实战-第2版/第9章-MyBatis的基本用法/9-5-本章小结)
 
 ## [第10章 深入使用MyBatis](/JavaReadingNotes/categories/4-Spring-Mybatis企业应用实战-第2版/第10章-深入使用MyBatis)
+- [10.0 本章概述](/JavaReadingNotes/categories/4-Spring-Mybatis企业应用实战-第2版/第10章-深入使用MyBatis/10-0-本章概述)
 - [10.1 MyBatis关联映射](/JavaReadingNotes/categories/4-Spring-Mybatis企业应用实战-第2版/第10章-深入使用MyBatis/10-1-MyBatis关联映射)
 - [10.2 MyBatis动态SQL](/JavaReadingNotes/categories/4-Spring-Mybatis企业应用实战-第2版/第10章-深入使用MyBatis/10-2-MyBatis动态SQL)
 - [10.3 MyBatis调用存储过程](/JavaReadingNotes/categories/4-Spring-Mybatis企业应用实战-第2版/第10章-深入使用MyBatis/10-3-MyBatis调用存储过程)
