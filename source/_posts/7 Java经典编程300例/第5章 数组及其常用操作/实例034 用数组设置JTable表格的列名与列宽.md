@@ -1,8 +1,9 @@
 ---
 title: 实例033 利用数组随机抽取幸运观众
-categories: 
+categories:
   - 7 Java经典编程300例
   - 第5章 数组及其常用操作
+abbrlink: 846a1c17
 date: 2020-09-12 03:06:06
 updated: 2020-09-12 03:06:06
 ---
