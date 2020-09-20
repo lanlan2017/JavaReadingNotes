@@ -479,3 +479,29 @@ date: 2019-12-17 04:08:18
 - [10.5 开发前端JSON接口](/JavaReadingNotes/categories/5-疯狂前端开发讲义JQuery-AngularJS-Bootstrap前端开发实战/第10章-jQuery-Bootstrap整合开发-电子拍卖系统/10-5-开发前端JSON接口)
 - [10.6 前端整合开发](/JavaReadingNotes/categories/5-疯狂前端开发讲义JQuery-AngularJS-Bootstrap前端开发实战/第10章-jQuery-Bootstrap整合开发-电子拍卖系统/10-6-前端整合开发)
 - [10.7 本章小结](/JavaReadingNotes/categories/5-疯狂前端开发讲义JQuery-AngularJS-Bootstrap前端开发实战/第10章-jQuery-Bootstrap整合开发-电子拍卖系统/10-7-本章小结)
+
+# [6 Java Web项目开发案例精粹](/JavaReadingNotes/categories/6-Java-Web项目开发案例精粹)
+
+## [前言](/JavaReadingNotes/categories/6-Java-Web项目开发案例精粹/前言)
+
+## [第1章 企业日常事务管理系统](/JavaReadingNotes/categories/6-Java-Web项目开发案例精粹/第1章-企业日常事务管理系统)
+
+# [7 Java经典编程300例](/JavaReadingNotes/categories/7-Java经典编程300例)
+
+## [第0章 前言](/JavaReadingNotes/categories/7-Java经典编程300例/第0章-前言)
+
+## [第1章 Java语言概述](/JavaReadingNotes/categories/7-Java经典编程300例/第1章-Java语言概述)
+
+## [第2章 Eclipse开发工具](/JavaReadingNotes/categories/7-Java经典编程300例/第2章-Eclipse开发工具)
+
+## [第3章 Java语言基础](/JavaReadingNotes/categories/7-Java经典编程300例/第3章-Java语言基础)
+
+## [第4章 流程控制](/JavaReadingNotes/categories/7-Java经典编程300例/第4章-流程控制)
+
+## [第5章 数组及其常用操作](/JavaReadingNotes/categories/7-Java经典编程300例/第5章-数组及其常用操作)
+
+## [第6章 面向对象入门](/JavaReadingNotes/categories/7-Java经典编程300例/第6章-面向对象入门)
+
+## [第7章 面向对象进阶](/JavaReadingNotes/categories/7-Java经典编程300例/第7章-面向对象进阶)
+
+# [8 Java开发实例大全(基础卷)](/JavaReadingNotes/categories/8-Java开发实例大全-基础卷)
