@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="7.3.3 Java9改进的String StringBuffer和StringBuilder类&amp;nbsp;String介绍&amp;nbsp;StringBuffer介绍&amp;nbsp;StringBuilder和StringBuffer的不同&amp;nbsp;CharSequence接口介绍&amp;nbsp;java9对字符串类的改进&amp;nbsp;String API详解&amp;nbsp;String类构造器&amp;nbsp;St">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.3.3 Java9改进的String、 StringBuffer和StringBuilder类">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/dc99ad78/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="7.3.3 Java9改进的String StringBuffer和StringBuilder类&amp;nbsp;String介绍&amp;nbsp;StringBuffer介绍&amp;nbsp;StringBuilder和StringBuffer的不同&amp;nbsp;CharSequence接口介绍&amp;nbsp;java9对字符串类的改进&amp;nbsp;String API详解&amp;nbsp;String类构造器&amp;nbsp;St">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-10-01T19:17:51.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/dc99ad78/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>7.3.3 Java9改进的String、 StringBuffer和StringBuilder类 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/dc99ad78/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">7.3.3 Java9改进的String、 StringBuffer和StringBuilder类<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC7%E7%AB%A0%20Java%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%BA%93/7.3%20%E5%B8%B8%E7%94%A8%E7%B1%BB/7.3.3%20Java9%E6%94%B9%E8%BF%9B%E7%9A%84String%E3%80%81%20StringBuffer%E5%92%8CStringBuilder%E7%B1%BB.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-10-01 19:17:51" itemprop="dateCreated datePublished" datetime="2019-10-01T19:17:51+00:00">2019-10-01</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC7%E7%AB%A0-Java%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%BA%93/" itemprop="url" rel="index"><span itemprop="name">第7章 Java基础类库</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC7%E7%AB%A0-Java%E5%9F%BA%E7%A1%80%E7%B1%BB%E5%BA%93/7-3-%E5%B8%B8%E7%94%A8%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">7.3 常用类</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/dc99ad78/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/dc99ad78/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/dc99ad78/#7-3-3-Java9改进的String-StringBuffer和StringBuilder类" class="header_1">7.3.3 Java9改进的String StringBuffer和StringBuilder类</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#String介绍" class="header_2">String介绍</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#StringBuffer介绍" class="header_2">StringBuffer介绍</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#StringBuilder和StringBuffer的不同" class="header_2">StringBuilder和StringBuffer的不同</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#CharSequence接口介绍" class="header_2">CharSequence接口介绍</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#java9对字符串类的改进" class="header_2">java9对字符串类的改进</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#String-API详解" class="header_1">String API详解</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#String类构造器" class="header_2">String类构造器</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#String类方法" class="header_2">String类方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#根据下标获取一个字符" class="header_3">根据下标获取一个字符</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#复制字符序列到字符数组的方法" class="header_3">复制字符序列到字符数组的方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#获取字符长度的方法" class="header_3">获取字符长度的方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#比较是否相同的方法" class="header_3">比较是否相同的方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#生成新字符串的方法" class="header_3">生成新字符串的方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#静态方法" class="header_3">静态方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#比较大小方法" class="header_3">比较大小方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#查找字符出现位置的方法" class="header_3">查找字符出现位置的方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#大小写转换方法" class="header_3">大小写转换方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#转成字节数组或字符数组的方法" class="header_3">转成字节数组或字符数组的方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#判断是否带前缀或后缀" class="header_3">判断是否带前缀或后缀</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#StringBuffer和StringBuilder" class="header_1">StringBuffer和StringBuilder</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#StringBuilder和StringBuffer的属性" class="header_2">StringBuilder和StringBuffer的属性</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#StringBuilder方法详解" class="header_2">StringBuilder方法详解</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#追加方法" class="header_3">追加方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#删除方法" class="header_3">删除方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#插入方法" class="header_3">插入方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#查找下标方法" class="header_3">查找下标方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#获取或设置字符方法" class="header_3">获取或设置字符方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#容量和长度相关方法" class="header_3">容量和长度相关方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#截取子串方法" class="header_3">截取子串方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#反转方法" class="header_3">反转方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#替换方法" class="header_3">替换方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#重写的Object方法" class="header_3">重写的Object方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#代码点相关方法" class="header_3">代码点相关方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#其他方法" class="header_3">其他方法</a>&nbsp;<br><a href="/JavaReadingNotes/dc99ad78/#-StringBuilder-与-String-之间区别" class="header_3">`StringBuilder`与`String`之间区别</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="7-3-3-Java9改进的String-StringBuffer和StringBuilder类"><a href="#7-3-3-Java9改进的String-StringBuffer和StringBuilder类" class="headerlink" title="7.3.3 Java9改进的String StringBuffer和StringBuilder类"></a>7.3.3 Java9改进的String StringBuffer和StringBuilder类</h1><p>字符串就是一连串的字符序列,<code>Java</code>提供了<code>String</code>、 <code>StringBuffer</code>和<code>StringBuilder</code>三个类来封装字符串,并提供了一系列方法来操作字符串对象。</p>
+<h2 id="String介绍"><a href="#String介绍" class="headerlink" title="String介绍"></a>String介绍</h2><p><code>String</code>类是不可变类,即一旦一个<code>String</code>对象被创建以后,包含在这个对象中的字符序列是不可改的,直至这个对象被销毁。</p>
+<h2 id="StringBuffer介绍"><a href="#StringBuffer介绍" class="headerlink" title="StringBuffer介绍"></a>StringBuffer介绍</h2><p><code>StringBuffer</code>对象则代表一个字符序列可变的字符串,当一个<code>String Buffer</code>被创建以后,通过<code>String Buffer</code>提供的<code>append()</code>、 <code>insert()</code>、 <code>reverse()</code>、 <code>setCharAt()</code>、 <code>setLength()</code>等方法可以改变这个字符串对象的字符序列。一旦通过<code>StringBuffer</code>生成了最终想要的字符串,就可以调用它的<code>toString()</code>方法将其转换为一个<code>String</code>对象.<br><code>StringBuilder</code>类是<code>JDK1.5</code>新增的类,它也代表可变字符串对象。实际上, <code>StringBuilder</code>和<code>StringBuffer</code>基本相似,两个类的构造器和方法也基本相同。</p>
+<h2 id="StringBuilder和StringBuffer的不同"><a href="#StringBuilder和StringBuffer的不同" class="headerlink" title="StringBuilder和StringBuffer的不同"></a>StringBuilder和StringBuffer的不同</h2><p><code>StringBuffer</code>是线程安全的,而<code>StringBuilder</code>则没有实现线程安全功能,所以性能略高。<br>因此在通常情况下,<strong>如果需要创建一个内容可变的字符串对象,则应该优先考虑使用<code>StringBuilder</code>类</strong>,需要考虑线程安全的使用<code>StringBuffer</code>类。</p>
+<h2 id="CharSequence接口介绍"><a href="#CharSequence接口介绍" class="headerlink" title="CharSequence接口介绍"></a>CharSequence接口介绍</h2><p><code>String</code>、 <code>StringBuilder</code>、 <code>StringBuffer</code>都实现了<code>CharSequence</code>接口,因此<code>CharSequence</code>可认为是一个字符串的协议接口。</p>
+<h2 id="java9对字符串类的改进"><a href="#java9对字符串类的改进" class="headerlink" title="java9对字符串类的改进"></a>java9对字符串类的改进</h2><p><code>Java9</code>改进了字符串的实现(包括<code>String</code>、 <code>StringBuffer</code>、 <code>StringBuilder</code>)。</p>
+<ul>
+<li>在<code>Java9</code>以前字符串采用<code>char</code>数组来保存字符,因此字符串的<code>每个字符占2字节</code>;</li>
+<li>而<code>Java9</code>的字符串采用<code>byte</code>数组再加一个<code>encoding-flag</code>字段来保存字符,因此<code>字符串的每个字符只占1字节</code>。</li>
+</ul>
+<p><strong>所以<code>Java9</code>的字符串更加节省空间</strong>,但字符串的功能方法没有受到任何影响。</p>
+<h1 id="String-API详解"><a href="#String-API详解" class="headerlink" title="String API详解"></a>String API详解</h1><p><code>String</code>类提供了大量构造器来创建<code>String</code>对象,其中如下几个有特殊用途。</p>
+<h2 id="String类构造器"><a href="#String类构造器" class="headerlink" title="String类构造器"></a>String类构造器</h2><table>
+<thead>
+<tr>
+<th align="left">构造器</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>String()</code></td>
+<td align="left">创建一个包含0个字符串序列的<code>String</code>对象.</td>
+</tr>
+<tr>
+<td align="left"><code>String(byte[] bytes, Charset charset)</code></td>
+<td align="left">使用指定的字符集将指定的<code>byte</code>数组<code>解码</code>成一个新的<code>String</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>String(byte[] bytes, int offset,int length)</code></td>
+<td align="left">使用<code>平台的默认字符集</code>将指定的<code>byte</code>数组从<code>offset</code>位置开始、取出长度为<code>length</code>的子数组，然后解码成一个新的<code>String</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>String(byte[] bytes, int offset, int length, String charsetName)</code></td>
+<td align="left">使用<code>指定的字符集</code>将指定的<code>byte</code>数组从<code>offset</code>开始、取出长度为<code>length</code>的子数组，然后解码成一个新的<code>String</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>String(char[] value, int offset, int count)</code></td>
+<td align="left">将指定的字符数组从<code>offset</code>开始、取出长度为<code>count</code>的字符元素,然后连缀成字符串。</td>
+</tr>
+<tr>
+<td align="left"><code>String(String original)</code></td>
+<td align="left">根据<code>字符串直接量</code>来创建一个<code>String</code>对象。也就是说,新创建的<code>String</code>对象是该参数字符串的<code>副本</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>String(StringBuffer buffer)</code></td>
+<td align="left">根据<code>StringBuffer</code>对象来创建对应的<code>String</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>String(StringBuilder builder)</code></td>
+<td align="left">根据<code>StringBuilder</code>对象来创建对应的<code>String</code>对象。</td>
+</tr>
+</tbody></table>
+<h2 id="String类方法"><a href="#String类方法" class="headerlink" title="String类方法"></a>String类方法</h2><p><code>String</code>类也提供了大量方法来操作字符串对象,下面详细介绍这些常用方法</p>
+<h3 id="根据下标获取一个字符"><a href="#根据下标获取一个字符" class="headerlink" title="根据下标获取一个字符"></a>根据下标获取一个字符</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>char charAt(int index)</code></td>
+<td align="left">获取字符串中指定位置的字符。其中,参数<code>index</code>指的是字符串的序数,字符串的序数从<strong>0开始到<code>length()-1</code></strong></td>
+</tr>
+</tbody></table>
+<h3 id="复制字符序列到字符数组的方法"><a href="#复制字符序列到字符数组的方法" class="headerlink" title="复制字符序列到字符数组的方法"></a>复制字符序列到字符数组的方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void getChars(int srcBegin, int srcEnd,char[] dst, int dstBegin)</code></td>
+<td align="left">该方法将字符串中从<code>srcBegin</code>开始,到<code>srcEnd</code>结束的字符复制到<code>dst</code>字符数组中,其中<code>dstBegin</code>为目标字符数组的起始复制位置。</td>
+</tr>
+</tbody></table>
+<h3 id="获取字符长度的方法"><a href="#获取字符长度的方法" class="headerlink" title="获取字符长度的方法"></a>获取字符长度的方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>int length()</code></td>
+<td align="left">返回当前字符串长度。</td>
+</tr>
+</tbody></table>
+<h3 id="比较是否相同的方法"><a href="#比较是否相同的方法" class="headerlink" title="比较是否相同的方法"></a>比较是否相同的方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>boolean contentEquals(StringBuffer sb)</code></td>
+<td align="left">将该<code>String</code>对象与<code>StringBuffer</code>对象进行比较,当它们包含的字符序列相同时返回<code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>boolean equals(Object anObject)</code></td>
+<td align="left">将该字符串与指定对象比较,如果二者包含的字符序列相等则返回<code>true</code>;否则返回<code>false</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean equalsIgnoreCase(String str)</code></td>
+<td align="left">与前一个方法基本相似,只是忽略字符的大小写。</td>
+</tr>
+</tbody></table>
+<h3 id="生成新字符串的方法"><a href="#生成新字符串的方法" class="headerlink" title="生成新字符串的方法"></a>生成新字符串的方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>String concat(String anotherString)</code></td>
+<td align="left">将该<code>String</code>对象与<code>anotherString</code>连接在一起。与<code>Java</code>提供的字符串连接运算符<code>&quot;+&quot;</code>的功能相同。</td>
+</tr>
+<tr>
+<td align="left"><code>String replace(char oldChar, char newChar)</code></td>
+<td align="left">将字符串中的第一个<code>oldChar</code>替换成<code>newChar</code>.</td>
+</tr>
+<tr>
+<td align="left"><code>String substring(int beginIndex)</code></td>
+<td align="left">获取从<code>beginIndex</code>位置开始到结束的子字符串。</td>
+</tr>
+<tr>
+<td align="left"><code>String substring(int beginIndex, int endIndex)</code></td>
+<td align="left">获取从<code>beginIndex</code>位置开始到<code>endIndex</code>位置的子字符串。</td>
+</tr>
+</tbody></table>
+<h3 id="静态方法"><a href="#静态方法" class="headerlink" title="静态方法"></a>静态方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static String valueOf(X x)</code></td>
+<td align="left">一系列用于将<code>基本类型值</code>转换为<code>String</code>对象的方法。</td>
+</tr>
+<tr>
+<td align="left"><code>static String copyValueOf(char[] data)</code></td>
+<td align="left">将字符数组连缀成字符串,与构造器<code>String(char[] content)</code>的功能相同</td>
+</tr>
+<tr>
+<td align="left"><code>static String copyValueof(char[] data, int offset, int count)</code></td>
+<td align="left">将<code>char</code>数组的子数组中的元素连缀成字符串,与构造器<code>String(char[] value, int offset, int count)</code>的功能相同。</td>
+</tr>
+</tbody></table>
+<h3 id="比较大小方法"><a href="#比较大小方法" class="headerlink" title="比较大小方法"></a>比较大小方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>int compareTo(String anotherString)</code></td>
+<td align="left">比较两个字符串的大小。</td>
+</tr>
+</tbody></table>
+<ul>
+<li>如果两个字符串的字符序列相等,则返回0;</li>
+<li>如果两个字符串的字符序列不相等,则从两个字符串第0个字符开始比较,返回<code>第一个不相等的字符差</code>。</li>
+<li>如果较长字符串的前面部分恰巧是较短的字符串,则返回它们的<code>长度差</code>。</li>
+</ul>
+<h3 id="查找字符出现位置的方法"><a href="#查找字符出现位置的方法" class="headerlink" title="查找字符出现位置的方法"></a>查找字符出现位置的方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>int indexOf(int ch)</code></td>
+<td align="left">找出ch字符在该字符串中第一次出现的位置.</td>
+</tr>
+<tr>
+<td align="left"><code>int indexOf(int ch, int fromIndex)</code></td>
+<td align="left">找出ch字符在该字符串中从<code>fromIndex</code>开始后第一次出现的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>int indexOf(String string)</code></td>
+<td align="left">找出<code>string</code>子字符串在该字符串中第一次出现的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>int indexOf(String string, int fromIndex)</code></td>
+<td align="left">找出<code>string</code>子字符串在该字符串中从<code>fromIndex</code>开始后第一次出现的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>int lastIndexOf( int ch)</code></td>
+<td align="left">找出ch字符在该字符串中最后一次出现的位置.</td>
+</tr>
+<tr>
+<td align="left"><code>int lastIndexOf(int ch, int fromIndex)</code></td>
+<td align="left">找出ch字符在该字符串中从<code>fromIndex</code>开始后最后一次出现的位置</td>
+</tr>
+<tr>
+<td align="left"><code>int lastIndexOf(String str)</code></td>
+<td align="left">找出<code>str</code>子字符串在该字符串中最后一次出现的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>int lastIndexOf(String str,int fromIndex)</code></td>
+<td align="left">找出str子字符串在该字符串中从<code>fromIndex</code>开始后最后次出现的位置。</td>
+</tr>
+</tbody></table>
+<h3 id="大小写转换方法"><a href="#大小写转换方法" class="headerlink" title="大小写转换方法"></a>大小写转换方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>String toLowerCase()</code></td>
+<td align="left">将字符串转换成小写。</td>
+</tr>
+<tr>
+<td align="left"><code>String toUpperCase()</code></td>
+<td align="left">将字符串转换成大写。</td>
+</tr>
+</tbody></table>
+<h3 id="转成字节数组或字符数组的方法"><a href="#转成字节数组或字符数组的方法" class="headerlink" title="转成字节数组或字符数组的方法"></a>转成字节数组或字符数组的方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>byte[] getBytes()</code></td>
+<td align="left">将该<code>String</code>对象转换成<code>byte</code>数组。</td>
+</tr>
+<tr>
+<td align="left"><code>char[] toCharArray()</code></td>
+<td align="left">将该<code>String</code>对象转换成<code>char</code>数组。</td>
+</tr>
+</tbody></table>
+<h3 id="判断是否带前缀或后缀"><a href="#判断是否带前缀或后缀" class="headerlink" title="判断是否带前缀或后缀"></a>判断是否带前缀或后缀</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>boolean startsWith(String prefix)</code></td>
+<td align="left">该<code>String</code>对象是否以<code>prefix</code>开始。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean startsWith(String prefix, int offset)</code></td>
+<td align="left">该<code>String</code>对象从<code>offset</code>位置算起,是否以<code>prefix</code>开始。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean endswith(String suffix)</code></td>
+<td align="left">返回该<code>Sing</code>对象是否以<code>suffix</code>结尾。</td>
+</tr>
+</tbody></table>
+<h1 id="StringBuffer和StringBuilder"><a href="#StringBuffer和StringBuilder" class="headerlink" title="StringBuffer和StringBuilder"></a>StringBuffer和StringBuilder</h1><p><code>String</code>类是不可变的, <code>String</code>的实例一旦生成就不会再改变了,使用字符串会产生字符串直接量,通过连接符<code>+</code>也会产生字符串直接量。<br>因为<code>String</code>是不可变的,所以会额外产生很多临时变量,使用<code>StringBuffer</code>或<code>StringBuilder</code>就可以避免这个问题。<br><code>StringBuilder</code>提供了一系列<code>插入</code>、<code>追加</code>、<code>改变</code>该字符串里包含的字符序列的方法。而<code>StringBuffer</code>与其用法完全相同,只是**<code>StringBuffer</code>是线程安全的**。</p>
+<h2 id="StringBuilder和StringBuffer的属性"><a href="#StringBuilder和StringBuffer的属性" class="headerlink" title="StringBuilder和StringBuffer的属性"></a>StringBuilder和StringBuffer的属性</h2><p><code>StringBuilder</code>、 <code>StringBuffer</code>有两个属性:<code>length</code>和<code>capacity</code>,其中</p>
+<ol>
+<li><code>length</code>属性表示其包含的字符序列的长度。与<code>String</code>对象的<code>length</code>不同的是, <code>StringBuilder</code>、 <code>StringBuffer</code>的<code>length</code>是可以改变的,可以通过<code>length</code>、 <code>setLength( int len)</code>方法来访问和修改其字符序列的长度。 </li>
+<li><code>capacity</code>属性表示<code>StringBuilder</code>的<code>容量</code>, <code>capacity</code>通常比<code>length</code>大,程序通常无须关心<code>capacity</code>属性。如下程序示范了<code>StringBuilder</code>类的用法。</li>
+</ol>
+<ul>
+<li><code>StringBuilder</code>的<code>length</code>方法返回其字符序列的长度,</li>
+<li><code>StringBuilder</code>的<code>capacity()</code>方法的返回值是容量,容量比<code>length</code>返回值大。</li>
+</ul>
+<p><code>StringBuilder</code>类有<code>追加</code>、<code>插入</code>、<code>替换</code>、<code>删除</code>,<code>反转</code>等操作,这些操作可以改变了<code>StringBuilder</code>里的字符序列。</p>
+<!--SSTStop-->
+
+<h2 id="StringBuilder方法详解"><a href="#StringBuilder方法详解" class="headerlink" title="StringBuilder方法详解"></a>StringBuilder方法详解</h2><h3 id="追加方法"><a href="#追加方法" class="headerlink" title="追加方法"></a>追加方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">StringBuilder append(boolean b)</td>
+<td align="left">追加布尔参数到StringBuilder中</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(char c)</td>
+<td align="left">追加char参数到StringBuilder中</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(char[] str)</td>
+<td align="left">Appends the string representation of the char array argument to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(char[] str, int offset, int len)</td>
+<td align="left">Appends the string representation of a subarray of the char array argument to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(CharSequence s)</td>
+<td align="left">Appends the specified character sequence to this Appendable.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(CharSequence s, int start, int end)</td>
+<td align="left">Appends a subsequence of the specified CharSequence to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(double d)</td>
+<td align="left">Appends the string representation of the double argument to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(float f)</td>
+<td align="left">Appends the string representation of the float argument to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(int i)</td>
+<td align="left">Appends the string representation of the int argument to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(long lng)</td>
+<td align="left">Appends the string representation of the long argument to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(Object obj)</td>
+<td align="left">Appends the string representation of the Object argument.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(String str)</td>
+<td align="left">Appends the specified string to this character sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder append(StringBuffer sb)</td>
+<td align="left">Appends the specified StringBuffer to this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder appendCodePoint(int codePoint)</td>
+<td align="left">Appends the string representation of the codePoint argument to this sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="删除方法"><a href="#删除方法" class="headerlink" title="删除方法"></a>删除方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">StringBuilder delete(int start, int end)</td>
+<td align="left">Removes the characters in a substring of this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder deleteCharAt(int index)</td>
+<td align="left">Removes the char at the specified position in this sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="插入方法"><a href="#插入方法" class="headerlink" title="插入方法"></a>插入方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">StringBuilder insert(int offset, boolean b)</td>
+<td align="left">Inserts the string representation of the boolean argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, char c)</td>
+<td align="left">Inserts the string representation of the char argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, char[] str)</td>
+<td align="left">Inserts the string representation of the char array argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int index, char[] str, int offset, int len)</td>
+<td align="left">Inserts the string representation of a subarray of the str array argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int dstOffset, CharSequence s)</td>
+<td align="left">Inserts the specified CharSequence into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int dstOffset, CharSequence s, int start, int end)</td>
+<td align="left">Inserts a subsequence of the specified CharSequence into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, double d)</td>
+<td align="left">Inserts the string representation of the double argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, float f)</td>
+<td align="left">Inserts the string representation of the float argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, int i)</td>
+<td align="left">Inserts the string representation of the second int argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, long l)</td>
+<td align="left">Inserts the string representation of the long argument into this sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, Object obj)</td>
+<td align="left">Inserts the string representation of the Object argument into this character sequence.</td>
+</tr>
+<tr>
+<td align="left">StringBuilder insert(int offset, String str)</td>
+<td align="left">Inserts the string into this character sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="查找下标方法"><a href="#查找下标方法" class="headerlink" title="查找下标方法"></a>查找下标方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">int indexOf(String str)</td>
+<td align="left">Returns the index within this string of the first occurrence of the specified substring.</td>
+</tr>
+<tr>
+<td align="left">int indexOf(String str, int fromIndex)</td>
+<td align="left">Returns the index within this string of the first occurrence of the specified substring, starting at the specified index.</td>
+</tr>
+<tr>
+<td align="left">int lastIndexOf(String str)</td>
+<td align="left">Returns the index within this string of the rightmost occurrence of the specified substring.</td>
+</tr>
+<tr>
+<td align="left">int lastIndexOf(String str, int fromIndex)</td>
+<td align="left">Returns the index within this string of the last occurrence of the specified substring.</td>
+</tr>
+</tbody></table>
+<h3 id="获取或设置字符方法"><a href="#获取或设置字符方法" class="headerlink" title="获取或设置字符方法"></a>获取或设置字符方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">char charAt(int index)</td>
+<td align="left">Returns the char value in this sequence at the specified index.</td>
+</tr>
+<tr>
+<td align="left">void setCharAt(int index, char ch)</td>
+<td align="left">The character at the specified index is set to ch.</td>
+</tr>
+</tbody></table>
+<h3 id="容量和长度相关方法"><a href="#容量和长度相关方法" class="headerlink" title="容量和长度相关方法"></a>容量和长度相关方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">int capacity()</td>
+<td align="left">Returns the current capacity.</td>
+</tr>
+<tr>
+<td align="left">int length()</td>
+<td align="left">Returns the length (character count).</td>
+</tr>
+<tr>
+<td align="left">void setLength(int newLength)</td>
+<td align="left">Sets the length of the character sequence.</td>
+</tr>
+<tr>
+<td align="left">void ensureCapacity(int minimumCapacity)</td>
+<td align="left">Ensures that the capacity is at least equal to the specified minimum.</td>
+</tr>
+</tbody></table>
+<h3 id="截取子串方法"><a href="#截取子串方法" class="headerlink" title="截取子串方法"></a>截取子串方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">String substring(int start)</td>
+<td align="left">Returns a new String that contains a subsequence of characters currently contained in this character sequence.</td>
+</tr>
+<tr>
+<td align="left">String substring(int start, int end)</td>
+<td align="left">Returns a new String that contains a subsequence of characters currently contained in this sequence.</td>
+</tr>
+<tr>
+<td align="left">CharSequence subSequence(int start, int end)</td>
+<td align="left">Returns a new character sequence that is a subsequence of this sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="反转方法"><a href="#反转方法" class="headerlink" title="反转方法"></a>反转方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">StringBuilder reverse()</td>
+<td align="left">Causes this character sequence to be replaced by the reverse of the sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="替换方法"><a href="#替换方法" class="headerlink" title="替换方法"></a>替换方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">StringBuilder replace(int start, int end, String str)</td>
+<td align="left">Replaces the characters in a substring of this sequence with characters in the specified String.</td>
+</tr>
+</tbody></table>
+<h3 id="重写的Object方法"><a href="#重写的Object方法" class="headerlink" title="重写的Object方法"></a>重写的Object方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">String toString()</td>
+<td align="left">Returns a string representing the data in this sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="代码点相关方法"><a href="#代码点相关方法" class="headerlink" title="代码点相关方法"></a>代码点相关方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">int offsetByCodePoints(int index, int codePointOffset)</td>
+<td align="left">Returns the index within this sequence that is offset from the given index by codePointOffset code points.</td>
+</tr>
+<tr>
+<td align="left">int codePointAt(int index)</td>
+<td align="left">Returns the character (Unicode code point) at the specified index.</td>
+</tr>
+<tr>
+<td align="left">int codePointBefore(int index)</td>
+<td align="left">Returns the character (Unicode code point) before the specified index.</td>
+</tr>
+<tr>
+<td align="left">int codePointCount(int beginIndex, int endIndex)</td>
+<td align="left">Returns the number of Unicode code points in the specified text range of this sequence.</td>
+</tr>
+</tbody></table>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">void trimToSize()</td>
+<td align="left">Attempts to reduce storage used for the character sequence.</td>
+</tr>
+<tr>
+<td align="left">void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin)</td>
+<td align="left">Characters are copied from this sequence into the destination character array dst.</td>
+</tr>
+</tbody></table>
+<!--SSTStart-->
+<h3 id="StringBuilder与String之间区别"><a href="#StringBuilder与String之间区别" class="headerlink" title="StringBuilder与String之间区别"></a><code>StringBuilder</code>与<code>String</code>之间区别</h3><ul>
+<li><code>StringBuilder</code>的字符序列是可变的。</li>
+<li><code>String</code>的是不可变的<!--SSTStop-->
+
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/dc99ad78/" title="7.3.3 Java9改进的String、 StringBuffer和StringBuilder类">https://lanlan2017.github.io/JavaReadingNotes/dc99ad78/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/b07fed4b/" rel="next" title="7.3.2 Java7新增的Objects类">
+                  <i class="fa fa-chevron-left"></i> 7.3.2 Java7新增的Objects类
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/f7bd2a98/" rel="prev" title="7.3.4 Math类">
+                  7.3.4 Math类 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-3-3-Java9改进的String-StringBuffer和StringBuilder类"><span class="nav-text">7.3.3 Java9改进的String StringBuffer和StringBuilder类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#String介绍"><span class="nav-text">String介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StringBuffer介绍"><span class="nav-text">StringBuffer介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StringBuilder和StringBuffer的不同"><span class="nav-text">StringBuilder和StringBuffer的不同</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CharSequence接口介绍"><span class="nav-text">CharSequence接口介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java9对字符串类的改进"><span class="nav-text">java9对字符串类的改进</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#String-API详解"><span class="nav-text">String API详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#String类构造器"><span class="nav-text">String类构造器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#String类方法"><span class="nav-text">String类方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根据下标获取一个字符"><span class="nav-text">根据下标获取一个字符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制字符序列到字符数组的方法"><span class="nav-text">复制字符序列到字符数组的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取字符长度的方法"><span class="nav-text">获取字符长度的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#比较是否相同的方法"><span class="nav-text">比较是否相同的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#生成新字符串的方法"><span class="nav-text">生成新字符串的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态方法"><span class="nav-text">静态方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#比较大小方法"><span class="nav-text">比较大小方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找字符出现位置的方法"><span class="nav-text">查找字符出现位置的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大小写转换方法"><span class="nav-text">大小写转换方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#转成字节数组或字符数组的方法"><span class="nav-text">转成字节数组或字符数组的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断是否带前缀或后缀"><span class="nav-text">判断是否带前缀或后缀</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#StringBuffer和StringBuilder"><span class="nav-text">StringBuffer和StringBuilder</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#StringBuilder和StringBuffer的属性"><span class="nav-text">StringBuilder和StringBuffer的属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#StringBuilder方法详解"><span class="nav-text">StringBuilder方法详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#追加方法"><span class="nav-text">追加方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#删除方法"><span class="nav-text">删除方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#插入方法"><span class="nav-text">插入方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找下标方法"><span class="nav-text">查找下标方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取或设置字符方法"><span class="nav-text">获取或设置字符方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容量和长度相关方法"><span class="nav-text">容量和长度相关方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#截取子串方法"><span class="nav-text">截取子串方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反转方法"><span class="nav-text">反转方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#替换方法"><span class="nav-text">替换方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重写的Object方法"><span class="nav-text">重写的Object方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码点相关方法"><span class="nav-text">代码点相关方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其他方法"><span class="nav-text">其他方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StringBuilder与String之间区别"><span class="nav-text">StringBuilder与String之间区别</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

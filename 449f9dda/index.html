@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="17.3.3 使用Socket进行通信&amp;nbsp;本地主机只有一个IP地址的情况&amp;nbsp;适用于本地主机有多个IP地址的情况&amp;nbsp;获取Socket的输入输出流&amp;nbsp;程序示例 最简单的TCP通信&amp;nbsp;设置超时时间&amp;nbsp;&#96;Socket&#96;连接服务器时指定超时时长&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="17.3.3 使用Socket进行通信">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/449f9dda/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="17.3.3 使用Socket进行通信&amp;nbsp;本地主机只有一个IP地址的情况&amp;nbsp;适用于本地主机有多个IP地址的情况&amp;nbsp;获取Socket的输入输出流&amp;nbsp;程序示例 最简单的TCP通信&amp;nbsp;设置超时时间&amp;nbsp;&#96;Socket&#96;连接服务器时指定超时时长&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-14T11:09:07.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/449f9dda/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>17.3.3 使用Socket进行通信 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/449f9dda/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">17.3.3 使用Socket进行通信<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC17%E7%AB%A0%20%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/17.3%20%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/17.3.3%20%E4%BD%BF%E7%94%A8Socket%E8%BF%9B%E8%A1%8C%E9%80%9A%E4%BF%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-14 11:09:07" itemprop="dateCreated datePublished" datetime="2020-01-14T11:09:07+00:00">2020-01-14</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC17%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第17章 网络编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC17%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/17-3-%E5%9F%BA%E4%BA%8ETCP%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">17.3 基于TCP协议的网络编程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/449f9dda/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/449f9dda/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/449f9dda/#17-3-3-使用Socket进行通信" class="header_1">17.3.3 使用Socket进行通信</a>&nbsp;<br><a href="/JavaReadingNotes/449f9dda/#本地主机只有一个IP地址的情况" class="header_2">本地主机只有一个IP地址的情况</a>&nbsp;<br><a href="/JavaReadingNotes/449f9dda/#适用于本地主机有多个IP地址的情况" class="header_2">适用于本地主机有多个IP地址的情况</a>&nbsp;<br><a href="/JavaReadingNotes/449f9dda/#获取Socket的输入输出流" class="header_2">获取Socket的输入输出流</a>&nbsp;<br><a href="/JavaReadingNotes/449f9dda/#程序示例-最简单的TCP通信" class="header_2">程序示例 最简单的TCP通信</a>&nbsp;<br><a href="/JavaReadingNotes/449f9dda/#设置超时时间" class="header_2">设置超时时间</a>&nbsp;<br><a href="/JavaReadingNotes/449f9dda/#-Socket-连接服务器时指定超时时长" class="header_3">`Socket`连接服务器时指定超时时长</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="17-3-3-使用Socket进行通信"><a href="#17-3-3-使用Socket进行通信" class="headerlink" title="17.3.3 使用Socket进行通信"></a>17.3.3 使用Socket进行通信</h1><p>客户端通常可以使用<code>Socket</code>的构造器来连接到指定服务器,<code>Socket</code>通常可以使用如下两个构造器。</p>
+<h2 id="本地主机只有一个IP地址的情况"><a href="#本地主机只有一个IP地址的情况" class="headerlink" title="本地主机只有一个IP地址的情况"></a>本地主机只有一个IP地址的情况</h2><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code> Socket(String host, int port)</code></td>
+<td align="left">创建连接到指定<strong>远程主机、远程端口</strong>的<code>Socket</code>,该构造器没有指定<strong>本地地址、本地端口</strong>,默认使用本地主机的默认IP地址,默认使用系统动态分配的端口。</td>
+</tr>
+<tr>
+<td align="left"><code> Socket(InetAddress address, int port)</code></td>
+<td align="left">Creates a stream socket and connects it to the specified port number at the specified IP address.</td>
+</tr>
+</tbody></table>
+<h2 id="适用于本地主机有多个IP地址的情况"><a href="#适用于本地主机有多个IP地址的情况" class="headerlink" title="适用于本地主机有多个IP地址的情况"></a>适用于本地主机有多个IP地址的情况</h2><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Socket(String host, int port, InetAddress localAddr, int localPort)</code></td>
+<td align="left">创建连接到<strong>指定远程主机、远程端口</strong>的<code>Socket</code>,并<strong>指定本地<code>IP</code>地址和本地端口</strong>,<strong>适用于本地主机有多个<code>IP</code>地址的情形</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>Socket(InetAddress address, int port, InetAddress localAddr, int localPort)</code></td>
+<td align="left">Creates a socket and connects it to the specified remote address on the specified remote port.</td>
+</tr>
+</tbody></table>
+<p>上面两个构造器中指定<strong>远程主机</strong>时既可使用<code>InetAddress</code>来指定,也可直接使用<code>String</code>对象来指定,但程序通常使用<code>String</code>对象(如192.168.2.23)来指定远程<code>IP</code>地址。当本地主机只有一个IP地址时,使用第一类Socket构造器更为简单。如下代码所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建连接到本机、30000端口的`Socket`</span></span><br><span class="line">Socket socket = <span class="keyword">new</span> Socket(<span class="string">"127.0.0.1"</span> , <span class="number">30000</span>);</span><br><span class="line"><span class="comment">//下面就可以使用`Socket`进行通信了</span></span><br></pre></td></tr></table></figure>
+<p>当程序执行上面<code>Socket</code>构造器时,该代码将会连接到指定服务器,让服务器端的<code>ServerSocket</code>的<code>accept()</code>方法向下执行,于是服务器端和客户端就产生一对互相连接的<code>Socket</code>。</p>
+<p>上面程序连接到“远程主机”的地址使用的是127.0.0.1,这个IP地址是一个特殊的地址,它总是代表本机的<code>IP</code>地址。因为本书的示例程序的服务器端、客户端都是在本机运行的,所以<code>Socket</code>连接的远程主机的IP地址使用127.0.0.1</p>
+<h2 id="获取Socket的输入输出流"><a href="#获取Socket的输入输出流" class="headerlink" title="获取Socket的输入输出流"></a>获取Socket的输入输出流</h2><p>当客户端、服务器端产生了对应的<code>Socket</code>之后,就得到了如图17.4所示的通信示意图,程序无须再区分服务器端、客户端,而是通过各自的<code>Socket</code>进行通信。<code>Socket</code>提供了如下两个方法来获取输入流和输出流。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>InputStream getInputStream()</code></td>
+<td align="left">返回该<code>Socket</code>对象对应的输入流,让程序通过该输入流从<code>Socket</code>中取出数据。</td>
+</tr>
+<tr>
+<td align="left"><code>OutputStream getOutputStream()</code></td>
+<td align="left">返回该<code>Socket</code>对象对应的输岀流,让程序通过该输出流向<code>Socket</code>中输出数据。</td>
+</tr>
+</tbody></table>
+<p>看到这两个方法返回的<code>InputStream</code>和<code>OutputStream</code>,读者应该可以明白<code>Java</code>在设计IO体系上的苦心了——不管底层的IO流是怎样的节点流:文件流也好,网络<code>Socket</code>产生的流也好,程序都可以将其包装成处理流,从而提供更多方便的处理。下面以一个最简单的网络通信程序为例来介绍基于<code>TCP</code>协议的网络通信。</p>
+<h2 id="程序示例-最简单的TCP通信"><a href="#程序示例-最简单的TCP通信" class="headerlink" title="程序示例 最简单的TCP通信"></a>程序示例 最简单的TCP通信</h2><p>下面的服务器端程序非常简单,它仅仅建立<code>ServerSocket</code>监听,并使用<code>Socket</code>获取输出流输出。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.net.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Server</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 创建一个ServerSocket，用于监听客户端Socket的连接请求</span></span><br><span class="line">        ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">30000</span>);</span><br><span class="line">        <span class="comment">// 采用循环不断接受来自客户端的请求</span></span><br><span class="line">        <span class="keyword">int</span> count = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 每当接受到客户端Socket的请求，服务器端也对应产生一个Socket</span></span><br><span class="line">            Socket server = serverSocket.accept();</span><br><span class="line">            <span class="comment">// 将Socket对应的输出流包装成PrintStream</span></span><br><span class="line">            PrintStream ps = <span class="keyword">new</span> PrintStream(server.getOutputStream());</span><br><span class="line">            <span class="comment">// 进行普通IO操作</span></span><br><span class="line">            ps.println(<span class="string">"你好! 你是第"</span>+(count++)+<span class="string">"号客户端"</span>);</span><br><span class="line">            <span class="comment">// 关闭输出流，关闭Socket</span></span><br><span class="line">            ps.close();</span><br><span class="line">            server.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面的客户端程序也非常简单,它仅仅使用<code>Socket</code>建立与指定IP地址、指定端口的连接,并使用<code>Socket</code>获取输入流读取数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.net.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        Socket socket = <span class="keyword">new</span> Socket(<span class="string">"127.0.0.1"</span>, <span class="number">30000</span>); <span class="comment">// ①</span></span><br><span class="line">        <span class="comment">// 将Socket对应的输入流包装成BufferedReader</span></span><br><span class="line">        BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(socket.getInputStream()));</span><br><span class="line">        <span class="comment">// 进行普通IO操作</span></span><br><span class="line">        String line = br.readLine();</span><br><span class="line">        System.out.println(<span class="string">"来自服务器的数据："</span> + line);</span><br><span class="line">        <span class="comment">// 关闭输入流、socket</span></span><br><span class="line">        br.close();</span><br><span class="line">        socket.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中①号代码是使用<code>Socket</code>和<code>ServerSocket</code>建立网络连接的代码,接下来代码通过<code>Socket</code>获取输入流、输岀流进行通信的代码。通过程序不难看出,一旦使用<code>ServerSocket</code>,<code>Socket</code>建立网络连接之后,程序通过网络通信与普通<code>IO</code>并没有太大的区别。<br>先运行程序中的<code>Server</code>类,将看到服务器一直处于等待状态,因为服务器使用了死循环来接收来自客户端的请求;<br>再运行<code>Client</code>类,将看到程序输岀:“来自服务器的数据：来自服务器的数据：你好! 你是第0号客户端”,这表明客户端和服务器端通信成功。<br>上面程序为了突出通过<code>ServerSocket</code>和<code>Socket</code>建立连接,并通过底层<code>IO</code>流进行通信的主题,程序没有进行异常处理,也没有使用<code>finally</code>块来关闭资源</p>
+<h2 id="设置超时时间"><a href="#设置超时时间" class="headerlink" title="设置超时时间"></a>设置超时时间</h2><p>在实际应用中,程序可能不想让执行网络连接、读取服务器数据的进程一直阻塞,而是希望当网络连接、读取操作超过合理时间之后,系统自动认为该操作失败,这个合理时间就是超时时长。<code>Socket</code>对象提供了一个<code>setSoTimeout(int timeout)</code>方法来设置超时时长。如下代码片段所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Socket s=<span class="keyword">new</span> Socket(<span class="string">"127.0.0.1"</span>,<span class="number">30000</span>);</span><br><span class="line"><span class="comment">//设置10秒之后即认为超时</span></span><br><span class="line">s.setsoTimeout(<span class="number">10000</span>);</span><br></pre></td></tr></table></figure>
+<p>为<code>Socket</code>对象指定了超时时长之后,如果在使用<code>Socket</code>进行读、写操作完成之前超出了该时间限制,那么这些方法就会抛出<code>SocketTimeoutException</code>异常,程序可以对该异常进行捕获,并进行适当处理。如下代码所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="comment">//使用 Scanner来读取网络输入流中的数据</span></span><br><span class="line">    Scanner scan = <span class="keyword">new</span> Scanner(s.getInputstream());</span><br><span class="line">    <span class="comment">//读取一行字符</span></span><br><span class="line">    string line = scan.nextline();</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//捕获 SocketTimeoutException异常</span></span><br><span class="line"><span class="keyword">catch</span>(SocketTimeoutException ex)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//对异常进行处理</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Socket连接服务器时指定超时时长"><a href="#Socket连接服务器时指定超时时长" class="headerlink" title="Socket连接服务器时指定超时时长"></a><code>Socket</code>连接服务器时指定超时时长</h3><p>假设程序需要<strong>为<code>Socket</code>连接服务器时指定超时时长</strong>,即经过指定时间后,如果该<code>Socket</code>还未连接到远程服务器,则系统认为该<code>Socket</code>连接超时。但<code>Socket</code>的所有构造器里都没有提供指定超时时长的参数,所以程序应该先创建一个无连接的<code>Socket</code>,再调用<code>Socket</code>的<code>connect()</code>方法来连接远程服务器而<code>connec</code>方法就可以接收一个超时时长参数。如下代码所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建一个无连接的 Socket</span></span><br><span class="line">Socket s= <span class="keyword">new</span>.Socket());</span><br><span class="line"><span class="comment">//让该 Socket连接到远程服务器,如果经过10秒还没有连接上,则认为连接超时</span></span><br><span class="line">s.connect(<span class="keyword">new</span> InetSocketAddress(host, port), <span class="number">10000</span>);</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/449f9dda/" title="17.3.3 使用Socket进行通信">https://lanlan2017.github.io/JavaReadingNotes/449f9dda/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/787fbef9/" rel="next" title="17.3.2 使用ServerSocket创建TCP服务器端">
+                  <i class="fa fa-chevron-left"></i> 17.3.2 使用ServerSocket创建TCP服务器端
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/f22786ee/" rel="prev" title="17.3.4 加入多线程">
+                  17.3.4 加入多线程 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#17-3-3-使用Socket进行通信"><span class="nav-text">17.3.3 使用Socket进行通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#本地主机只有一个IP地址的情况"><span class="nav-text">本地主机只有一个IP地址的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#适用于本地主机有多个IP地址的情况"><span class="nav-text">适用于本地主机有多个IP地址的情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取Socket的输入输出流"><span class="nav-text">获取Socket的输入输出流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例-最简单的TCP通信"><span class="nav-text">程序示例 最简单的TCP通信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置超时时间"><span class="nav-text">设置超时时间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Socket连接服务器时指定超时时长"><span class="nav-text">Socket连接服务器时指定超时时长</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

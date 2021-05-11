@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="3.3 @RequestParam注解&amp;nbsp;@RequestParam注解用途&amp;nbsp;@RequestParam注解属性&amp;nbsp;请求方法的参数可以为 基本类型或String&amp;nbsp;示例 @RequestMapping和@RequestParam注解的使用&amp;nbsp;项目结构&amp;nbsp;User.java&amp;nbsp;UserController.java&amp;nbsp;register">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.3 @RequestParam注解">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/b672b7a5/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="3.3 @RequestParam注解&amp;nbsp;@RequestParam注解用途&amp;nbsp;@RequestParam注解属性&amp;nbsp;请求方法的参数可以为 基本类型或String&amp;nbsp;示例 @RequestMapping和@RequestParam注解的使用&amp;nbsp;项目结构&amp;nbsp;User.java&amp;nbsp;UserController.java&amp;nbsp;register">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-18T10:18:26.000Z">
+<meta property="article:modified_time" content="2020-04-26T03:31:10.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b672b7a5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>3.3 @RequestParam注解 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/b672b7a5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">3.3 @RequestParam注解<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC3%E7%AB%A0%20Spring%20MVC%E7%9A%84%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/3.3%20@RequestParam%E6%B3%A8%E8%A7%A3/3.3%20@RequestParam%E6%B3%A8%E8%A7%A3.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-18 10:18:26" itemprop="dateCreated datePublished" datetime="2019-08-18T10:18:26+00:00">2019-08-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-26 03:31:10" itemprop="dateModified" datetime="2020-04-26T03:31:10+00:00">2020-04-26</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC3%E7%AB%A0-Spring-MVC%E7%9A%84%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第3章 Spring MVC的常用注解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC3%E7%AB%A0-Spring-MVC%E7%9A%84%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/3-3-RequestParam%E6%B3%A8%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">3.3 @RequestParam注解</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/b672b7a5/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/b672b7a5/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/b672b7a5/#3-3-RequestParam注解" class="header_1">3.3 @RequestParam注解</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#-RequestParam注解用途" class="header_2">@RequestParam注解用途</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#-RequestParam注解属性" class="header_2">@RequestParam注解属性</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#请求方法的参数可以为-基本类型或String" class="header_2">请求方法的参数可以为 基本类型或String</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#示例-RequestMapping和-RequestParam注解的使用" class="header_1">示例 @RequestMapping和@RequestParam注解的使用</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#User-java" class="header_2">User.java</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#UserController-java" class="header_2">UserController.java</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#registerForm-jsp" class="header_2">registerForm.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#loginForm-jsp" class="header_2">loginForm.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#welcome-jsp" class="header_2">welcome.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/b672b7a5/#测试" class="header_2">测试</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="3-3-RequestParam注解"><a href="#3-3-RequestParam注解" class="headerlink" title="3.3 @RequestParam注解"></a>3.3 @RequestParam注解</h1><h2 id="RequestParam注解用途"><a href="#RequestParam注解用途" class="headerlink" title="@RequestParam注解用途"></a>@RequestParam注解用途</h2><p><code>org.springframework.web.bind.annotation.RequestParam</code>注解用于**将指定的<mark>请求参数</mark>赋值给方法中的<mark>形参</mark>**。</p>
+<h2 id="RequestParam注解属性"><a href="#RequestParam注解属性" class="headerlink" title="@RequestParam注解属性"></a>@RequestParam注解属性</h2><p>使用<code>@RequestParam</code>注解可指定如下表所示的属性。</p>
+<table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">类型</th>
+<th align="left">是否必要</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>name</code></td>
+<td align="left"><code>String</code></td>
+<td align="left">否</td>
+<td align="left">指定请求参数绑定的名称</td>
+</tr>
+<tr>
+<td align="left"><code>value</code></td>
+<td align="left"><code>String</code></td>
+<td align="left">否</td>
+<td align="left"><code>name</code>属性的别名</td>
+</tr>
+<tr>
+<td align="left"><code>required</code></td>
+<td align="left"><code>boolean</code></td>
+<td align="left">否</td>
+<td align="left">指定参数是否必须绑定</td>
+</tr>
+<tr>
+<td align="left"><code>dafaultValue</code></td>
+<td align="left"><code>String</code></td>
+<td align="left">否</td>
+<td align="left">如果没有传递参数而使用的默认值</td>
+</tr>
+</tbody></table>
+<h2 id="请求方法的参数可以为-基本类型或String"><a href="#请求方法的参数可以为-基本类型或String" class="headerlink" title="请求方法的参数可以为 基本类型或String"></a>请求方法的参数可以为 基本类型或String</h2><p>请求处理方法参数的可选类型为<code>Java</code><mark>基本数据类型</mark>和<code>String</code>。<br>示例代码如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RequestMapping</span>(value=<span class="string">"/login"</span>)</span><br><span class="line"><span class="function"><span class="keyword">public</span> ModelAndView <span class="title">login</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    @RequestParam(<span class="string">"loginname"</span>)</span> String loginname,</span></span><br><span class="line"><span class="function">    @<span class="title">RequestParam</span><span class="params">(<span class="string">"password"</span>)</span> String password</span></span><br><span class="line"><span class="function">)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ......;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设请求如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;context&#x2F;login?loginname&#x3D;jack&amp;password&#x3D;123456</span><br></pre></td></tr></table></figure>
+<!--replace:loginname=login name-->
+<p>以上代码会将请求中的<code>loginname</code>参数的值<code>&quot;jack&quot;</code>赋给<code>loginname</code>变量, <code>password</code>参数的值<code>&quot;123456&quot;</code>赋给<code>password</code>变量。<br>需要注意的是,如果请求中不包含<code>&quot;loginname&quot;</code>参数,则将产生异常!因此,如果不能保证存在<code>&quot;loginname&quot;</code>参数,建议使用：<br><code>@RequestParam(value=&quot;loginname&quot;, required= false)</code><br><code>@RequestParam</code>注解还有如下写法:<br><code>@RequestParam(value=&quot;loginname&quot;, required=true, defaultValue=&quot;admin&quot;);</code><br>其中<code>required</code>参数默认值为<code>true</code>,所以这里可以省略<code>required=true</code>这个参数。</p>
+<h1 id="示例-RequestMapping和-RequestParam注解的使用"><a href="#示例-RequestMapping和-RequestParam注解的使用" class="headerlink" title="示例 @RequestMapping和@RequestParam注解的使用"></a>示例 @RequestMapping和@RequestParam注解的使用</h1><p>新建一个项目<code>RequestMappingTest</code>,加入所需的<code>jar</code>文件。</p>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><details><summary>展开/折叠</summary>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\RequestMappingTest</span><br><span class="line">├─src\</span><br><span class="line">│ └─org\</span><br><span class="line">│   └─fkit\</span><br><span class="line">│     ├─controller\</span><br><span class="line">│     │ └─UserController.java</span><br><span class="line">│     └─domain\</span><br><span class="line">│       └─User.java</span><br><span class="line">└─WebContent\</span><br><span class="line">  ├─META-INF\</span><br><span class="line">  │ └─MANIFEST.MF</span><br><span class="line">  └─WEB-INF\</span><br><span class="line">    ├─content\</span><br><span class="line">    │ ├─loginForm.jsp</span><br><span class="line">    │ ├─registerForm.jsp</span><br><span class="line">    │ └─welcome.jsp</span><br><span class="line">    ├─lib\</span><br><span class="line">    │ ├─commons-logging-1.2.jar</span><br><span class="line">    │ ├─spring-aop-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-aspects-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-beans-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-context-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-context-indexer-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-context-support-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-core-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-expression-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-instrument-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-jcl-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-jdbc-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-jms-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-messaging-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-orm-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-oxm-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-test-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-tx-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-web-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-webflux-5.0.1.RELEASE.jar</span><br><span class="line">    │ ├─spring-webmvc-5.0.1.RELEASE.jar</span><br><span class="line">    │ └─spring-websocket-5.0.1.RELEASE.jar</span><br><span class="line">    ├─springmvc-config.xml</span><br><span class="line">    └─web.xml</span><br></pre></td></tr></table></figure>
+
+</details>
+
+<p>示例代码如下:</p>
+<h2 id="User-java"><a href="#User-java" class="headerlink" title="User.java"></a>User.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.domain;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="comment">// 域对象，实现序列化接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="comment">// 私有字段</span></span><br><span class="line">    <span class="keyword">private</span> String loginname;</span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="comment">// 公共构造器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// set/get方法</span></span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>User</code>是一个域对象,用来接收并封装从前台页面传递过来的数据。</p>
+<h2 id="UserController-java"><a href="#UserController-java" class="headerlink" title="UserController.java"></a>UserController.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.fkit.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</span><br><span class="line"><span class="keyword">import</span> org.springframework.ui.Model;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PostMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestParam;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Controller注解用于指示该类是一个控制器，可以同时处理多个请求动作</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="comment">// RequestMapping可以用来注释一个控制器类，此时，所有方法都将映射为相对于类级别的请求,</span></span><br><span class="line"><span class="comment">// 表示该控制器处理所有的请求都被映射到 value属性所指示的路径下</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(value = <span class="string">"/user"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 静态List&lt;User&gt;集合，此处代替数据库用来保存注册的用户信息</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;User&gt; userList;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// UserController类的构造器，初始化List&lt;User&gt;集合</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">UserController</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        userList = <span class="keyword">new</span> ArrayList&lt;User&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 该方法映射的请求为http://localhost:8080/context/user/register，该方法支持GET请求</span></span><br><span class="line">    <span class="meta">@GetMapping</span>(value = <span class="string">"/register"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">registerForm</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"register GET方法被调用..."</span>);</span><br><span class="line">        <span class="comment">// 跳转到注册页面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"registerForm"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 该方法映射的请求为http://localhost:8080/RequestMappingTest/user/register，该方法支持POST请求</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(value = <span class="string">"/register"</span>)</span><br><span class="line">    <span class="comment">// 将请求中的loginname参数的值赋给loginname变量,password和username同样处理</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">register</span><span class="params">(@RequestParam(<span class="string">"loginname"</span>)</span> String loginname,</span></span><br><span class="line"><span class="function">            @<span class="title">RequestParam</span><span class="params">(<span class="string">"password"</span>)</span> String password,</span></span><br><span class="line"><span class="function">            @<span class="title">RequestParam</span><span class="params">(<span class="string">"username"</span>)</span> String username)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"register POST方法被调用..."</span>);</span><br><span class="line">        <span class="comment">// 创建User对象</span></span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        user.setLoginname(loginname);</span><br><span class="line">        user.setPassword(password);</span><br><span class="line">        user.setUsername(username);</span><br><span class="line">        <span class="comment">// 模拟数据库存储User信息</span></span><br><span class="line">        userList.add(user);</span><br><span class="line">        <span class="comment">// 跳转到登录页面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"loginForm"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 该方法映射的请求为http://localhost:8080/RequestMappingTest/user/login</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(<span class="string">"/login"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">login</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">            // 将请求中的loginname参数的值赋给loginname变量,password同样处理</span></span></span><br><span class="line"><span class="function"><span class="params">            @RequestParam(<span class="string">"loginname"</span>)</span> String loginname,</span></span><br><span class="line"><span class="function">            @<span class="title">RequestParam</span><span class="params">(<span class="string">"password"</span>)</span> String password,</span></span><br><span class="line"><span class="function">            Model model)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"登录名:"</span> + loginname + <span class="string">" 密码:"</span> + password);</span><br><span class="line">        <span class="comment">// 到集合中查找用户是否存在，此处用来模拟数据库验证</span></span><br><span class="line">        <span class="keyword">for</span> (User user : userList)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (user.getLoginname().equals(loginname)</span><br><span class="line">                    &amp;&amp; user.getPassword().equals(password))</span><br><span class="line">            &#123;</span><br><span class="line">                model.addAttribute(<span class="string">"user"</span>, user);</span><br><span class="line">                <span class="keyword">return</span> <span class="string">"welcome"</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"loginForm"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>UserControlller</code>类的代码解释如下:</p>
+<ol>
+<li><code>UserController</code>类使用了<code>@Controlller</code>注解,是一个控制器类。</li>
+<li>在<code>UserControlller</code>类上面使用了<code>@RequestMapping(value=&quot;/user&quot;)</code>注解,表示该控制器处理的所有请求都被映射到<code>/user</code>路径下。</li>
+<li>本例没有使用数据库存储用户注册信息,所以定义了一个静态的<code>List</code>集合<code>userList</code>用来代替数据库存储用户数据。</li>
+<li><code>registerForm</code>方法使用了<code>@GetMapping(value=&quot;/register&quot;)</code>注解,表示该方法映射的请求为:<br><code>http://localhost:8080/RequestMappingTest/user/register</code>,并且只支持<code>GET</code>请求。<br>该方法返回字符串<code>&quot;registerForm&quot;</code>,参考<code>springmvc-config.xml</code>中的视图解析器的配置信息,可以知道该方法只是跳转到<code>registerForm.jsp</code>注册页面</li>
+<li><code>register</code>方法使用了<code>@PostMapping(value=&quot;/register&quot;)</code>注解,表示该方法映射的请求为:<br><code>http://localhost:8080/RequestMappingTest/user/register</code>并且只支持<code>POST</code>请求。<br>该方法<strong>使用<code>@RequestParam</code>注解将指定的请求参数赋值给方法中的形参</strong>,之后创建了一个<code>User</code>对象保存用户传递的注册信息,最后将<code>User</code>对象存储到<code>userList</code>集合中,然后登录页面就可以到<code>userList</code>集合中进行用户登录业务逻辑的判断。该方法返回字符串<code>loginForm</code>,这样会跳转到<code>loginForm.jsp</code>登录页面。<ul>
+<li>提示:<code>registerForm</code>方法和<code>register</code>方法虽然映射的请求一样,但是<code>registerForm</code>方法支持的是<code>GET</code>请求,而<code>register</code>方法支持的是<code>POST</code>请求。</li>
+</ul>
+</li>
+<li><code>login</code>方法使用了<code>@RequestMapping(&quot;/login&quot;)</code>注解,表示该方法映射的请求为:<br><code>http://localhost/RequestMappingTest/user/login</code>,这里没有设置<code>method</code>属性,表示支持所有方式的请求。该方法也使用<code>@RequestParam</code>注解将指定的请求参数赋值给方法中的形参。之后到集合中査找用户是否存在,此处用来模拟数据库验证。<code>login</code>方法中还有一个参数<code>Model</code>对象,调用该对象的<code>addAttribute</code>方法可以将数据添加到<code>request</code>当中。最后,如果用户登录成功则返回字符串<code>welcome</code>,并跳转到<code>welcome.jsp</code>欢迎页面;登录失败则返回字符串 <code>loginForm</code>,并跳转到<code>loginForm.jsp</code>登录页面.</li>
+</ol>
+<h2 id="registerForm-jsp"><a href="#registerForm-jsp" class="headerlink" title="registerForm.jsp"></a>registerForm.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;注册页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;注册页面&lt;/h3&gt;</span><br><span class="line">    &lt;form action=<span class="string">"register"</span> method=<span class="string">"post"</span>&gt;</span><br><span class="line">        &lt;table&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;登录名: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="text" id="loginname" name="loginname"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;密码: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="password" id="password" name="password"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;真实姓名: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="text" id="username" name="username"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;input id="submit" type="submit" value="注册"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">        &lt;/table&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><code>registerForm.jsp</code>是一个注册页面,用户可以在这里输入登录名、密码和真实姓名,该表单被提交到<code>register</code>请求。注意,这里使用的是<code>POST</code>方式,响应请求的是<code>UserController</code>类的<code>register</code>方法。</p>
+<h2 id="loginForm-jsp"><a href="#loginForm-jsp" class="headerlink" title="loginForm.jsp"></a>loginForm.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;登录页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;登录页面&lt;/h3&gt;</span><br><span class="line">    &lt;form action=<span class="string">"login"</span> method=<span class="string">"post"</span>&gt;</span><br><span class="line">        &lt;table&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;登录名: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="text" id="loginname" name="loginname"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;密码: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="password" id="password" name="password"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;input id="submit" type="submit" value="登录"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">        &lt;/table&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><code>lognForm.jsp</code>是一个登录页面,用户可以在这里输入登录名和密码,该表单被提交<code>login</code>请求。这里使用的是<code>POST</code>方式,响应请求的是<code>UserControlller</code>类的<code>login</code>方法。</p>
+<h2 id="welcome-jsp"><a href="#welcome-jsp" class="headerlink" title="welcome.jsp"></a>welcome.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;测试@RequestMapping注解&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;!-- 页面可以访问Controller传递传递出来的模型User对象 --&gt;</span><br><span class="line">    欢迎[$&#123;requestScope.user.username &#125;]登陆</span><br><span class="line">    &lt;br&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><code>welcome.jsp</code>是一个欢迎页面,用户登录成功后跳转到该页面,该页面使用了<code>EL</code>表达式访问<code>request</code>当中的<code>user</code>对象的<code>username</code>属性<br>此外,还需要在<code>web.xml</code>文件中配置<code>Spring MVC</code>的前端控制器<code>DispatcherServlet</code>,因为每次配置基本相同,此处不再赘述,读者可自行配置.<br>同时<code>Spring MVC</code>还需要<code>springmvc-config.xml</code>配置文件,<code>ControllerTest</code>项目中的<code>springmvc-config.xml</code>文件内容一致.读者可以自行配置。</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>部署<code>RequestMappingTest</code>这个<code>Web</code>应用,在浏览器中输入如下<code>URL</code>来测试应用:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;RequestMappingTest&#x2F;user&#x2F;register</span><br></pre></td></tr></table></figure>
+<ul>
+<li>此时可以在浏览器上看到<code>注册页面</code>,表示<code>Spring MVC</code>成功跳转到注册页面<code>registerForm.jsp</code>.</li>
+<li>输入登录名<code>&quot;test&quot;</code>,密码<code>&quot;123456&quot;</code>,真实姓名<code>&quot;测试用户&quot;</code>,单击<code>&quot;注册&quot;</code>按钮。请求将会被提交到<code>UserControlller</code>类的<code>register</code>方法进行注册,注册的用户信息会被保存到<code>UserController</code>类的<code>userList</code>静态集合中。若注册成功,将会跳转到<code>登录页面</code>。</li>
+<li>输入登录名<code>&quot;test&quot;</code>,密码<code>&quot;123456&quot;</code>,单击<code>&quot;登录&quot;</code>按钮。请求将会被提交到<code>UserController</code>类的<code>login</code>方法进行登录验证,若验证成功,将会跳转到欢迎页面.</li>
+</ul>
+<!--SSTStop-->
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/b672b7a5/" title="3.3 @RequestParam注解">https://lanlan2017.github.io/JavaReadingNotes/b672b7a5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/af8b0d33/" rel="next" title="3.2.6页面转发">
+                  <i class="fa fa-chevron-left"></i> 3.2.6页面转发
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/d0a0f6a4/" rel="prev" title="3.4 @PathVariable注解">
+                  3.4 @PathVariable注解 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#3-3-RequestParam注解"><span class="nav-text">3.3 @RequestParam注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RequestParam注解用途"><span class="nav-text">@RequestParam注解用途</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RequestParam注解属性"><span class="nav-text">@RequestParam注解属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求方法的参数可以为-基本类型或String"><span class="nav-text">请求方法的参数可以为 基本类型或String</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例-RequestMapping和-RequestParam注解的使用"><span class="nav-text">示例 @RequestMapping和@RequestParam注解的使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目结构"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#User-java"><span class="nav-text">User.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UserController-java"><span class="nav-text">UserController.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#registerForm-jsp"><span class="nav-text">registerForm.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loginForm-jsp"><span class="nav-text">loginForm.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#welcome-jsp"><span class="nav-text">welcome.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试"><span class="nav-text">测试</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

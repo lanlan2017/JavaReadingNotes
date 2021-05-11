@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2.6.6 request对象&amp;nbsp;1. 获取请求头 获取请求参数&amp;nbsp;获取请求参数方法&amp;nbsp;获取请求头方法&amp;nbsp;请求头和请求参数的区别&amp;nbsp;GET请求POST请求&amp;nbsp;&#96;GET&#96;方式的请求&amp;nbsp;&#96;POST&#96;方式的请求&amp;nbsp;form.jsp&amp;nbsp;只有带有name属性的表单域才会生成请求参数&amp;nbsp;request1.jsp&amp;nbsp;请求参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.6.6 request对象 1. 获取请求头 获取请求参数">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/da442ae0/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="2.6.6 request对象&amp;nbsp;1. 获取请求头 获取请求参数&amp;nbsp;获取请求参数方法&amp;nbsp;获取请求头方法&amp;nbsp;请求头和请求参数的区别&amp;nbsp;GET请求POST请求&amp;nbsp;&#96;GET&#96;方式的请求&amp;nbsp;&#96;POST&#96;方式的请求&amp;nbsp;form.jsp&amp;nbsp;只有带有name属性的表单域才会生成请求参数&amp;nbsp;request1.jsp&amp;nbsp;请求参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-07T03:16:45.000Z">
+<meta property="article:modified_time" content="2020-06-10T08:12:30.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/da442ae0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>2.6.6 request对象 1. 获取请求头 获取请求参数 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/da442ae0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">2.6.6 request对象 1. 获取请求头 获取请求参数<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC2%E7%AB%A0%20JSP%20Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2.6%20JSP%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%849%E4%B8%AA%E5%86%85%E7%BD%AE%E5%AF%B9%E8%B1%A1/2.6.6%20request%E5%AF%B9%E8%B1%A1%201.%20%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%A4%B4%20%E8%8E%B7%E5%8F%96%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-07 03:16:45" itemprop="dateCreated datePublished" datetime="2020-06-07T03:16:45+00:00">2020-06-07</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-10 08:12:30" itemprop="dateModified" datetime="2020-06-10T08:12:30+00:00">2020-06-10</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第2章 JSP Servlet及相关技术详解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2-6-JSP%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%849%E4%B8%AA%E5%86%85%E7%BD%AE%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">2.6 JSP脚本中的9个内置对象</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/da442ae0/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/da442ae0/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/da442ae0/#2-6-6-request对象" class="header_1">2.6.6 request对象</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#1-获取请求头-获取请求参数" class="header_1">1. 获取请求头 获取请求参数</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#获取请求参数方法" class="header_2">获取请求参数方法</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#获取请求头方法" class="header_2">获取请求头方法</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#请求头和请求参数的区别" class="header_2">请求头和请求参数的区别</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#GET请求POST请求" class="header_2">GET请求POST请求</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#-GET-方式的请求" class="header_3">`GET`方式的请求</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#-POST-方式的请求" class="header_3">`POST`方式的请求</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#form-jsp" class="header_2">form.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#只有带有name属性的表单域才会生成请求参数" class="header_2">只有带有name属性的表单域才会生成请求参数</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#request1-jsp" class="header_2">request1.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#请求参数的字符集" class="header_2">请求参数的字符集</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#请求的字符集合表单页面的字符集一样" class="header_3">请求的字符集合表单页面的字符集一样</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#测试" class="header_2">测试</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#request2-jsp" class="header_2">request2.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#获取GET的请求参数值" class="header_2">获取GET的请求参数值</a>&nbsp;<br><a href="/JavaReadingNotes/da442ae0/#request3-jsp" class="header_3">request3.jsp</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="2-6-6-request对象"><a href="#2-6-6-request对象" class="headerlink" title="2.6.6 request对象"></a>2.6.6 request对象</h1><p><code>request</code>对象是<code>JSP</code>中重要的对象,每个<code>request</code>对象封装着一次用户请求,并且所有的请求参数都被封装在<code>request</code>对象中,因此<code>request</code>对象是获取请求参数的重要途径。<br>除此之外,<code>request</code>可代表本次请求范围,所以还可用于操作<code>request</code>范围的属性。</p>
+<h1 id="1-获取请求头-获取请求参数"><a href="#1-获取请求头-获取请求参数" class="headerlink" title="1. 获取请求头 获取请求参数"></a>1. 获取请求头 获取请求参数</h1><p><code>web</code>应用是请求/响应架构的应用,浏览器发送请求时通常总会附带一些请求头,还可能包含一些请求参数发送给服务器,服务器端负责解析请求头凊请求参数的就是<code>JSP</code>或<code>Servlet</code>,而<code>JSP</code>和<code>Servlet</code>取得请求参数的途径就是<code>request</code>.</p>
+<h2 id="获取请求参数方法"><a href="#获取请求参数方法" class="headerlink" title="获取请求参数方法"></a>获取请求参数方法</h2><p><code>request</code>是<code>HttpServletrequest</code>接口的实例,它提供了如下几个方法来获取请求参数。</p>
+<table>
+<thead>
+<tr>
+<th align="left">获取请求参数方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>String getParameter(String paramName)</code></td>
+<td align="left">获取<code>paramName</code>请求参数的值。</td>
+</tr>
+<tr>
+<td align="left"><code>Map getParameterMap()</code></td>
+<td align="left">获取所有请求参数名和参数值所组成的<code>Map</code>对象</td>
+</tr>
+<tr>
+<td align="left"><code>Enumeration getParameterNames()</code></td>
+<td align="left">获取所有请求参数名所组成的<code>Enumeration</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>String[] getParameterValues(String name)</code></td>
+<td align="left"><code>paramName</code>请求参数的值,当该请求参数有多个值时,该方法将返回多个值所组成的数组。</td>
+</tr>
+</tbody></table>
+<h2 id="获取请求头方法"><a href="#获取请求头方法" class="headerlink" title="获取请求头方法"></a>获取请求头方法</h2><p><code>HttpServletRequest</code>提供了如下方法来访问请求头。</p>
+<ul>
+<li><code>String getHeader(String name)</code>:根据指定请求头的值。</li>
+<li><code>java.util.Enumeration&lt;String&gt; GetHeaderNames()</code>:获取所有请求头的名称。</li>
+<li><code>java.util.Enumeration&lt;String&gt; getHeaders(String name)</code>:获取指定请求头的多个值</li>
+<li><code>int getIntHeader(String name)</code>:获取指定请求头的值,并将该值转为整数值。</li>
+</ul>
+<h2 id="请求头和请求参数的区别"><a href="#请求头和请求参数的区别" class="headerlink" title="请求头和请求参数的区别"></a>请求头和请求参数的区别</h2><p>对于开发人员来说,请求头和请求参数都是由用户发送到服务器的数据,区别在于:<br><strong>请求头通常由浏览器自动添加</strong>,因此一次请求总是包含若干请求头;<br>请求参数则通常需要开发人员控制添加,让客户端发送。</p>
+<h2 id="GET请求POST请求"><a href="#GET请求POST请求" class="headerlink" title="GET请求POST请求"></a>GET请求POST请求</h2><p>客户端发送的请求参数通常分两种情况。</p>
+<h3 id="GET方式的请求"><a href="#GET方式的请求" class="headerlink" title="GET方式的请求"></a><code>GET</code>方式的请求</h3><p>直接在浏览器地址栏输入访问地址所发送的请求或提交表单发送请求时,该表单对应的<code>form</code>元素没有设置<code>method</code>属性,或设置<code>method</code>属性为<code>get</code>,这几种请求都是<code>GET</code>方式的请求。<code>GET</code>方式的请求会将请求参数的名和值转换成字符串,并附加在原<code>URL</code>之后,因此可以在地址栏中看到请求参数名和值。且<code>GET</code>请求传送的数据量较小,一般不能大于<code>2KB</code>。</p>
+<h3 id="POST方式的请求"><a href="#POST方式的请求" class="headerlink" title="POST方式的请求"></a><code>POST</code>方式的请求</h3><p>这种方式通常使用提交表单(由<code>form</code>元素表示)的方式来发送,且需要设置<code>form</code>元素的<code>method</code>属性为<code>post</code>。<code>POST</code>方式传送的数据量较大,通常认为<code>POST</code>请求参数的大小不受限制,但往往取决于服务器的限制,<code>POST</code>请求传输的数据量总比<code>GET</code>传输的数据量大。而且<code>POST</code>方式发送的请求参数以及对应的值放在<code>HTML HEADER</code>中传输,用户不能在地址栏里看到请求参数值,安全性相对较高。</p>
+<p>对比上面两种请求方式,不难发现,通常应该采用<code>POST</code>方式发送请求。</p>
+<p>几乎每个网站都会大量使用表单,表单用于收集用户信息,一旦用户提交请求,表单的信息将会提交给对应的处理程序,如果为<code>form</code>元素设置<code>method</code>属性为<code>post</code>,则表示发送<code>POST</code>请求。</p>
+<h2 id="form-jsp"><a href="#form-jsp" class="headerlink" title="form.jsp"></a>form.jsp</h2><p>下面是表单页面的代码</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;!DOCtype html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 收集参数的表单页 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;form id=<span class="string">"form1"</span> action=<span class="string">"request1.jsp"</span>&gt;</span><br><span class="line">用户名：&lt;br/&gt;</span><br><span class="line">&lt;input type=<span class="string">"text"</span> name=<span class="string">"name"</span>&gt;&lt;hr/&gt;</span><br><span class="line">性别：&lt;br/&gt;</span><br><span class="line">男：&lt;input type=<span class="string">"radio"</span> name=<span class="string">"gender"</span> value=<span class="string">"男"</span>&gt;</span><br><span class="line">女：&lt;input type=<span class="string">"radio"</span> name=<span class="string">"gender"</span> value=<span class="string">"女"</span>&gt;&lt;hr/&gt;</span><br><span class="line">喜欢的颜色：&lt;br/&gt;</span><br><span class="line">红：&lt;input type=<span class="string">"checkbox"</span> name=<span class="string">"color"</span> value=<span class="string">"红"</span>&gt;</span><br><span class="line">绿：&lt;input type=<span class="string">"checkbox"</span> name=<span class="string">"color"</span> value=<span class="string">"绿"</span>&gt;</span><br><span class="line">蓝：&lt;input type=<span class="string">"checkbox"</span> name=<span class="string">"color"</span> value=<span class="string">"蓝"</span>&gt;&lt;hr/&gt;</span><br><span class="line">来自的国家：&lt;br/&gt;</span><br><span class="line">&lt;select name=<span class="string">"country"</span>&gt;</span><br><span class="line">    &lt;option value="中国"&gt;中国&lt;/option&gt;</span><br><span class="line">    &lt;option value="美国"&gt;美国&lt;/option&gt;</span><br><span class="line">    &lt;option value="俄罗斯"&gt;俄罗斯&lt;/option&gt;</span><br><span class="line">&lt;/select&gt;&lt;hr/&gt;</span><br><span class="line">&lt;input type=<span class="string">"submit"</span> value=<span class="string">"提交"</span>&gt;</span><br><span class="line">&lt;input type=<span class="string">"reset"</span> value=<span class="string">"重置"</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>这个页面没有动态的<code>JSP</code>部分,它只是包含一个收集请求参数的表单,且粗体字部分设置了该表单的<code>action</code>为<code>requestl.jsp</code>,这表明提交该表单时,请求将发送到<code>requestl.Jsp</code>页面;粗体字代码还设置了<code>method</code>为<code>post</code>,这表明提交表单将发送<code>POST</code>请求。<br>除此之外,表单里还包含1个文本框、2个单选框、3个复选框及1个下拉列表框,另外包括“提交”和“重置”两个按钮。页面的执行效果如图2.24所示。<br>在该页面中输入相应信息后,单击“提交”按钮,表单域所代表的请求参数将通过<code>request</code>对象的<code>getParameter()</code>方法来取得。</p>
+<h2 id="只有带有name属性的表单域才会生成请求参数"><a href="#只有带有name属性的表单域才会生成请求参数" class="headerlink" title="只有带有name属性的表单域才会生成请求参数"></a>只有带有name属性的表单域才会生成请求参数</h2><p>并不是每个表单域都会生成请求参数,而是有<code>name</code>属性的表单域才生成请求参数.关于表单堿和请求参数的关系遵循如下4点。</p>
+<ul>
+<li>每个有<code>name</code>属性的表单域对应一个请求参数。</li>
+<li>如果有多个表单域有相同的<code>name</code>属性,则多个表单域只生成一个请求参数,只是该参数有多个值。</li>
+<li>表单域的<code>name</code>属性指定请求参数名,<code>value</code>指定请求参数值。</li>
+<li>如果某个表单城设置了<code>disabled</code>=” ‘<code>disabled</code>“属性,则该表单域不再生成请求参数。</li>
+</ul>
+<h2 id="request1-jsp"><a href="#request1-jsp" class="headerlink" title="request1.jsp"></a>request1.jsp</h2><p>上面的表单页向<code>request1.jsp</code>页面发送请求,<code>request1.jsp</code>页面的代码如下。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">"java.util.*"</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 获取请求头/请求参数 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;%</span><br><span class="line"><span class="comment">// 获取所有请求头的名称</span></span><br><span class="line">Enumeration&lt;String&gt; headerNames = request.getHeaderNames();</span><br><span class="line"><span class="keyword">while</span>(headerNames.hasMoreElements())</span><br><span class="line">&#123;</span><br><span class="line">    String headerName = headerNames.nextElement();</span><br><span class="line">    <span class="comment">// 获取每个请求、及其对应的值</span></span><br><span class="line">    out.println(</span><br><span class="line">        headerName + <span class="string">"--&gt;"</span> + request.getHeader(headerName) + <span class="string">"&lt;br/&gt;"</span>);</span><br><span class="line">&#125;</span><br><span class="line">out.println(<span class="string">"&lt;hr/&gt;"</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 设置解码方式，对于简体中文，使用UTF-8解码</span></span><br><span class="line">request.setCharacterEncoding(<span class="string">"UTF-8"</span>);   <span class="comment">// ①</span></span><br><span class="line"><span class="comment">// 下面依次获取表单域的值</span></span><br><span class="line">String name = request.getParameter(<span class="string">"name"</span>);</span><br><span class="line">String gender = request.getParameter(<span class="string">"gender"</span>);</span><br><span class="line"><span class="comment">// 如果某个请求参数有多个值，将使用该方法获取多个值</span></span><br><span class="line">String[] color = request.getParameterValues(<span class="string">"color"</span>);</span><br><span class="line">String national = request.getParameter(<span class="string">"country"</span>);</span><br><span class="line">%&gt;</span><br><span class="line"></span><br><span class="line">&lt;!-- 下面依次输出表单域的值 --&gt;</span><br><span class="line">您的名字：&lt;%=name%&gt;&lt;hr/&gt;</span><br><span class="line">您的性别：&lt;%=gender%&gt;&lt;hr/&gt;</span><br><span class="line">&lt;!-- 输出复选框获取的数组值 --&gt;</span><br><span class="line">您喜欢的颜色：&lt;%<span class="keyword">for</span>(String c : color)</span><br><span class="line">&#123;out.println(c + <span class="string">" "</span>);&#125;%&gt;&lt;hr/&gt;</span><br><span class="line">您来自的国家：&lt;%=national%&gt;&lt;hr/&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>上述页面中的代码示范了如何获取请求头、请求参数.</p>
+<h2 id="请求参数的字符集"><a href="#请求参数的字符集" class="headerlink" title="请求参数的字符集"></a>请求参数的字符集</h2><p>在获取表单域对应的请求参数值之前,先设置<code>request</code>编码的字符集(如①号代码所示).如果<code>POST</code>请求的请求参数里包含<strong>非西欧字符</strong>,则必须在获取请求参数之前先调用<code>setCharacterEncoding()</code>方法设置编码的字符集。</p>
+<h3 id="请求的字符集合表单页面的字符集一样"><a href="#请求的字符集合表单页面的字符集一样" class="headerlink" title="请求的字符集合表单页面的字符集一样"></a>请求的字符集合表单页面的字符集一样</h3><p>如果发送请求的表单页采用<code>UTF-8</code>字符集,该表单页发送的请求也将采用<code>UTF-8</code>字符集,所以本页面需要先执行如下方法:</p>
+<ul>
+<li><code>request.setCharacterEncoding(&quot;UTF-8&quot;);</code>:设置<code>request</code>编码所用的字符集。</li>
+</ul>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>在表单提交页的各个输入域内输入对应的值,然后单击“提交”按钮,<code>request1.jsp</code>就会出现如图2.25所示的效果</p>
+<p>如果需要传递的参数是普通字符串,而且仅需传递少量参数,可以选择使用<code>GET</code>方式发送请求参数,<code>GET</code>方式发送的请求参数被附加到地址栏的<code>URL</code>之后,地址栏的<code>URL</code>将变成如下形式:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url?param1&#x3D;value1&amp;param2&#x3D;value2&amp;......&amp;paramN&#x3D;valueN</span><br></pre></td></tr></table></figure>
+<p><code>URL</code>和参数之间以“?”分隔,而多个参数之间以“&amp;”分隔</p>
+<h2 id="request2-jsp"><a href="#request2-jsp" class="headerlink" title="request2.jsp"></a>request2.jsp</h2><p>下面的<code>JSP</code>页面示范了如何通过<code>request</code>来获取<code>GET</code>请求参数值</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 获取GET请求参数 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;%</span><br><span class="line"><span class="comment">// 获取name请求参数的值</span></span><br><span class="line">String name = request.getParameter(<span class="string">"name"</span>);</span><br><span class="line"><span class="comment">// 获取gender请求参数的值</span></span><br><span class="line">String gender = request.getParameter(<span class="string">"gender"</span>);</span><br><span class="line">%&gt;</span><br><span class="line">&lt;!-- 输出name变量值 --&gt;</span><br><span class="line">您的名字：&lt;%=name%&gt;&lt;hr/&gt;</span><br><span class="line">&lt;!-- 输出gender变量值 --&gt;</span><br><span class="line">您的性别：&lt;%=gender%&gt;&lt;hr/&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的页面中粗体字代码用于获取<code>GET</code>方式的请求参数,从这些代码不难看出:<strong><code>request</code>获取<code>POST</code>请求参数的代码和获取<code>GET</code>请求参数代码完全一样</strong>。<br>向该页面发送请求时直接在地址栏里增加一些<code>GET</code>方式的请求参数：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:&#x2F;&#x2F;localhost:8080&#x2F;jspObject&#x2F;request2.jsp?name&#x3D;川普&amp;gender&#x3D;女</span><br></pre></td></tr></table></figure>
+<p>执行效果如图2.26所示。</p>
+<h2 id="获取GET的请求参数值"><a href="#获取GET的请求参数值" class="headerlink" title="获取GET的请求参数值"></a>获取GET的请求参数值</h2><p>细心的读者可能发现上面两个请求参数值都由英文字符组成,如果请求参数值里包含非西欧字符,那么是不是应该先调用<code>setCharacterEncoding()</code>来设置<code>request</code>编码的字符集呢?读者可以试一下。答案是不行,如果<code>GET</code>方式的请求值里包含了非西欧字符,则获取这些参数比较复杂.<br>下面的页面示范了如何获取<code>GET</code>请求里的中文字符。</p>
+<h3 id="request3-jsp"><a href="#request3-jsp" class="headerlink" title="request3.jsp"></a>request3.jsp</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 获取包含非西欧字符的GET请求参数 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;%</span><br><span class="line"><span class="comment">// 获取请求里包含的查询字符串</span></span><br><span class="line">String rawQueryStr = request.getQueryString();</span><br><span class="line">out.println(<span class="string">"原始查询字符串为："</span> + rawQueryStr + <span class="string">"&lt;hr/&gt;"</span>);</span><br><span class="line"><span class="comment">// 使用URLDecoder解码字符串</span></span><br><span class="line">String queryStr = java.net.URLDecoder.decode(</span><br><span class="line">    rawQueryStr , <span class="string">"UTF-8"</span>);</span><br><span class="line">out.println(<span class="string">"解码后的查询字符串为："</span> + queryStr + <span class="string">"&lt;hr/&gt;"</span>);</span><br><span class="line"><span class="comment">// 以&amp;符号分解查询字符串</span></span><br><span class="line">String[] paramPairs = queryStr.split(<span class="string">"&amp;"</span>);</span><br><span class="line"><span class="keyword">for</span>(String paramPair : paramPairs)</span><br><span class="line">&#123;</span><br><span class="line">    out.println(<span class="string">"每个请求参数名、值对为："</span> + paramPair + <span class="string">"&lt;br/&gt;"</span>);</span><br><span class="line">    <span class="comment">// 以=来分解请求参数名和值</span></span><br><span class="line">    String[] nameValue = paramPair.split(<span class="string">"="</span>);</span><br><span class="line">    out.println(nameValue[<span class="number">0</span>] + <span class="string">"参数的值是："</span> + </span><br><span class="line">        nameValue[<span class="number">1</span>]+ <span class="string">"&lt;hr/&gt;"</span>);</span><br><span class="line">&#125;</span><br><span class="line">%&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的程序中粗体字代码就是获取<code>GET</code>请求里中文参数值的关键代码,为了获取<code>GET</code>请求里的中文参数值,必须借助于<code>java.net.URLDecoder</code>类。关于<code>URLDecoder</code>和<code>URLEncoder</code>两个类的用法请参考疯狂<code>Java</code>体系的《疯狂Java讲义》的17.2节。<br>上面页面代码使用了<code>UIF-8</code>字符集进行解码,到底应该用哪种字符集来解码,这取决于浏览器。对于简体中文的环境来说,一般要么是<code>UTF8</code>字符集,要么是<code>GBK</code>字符集。<br>读者可以编写一个表单,并让表单以<code>GET</code>方式提交请求到<code>request3jsp</code>页面,将可看到如图2.27所示的效果<br>如果读者不想这样做,还可以在获取请求参数值之后对请求参数值重新编码。也就是先将其转换成字节数组,再将字节数组重新解码成字符串。例如,可通过如下代码来取得<code>name</code>请求参数的参数值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取原始的请求参数值</span></span><br><span class="line">String rawName = request.getParameter(<span class="string">"name"</span>);</span><br><span class="line"><span class="comment">//将请求参数值使用Iso-8859-1字符串分解成字节数组</span></span><br><span class="line"><span class="keyword">byte</span> [] rawBytes = rawName.getBytes(<span class="string">"ISO-8859-1"</span>);</span><br><span class="line"><span class="comment">//将字节数组重新解码成字符串</span></span><br><span class="line">String name = <span class="keyword">new</span> String(rawBytes,<span class="string">"UTF-8"</span>);</span><br></pre></td></tr></table></figure>
+<p>通过上面代码片段也可处理<code>GET</code>请求里的中文请求参数值。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/da442ae0/" title="2.6.6 request对象 1. 获取请求头 获取请求参数">https://lanlan2017.github.io/JavaReadingNotes/da442ae0/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/7bd29927/" rel="next" title="2.6.5 pageContext对象">
+                  <i class="fa fa-chevron-left"></i> 2.6.5 pageContext对象
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/39de51f7/" rel="prev" title="2.6.6 request对象 2. 操作request范围的属性">
+                  2.6.6 request对象 2. 操作request范围的属性 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-6-6-request对象"><span class="nav-text">2.6.6 request对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-获取请求头-获取请求参数"><span class="nav-text">1. 获取请求头 获取请求参数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#获取请求参数方法"><span class="nav-text">获取请求参数方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取请求头方法"><span class="nav-text">获取请求头方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求头和请求参数的区别"><span class="nav-text">请求头和请求参数的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GET请求POST请求"><span class="nav-text">GET请求POST请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GET方式的请求"><span class="nav-text">GET方式的请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POST方式的请求"><span class="nav-text">POST方式的请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#form-jsp"><span class="nav-text">form.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#只有带有name属性的表单域才会生成请求参数"><span class="nav-text">只有带有name属性的表单域才会生成请求参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#request1-jsp"><span class="nav-text">request1.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#请求参数的字符集"><span class="nav-text">请求参数的字符集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#请求的字符集合表单页面的字符集一样"><span class="nav-text">请求的字符集合表单页面的字符集一样</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试"><span class="nav-text">测试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#request2-jsp"><span class="nav-text">request2.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#获取GET的请求参数值"><span class="nav-text">获取GET的请求参数值</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#request3-jsp"><span class="nav-text">request3.jsp</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

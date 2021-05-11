@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content=".header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.6 员工身份识别模块">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/51f5f778/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content=".header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-03T10:28:42.000Z">
+<meta property="article:modified_time" content="2020-09-03T10:28:42.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/51f5f778/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>1.6 员工身份识别模块 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/51f5f778/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">1.6 员工身份识别模块<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/6%20Java%20Web%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%A1%88%E4%BE%8B%E7%B2%BE%E7%B2%B9/%E7%AC%AC1%E7%AB%A0%20%E4%BC%81%E4%B8%9A%E6%97%A5%E5%B8%B8%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/1.6%20%E5%91%98%E5%B7%A5%E8%BA%AB%E4%BB%BD%E8%AF%86%E5%88%AB%E6%A8%A1%E5%9D%97.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-09-03 10:28:42" itemprop="dateCreated datePublished" datetime="2020-09-03T10:28:42+00:00">2020-09-03</time>
+            </span>
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/6-Java-Web%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%A1%88%E4%BE%8B%E7%B2%BE%E7%B2%B9/" itemprop="url" rel="index"><span itemprop="name">6 Java Web项目开发案例精粹</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/6-Java-Web%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%A1%88%E4%BE%8B%E7%B2%BE%E7%B2%B9/%E7%AC%AC1%E7%AB%A0-%E4%BC%81%E4%B8%9A%E6%97%A5%E5%B8%B8%E4%BA%8B%E5%8A%A1%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">第1章 企业日常事务管理系统</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/51f5f778/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/51f5f778/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h2 id="1-6-1-员工身份识别表单"><a href="#1-6-1-员工身份识别表单" class="headerlink" title="1.6.1 员工身份识别表单"></a>1.6.1 员工身份识别表单</h2><p>员工身份识别表单用来输入员工身份信息,包括员工编号和系统口令两个输入框,同时还包含一个提交按钮和一个重置按钮,分别用来提交表单和重置表单。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"shenfenshibie"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">font</span> <span class="attr">color</span>=<span class="string">"red"</span>&gt;</span>$&#123;requestScope.error &#125;<span class="tag">&lt;/<span class="name">font</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">"StatusRecogniseAction"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>员工编号：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"employeeID"</span> <span class="attr">value</span>=<span class="string">"$&#123;param.employeeID&#125;"</span>/&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="symbol">&amp;nbsp;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span>系统口令：<span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">name</span>=<span class="string">"password"</span> /&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="symbol">&amp;nbsp;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">value</span>=<span class="string">"提交"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"reset"</span> <span class="attr">value</span>=<span class="string">"重置"</span> /&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>代码第2行使用<code>EL</code>表达式输出<code>request</code>范围的<code>eror</code>信息,其中<code>eror</code>中包含了员工识别时的所有错误信息,比如员工编号不存在,系统口令不正确等等。代码第4行添加了一个单行文本框,用来输入员工编号。代码第7行添加了一个密码输入框,用来输入系统口令<br>打开浏览器,在地址栏中输入<code>htt:/Localhost:8080/JavaPrj_ 1/statusRecogniseJsp</code>,打开员工身份识别表单如图1-6所示</p>
+<h2 id="1-6-2-员工信息DAO层"><a href="#1-6-2-员工信息DAO层" class="headerlink" title="1.6.2 员工信息DAO层"></a>1.6.2 员工信息DAO层</h2><p>要对员工身份进行识别,必须从数据库中查询该员工编号是否存在,系统口令是否一致,这时就需要使用<code>JDBC</code>来操作数据库。本系统使用<code>DAO</code>层封装<code>JDBC</code>操作,从而简化开发步骤,并提供良好的扩展性。<br><code>DAO</code>层包括3个部分,分别是<code>DAO</code>接口、<code>DAO</code>实现类以及<code>DAO</code>工厂类。下面将对这3个部分进行详细讲解。</p>
+<h3 id="1-EmployeeDAO接口"><a href="#1-EmployeeDAO接口" class="headerlink" title="(1)EmployeeDAO接口"></a>(1)EmployeeDAO接口</h3><p><code>EmployeeDAO</code>接口声明了所有的需要使用的操作,如添加员工信息、修改员工信息以及删除员工信息等等操作。</p>
+<figure class="highlight java"><figcaption><span>/JavaPrj_1/src/com/sanqing/dao/EmployeeDAO.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">EmployeeDAO</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addEmployee</span><span class="params">(Employee employee)</span></span>;        <span class="comment">//定义添加员工信息的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">updateEmployee</span><span class="params">(Employee employee)</span></span>;    <span class="comment">//定义修改员工信息的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteEmployee</span><span class="params">(<span class="keyword">int</span> employeeID)</span></span>;        <span class="comment">//定义删除员工信息的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> List&lt;Employee&gt; <span class="title">findAllEmployee</span><span class="params">()</span></span>;        <span class="comment">//定义查询所有员工信息的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Employee <span class="title">findEmployeeById</span><span class="params">(<span class="keyword">int</span> employeeID)</span></span>;<span class="comment">//定义按ID查询员工信息的方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码第2行声明了<code>addEmployee</code>方法,该方法接收一个<code>Employee</code>类型的参数,该参数中封装了需要添加的员工所有信息。代码第3行声明了<code>updateEmployee</code>方法,该方法同样接收个<code>Employee</code>类型的参数,用来封装需要更新的员工所有信息。代码第4行声明了<code>deleteEmployee</code>方法,该方法接收一个<code>int</code>类型的参数,该参数用来指定需要删除的员工的员工编号。<br>代码第5行声明了<code>findAllEmployee</code>方法,该方法返回一个<code>List</code>类型的集合,包含了所有的员工信息。代码第6行声明了<code>findEmployeeByld</code>方法,该方法接收员工编号信息,并返回该员工编号对应的所有员工信息.</p>
+<h3 id="2-EmployeeDAOImpl类"><a href="#2-EmployeeDAOImpl类" class="headerlink" title="(2)EmployeeDAOImpl类"></a>(2)EmployeeDAOImpl类</h3><p><code>EmployeeDAOImpl</code>类实现了<code>EmployeeDAO</code>接口,并实现了<code>EmployeeDAO</code>接口中声明的所有方法。<code>EmployeeDAOImpl</code>类通过调用<code>JDBC</code>来完成所有的数据库操作</p>
+<figure class="highlight java"><figcaption><span>/JavaPrj_1/src/com/sanqing/daoImpl/EmployeeDAOImpl.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Employee <span class="title">findEmployeeById</span><span class="params">(<span class="keyword">int</span> employeeID)</span> </span>&#123;</span><br><span class="line">    Connection conn = DBConnection.getConnection();        <span class="comment">//获得连接对象</span></span><br><span class="line">    String findByIDSQL = <span class="string">"select * from "</span> +</span><br><span class="line">                    <span class="string">"tb_employee where employeeID = ?"</span>;    <span class="comment">//SQL语句</span></span><br><span class="line">    PreparedStatement pstmt = <span class="keyword">null</span>;    <span class="comment">//声明预处理对象</span></span><br><span class="line">    ResultSet rs = <span class="keyword">null</span>;</span><br><span class="line">    Employee employee = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        pstmt = conn.prepareStatement(findByIDSQL);        <span class="comment">//获得预处理对象并赋值</span></span><br><span class="line">        pstmt.setInt(<span class="number">1</span>, employeeID);                    <span class="comment">//设置参数</span></span><br><span class="line">        rs = pstmt.executeQuery();                        <span class="comment">//执行查询</span></span><br><span class="line">        <span class="keyword">if</span>(rs.next()) &#123;</span><br><span class="line">            employee = <span class="keyword">new</span> Employee();</span><br><span class="line">            employee.setEmployeeID(rs.getInt(<span class="number">1</span>));        <span class="comment">//设置员工编号</span></span><br><span class="line">            employee.setEmployeeName(rs.getString(<span class="number">2</span>));    <span class="comment">//设置员工姓名</span></span><br><span class="line">            employee.setEmployeeSex(rs.getBoolean(<span class="number">3</span>));    <span class="comment">//设置员工性别</span></span><br><span class="line">            employee.setEmployeeBirth(rs.getDate(<span class="number">4</span>));    <span class="comment">//设置出生日期</span></span><br><span class="line">            employee.setEmployeePhone(rs.getString(<span class="number">5</span>));    <span class="comment">//设置办公室电话</span></span><br><span class="line">            employee.setEmployeePlace(rs.getString(<span class="number">6</span>));    <span class="comment">//设置住址</span></span><br><span class="line">            employee.setJoinTime(rs.getDate(<span class="number">7</span>));        <span class="comment">//设置录入时间</span></span><br><span class="line">            employee.setPassword(rs.getString(<span class="number">8</span>));        <span class="comment">//设置系统口令</span></span><br><span class="line">            employee.setLead(rs.getBoolean(<span class="number">9</span>));            <span class="comment">//设置是否为管理层领导</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (SQLException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125; <span class="keyword">finally</span>&#123;</span><br><span class="line">        DBConnection.close(rs);                                <span class="comment">//关闭结果集对象</span></span><br><span class="line">        DBConnection.close(pstmt);                            <span class="comment">//关闭预处理对象</span></span><br><span class="line">        DBConnection.close(conn);                            <span class="comment">//关闭连接对象</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> employee;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码第2行调用<code>DBConnection</code>类的<code>getConnection</code>方法获得连接对象<code>conn</code>。代码第3行定义了一个查询<code>SQL</code>语句,该<code>SOL</code>语句通过员工编号来查询该员工的所有信息。代码第9行通过连接对象<code>conn</code>的<code>prepareStatement</code>方法来获得预处理对象<code>pstm</code>。代码第10行调用预处理对象<code>pstm</code>的<code>setInt</code>方法来设置参数,其参数值为员工的编号。<br>代码第11行通过预处理对象<code>pstm</code>的<code>executeQuery</code>来执行査询,并将査询结果赋值给结果集对象<code>rs</code>。代码第12行通过判断结果集中是否包含员工信息,如果包含员工信息,则首先创建一个<code>Employee</code>实例对象,并调用其各方法来设置员工信息。代码第27行至29行通过调用<code>DBConnection</code>类的<code>close</code>方法来关闭预处理对象、预处理对象以及连接对象,从而释放系统资源,减少项目开销。</p>
+<h3 id="3-EmployeeDAOFactory类"><a href="#3-EmployeeDAOFactory类" class="headerlink" title="(3)EmployeeDAOFactory类"></a>(3)EmployeeDAOFactory类</h3><p><code>EmployeeDAOFactory</code>类为<code>DAO</code>工厂类,通过调用该类的<code>getEmployeeDAOInstance</code>方法能返回一个<code>EmployeeDAOImpl</code>实现类实例。</p>
+<figure class="highlight java"><figcaption><span>/JavaPrj_1/src/com/sanqing/factory/EmployeeDAOFactory.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EmployeeDAOFactory</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> EmployeeDAO <span class="title">getEmployeeDAOInstance</span><span class="params">()</span></span>&#123;    <span class="comment">//工厂方法，用来返回DAO实现类实例</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> EmployeeDAOImpl();                        <span class="comment">//返回DAO实现类实例</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码第2行定义了一个静态方法<code>getEmployeeDAOInstance</code>,其返回值为<code>EmployeeDAO</code>接口类型。代码第3行返回了一个<code>EmployeeDAOImpl</code>实现类的实例。<br>工厂类的好处在于,如果有多个<code>DAO</code>实现类,比如一个实现类用来操作<code>MySQL</code>数据库一个实现类用来操作<code>SQLServer</code>数据库,那么只需要修改工厂类中代码即可返回不同的实现类实例。对于其他代码中调用<code>DAO</code>的地方不需要进行任何修改,这种编程方式也叫面向接口编程的。</p>
+<h2 id="1-6-3-完成员工身份识别"><a href="#1-6-3-完成员工身份识别" class="headerlink" title="1.6.3 完成员工身份识别"></a>1.6.3 完成员工身份识别</h2><p>要完成员工识别,需要添加一个员工身份识别类,该类为一个<code>Servlet</code>。通过接收员工提交的员工编号和系统口令来对员工身份进行识别。只有当员工编号和系统口令都正确的情况下,才允许员工进入系统,否则提示其重新识别。</p>
+<figure class="highlight java"><figcaption><span>/JavaPrj_12/src/com/sanqing/servlet/StatusRecognise.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">    ServletContext servletContext = getServletContext();    <span class="comment">//获得ServletContex</span></span><br><span class="line">    RequestDispatcher dispatcher = <span class="keyword">null</span>;                    </span><br><span class="line">    String employeeID = request.getParameter(<span class="string">"employeeID"</span>);    <span class="comment">//接受员工编号参数</span></span><br><span class="line">    String password = request.getParameter(<span class="string">"password"</span>);        <span class="comment">//接受系统密码参数</span></span><br><span class="line">    <span class="keyword">if</span>(employeeID == <span class="keyword">null</span> || <span class="string">""</span>.equals(employeeID)) &#123;        <span class="comment">//判断是否输入员工编号</span></span><br><span class="line">        request.setAttribute(<span class="string">"error"</span>, <span class="string">"请输入员工编号!"</span>);</span><br><span class="line">        dispatcher = servletContext.</span><br><span class="line">                getRequestDispatcher(<span class="string">"/statusRecognise.jsp"</span>);<span class="comment">//设置跳转页面</span></span><br><span class="line">    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(password == <span class="keyword">null</span> || <span class="string">""</span>.equals(password)) &#123;        <span class="comment">//判断是否输入系统密码</span></span><br><span class="line">            request.setAttribute(<span class="string">"error"</span>, <span class="string">"请输入系统口令!"</span>);</span><br><span class="line">            dispatcher = servletContext.</span><br><span class="line">                getRequestDispatcher(<span class="string">"/statusRecognise.jsp"</span>);<span class="comment">//设置跳转页面</span></span><br><span class="line">        &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">            EmployeeDAO employeeDAO = </span><br><span class="line">                EmployeeDAOFactory.getEmployeeDAOInstance();<span class="comment">//获得DAO实现类实例</span></span><br><span class="line">            Employee employee = employeeDAO.</span><br><span class="line">                findEmployeeById(Integer.parseInt(employeeID));<span class="comment">//查询员工</span></span><br><span class="line">            <span class="keyword">if</span>(employee == <span class="keyword">null</span>) &#123;</span><br><span class="line">                request.setAttribute(<span class="string">"error"</span>, <span class="string">"该员工编号不存在!"</span>);</span><br><span class="line">                dispatcher = servletContext.</span><br><span class="line">                    getRequestDispatcher(<span class="string">"/statusRecognise.jsp"</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">if</span>(password.equals(employee.getPassword())) &#123;</span><br><span class="line">                    request.getSession().</span><br><span class="line">                        setAttribute(<span class="string">"employee"</span>, employee);<span class="comment">//将员工信息保存到session范围</span></span><br><span class="line">                    response.sendRedirect(<span class="string">"index.jsp"</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    request.setAttribute(<span class="string">"error"</span>, <span class="string">"系统口令不正确!"</span>);</span><br><span class="line">                    dispatcher = servletContext.</span><br><span class="line">                        getRequestDispatcher(<span class="string">"/statusRecognise.jsp"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dispatcher.forward(request, response);<span class="comment">//进行跳转</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码第5行和第6行调用<code>request</code>的<code>getParameter</code>方法获得员工提交的员工编号和系统口令参数。代码第7行判断员工是否输入了员工编号,如果没有输入则在<code>request</code>范围添加错误提示信息,并设置跳转页面为员工身份识别表单页。代码第12行判断员工是否输入了系统口令,如果没有输入同样在<code>request</code>范围添加错误提示信息,并设置跳转页面为员工身份识别表单页。如果员工输入了员工编号和系统口令则再对员工编号进行査询,査询数据库中是否存在该员工编号对应的员工信息,如果不存在,则在<code>request</code>范围添加错误提示信息,并设置跳转页面为员工身份识别表单页<br>代码第26行通过判断员工输入的系统口令和数据库中保存的是否相同,如果相同则将该员工的所有信息保存到<code>session</code>范围中,同时设置跳转页面为系统首页;否则设置跳转页面为员工身份识别表单页。代码第39行通过<code>dispatcher</code>对象的<code>forward</code>方法来进行跳转,页面将跳转到指定的跳转页面。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/51f5f778/" title="1.6 员工身份识别模块">https://lanlan2017.github.io/JavaReadingNotes/51f5f778/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/3885e7d5/" rel="next" title="1.5 公共类设计">
+                  <i class="fa fa-chevron-left"></i> 1.5 公共类设计
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/a4697e2c/" rel="prev" title="Java经典编程300例 前言">
+                  Java经典编程300例 前言 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-1-员工身份识别表单"><span class="nav-text">1.6.1 员工身份识别表单</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-2-员工信息DAO层"><span class="nav-text">1.6.2 员工信息DAO层</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-EmployeeDAO接口"><span class="nav-text">(1)EmployeeDAO接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-EmployeeDAOImpl类"><span class="nav-text">(2)EmployeeDAOImpl类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-EmployeeDAOFactory类"><span class="nav-text">(3)EmployeeDAOFactory类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-6-3-完成员工身份识别"><span class="nav-text">1.6.3 完成员工身份识别</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

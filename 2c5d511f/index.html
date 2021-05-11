@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="9.4 深入Mapper XML映射文件&amp;nbsp;9.4.1 select&amp;nbsp;select元素的属性&amp;nbsp;select元素的属性描述&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.4 深入Mapper XML映射文件 9.4.1 select">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/2c5d511f/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="9.4 深入Mapper XML映射文件&amp;nbsp;9.4.1 select&amp;nbsp;select元素的属性&amp;nbsp;select元素的属性描述&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-03T21:22:21.000Z">
+<meta property="article:modified_time" content="2020-06-05T03:17:50.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/2c5d511f/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>9.4 深入Mapper XML映射文件 9.4.1 select | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/2c5d511f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">9.4 深入Mapper XML映射文件 9.4.1 select<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC9%E7%AB%A0%20MyBatis%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/9.4%20%E6%B7%B1%E5%85%A5Mapper%20XML%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6/9.4%20%E6%B7%B1%E5%85%A5Mapper%20XML%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6%209.4.1%20select.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-03 21:22:21" itemprop="dateCreated datePublished" datetime="2019-06-03T21:22:21+00:00">2019-06-03</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-05 03:17:50" itemprop="dateModified" datetime="2020-06-05T03:17:50+00:00">2020-06-05</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC9%E7%AB%A0-MyBatis%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">第9章 MyBatis的基本用法</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC9%E7%AB%A0-MyBatis%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/9-4-%E6%B7%B1%E5%85%A5Mapper-XML%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">9.4 深入Mapper XML映射文件</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/2c5d511f/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/2c5d511f/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/2c5d511f/#9-4-深入Mapper-XML映射文件" class="header_1">9.4 深入Mapper XML映射文件</a>&nbsp;<br><a href="/JavaReadingNotes/2c5d511f/#9-4-1-select" class="header_1">9.4.1 select</a>&nbsp;<br><a href="/JavaReadingNotes/2c5d511f/#select元素的属性" class="header_1">select元素的属性</a>&nbsp;<br><a href="/JavaReadingNotes/2c5d511f/#select元素的属性描述" class="header_2">select元素的属性描述</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="9-4-深入Mapper-XML映射文件"><a href="#9-4-深入Mapper-XML映射文件" class="headerlink" title="9.4 深入Mapper XML映射文件"></a>9.4 深入Mapper XML映射文件</h1><p><code>MyBatis</code>的真正强大之处在于它的映射语句，这也是它的魔力所在。由于它的功能异常强大，映射器的<code>XML</code>文件就显得相对简单。如果拿它跟具有相同功能的<code>JDBC</code>代码进行对比，你会立即发现省掉了将近95%的代码。<code>MyBatis</code>就是针对<code>SQL</code>构建的，并且比普通的方法做得更好。</p>
+<h2 id="SQL映射文件的常用元素"><a href="#SQL映射文件的常用元素" class="headerlink" title="SQL映射文件的常用元素"></a>SQL映射文件的常用元素</h2><p><code>SQL</code>映射文件常用的元素如下</p>
+<ul>
+<li><code>select</code>,映射查询语句</li>
+<li><code>insert</code>,映射插入语句。</li>
+<li><code>update</code>,映射更新语句。</li>
+<li><code>delete</code>,映射删除语句。</li>
+<li><code>sql</code>,可被其他语句引用的可重用语句块。</li>
+<li><code>cache</code>,给定命名空间的缓存配置。</li>
+<li><code>cache-ref</code>,其他命名空间缓存配置的引用。</li>
+<li><code>resultMap</code>,最复杂也是最强大的元素,用来描述如何从数据库结果集中加载对象。</li>
+</ul>
+<p><strong>提示</strong><br><code>parameterMap</code>已废弃!它是老式风格的参数映射。</p>
+<h1 id="9-4-1-select"><a href="#9-4-1-select" class="headerlink" title="9.4.1 select"></a>9.4.1 select</h1><p><code>select</code>元素用来映射查询语句,它是<code>MyBatis</code>中最常用的元素之一。</p>
+<h2 id="select元素示例"><a href="#select元素示例" class="headerlink" title="select元素示例"></a>select元素示例</h2><p>执行简单查询的<code>select</code>元素是非常简单的。例如:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- select操作</span></span><br><span class="line"><span class="comment">    parameterType="int"表示该查询语句需要一个int类型的参数</span></span><br><span class="line"><span class="comment">    resultType="user"表示返回的是一个user对象 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">"selectUser"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">resultType</span>=<span class="string">"hashmap"</span>&gt;</span> select * from tb_user where id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这个语句被称作<code>selectUser</code>,其接受一个<code>int</code>(或<code>Integer)</code>类型的参数,并返回一个<code>HashMap</code>类型的对象,<code>HashMap</code>中的键是列名,值便是结果行中的对应值。<br>注意参数符号<code>#{id}</code>,这是告诉<code>MyBatis</code>创建一个预处理语句参数。通过<code>JDBC</code>,这样的一个参数在<code>SQL</code>中会由一个”<code>?</code>“来标识,并被传递到一个新的预处理语句中。以上<code>MyBatis</code>配置文件执行时会生成如下<code>JDBC</code>代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String selectUser=<span class="string">"select * from tb_user where id=?"</span>;</span><br><span class="line">PrepareStatement ps=conn.prepareStatement(selectUser);</span><br><span class="line">ps.setInt(<span class="number">1</span>,id);</span><br></pre></td></tr></table></figure>
+<h2 id="select元素的属性"><a href="#select元素的属性" class="headerlink" title="select元素的属性"></a>select元素的属性</h2><p><code>select</code>元素有很多属性可以配置,它们用来决定每条语句的作用细节。例如</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">"selectUser"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">resultType</span>=<span class="string">"hashmap"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">resultMap</span>=<span class="string">"userResultMap"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">flushCache</span>=<span class="string">"false"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">useCacher</span>=<span class="string">"true"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">timeout</span>=<span class="string">"10000"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">fetchSize</span>=<span class="string">"256"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">statementType</span>=<span class="string">"PREPARED"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">resultSetType</span>=<span class="string">"FORWARD_ONLY"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>select</code>元素的属性描述如下:</p>
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><p>在命名空间中唯一的标识符,可以被用来引用这条语句。</p>
+<h3 id="parameterType"><a href="#parameterType" class="headerlink" title="parameterType"></a>parameterType</h3><p>将会传入这条语句的参数类的完全限定名或别名。这个属性是可选的,因为<code>MyBatis</code>可以通过<code>TypeHandler</code>推断出具体传入语句的参数,默认值为<code>unset</code>。</p>
+<h3 id="resultType"><a href="#resultType" class="headerlink" title="resultType"></a>resultType</h3><p>从这条语句中返回的期望类型的类的完全限定名或别名。注意如果是集合情形,那应该是集合可以包含的类型,而不能是集合本身。返回时可以使用<code>resultType</code>或<code>resultMap</code>,但不能同时使用。</p>
+<h3 id="resultMap"><a href="#resultMap" class="headerlink" title="resultMap"></a>resultMap</h3><p>外部<code>resultMap</code>的命名引用。<strong>结果集的映射是<code>MyBatis</code>最强大的特性,对其有一个很好的理解的话,许多复杂映射的情形都能迎刃而解</strong>。返回时可以使用<code>resultMap</code>或<code>resultType</code>,但不能同时使用。</p>
+<h3 id="flushCache"><a href="#flushCache" class="headerlink" title="flushCache"></a>flushCache</h3><p>如果设置为<code>true</code>,则任何时候只要语句被调用,都会导致本地缓存和二级缓存都被清空,默认值为<code>false</code>。</p>
+<h3 id="useCache"><a href="#useCache" class="headerlink" title="useCache"></a>useCache</h3><p>如果设置为<code>true</code>,将会导致本条语句的结果被二级缓存,在<code>select</code>元素当中默认值为<code>true</code>。</p>
+<h3 id="timeout"><a href="#timeout" class="headerlink" title="timeout"></a>timeout</h3><p>这个设置是在抛出异常之前,驱动程序等待数据库返回请求结果的秒数默认值为<code>unset</code>(依赖驱动)。</p>
+<h3 id="fetchSize"><a href="#fetchSize" class="headerlink" title="fetchSize"></a>fetchSize</h3><p>其尝试使得驱动程序每次批量返回的结果行数和这个设置值相等。默认值为<code>unset</code>(依赖驱动)。</p>
+<h3 id="statementType"><a href="#statementType" class="headerlink" title="statementType"></a>statementType</h3><p>值为<code>STATEMENT</code>、<code>PREPARED</code>或<code>CALLABLE</code>。这会让<code>MyBatis</code>分别使用<code>JDBC</code>中的<code>Statement</code>,<code>PreparedStatement</code>或<code>CallableStatement</code>,默认值为<code>PREPARED</code>。</p>
+<h3 id="resultSetType"><a href="#resultSetType" class="headerlink" title="resultSetType"></a>resultSetType</h3><p>结果集的类型,值为<code>FORWARDONLY</code>、<code>SCROLLSENSITIVE</code>或<code>SCROLL_INSENSITIVE</code>,默认值为<code>unset(</code>依赖驱动)。</p>
+<h3 id="databased"><a href="#databased" class="headerlink" title="databased"></a>databased</h3><p>如果配置了<code>databaseldProvider</code>,<code>MyBatis</code>会加载所有的不带<code>databased</code>或匹配当前<code>databased</code>的语句;如果带或者不带的语句都有,则不带的会被忽略。</p>
+<h3 id="resultOrdered"><a href="#resultOrdered" class="headerlink" title="resultOrdered"></a>resultOrdered</h3><p>这个设置仅针对嵌套结果<code>select</code>语句适用:如果为<code>true</code>,就是假设包含了嵌套结果集或分组,这样的话当返回一个主结果行的时候,就不会发生对前面结果集引用的情况。这就使得在获取嵌套的结果集时不至于导致内存不够用。默认值为<code>false</code>。</p>
+<h3 id="resultSets"><a href="#resultSets" class="headerlink" title="resultSets"></a>resultSets</h3><p>这个设置仅对多结果集的情况适用,它将列出语句执行后返回的结果集并给每个结果集起一个名称,名称是逗号分隔的。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/2c5d511f/" title="9.4 深入Mapper XML映射文件 9.4.1 select">https://lanlan2017.github.io/JavaReadingNotes/2c5d511f/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/2ed42ebd/" rel="next" title="9.3 MyBatis日志信息配置">
+                  <i class="fa fa-chevron-left"></i> 9.3 MyBatis日志信息配置
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/f097c266/" rel="prev" title="9.4 深入Mapper XML映射文件 9.4.2 insert,update和delete">
+                  9.4 深入Mapper XML映射文件 9.4.2 insert,update和delete <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-4-深入Mapper-XML映射文件"><span class="nav-text">9.4 深入Mapper XML映射文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL映射文件的常用元素"><span class="nav-text">SQL映射文件的常用元素</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-4-1-select"><span class="nav-text">9.4.1 select</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#select元素示例"><span class="nav-text">select元素示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#select元素的属性"><span class="nav-text">select元素的属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#id"><span class="nav-text">id</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#parameterType"><span class="nav-text">parameterType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#resultType"><span class="nav-text">resultType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#resultMap"><span class="nav-text">resultMap</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flushCache"><span class="nav-text">flushCache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#useCache"><span class="nav-text">useCache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#timeout"><span class="nav-text">timeout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#fetchSize"><span class="nav-text">fetchSize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#statementType"><span class="nav-text">statementType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#resultSetType"><span class="nav-text">resultSetType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#databased"><span class="nav-text">databased</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#resultOrdered"><span class="nav-text">resultOrdered</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#resultSets"><span class="nav-text">resultSets</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

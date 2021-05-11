@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="16.3 线程的生命周期&amp;nbsp;线程的5种状态&amp;nbsp;16.3.1 新建状态和就绪状态&amp;nbsp;新建状态 new Thread创建线程后&amp;nbsp;就绪状态 调用Thread对象start方法后&amp;nbsp;启动线程使用start方法&amp;nbsp;永远不要调用线程对象的run方法&amp;nbsp;程序 调用run方法不会启动线程&amp;nbsp;只能对处于新建状态的线程调用start方法&amp;nbsp;如何">
+<meta property="og:type" content="article">
+<meta property="og:title" content="16.3 线程的生命周期">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/42f33da/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="16.3 线程的生命周期&amp;nbsp;线程的5种状态&amp;nbsp;16.3.1 新建状态和就绪状态&amp;nbsp;新建状态 new Thread创建线程后&amp;nbsp;就绪状态 调用Thread对象start方法后&amp;nbsp;启动线程使用start方法&amp;nbsp;永远不要调用线程对象的run方法&amp;nbsp;程序 调用run方法不会启动线程&amp;nbsp;只能对处于新建状态的线程调用start方法&amp;nbsp;如何">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/16/1.png">
+<meta property="article:published_time" content="2019-07-16T00:50:35.000Z">
+<meta property="article:modified_time" content="2020-03-20T09:17:27.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/16/1.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/42f33da/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>16.3 线程的生命周期 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/42f33da/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">16.3 线程的生命周期<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC16%E7%AB%A0%20%E5%A4%9A%E7%BA%BF%E7%A8%8B/16.3%20%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/16.3%20%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-16 00:50:35" itemprop="dateCreated datePublished" datetime="2019-07-16T00:50:35+00:00">2019-07-16</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-20 09:17:27" itemprop="dateModified" datetime="2020-03-20T09:17:27+00:00">2020-03-20</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第16章 多线程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/16-3-%E7%BA%BF%E7%A8%8B%E7%9A%84%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" itemprop="url" rel="index"><span itemprop="name">16.3 线程的生命周期</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/42f33da/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/42f33da/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/42f33da/#16-3-线程的生命周期" class="header_1">16.3 线程的生命周期</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#线程的5种状态" class="header_2">线程的5种状态</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#16-3-1-新建状态和就绪状态" class="header_1">16.3.1 新建状态和就绪状态</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#新建状态-new-Thread创建线程后" class="header_2">新建状态 new Thread创建线程后</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#就绪状态-调用Thread对象start方法后" class="header_2">就绪状态 调用Thread对象start方法后</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#启动线程使用start方法" class="header_2">启动线程使用start方法</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#永远不要调用线程对象的run方法" class="header_3">永远不要调用线程对象的run方法</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#程序-调用run方法不会启动线程" class="header_3">程序 调用run方法不会启动线程</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#只能对处于新建状态的线程调用start方法" class="header_3">只能对处于新建状态的线程调用start方法</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#如何让子线程立即执行" class="header_3">如何让子线程立即执行</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#小结" class="header_2">小结</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#16-3-2-运行状态和阻塞状态" class="header_1">16.3.2 运行状态和阻塞状态</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#运行状态-run方法得到执行" class="header_2">运行状态 run方法得到执行</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#阻塞状态-sleep-IO阻塞-等待同步锁-等待通知-suspend" class="header_2">阻塞状态 sleep IO阻塞 等待同步锁 等待通知 suspend</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#阻塞结束进入就绪" class="header_2">阻塞结束进入就绪</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#阻塞进入就绪-sleep时间到-IO方法返回-获得同步锁-收到通知-resumed" class="header_3">阻塞进入就绪 sleep时间到 IO方法返回 获得同步锁 收到通知 resumed</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#线程状态转换图" class="header_2">线程状态转换图</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#16-3-3-线程死亡" class="header_1">16.3.3 线程死亡</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#线程死亡-run方法结束-异常-stop" class="header_2">线程死亡 run方法结束 异常 stop</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#一个线程结束不会影响其他线程" class="header_2">一个线程结束不会影响其他线程</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#isAlive方法" class="header_2">isAlive方法</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#已经死亡的线程无法再次启动" class="header_2">已经死亡的线程无法再次启动</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#程序-死亡的线程无法再次start" class="header_3">程序 死亡的线程无法再次start</a>&nbsp;<br><a href="/JavaReadingNotes/42f33da/#只能对新建的线程start一次" class="header_3">只能对新建的线程start一次</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="16-3-线程的生命周期"><a href="#16-3-线程的生命周期" class="headerlink" title="16.3 线程的生命周期"></a>16.3 线程的生命周期</h1><p>当线程被创建并启动以后,它既不是一启动就进入了执行状态,也不是一直处于执行状态。</p>
+<h2 id="线程的5种状态"><a href="#线程的5种状态" class="headerlink" title="线程的5种状态"></a>线程的5种状态</h2><p>在线程的生命周期中,它要经过:</p>
+<ol>
+<li>新建(<code>New</code>)、</li>
+<li>就绪(<code>Runnable</code>)、</li>
+<li>运行(<code>Running</code>)、</li>
+<li>阻塞(<code>Blocked</code>)</li>
+<li>死亡(<code>Dead</code>)</li>
+</ol>
+<p>这5种状态。</p>
+<p>尤其是当线程启动以后,它不可能一直霸占着<code>CPU</code>独自运行,所以<code>CPU</code>需要在多条线程之间切换,于是线程状态也会多次在<code>运行</code>、<code>阻塞</code>之间切换。</p>
+<h1 id="16-3-1-新建状态和就绪状态"><a href="#16-3-1-新建状态和就绪状态" class="headerlink" title="16.3.1 新建状态和就绪状态"></a>16.3.1 新建状态和就绪状态</h1><h2 id="新建状态-new-Thread创建线程后"><a href="#新建状态-new-Thread创建线程后" class="headerlink" title="新建状态 new Thread创建线程后"></a>新建状态 new Thread创建线程后</h2><p><strong>当程序使用<code>new</code>关键字创建了一个线程之后,该线程就处于<code>新建状态</code></strong>,此时它和其他的<code>Java</code>对象一样,仅仅由<code>Java</code>虚拟机为其分配内存,并初始化其成员变量的值。<br>此时的线程对象没有表现出任何线程的动态特征,程序也不会执行线程的线程执行体。</p>
+<h2 id="就绪状态-调用Thread对象start方法后"><a href="#就绪状态-调用Thread对象start方法后" class="headerlink" title="就绪状态 调用Thread对象start方法后"></a>就绪状态 调用Thread对象start方法后</h2><p><strong>当线程对象调用了<code>start</code>方法之后,该线程处于<code>就绪状态</code></strong>,<code>Java</code>虚拟机会为其创建<strong>方法调用栈</strong>和<strong>程序计数器</strong>,处于这个状态中的线程并没有开始运行,<strong>只是表示该线程可以运行了</strong>。至于该线程何时开始运行,取决于<code>JVM</code>里线程调度器的调度。</p>
+<h2 id="启动线程使用start方法"><a href="#启动线程使用start方法" class="headerlink" title="启动线程使用start方法"></a>启动线程使用start方法</h2><h3 id="永远不要调用线程对象的run方法"><a href="#永远不要调用线程对象的run方法" class="headerlink" title="永远不要调用线程对象的run方法"></a>永远不要调用线程对象的run方法</h3><p><strong>启动线程使用<code>start()</code>方法,而不是<code>run()</code>方法</strong>!永远不要调用线程对象的<code>run()</code>方法!</p>
+<ul>
+<li>调用<code>start()</code>方法来启动线程,系统会把该<code>run()</code>方法当成<strong>线程执行体</strong>来处理;</li>
+<li>如果直接调用线程对象的<code>run()</code>方法,系统把线程对象当成一个普通对象,把<code>run()</code>方法当成一个普通方法,而不是线程执行体,<code>run()</code>方法将立即就会被执行,而且在<code>run()</code>方法返回之前其他线程无法并发执行</li>
+</ul>
+<h3 id="程序-调用run方法不会启动线程"><a href="#程序-调用run方法不会启动线程" class="headerlink" title="程序 调用run方法不会启动线程"></a>程序 调用run方法不会启动线程</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InvokeRun</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> i ;</span><br><span class="line">    <span class="comment">// 重写run方法，run方法的方法体就是线程执行体</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> ( ; i &lt; <span class="number">100</span> ; i++ )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 直接调用run方法时，Thread的this.getName返回的是该对象名字，</span></span><br><span class="line">            <span class="comment">// 而不是当前线程的名字。</span></span><br><span class="line">            <span class="comment">// 使用Thread.currentThread().getName()总是获取当前线程名字</span></span><br><span class="line">            System.out.println(Thread.currentThread().getName()</span><br><span class="line">                +  <span class="string">" "</span> + i);   <span class="comment">// ①</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>;  i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 调用Thread的currentThread方法获取当前线程</span></span><br><span class="line">            System.out.println(Thread.currentThread().getName()</span><br><span class="line">                +  <span class="string">" "</span> + i);</span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">20</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 直接调用线程对象的run方法，</span></span><br><span class="line">                <span class="comment">// 系统会把线程对象当成普通对象，run方法当成普通方法，</span></span><br><span class="line">                <span class="comment">// 所以下面两行代码并不会启动两条线程，而是依次执行两个run方法</span></span><br><span class="line">                <span class="keyword">new</span> InvokeRun().run();</span><br><span class="line">                <span class="keyword">new</span> InvokeRun().run();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">main <span class="number">0</span></span><br><span class="line">main <span class="number">1</span></span><br><span class="line">main <span class="number">2</span></span><br><span class="line">main <span class="number">3</span></span><br><span class="line">......</span><br><span class="line">main <span class="number">18</span></span><br><span class="line">main <span class="number">19</span></span><br><span class="line">main <span class="number">20</span></span><br><span class="line">main <span class="number">0</span></span><br><span class="line">main <span class="number">1</span></span><br><span class="line">main <span class="number">2</span></span><br><span class="line">......</span><br><span class="line">main <span class="number">44</span></span><br><span class="line">main <span class="number">45</span></span><br><span class="line">main <span class="number">46</span></span><br><span class="line">main <span class="number">47</span></span><br><span class="line">main <span class="number">48</span></span><br><span class="line">main <span class="number">49</span></span><br><span class="line">main <span class="number">0</span></span><br><span class="line">main <span class="number">1</span></span><br><span class="line">main <span class="number">2</span></span><br><span class="line">main <span class="number">3</span></span><br><span class="line">......</span><br><span class="line">main <span class="number">47</span></span><br><span class="line">main <span class="number">48</span></span><br><span class="line">main <span class="number">49</span></span><br></pre></td></tr></table></figure>
+<p>上面程序创建线程对象后<strong>直接调用了线程对象的<code>run()</code>方法,程序运行的结果是整个程序只有一个线程:<code>主线程</code>**。<br>还有一点需要指出,如果直接调用线程对象的<code>run()</code>方法,则<code>run()</code>方法里不能直接通过<code>getName()</code>方法来获得当前执行线程的名字,而是需要使用<code>Thread.currentThread()</code>方法先获得当前线程,再调用线程对象的<code>getName()</code>方法来获得线程的名字。<br>通过上面程序不难看出,**启动线程的正确方法是调用<code>Thread</code>对象的<code>start()</code>方法,而不是直接调用<code>run()</code>方法</strong>,否则就变成单线程程序了</p>
+<h3 id="只能对处于新建状态的线程调用start方法"><a href="#只能对处于新建状态的线程调用start方法" class="headerlink" title="只能对处于新建状态的线程调用start方法"></a>只能对处于新建状态的线程调用start方法</h3><p><strong>只能对处于新建状态的线程调用<code>start</code>方法,否则将引发<code>IllegalThreadStateException</code>异常</strong>。调用了线程的<code>run()</code>方法之后,该线程已经不再处于新建状态,不要再次调用线程对象的<code>start()</code>方法。<br>调用线程对象的<code>start</code>方法之后,该线程立即进入就绪状态,就绪状态相当于”等待执行”,但该线程并未真正进入运行状态。</p>
+<h3 id="如何让子线程立即执行"><a href="#如何让子线程立即执行" class="headerlink" title="如何让子线程立即执行"></a>如何让子线程立即执行</h3><p>如果希望调用子线程的<code>start</code>方法后子线程立即开始执行,程序可以使用<code>Thread.sleep(1)</code>来让<code>当前运行的线程(主线程)睡眠1毫秒</code>——1毫秒就够了,因为在这1毫秒内<code>CPU</code>不会空闲,它会去执行另一个处于就绪状态的线程,这样就可以让子线程立即开始执行。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
+<li><strong>当程序使用<code>new</code>关键字创建了一个线程之后,该线程就处于<code>新建状态</code></strong></li>
+<li><strong>当线程对象调用了<code>start</code>方法之后,该线程处于<code>就绪状态</code></strong>,就绪状态相当于”等待执行”状态,此时该线程并未真正进入运行状态。</li>
+<li><strong>只能对处于新建状态的线程调用<code>start</code>方法,否则将引发<code>IllegalThreadStateException</code>异常</strong></li>
+<li><strong>启动线程的正确方法是调用<code>Thread</code>对象的<code>start()</code>方法,而不是直接调用<code>run()</code>方法</strong>,<strong>直接调用了线程对象的<code>run()</code>方法,程序运行的结果是整个程序只有一个线程:<code>主线程</code></strong></li>
+<li>如果希望调用子线程的<code>start</code>方法后子线程立即开始执行,则可以让<code>当前运行的线程(主线程)睡眠1毫秒</code>,这种情况针只有一个子线程的情况,个人觉得用处不大.</li>
+</ul>
+<h1 id="16-3-2-运行状态和阻塞状态"><a href="#16-3-2-运行状态和阻塞状态" class="headerlink" title="16.3.2 运行状态和阻塞状态"></a>16.3.2 运行状态和阻塞状态</h1><h2 id="运行状态-run方法得到执行"><a href="#运行状态-run方法得到执行" class="headerlink" title="运行状态 run方法得到执行"></a>运行状态 run方法得到执行</h2><p>如果<strong>处于就绪状态的线程获得了<code>CPU</code>,开始执行线程的执行体<code>run()</code>方法,则该线程处于<code>运行状态</code></strong>,如果计算机只有一个<code>CPU</code>,那么在任何时刻只有一个线程处于运行状态。当然,在一个多处理器的机器上,将会有多个线程**<code>并行</code>执行**;不过当线程数大于处理器数时,依然会存在多个线程在同一个<code>CPU</code>上轮换的现象。(注意多处理器的机器上是并行:<code>parallel</code>,单处理器上是<code>并发</code>)<br>当一个线程开始运行后,它不可能一直处于运行状态(除非它的线程执行体足够短,瞬间就执行结束了),<strong>线程在运行过程中需要被中断,目的是使其他线程获得执行的机会</strong>,线程调度的细节取决于底层平台所采用的策略。对于采用<code>抢占式策略</code>的系统而言,系统会给每个可执行的线程一个<code>小时间段</code>来处理任务;当该时间段用完后,系统就会剥夺该线程所占用的资源,让其他线程获得执行的机会。在选择下一个线程时,系统会考虑线程的优先级。<br>所有现代的桌面和服务器操作系统都采用<code>抢占式调度策略</code>,但一些小型设备如<code>手机</code>则可能采用<code>协作式调度策略</code>,在这样的系统中,只有当一个线程调用了它的<code>sleep()</code>或<code>yield()</code>方法后才会放弃所占用的资源,也就是必须由该线程主动放弃所占用的资源。</p>
+<h2 id="阻塞状态-sleep-IO阻塞-等待同步锁-等待通知-suspend"><a href="#阻塞状态-sleep-IO阻塞-等待同步锁-等待通知-suspend" class="headerlink" title="阻塞状态 sleep IO阻塞 等待同步锁 等待通知 suspend"></a>阻塞状态 sleep IO阻塞 等待同步锁 等待通知 suspend</h2><p>当发生如下情况时,线程将会进入阻塞状态。</p>
+<ol>
+<li>线程调用<code>sleep()</code>方法主动放弃所占用的处理器资源。</li>
+<li>线程调用了一个<code>阻塞式IO方法</code>,在<code>阻塞式IO方法</code>返回之前,该线程被阻塞。</li>
+<li>线程试图获得一个<strong>同步监视器</strong>,但该<code>同步监视器正被其他线程所持有的时候</code>。</li>
+<li>线程在等待某个通知(<code>notify</code>)。</li>
+<li>程序调用了线程的<code>suspend()</code>方法将该线程挂起。但这个方法容易导致死锁,所以应该尽量避免使用该方法。</li>
+</ol>
+<h2 id="阻塞结束进入就绪"><a href="#阻塞结束进入就绪" class="headerlink" title="阻塞结束进入就绪"></a>阻塞结束进入就绪</h2><p>当前正在执行的线程被阻塞之后,其他线程就可以获得执行的机会。<strong>被阻塞的线程会在合适的时候重新进入<code>就绪状态</code></strong>,注意是<code>就绪状态</code>而不是<strong>运行状态</strong>。也就是说,<strong>被阻塞线程的阻塞解除后,必须重新等待线程调度器再次调度它</strong>。</p>
+<h3 id="阻塞进入就绪-sleep时间到-IO方法返回-获得同步锁-收到通知-resumed"><a href="#阻塞进入就绪-sleep时间到-IO方法返回-获得同步锁-收到通知-resumed" class="headerlink" title="阻塞进入就绪 sleep时间到 IO方法返回 获得同步锁 收到通知 resumed"></a>阻塞进入就绪 sleep时间到 IO方法返回 获得同步锁 收到通知 resumed</h3><p>针对上面几种情况,当发生如下特定的情况时可以解除上面的阻塞,让该线程重新进入就绪状态。</p>
+<ol>
+<li>调用<code>sleep</code>方法的线程经过了指定时间</li>
+<li>线程调用的<code>阻塞式IO方法</code>已经返回。</li>
+<li>线程成功地获得了试图取得的同步监视器。</li>
+<li>线程正在等待某个通知时,<code>其他线程发出了一个通知</code>。</li>
+<li>处于挂起状态的线程被调用了<code>resumed()</code>恢复方法。</li>
+</ol>
+<h2 id="线程状态转换图"><a href="#线程状态转换图" class="headerlink" title="线程状态转换图"></a>线程状态转换图</h2><p>图16.4显示了线程状态转换图。<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/16/1.png" alt="这里有一张图片"><br>从图16.4中可以看出：</p>
+<ul>
+<li><strong>线程从<code>阻塞状态</code>只能进入<code>就绪状态</code>,无法直接进入运行状态</strong>。</li>
+<li><strong><code>就绪状态</code>和<code>运行状态</code>之间的转换通常不受程序控制,而是由系统线程调度所决定</strong>,<ul>
+<li>当处于<code>就绪状态</code>的线程获得处理器资源时,该线程进入<code>运行状态</code>;</li>
+<li>当处于<code>运行状态</code>的线程失去处理器资源时,该线程进入<code>就绪状态</code>。<ul>
+<li>但有个方法例外,**调用<code>yield()</code>方法可以让<code>运行状态</code>的线程转入<code>就绪状态</code>**。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="16-3-3-线程死亡"><a href="#16-3-3-线程死亡" class="headerlink" title="16.3.3 线程死亡"></a>16.3.3 线程死亡</h1><h2 id="线程死亡-run方法结束-异常-stop"><a href="#线程死亡-run方法结束-异常-stop" class="headerlink" title="线程死亡 run方法结束 异常 stop"></a>线程死亡 run方法结束 异常 stop</h2><p>线程会以如下三种方式结束,结束后就处于死亡状态。</p>
+<ul>
+<li><code>run()</code>或<code>call()</code>方法执行完成,线程正常结束。</li>
+<li>线程抛出一个未捕获的<code>Exception</code>或<code>Error</code>。</li>
+<li>直接调用该线程的<code>stop()</code>方法来结束该线程,不过<code>stop()</code>方法容易导致死锁,通常不推荐使用。</li>
+</ul>
+<h2 id="一个线程结束不会影响其他线程"><a href="#一个线程结束不会影响其他线程" class="headerlink" title="一个线程结束不会影响其他线程"></a>一个线程结束不会影响其他线程</h2><p>当主线程结束时,其他线程不受任何影响,并不会随之结束。一旦子线程启动起来后,它就拥有和主线程相同的地位,它不会受主线程的影响。</p>
+<h2 id="isAlive方法"><a href="#isAlive方法" class="headerlink" title="isAlive方法"></a>isAlive方法</h2><p>为了测试某个线程是否已经死亡,可以调用线程对象的<code>isAlive()</code>方法,</p>
+<ul>
+<li>当线程处于<code>就绪</code>、<code>运行</code>、<code>阻塞</code>三种状态时,<code>isAlive()</code>方法将返回<code>true</code>;</li>
+<li>当线程处于<code>新建</code>、<code>死亡</code>两种状态时,<code>isAlive()</code>方法将返回<code>false</code></li>
+</ul>
+<h2 id="已经死亡的线程无法再次启动"><a href="#已经死亡的线程无法再次启动" class="headerlink" title="已经死亡的线程无法再次启动"></a>已经死亡的线程无法再次启动</h2><p>不要试图对一个已经死亡的线程调用<code>start</code>方法使它重新启动,死亡就是死亡,该线程将不可再次作为线程执行。</p>
+<h3 id="程序-死亡的线程无法再次start"><a href="#程序-死亡的线程无法再次start" class="headerlink" title="程序 死亡的线程无法再次start"></a>程序 死亡的线程无法再次start</h3><p>下面程序尝试对处于死亡状态的线程再次调用<code>start</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">StartDead</span> <span class="keyword">extends</span> <span class="title">Thread</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 重写run方法，run方法的方法体就是线程执行体</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> i ;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> ( ; i &lt; <span class="number">100</span> ; i++ )</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(getName() +  <span class="string">" "</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 创建线程对象</span></span><br><span class="line">        StartDead sd = <span class="keyword">new</span> StartDead();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">300</span>;  i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 调用Thread的currentThread方法获取当前线程</span></span><br><span class="line">            System.out.println(Thread.currentThread().getName()</span><br><span class="line">                +  <span class="string">" "</span> + i);</span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">20</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 启动线程</span></span><br><span class="line">                <span class="comment">// 判断启动后线程的isAlive()值，输出true</span></span><br><span class="line">                sd.start();</span><br><span class="line">                System.out.println(sd.isAlive());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 只有当线程处于新建、死亡两种状态时isAlive()方法返回false。</span></span><br><span class="line">            <span class="comment">// 当i &gt; 20，则该线程肯定已经启动过了，</span></span><br><span class="line">            <span class="comment">// 如果sd.isAlive()为假时，那只能是死亡状态了。</span></span><br><span class="line">            <span class="keyword">if</span> (i &gt; <span class="number">20</span> &amp;&amp; !sd.isAlive())</span><br><span class="line"></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 试图再次启动该线程</span></span><br><span class="line">                sd.start();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中试图在线程已死亡的情况下再次调用<code>start</code>方法来启动该线程。<br>运行上面程序,将引发<code>IllegalThreadStateException</code>异常。这表明<strong>处于死亡状态的线程无法再次运行了</strong>。</p>
+<h3 id="只能对新建的线程start一次"><a href="#只能对新建的线程start一次" class="headerlink" title="只能对新建的线程start一次"></a>只能对新建的线程start一次</h3><p>不要对处于死亡状态的线程调用<code>start</code>方法,<strong>只能对<code>新建状态</code>的线程调用<code>start</code>方法</strong>,<strong>对<code>新建状态</code>的线程两次调用<code>start</code>方法也是错误的</strong>。这都会引发<code>IllegalThreadStateException</code>异常.</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/42f33da/" title="16.3 线程的生命周期">https://lanlan2017.github.io/JavaReadingNotes/42f33da/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/d5151950/" rel="next" title="16.2 线程的创建和启动">
+                  <i class="fa fa-chevron-left"></i> 16.2 线程的创建和启动
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/6fdf5d88/" rel="prev" title="16.4 控制线程 16.4.1 join线程">
+                  16.4 控制线程 16.4.1 join线程 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#16-3-线程的生命周期"><span class="nav-text">16.3 线程的生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的5种状态"><span class="nav-text">线程的5种状态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16-3-1-新建状态和就绪状态"><span class="nav-text">16.3.1 新建状态和就绪状态</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#新建状态-new-Thread创建线程后"><span class="nav-text">新建状态 new Thread创建线程后</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#就绪状态-调用Thread对象start方法后"><span class="nav-text">就绪状态 调用Thread对象start方法后</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#启动线程使用start方法"><span class="nav-text">启动线程使用start方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#永远不要调用线程对象的run方法"><span class="nav-text">永远不要调用线程对象的run方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#程序-调用run方法不会启动线程"><span class="nav-text">程序 调用run方法不会启动线程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只能对处于新建状态的线程调用start方法"><span class="nav-text">只能对处于新建状态的线程调用start方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何让子线程立即执行"><span class="nav-text">如何让子线程立即执行</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16-3-2-运行状态和阻塞状态"><span class="nav-text">16.3.2 运行状态和阻塞状态</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#运行状态-run方法得到执行"><span class="nav-text">运行状态 run方法得到执行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞状态-sleep-IO阻塞-等待同步锁-等待通知-suspend"><span class="nav-text">阻塞状态 sleep IO阻塞 等待同步锁 等待通知 suspend</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞结束进入就绪"><span class="nav-text">阻塞结束进入就绪</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#阻塞进入就绪-sleep时间到-IO方法返回-获得同步锁-收到通知-resumed"><span class="nav-text">阻塞进入就绪 sleep时间到 IO方法返回 获得同步锁 收到通知 resumed</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程状态转换图"><span class="nav-text">线程状态转换图</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16-3-3-线程死亡"><span class="nav-text">16.3.3 线程死亡</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程死亡-run方法结束-异常-stop"><span class="nav-text">线程死亡 run方法结束 异常 stop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一个线程结束不会影响其他线程"><span class="nav-text">一个线程结束不会影响其他线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#isAlive方法"><span class="nav-text">isAlive方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#已经死亡的线程无法再次启动"><span class="nav-text">已经死亡的线程无法再次启动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序-死亡的线程无法再次start"><span class="nav-text">程序 死亡的线程无法再次start</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只能对新建的线程start一次"><span class="nav-text">只能对新建的线程start一次</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

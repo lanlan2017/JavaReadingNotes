@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="7.3 拦截器&amp;nbsp;7.3.1 HandlerInterceptor接口&amp;nbsp;preHandle方法&amp;nbsp;postHandle方法&amp;nbsp;afterCompletion方法&amp;nbsp;示例 拦截器实现用户权限验证&amp;nbsp;FormController&amp;nbsp;登录界面&amp;nbsp;UserController&amp;nbsp;BookController&amp;nbsp;main.js">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.3 拦截器">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/ad57fe08/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="7.3 拦截器&amp;nbsp;7.3.1 HandlerInterceptor接口&amp;nbsp;preHandle方法&amp;nbsp;postHandle方法&amp;nbsp;afterCompletion方法&amp;nbsp;示例 拦截器实现用户权限验证&amp;nbsp;FormController&amp;nbsp;登录界面&amp;nbsp;UserController&amp;nbsp;BookController&amp;nbsp;main.js">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/7.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/8.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/9.png">
+<meta property="article:published_time" content="2019-05-31T16:17:04.000Z">
+<meta property="article:modified_time" content="2020-06-05T03:17:50.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/7.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/ad57fe08/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>7.3 拦截器 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/ad57fe08/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">7.3 拦截器<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC7%E7%AB%A0%20Spring%20MVC%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E5%92%8C%E6%8B%A6%E6%88%AA%E5%99%A8%E6%9C%BA%E5%88%B6/7.3%20%E6%8B%A6%E6%88%AA%E5%99%A8/7.3%20%E6%8B%A6%E6%88%AA%E5%99%A8.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-31 16:17:04" itemprop="dateCreated datePublished" datetime="2019-05-31T16:17:04+00:00">2019-05-31</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-05 03:17:50" itemprop="dateModified" datetime="2020-06-05T03:17:50+00:00">2020-06-05</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring-MVC%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E5%92%8C%E6%8B%A6%E6%88%AA%E5%99%A8%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">第7章 Spring MVC的文件上传下载和拦截器机制</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring-MVC%E7%9A%84%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E5%92%8C%E6%8B%A6%E6%88%AA%E5%99%A8%E6%9C%BA%E5%88%B6/7-3-%E6%8B%A6%E6%88%AA%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">7.3 拦截器</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/ad57fe08/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/ad57fe08/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/ad57fe08/#7-3-拦截器" class="header_1">7.3 拦截器</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#7-3-1-HandlerInterceptor接口" class="header_2">7.3.1 HandlerInterceptor接口</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#preHandle方法" class="header_2">preHandle方法</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#postHandle方法" class="header_2">postHandle方法</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#afterCompletion方法" class="header_2">afterCompletion方法</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#示例-拦截器实现用户权限验证" class="header_1">示例 拦截器实现用户权限验证</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#FormController" class="header_2">FormController</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#登录界面" class="header_2">登录界面</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#UserController" class="header_2">UserController</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#BookController" class="header_2">BookController</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#main-jsp" class="header_2">main.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#拦截器" class="header_2">拦截器</a>&nbsp;<br><a href="/JavaReadingNotes/ad57fe08/#测试" class="header_2">测试</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="7-3-拦截器"><a href="#7-3-拦截器" class="headerlink" title="7.3 拦截器"></a>7.3 拦截器</h1><p><code>Interceptor</code>拦截器是<code>SpringMVC</code>中相当重要的功能,它的<strong>主要作用是拦截用户的请求并进行相应的处理</strong>。比如**通过拦截器来进行<mark>用户权限验证</mark>,或者用<mark>来判断用户是否已经登录</mark>**等。</p>
+<h2 id="Spring-MVC拦截器可插拔"><a href="#Spring-MVC拦截器可插拔" class="headerlink" title="Spring MVC拦截器可插拔"></a>Spring MVC拦截器可插拔</h2><p><code>Spring MVC</code>拦截器是可插拔式的设计。<strong>如果需要使用某个拦截器,只需要在配置文件中应用该拦截器即可</strong>;如果不需要使用该拦截器,只需要在配置文件中取消应用该拦截器。不管是否应用某个拦截器,对<code>Spring MVC</code>框架不会有任何影响。</p>
+<h1 id="7-3-1-HandlerInterceptor接口"><a href="#7-3-1-HandlerInterceptor接口" class="headerlink" title="7.3.1 HandlerInterceptor接口"></a>7.3.1 HandlerInterceptor接口</h1><p><strong><code>Spring MVC</code>中的<code>Interceptor</code>拦截器拦截请求是通过实现<code>HandlerInterceptor</code>接口来完成的</strong>。在<code>Spring MVC</code>中定义一个<code>Interceptor</code>拦截器非常简单,通常在要定义的<code>Interceptor</code>拦截器类中实现<code>Spring</code>的<code>HandlerInterceptor</code>接口,或者继承抽象类<code>HandlerInterceptorAdapter</code>。<br><code>HandlerInterceptor</code>接口中定义了三个方法,<code>SpringMVC</code>就是通过这三个方法来对用户的请求进行拦截处理的。</p>
+<h2 id="preHandle方法"><a href="#preHandle方法" class="headerlink" title="preHandle方法"></a>preHandle方法</h2><p>preHandle方法的方法声明如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(HttpServletRequest request,HttpServletResponse response,Object handle)</span></span></span><br></pre></td></tr></table></figure>
+<p>顾名思义,<strong>该方法将在请求处理之前被调用</strong>。<br><code>SpringMVC</code>中的<code>Interceptor</code>实行的是<strong>链式调用</strong>,即在一个应用中或者说在一个请求中可以同时存在多个<code>Interceptor</code>。每个<code>Interceptor</code>的调用会依据它的声明顺序依次执行,而且最先执行的是<code>Interceptor</code>中的<code>preHandle</code>方法,所以可以在这个方法中进行一些前置的初始化操作或者是对当前请求的一个预处理,也可以在这个方法中进行一些判断来决定请求是否要继续进行下去。该方法的返回值是<code>boolean</code>类型的,</p>
+<ul>
+<li>当返回值为<code>false</code>时,<strong>表示请求结束</strong>,后续的<code>Interceptor</code>和<code>Controller</code>都不会再执行;</li>
+<li>当返回值为<code>true</code>时就会继续调用下一个<code>Interceptor</code>的<code>preHandle</code>方法;</li>
+</ul>
+<p>如果已经是最后一个<code>Interceptor</code>,就会调用当前请求的<code>Controller</code>方法。</p>
+<h2 id="postHandle方法"><a href="#postHandle方法" class="headerlink" title="postHandle方法"></a>postHandle方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">postHandle</span> <span class="params">(HttpServletRequest request,HttpServletResponse response,</span></span></span><br><span class="line"><span class="function"><span class="params">                    Object handler,ModelAndView mv)</span></span></span><br></pre></td></tr></table></figure>
+<p>该方法和之后的<code>afterCompletion</code>方法都只能在当前所属的<code>Interceptor</code>的<code>preHandle</code>方法的返回值为<code>true</code>时才能被调用。<br><code>postHandle</code>方法,顾名思义,就是<strong>在当前请求被处理之后,也就是在<code>Controller</code>的请求处理方法被调用之后执行</strong>,但是它会<strong>在<code>DispatcherServlet</code>进行视图返回渲染之前被调用</strong>,所以我们可以在这个方法中对<code>Controller</code>处理之后的<code>ModelAndView</code>对象进行操作。<code>postHandle</code>方法被调用的方向跟<code>preHandle</code>是相反的,也就是说先声明的<code>Interceptor</code>的<code>postHandle</code>方法反而会后执行,这和<code>Struts2</code>里面的<code>Interceptor</code>的执行过程类似。</p>
+<h2 id="afterCompletion方法"><a href="#afterCompletion方法" class="headerlink" title="afterCompletion方法"></a>afterCompletion方法</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">afterCompletion</span><span class="params">(HttpServletRequest request,HttpServletResponsere sponse,</span></span></span><br><span class="line"><span class="function"><span class="params">                        Object handler,Exception exception)</span></span></span><br></pre></td></tr></table></figure>
+<p>该方法也是在当前所属的<code>Interceptor</code>的<code>preHandle</code>方法的返回值为<code>true</code>时才会执行。</p>
+<p>顾名思义,<strong>该方法将在整个请求结束之后,也就是在<code>DispatcherServlet</code>渲染了对应的视图之后执行</strong>。这个方法的<strong>主要作用是进行资源清理</strong>。</p>
+<h1 id="示例-拦截器实现用户权限验证"><a href="#示例-拦截器实现用户权限验证" class="headerlink" title="示例 拦截器实现用户权限验证"></a>示例 拦截器实现用户权限验证</h1><h2 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h2><details><summary>展开/折叠</summary><pre>
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\07\InterceptorTest
+├─src\
+│ └─org\
+│   └─fkit\
+│     ├─controller\
+│     │ ├─BookController.java
+│     │ ├─FormController.java
+│     │ └─UserController.java
+│     ├─domain\
+│     │ ├─Book.java
+│     │ └─User.java
+│     └─interceptor\
+│       └─AuthorizationInterceptor.java
+└─WebContent\
+  ├─images\
+  │ ├─ajax.jpg
+  │ ├─android.jpg
+  │ ├─basic.jpg
+  │ ├─ee.jpg
+  │ ├─fkjava.jpg
+  │ ├─framework.jpg
+  │ ├─java.jpg
+  │ ├─javaee.jpg
+  │ ├─struts.jpg
+  │ └─xml.jpg
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─content\
+    │ ├─loginForm.jsp
+    │ └─main.jsp
+    ├─lib\
+    │ ├─commons-logging-1.2.jar
+    │ ├─javax.servlet.jsp.jstl-1.2.1.jar
+    │ ├─javax.servlet.jsp.jstl-api-1.2.1.jar
+    │ ├─spring-aop-5.0.1.RELEASE.jar
+    │ ├─spring-aspects-5.0.1.RELEASE.jar
+    │ ├─spring-beans-5.0.1.RELEASE.jar
+    │ ├─spring-context-5.0.1.RELEASE.jar
+    │ ├─spring-context-indexer-5.0.1.RELEASE.jar
+    │ ├─spring-context-support-5.0.1.RELEASE.jar
+    │ ├─spring-core-5.0.1.RELEASE.jar
+    │ ├─spring-expression-5.0.1.RELEASE.jar
+    │ ├─spring-instrument-5.0.1.RELEASE.jar
+    │ ├─spring-jcl-5.0.1.RELEASE.jar
+    │ ├─spring-jdbc-5.0.1.RELEASE.jar
+    │ ├─spring-jms-5.0.1.RELEASE.jar
+    │ ├─spring-messaging-5.0.1.RELEASE.jar
+    │ ├─spring-orm-5.0.1.RELEASE.jar
+    │ ├─spring-oxm-5.0.1.RELEASE.jar
+    │ ├─spring-test-5.0.1.RELEASE.jar
+    │ ├─spring-tx-5.0.1.RELEASE.jar
+    │ ├─spring-web-5.0.1.RELEASE.jar
+    │ ├─spring-webflux-5.0.1.RELEASE.jar
+    │ ├─spring-webmvc-5.0.1.RELEASE.jar
+    │ └─spring-websocket-5.0.1.RELEASE.jar
+    ├─springmvc-config.xml
+    └─web.xml
+</pre></details>
+
+<p>本小节通过拦截器完成一个用户权限验证的功能。即<strong>用户必须登录之后才可以访问网站首页</strong>,如果没有登录就直接访问网站首页,则拦截器会拦截请求,并将请求重新转发到登录页面,同时提示用户需要先登录再访问网站。</p>
+<h2 id="FormController-java"><a href="#FormController-java" class="headerlink" title="FormController.java"></a>FormController.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 动态页面跳转控制器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FormController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span>(value = <span class="string">"/loginForm"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">loginForm</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"请求处理方法  loginForm"</span>);</span><br><span class="line">        <span class="comment">// 跳转到登录页面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"loginForm"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="loginForm-jsp"><a href="#loginForm-jsp" class="headerlink" title="loginForm.jsp"></a>loginForm.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;登录页面&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;登录页面&lt;/h3&gt;</span><br><span class="line">    &lt;form action=<span class="string">"login"</span> method=<span class="string">"post"</span>&gt;</span><br><span class="line">        &lt;!-- 提示信息 --&gt;</span><br><span class="line">        &lt;font color="red"&gt;$&#123;requestScope.message &#125;&lt;/font&gt;</span><br><span class="line">        &lt;table&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;登录名: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="text" id="loginname" name="loginname"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;密码: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="password" id="password" name="password"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type="submit" value="登录"&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">        &lt;/table&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="UserController-java"><a href="#UserController-java" class="headerlink" title="UserController.java"></a>UserController.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</span><br><span class="line"><span class="keyword">import</span> org.fkit.domain.User;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.PostMapping;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.ModelAndView;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 处理用户请求控制器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理/login请求</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@PostMapping</span>(value = <span class="string">"/login"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">login</span><span class="params">(String loginname, String password,</span></span></span><br><span class="line"><span class="function"><span class="params">            ModelAndView mv, HttpSession session)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 模拟数据库根据登录名和密码查找用户，判断用户登录</span></span><br><span class="line">        <span class="keyword">if</span> (loginname != <span class="keyword">null</span> &amp;&amp; loginname.equals(<span class="string">"fkit"</span>) &amp;&amp; password != <span class="keyword">null</span></span><br><span class="line">                &amp;&amp; password.equals(<span class="string">"123456"</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 模拟创建用户</span></span><br><span class="line">            User user = <span class="keyword">new</span> User();</span><br><span class="line">            user.setLoginname(loginname);</span><br><span class="line">            user.setPassword(password);</span><br><span class="line">            user.setUsername(<span class="string">"管理员"</span>);</span><br><span class="line">            <span class="comment">// 登录成功，将user对象设置到HttpSession作用范围域</span></span><br><span class="line">            session.setAttribute(<span class="string">"user"</span>, user);</span><br><span class="line">            <span class="comment">// 转发到main请求</span></span><br><span class="line">            mv.setViewName(<span class="string">"redirect:main"</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 登录失败，设置失败提示信息，并跳转到登录页面</span></span><br><span class="line">            mv.addObject(<span class="string">"message"</span>, <span class="string">"登录名或密码错误，请重新输入!"</span>);</span><br><span class="line">            mv.setViewName(<span class="string">"loginForm"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> mv;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>UserController</code>类的<code>login</code>方法用来处理登录请求,本示例没有使用数据库存储数据,只是简单地模拟了用户登录,只要用户输入的登录名是”<code>xiaoming</code>“,密码是”xiaoming”,则验证通过。</p>
+<ul>
+<li>如果验证通过,创建一个<code>User</code>对象保存到<code>HttpSession</code>当中,同时将请求使用客户端跳转到<code>main</code>请求;</li>
+<li>如果验证失败,则设置失败提示信息到<code>ModelAndView</code>对象,同时将请求使用客户端跳转到<code>loginForm</code>请求,即跳回登录页面。</li>
+</ul>
+<h2 id="BookController-java"><a href="#BookController-java" class="headerlink" title="BookController.java"></a>BookController.java</h2><p><code>BookController</code>类的<code>main</code>方法用来处理网站首页的请求,该方法获得所有图书信息,并将它们设置到<code>Model</code>当中,然后传递到<code>main</code>页面。本示例没有使用数据库存储数据,只是简单地创建了一个集合模拟从数据库获取图书信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.controller;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.fkit.domain.Book;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Controller;</span><br><span class="line"><span class="keyword">import</span> org.springframework.ui.Model;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.RequestMapping;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 处理图书请求控制器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理/main请求</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/main"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">main</span><span class="params">(Model model)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 模拟数据库获得所有图书集合</span></span><br><span class="line">        List&lt;Book&gt; book_list = <span class="keyword">new</span> ArrayList&lt;Book&gt;();</span><br><span class="line">        book_list.add(<span class="keyword">new</span> Book(<span class="string">"java.jpg"</span>, <span class="string">"疯狂Java讲义（附光盘）"</span>, <span class="string">"李刚 编著"</span>, <span class="number">74.2</span>));</span><br><span class="line">        book_list.add(<span class="keyword">new</span> Book(<span class="string">"ee.jpg"</span>, <span class="string">"轻量级Java EE企业应用实战"</span>, <span class="string">"李刚 编著"</span>, <span class="number">59.2</span>));</span><br><span class="line">        book_list.add(</span><br><span class="line">                <span class="keyword">new</span> Book(<span class="string">"android.jpg"</span>, <span class="string">"疯狂Android讲义（附光盘）"</span>, <span class="string">"李刚 编著"</span>, <span class="number">60.6</span>));</span><br><span class="line">        book_list.add(<span class="keyword">new</span> Book(<span class="string">"ajax.jpg"</span>, <span class="string">"疯狂Ajax讲义（附光盘）"</span>, <span class="string">"李刚 编著"</span>, <span class="number">66.6</span>));</span><br><span class="line">        <span class="comment">// 将图书集合添加到model当中</span></span><br><span class="line">        model.addAttribute(<span class="string">"book_list"</span>, book_list);</span><br><span class="line">        <span class="comment">// 跳转到main页面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">"main"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="main-jsp"><a href="#main-jsp" class="headerlink" title="main.jsp"></a>main.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;%@ taglib uri=<span class="string">"http://java.sun.com/jsp/jstl/core"</span> prefix=<span class="string">"c"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">"Content-Type"</span> content=<span class="string">"text/html; charset=UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;首页&lt;/title&gt;</span><br><span class="line">&lt;style type=<span class="string">"text/css"</span>&gt;</span><br><span class="line">table &#123;</span><br><span class="line">    border-collapse: collapse;</span><br><span class="line">    border-spacing: <span class="number">0</span>;</span><br><span class="line">    border-left: 1px solid #888;</span><br><span class="line">    border-top: 1px solid #888;</span><br><span class="line">    background: #efefef;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">th, td &#123;</span><br><span class="line">    border-right: 1px solid #888;</span><br><span class="line">    border-bottom: 1px solid #888;</span><br><span class="line">    padding: <span class="number">5</span>px <span class="number">15</span>px;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">th &#123;</span><br><span class="line">    font-weight: bold;</span><br><span class="line">    background: #ccc;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;欢迎[$&#123;sessionScope.user.username &#125;]访问&lt;/h3&gt;</span><br><span class="line">    &lt;br&gt;</span><br><span class="line">    &lt;table border=<span class="string">"1"</span>&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;th&gt;封面&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;书名&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;作者&lt;/th&gt;</span><br><span class="line">            &lt;th&gt;价格&lt;/th&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;c:forEach items=<span class="string">"$&#123;requestScope.book_list &#125;"</span> <span class="keyword">var</span>=<span class="string">"book"</span>&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;img src="images/$&#123;book.image &#125;" height="60"&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;$&#123;book.name &#125;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;$&#123;book.author &#125;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;$&#123;book.price &#125;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">        &lt;/c:forEach&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="拦截器"><a href="#拦截器" class="headerlink" title="拦截器"></a>拦截器</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 拦截器必须实现HandlerInterceptor接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthorizationInterceptor</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">HandlerInterceptor</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 不拦截"/loginForm"和"/login"请求</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String[] IGNORE_URI = &#123;<span class="string">"/loginForm"</span>, <span class="string">"/login"</span>&#125;;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 该方法将在整个请求完成之后执行， 主要作用是用于清理资源的，</span></span><br><span class="line"><span class="comment">     * 该方法也只能在当前Interceptor的preHandle方法的返回值为true时才会执行。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">afterCompletion</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">                                HttpServletResponse response, Object handler,</span></span></span><br><span class="line"><span class="function"><span class="params">                                Exception exception)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"拦截器的 afterCompletion方法\n-----------------------------"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 该方法将在Controller的方法调用之后执行， 方法中可以对ModelAndView进行操作 ，</span></span><br><span class="line"><span class="comment">     * 该方法也只能在当前Interceptor的preHandle方法的返回值为true时才会执行。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postHandle</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">                           HttpServletResponse response, Object handler,</span></span></span><br><span class="line"><span class="function"><span class="params">                           ModelAndView mv)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"拦截器的 postHandle方法"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * preHandle方法是进行处理器拦截用的，该方法将在Controller处理之前进行调用，</span></span><br><span class="line"><span class="comment">     * 该方法的返回值为true拦截器才会继续往下执行，该方法的返回值为false的时候整个请求就结束了。</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">preHandle</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">                             HttpServletResponse response, Object handler)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"拦截器的 preHandle方法"</span>);</span><br><span class="line">        <span class="comment">// flag变量用于判断用户是否登录，默认为false</span></span><br><span class="line">        <span class="keyword">boolean</span> flag = <span class="keyword">false</span>;</span><br><span class="line">        <span class="comment">// 获取请求的路径进行判断</span></span><br><span class="line">        String servletPath = request.getServletPath();</span><br><span class="line">        <span class="comment">// 判断请求是否需要拦截</span></span><br><span class="line">        <span class="keyword">for</span> (String s : IGNORE_URI)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (servletPath.contains(s))</span><br><span class="line">            &#123;</span><br><span class="line">                flag = <span class="keyword">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 拦截请求</span></span><br><span class="line">        <span class="keyword">if</span> (!flag)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 1.获取session中的用户</span></span><br><span class="line">            User user = (User) request.getSession().getAttribute(<span class="string">"user"</span>);</span><br><span class="line">            <span class="comment">// 2.判断用户是否已经登录</span></span><br><span class="line">            <span class="keyword">if</span> (user == <span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 如果用户没有登录，则设置提示信息，跳转到登录页面</span></span><br><span class="line">                System.out.println(<span class="string">"    |----验证不通过,重新登录"</span>);</span><br><span class="line">                request.setAttribute(<span class="string">"message"</span>, <span class="string">"请先登录再访问网站"</span>);</span><br><span class="line">                <span class="comment">// 转发到登录页面</span></span><br><span class="line">                request.getRequestDispatcher(<span class="string">"loginForm"</span>).forward(request,</span><br><span class="line">                        response);</span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 如果用户已经登录，则验证通过，放行</span></span><br><span class="line">                System.out.println(<span class="string">"    |----验证通过,放行/main请求"</span>);</span><br><span class="line">                flag = <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"main"</span>&gt;</span>直接请求/main<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>如果没有登录,直接访问<code>main</code>请求,拦截器会拦截请求,验证用户是否登录,此时用户若没有登录,则跳转到登录页面,如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/7.png" alt="这里有一张图片"><br>从控制台的输出可以看到各个方法的执行顺序,如下所示.</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">拦截器的 preHandle方法</span><br><span class="line">    |----验证不通过,重新登录</span><br><span class="line">拦截器的 preHandle方法</span><br><span class="line">请求处理方法  loginForm</span><br><span class="line">拦截器的 postHandle方法</span><br><span class="line">拦截器的 afterCompletion方法</span><br><span class="line">-----------------------------</span><br></pre></td></tr></table></figure>
+<p>此时填写正确的用户名xiaoming和密码xiaoming,点击登录<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/8.png" alt="这里有一张图片"><br>此时才可以正确得到main请求的资源,如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/9.png" alt="这里有一张图片"><br>控制台新增内容如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">拦截器的 preHandle方法</span><br><span class="line">请求处理方法 login</span><br><span class="line">    |-----&gt;登陆验证通过,转发到main请求</span><br><span class="line">拦截器的 postHandle方法</span><br><span class="line">拦截器的 afterCompletion方法</span><br><span class="line">-----------------------------</span><br><span class="line">拦截器的 preHandle方法</span><br><span class="line">    |----验证通过,放行/main请求</span><br><span class="line">请求处理方法  main</span><br><span class="line">拦截器的 postHandle方法</span><br><span class="line">拦截器的 afterCompletion方法</span><br><span class="line">-----------------------------</span><br></pre></td></tr></table></figure>
+<p>可以看到执行顺序是,表单提交到<code>login</code>请求,<code>login</code>方法验证成功后,转发到<code>main</code>请求,当请求<code>main</code>时,拦截器的<code>preHandle</code>方法先验证是否登录过,现在的情况是已经登录了,<code>preHandle</code>方法放行<code>main</code>请求,<code>main</code>方法得到执行.</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/ad57fe08/" title="7.3 拦截器">https://lanlan2017.github.io/JavaReadingNotes/ad57fe08/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/c48866c4/" rel="next" title="6.2.2 Spring支持的转换器 示例 使用InitBinder注解添加自定义编辑器转换数据">
+                  <i class="fa fa-chevron-left"></i> 6.2.2 Spring支持的转换器 示例 使用InitBinder注解添加自定义编辑器转换数据
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/8e330816/" rel="prev" title="6.2.2 Spring支持的转换器 示例 使用WebBindingInitializer注册全局自定义编辑器转换数据">
+                  6.2.2 Spring支持的转换器 示例 使用WebBindingInitializer注册全局自定义编辑器转换数据 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-3-拦截器"><span class="nav-text">7.3 拦截器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-MVC拦截器可插拔"><span class="nav-text">Spring MVC拦截器可插拔</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-3-1-HandlerInterceptor接口"><span class="nav-text">7.3.1 HandlerInterceptor接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#preHandle方法"><span class="nav-text">preHandle方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#postHandle方法"><span class="nav-text">postHandle方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#afterCompletion方法"><span class="nav-text">afterCompletion方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例-拦截器实现用户权限验证"><span class="nav-text">示例 拦截器实现用户权限验证</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#目录结构"><span class="nav-text">目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FormController-java"><span class="nav-text">FormController.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#loginForm-jsp"><span class="nav-text">loginForm.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UserController-java"><span class="nav-text">UserController.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BookController-java"><span class="nav-text">BookController.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#main-jsp"><span class="nav-text">main.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拦截器"><span class="nav-text">拦截器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试"><span class="nav-text">测试</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

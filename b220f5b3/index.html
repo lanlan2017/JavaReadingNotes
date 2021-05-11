@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="12.2 身份验证方法&amp;nbsp;基本访问身份验证&amp;nbsp;实例&amp;nbsp;项目结构&amp;nbsp;app12b的部署描述符web.xml&amp;nbsp;Servlet1.java&amp;nbsp;1.jsp&amp;nbsp;运行效果&amp;nbsp;摘要访问接入认证&amp;nbsp;实例&amp;nbsp;项目结构&amp;nbsp;web.xml&amp;nbsp;Servlet1.java&amp;nbsp;1.jsp&amp;nbsp;运行效果&amp;nbsp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12.2 身份验证方法">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/b220f5b3/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="12.2 身份验证方法&amp;nbsp;基本访问身份验证&amp;nbsp;实例&amp;nbsp;项目结构&amp;nbsp;app12b的部署描述符web.xml&amp;nbsp;Servlet1.java&amp;nbsp;1.jsp&amp;nbsp;运行效果&amp;nbsp;摘要访问接入认证&amp;nbsp;实例&amp;nbsp;项目结构&amp;nbsp;web.xml&amp;nbsp;Servlet1.java&amp;nbsp;1.jsp&amp;nbsp;运行效果&amp;nbsp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/3.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/4.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/6.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/8.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/9.png">
+<meta property="article:published_time" content="2019-04-20T21:43:28.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:54.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/3.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b220f5b3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>12.2 身份验证方法 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/b220f5b3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">12.2 身份验证方法<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/3%20Serlet%20JSP%E5%92%8CSpring%20MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%20Servlets%E5%92%8CJSP/%E7%AC%AC12%E7%AB%A0%20%E5%AE%89%E5%85%A8/12.2%20%E8%BA%AB%E4%BB%BD%E9%AA%8C%E8%AF%81%E6%96%B9%E6%B3%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-20 21:43:28" itemprop="dateCreated datePublished" datetime="2019-04-20T21:43:28+00:00">2019-04-20</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:54" itemprop="dateModified" datetime="2020-02-07T01:34:54+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">3 Serlet JSP和Spring MVC初学指南</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-Servlets%E5%92%8CJSP/" itemprop="url" rel="index"><span itemprop="name">第一部分 Servlets和JSP</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-Servlets%E5%92%8CJSP/%E7%AC%AC12%E7%AB%A0-%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">第12章 安全</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/b220f5b3/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/b220f5b3/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/b220f5b3/#12-2-身份验证方法" class="header_1">12.2 身份验证方法</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#基本访问身份验证" class="header_2">基本访问身份验证</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#实例" class="header_2">实例</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#项目结构" class="header_3">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#app12b的部署描述符web-xml" class="header_3">app12b的部署描述符web.xml</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#Servlet1-java" class="header_3">Servlet1.java</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#1-jsp" class="header_3">1.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#运行效果" class="header_3">运行效果</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#摘要访问接入认证" class="header_2">摘要访问接入认证</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#实例" class="header_2">实例</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#项目结构" class="header_3">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#web-xml" class="header_3">web.xml</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#Servlet1-java" class="header_3">Servlet1.java</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#1-jsp" class="header_3">1.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/b220f5b3/#运行效果" class="header_3">运行效果</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="12-2-身份验证方法"><a href="#12-2-身份验证方法" class="headerlink" title="12.2 身份验证方法"></a>12.2 身份验证方法</h1><p>现在你应该知道如何对资源集合实施安全约束，你也应该学会如何验证访问资源的用户信息。由于以声明的方式获得的资源，在部署描述符中使用的是安全约束元素，因此身份验证可以使用<code>HTTP 1.1</code>提供的解决方案：<strong>基本访问认证和摘要访问身份验证</strong>。此外，<strong>还可以使用基于表单的访问认证</strong>。<code>HTTP</code>身份验证是在<code>RFC2617</code>中定义的。你可以在这里下载规范：<br><a href="http://www.ietf.org/rfc/rfc2617.txt" target="_blank" rel="noopener">http://www.ietf.org/rfc/rfc2617.txt</a></p>
+<h2 id="基本访问身份验证"><a href="#基本访问身份验证" class="headerlink" title="基本访问身份验证"></a>基本访问身份验证</h2><p><strong>基本访问身份验证</strong>，或简称基本认证，<strong>是一个接受用户名和密码的<code>HTTP</code>身份验证</strong>。访问受保护的资源的用户将被服务器拒绝，服务器会返回一个<strong>401（未经授权）响应</strong>。该响应包含一个<code>WWW-Authenticate</code>头，包含至少一个适用于所请求资源的认证域。这里有一个响应内容的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HTTP&#x2F;1.1 401 Authorization Required</span><br><span class="line">Server: Apache-Coyote&#x2F;1.1</span><br><span class="line">Date: Wed, 21 Dec 2011 11:32:09 GMT</span><br><span class="line">WWW-Authenticate: Basic realm&#x3D;&quot;Members Only&quot;</span><br></pre></td></tr></table></figure>
+<p>浏览器会显示用户输入用户名和密码的登录对话框。当用户单击“登录”按钮时，用户名将被加上一个冒号并与密码连接起来形成一个字符串。该字符串在被发送到服务器之前将用<code>Base64</code>算法编码。成功登录后，服务器将发送所请求的资源。<code>Base64</code>是一个非常弱的算法，因此很容易解密<code>Base64</code>的信息。考虑使用摘要访问认证来替代。</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p><code>app12b</code>应用程序展示了如何使用<strong>基本访问认证</strong>。</p>
+<h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><p><code>app12b</code>应用程序的项目结构如下图所示<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/3.png" alt="这里有一张图片"></p>
+<h3 id="app12b的部署描述符web-xml"><a href="#app12b的部署描述符web-xml" class="headerlink" title="app12b的部署描述符web.xml"></a>app12b的部署描述符web.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="utf-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/javaee"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">version</span>=<span class="string">"3.0"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 限制资源访问配置 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 访问受限的资源集合 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">web-resource-name</span>&gt;</span>JSP pages<span class="tag">&lt;/<span class="name">web-resource-name</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 访问受限的资源集合的URL的正则表达式 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>*.jsp<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 运行访问该资源集合的角色列表 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">auth-constraint</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">web-resource-name</span>&gt;</span>Servlet1<span class="tag">&lt;/<span class="name">web-resource-name</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 受保护的资源集合的URL正则表达式 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/servlet1<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 允许访问该资源集合的角色列表 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>member<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>manager<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 认证设置 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">login-config</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 认证方法为:基本访问身份验证 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">auth-method</span>&gt;</span>BASIC<span class="tag">&lt;/<span class="name">auth-method</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 提示信息,将会显示在浏览器上 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">realm-name</span>&gt;</span>Members Only<span class="tag">&lt;/<span class="name">realm-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">login-config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>部署描述符web.xml中最重要的元素是<code>login-config</code>元素。它有两个子元素：<code>auth-method</code>和<code>realm-name</code>。要使用<br><strong>基本访问身份验证</strong> <code>Basic access authentication</code>，您必须将<code>auth-method</code>元素的值设为<code>BASIC</code>（所有字母大写）。在浏览器登录对话框中显示的<code>realm-name</code>元素必须赋值。</p>
+<h3 id="Servlet1-java"><a href="#Servlet1-java" class="headerlink" title="Servlet1.java"></a>Servlet1.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> servlet;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.RequestDispatcher;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.HttpConstraint;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.ServletSecurity;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="meta">@WebServlet</span>(</span><br><span class="line">    urlPatterns =</span><br><span class="line">    &#123;<span class="string">"/servlet1"</span>&#125;</span><br><span class="line">)</span><br><span class="line"><span class="meta">@ServletSecurity</span>(</span><br><span class="line">    <span class="meta">@HttpConstraint</span>(</span><br><span class="line">        rolesAllowed = <span class="string">"manager"</span></span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Servlet1</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">119L</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> ServletException,IOException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        RequestDispatcher dispatcher = request</span><br><span class="line">            .getRequestDispatcher(<span class="string">"/jsp/1.jsp"</span>);</span><br><span class="line">        dispatcher.forward(request, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-jsp"><a href="#1-jsp" class="headerlink" title="1.jsp"></a>1.jsp</h3><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE HTML&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Welcome&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;Hello World&lt;/h2&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="运行效果"><a href="#运行效果" class="headerlink" title="运行效果"></a>运行效果</h3><p>要测试<code>app12b</code>例子的<strong>基本访问身份验证</strong>，可使用以下<code>URL</code>来访问例子中的受限资源。<br><a href="http://localhost:8080/app12b/servlet1" target="_blank" rel="noopener">http://localhost:8080/app12b/servlet1</a><br>此时，浏览器中不会显示<code>Servlet1</code>的输出，而是要求输入用户名(tom)和密码(tom),如下图所示：<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/4.png" alt="这里有一张图片"><br>用户名和密码需要在<code>Tomcat</code>安装目录下的<code>conf</code>目录下的<code>tomcat-users.xml</code>中配置,详情请看：<a href="/blog/bd765484/">12.1 身份验证和授权</a>小节中.<br>现在输入<code>tomcat-user.xml</code>中配置过的用户名<code>tom</code>,密码<code>tom</code>,就可以访问这个<code>Servlet1</code>了,显示效果如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/6.png" alt="这里有一张图片"><br>认证过后,再次点击上述链接则可以直接访问<code>Servlet1</code>,不再需要重复认证.</p>
+<h2 id="摘要访问接入认证"><a href="#摘要访问接入认证" class="headerlink" title="摘要访问接入认证"></a>摘要访问接入认证</h2><p><strong>摘要访问接入认证，或简称摘要认证，也是一个<code>HTTP</code>认证</strong>，类似基本认证。但不使用弱加密的<code>base64</code>算法，而<strong>使用<code>MD5</code>算法</strong>创建一个组合用户名、域名和密码的哈希值，并发送到服务器。摘要访问身份验证是为了取代基本的访问认证，因为它提供了更安全的环境。<br><code>servlet</code>和<code>JSP</code>容器没有义务支持摘要访问认证但大多数都有支持。</p>
+<p>配置应用程序使用摘要访问认证的方式类似于使用基本访问认证。唯一的区别是<code>login-config</code>元素内的<code>auth-method</code>元素的值。**对于摘要访问认证，<code>login-config</code>元素内的<code>auth-method</code>元素值必须是<code>DIGEST</code>**（大写）。</p>
+<h2 id="实例-1"><a href="#实例-1" class="headerlink" title="实例"></a>实例</h2><p>作为一个例子，该<code>app12c</code>演示应用的摘要访问认证<code>Digest accessauthentication</code>的使用。</p>
+<h3 id="项目结构-1"><a href="#项目结构-1" class="headerlink" title="项目结构"></a>项目结构</h3><p>项目结构如下图所示:</p>
+<h3 id="web-xml"><a href="#web-xml" class="headerlink" title="web.xml"></a>web.xml</h3><p>此应用程序的部署描述符如下所示:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="ISO-8859-1"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">web-app</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/javaee"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">version</span>=<span class="string">"3.0"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 设置受保护的资源 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 设置受保护的资源集合 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">web-resource-name</span>&gt;</span>JSP pages<span class="tag">&lt;/<span class="name">web-resource-name</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- URL满足以下正则表达式的资源将被保护 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>*.jsp<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 设置允许访问该资源集合的角色列表 --&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 角色列表为空表示拒绝任何角色直接访问 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">auth-constraint</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">web-resource-name</span>&gt;</span>Servlet1<span class="tag">&lt;/<span class="name">web-resource-name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/servlet1<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">web-resource-collection</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 允许以下角色访问该资源集合 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>member<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">role-name</span>&gt;</span>manager<span class="tag">&lt;/<span class="name">role-name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">auth-constraint</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">security-constraint</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 认证配置 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">login-config</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 使用摘要接入认证方法 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">auth-method</span>&gt;</span>DIGEST<span class="tag">&lt;/<span class="name">auth-method</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 提示信息 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">realm-name</span>&gt;</span>Digest authentication<span class="tag">&lt;/<span class="name">realm-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">login-config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">web-app</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Servlet1-java-1"><a href="#Servlet1-java-1" class="headerlink" title="Servlet1.java"></a>Servlet1.java</h3><p>与上述代码一样,这里不再列举。</p>
+<h3 id="1-jsp-1"><a href="#1-jsp-1" class="headerlink" title="1.jsp"></a>1.jsp</h3><p>与上面的1.jsp代码一样,这里不再列举.</p>
+<h3 id="运行效果-1"><a href="#运行效果-1" class="headerlink" title="运行效果"></a>运行效果</h3><p>我们在浏览器里输入这个地址来测试一下：<br><a href="http://localhost:8080/app12c/servlet1" target="_blank" rel="noopener">http://localhost:8080/app12c/servlet1</a><br>输入正确的用户名<code>tom</code>,密码<code>tom</code>:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/8.png" alt="这里有一张图片"><br>然后才可以访问<code>Servlet1</code>,浏览器显示效果如下:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter12/9.png" alt="这里有一张图片"></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/b220f5b3/" title="12.2 身份验证方法">https://lanlan2017.github.io/JavaReadingNotes/b220f5b3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/396d2c/" rel="next" title="12.1.2 实施安全约束">
+                  <i class="fa fa-chevron-left"></i> 12.1.2 实施安全约束
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/99deb717/" rel="prev" title="12.2.1 基于表单的认证">
+                  12.2.1 基于表单的认证 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#12-2-身份验证方法"><span class="nav-text">12.2 身份验证方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#基本访问身份验证"><span class="nav-text">基本访问身份验证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目结构"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#app12b的部署描述符web-xml"><span class="nav-text">app12b的部署描述符web.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet1-java"><span class="nav-text">Servlet1.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jsp"><span class="nav-text">1.jsp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行效果"><span class="nav-text">运行效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#摘要访问接入认证"><span class="nav-text">摘要访问接入认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例-1"><span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目结构-1"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#web-xml"><span class="nav-text">web.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Servlet1-java-1"><span class="nav-text">Servlet1.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-jsp-1"><span class="nav-text">1.jsp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行效果-1"><span class="nav-text">运行效果</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="13.3.2 JDBC编程步骤&amp;nbsp;1.加载数据库驱动&amp;nbsp;2.通过DriverManager获取数据库连接&amp;nbsp;3.通过Connection对象创建Statement对象&amp;nbsp;4.使用Statement执行SQL语句&amp;nbsp;5.操作结果集&amp;nbsp;6.回收数据库资源&amp;nbsp;实例&amp;nbsp;小结&amp;nbsp; .header_1{margin-left: 1em;}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.3.2 JDBC编程步骤">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/2ac92d84/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="13.3.2 JDBC编程步骤&amp;nbsp;1.加载数据库驱动&amp;nbsp;2.通过DriverManager获取数据库连接&amp;nbsp;3.通过Connection对象创建Statement对象&amp;nbsp;4.使用Statement执行SQL语句&amp;nbsp;5.操作结果集&amp;nbsp;6.回收数据库资源&amp;nbsp;实例&amp;nbsp;小结&amp;nbsp; .header_1{margin-left: 1em;}">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-04T11:52:53.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/2ac92d84/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>13.3.2 JDBC编程步骤 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/2ac92d84/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">13.3.2 JDBC编程步骤<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC13%E7%AB%A0%20MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13.3%20JDBC%E7%9A%84%E5%85%B8%E5%9E%8B%E7%94%A8%E6%B3%95/13.3.2%20JDBC%E7%BC%96%E7%A8%8B%E6%AD%A5%E9%AA%A4.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-04 11:52:53" itemprop="dateCreated datePublished" datetime="2019-07-04T11:52:53+00:00">2019-07-04</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第13章 MySQL数据库与JDBC编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13-3-JDBC%E7%9A%84%E5%85%B8%E5%9E%8B%E7%94%A8%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">13.3 JDBC的典型用法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/2ac92d84/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/2ac92d84/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/2ac92d84/#13-3-2-JDBC编程步骤" class="header_1">13.3.2 JDBC编程步骤</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#1-加载数据库驱动" class="header_2">1.加载数据库驱动</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#2-通过DriverManager获取数据库连接" class="header_2">2.通过DriverManager获取数据库连接</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#3-通过Connection对象创建Statement对象" class="header_2">3.通过Connection对象创建Statement对象</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#4-使用Statement执行SQL语句" class="header_2">4.使用Statement执行SQL语句</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#5-操作结果集" class="header_2">5.操作结果集</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#6-回收数据库资源" class="header_2">6.回收数据库资源</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#实例" class="header_2">实例</a>&nbsp;<br><a href="/JavaReadingNotes/2ac92d84/#小结" class="header_2">小结</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="13-3-2-JDBC编程步骤"><a href="#13-3-2-JDBC编程步骤" class="headerlink" title="13.3.2 JDBC编程步骤"></a>13.3.2 JDBC编程步骤</h1><p>大致了解了<code>JDBC API</code>的相关接口和类之后,下面就可以进行<code>JDBC</code>编程了,<code>JDBC</code>编程大致按如下步骤进行。</p>
+<h2 id="1-加载数据库驱动"><a href="#1-加载数据库驱动" class="headerlink" title="1.加载数据库驱动"></a>1.加载数据库驱动</h2><p>通常使用<code>Class</code>类的<code>forName()</code>静态方法来加载驱动。例如如下代码:<br><code>Class forName(driverClass)</code><br>上面代码中的<code>driverClass</code>就是数据库驱动类所对应的字符串。例如,加载<code>MySQL</code>的驱动采用如下代码:<br><code>Class.forName(&quot;com.mysql.jdbc.Driver&quot;);</code><br>而加载<code>Oracle</code>的驱动则采用如下代码:<br><code>Class.forName(&quot;oracle.jdbc.driver.OracleDriver&quot;);</code><br>从上面代码中可以看出,加载驱动时并不是真正使用数据库的驱动类,只是使用数据库驱动类名的字符串而已。</p>
+<h2 id="2-通过DriverManager获取数据库连接"><a href="#2-通过DriverManager获取数据库连接" class="headerlink" title="2.通过DriverManager获取数据库连接"></a>2.通过DriverManager获取数据库连接</h2><p><code>DriverManager</code>提供了如下方法:<br><code>DriverManager getConnection(String url, String user, String password);</code><br>当使用<code>DriverManager</code>获取数据库连接时,通常需要传入三个参数:<strong>数据库<code>URL</code>**、</strong>登录数据库的用户名<strong>和</strong>密码**。这三个参数中用户名和密码通常由<code>DBA</code>(数据库管理员)分配,而且该用户还应该具有相应的权限,才可以执行相应的<code>SQL</code>语句<br>数据库<code>URL</code>通常遵循如下写法<br><code>jdbc:subprotocol:other stuff</code><br>上面<code>URL</code>写法中的<code>jdbc</code>是固定的,而<code>subprotocol</code>指定连接到特定数据库的驱动,而后面的<code>other</code>和<code>stuff</code>是不固定的—也没有较强的规律,不同数据库的<code>URL</code>写法可能存在较大差异例如, <code>MySQL</code>数据库的<code>URL</code>写法如下:<br><code>jdbc:mysql://hostName:port/DataBaseName</code><br><code>Oracle</code>数据库的<code>URL</code>写法如下:<br><code>jdbc:oracle:thin:@hostName:port:databaseName</code></p>
+<h2 id="3-通过Connection对象创建Statement对象"><a href="#3-通过Connection对象创建Statement对象" class="headerlink" title="3.通过Connection对象创建Statement对象"></a>3.通过Connection对象创建Statement对象</h2><p><code>Connection</code>创建<code>Statement</code>的方法有如下三个。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>createStatement()</code></td>
+<td align="left">创建基本的<code>Statement</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>prepareStatement(String sql)</code></td>
+<td align="left">根据传入的<code>SQL</code>语句创建预编译的<code>Statement</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>prepareCall(String sql)</code></td>
+<td align="left">根据传入的<code>SQL</code>语句创建<code>Callablestatement</code>对象。</td>
+</tr>
+</tbody></table>
+<h2 id="4-使用Statement执行SQL语句"><a href="#4-使用Statement执行SQL语句" class="headerlink" title="4.使用Statement执行SQL语句"></a>4.使用Statement执行SQL语句</h2><p>所有的<code>Statement</code>都有如下三个方法来执行<code>SQL</code>语句。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>execute()</code></td>
+<td align="left">可以执行任何<code>SQL</code>语句,但比较麻烦。</td>
+</tr>
+<tr>
+<td align="left"><code>executeUpdate()</code></td>
+<td align="left">主要用于执行<code>DML</code>和<code>DDL</code>语句。执行<code>DML</code>语句返回受<code>SQL</code>语句影响的行数,执行<code>DDL</code>语句返回0</td>
+</tr>
+<tr>
+<td align="left"><code>executeQuery()</code></td>
+<td align="left">只能执行查询语句,执行后返回代表查询结果的<code>ResultSet</code>对象。</td>
+</tr>
+</tbody></table>
+<h2 id="5-操作结果集"><a href="#5-操作结果集" class="headerlink" title="5.操作结果集"></a>5.操作结果集</h2><p>如果执行的<code>SQL</code>语句是查询语句,则执行结果将返回一个<code>ResultSet</code>对象,该对象里保存了<code>SQL</code>语句查询的结果。程序可以通过操作该<code>ResultSet</code>对象来取出查询结果。 <code>ResultSet</code>对象主要提供了如下两类方法。</p>
+<ul>
+<li>移动记录指针的方法:<code>next()</code>、<code>previous()</code>、<code>first()</code>、<code>last()</code>、<code>beforeFirst()</code>、<code>afterLast()</code>、<code>absolute()</code></li>
+<li>获取记录指针指向的行中特定列的值:<code>getXxx()</code>方法。该方法既可使用列索引作为参数,也可使用列名作为参数。<ul>
+<li>使用列索引作为参数性能更好,</li>
+<li>使用列名作为参数可读性更好。</li>
+</ul>
+</li>
+</ul>
+<p><code>ResultSet</code>实质是一个査询结果集,在逻辑结构上非常类似于一个表。图13.17显示了<code>ResultSet</code>的逻辑结构,以及操作<code>ResultSet</code>结果集并获取值的方法示意图</p>
+<h2 id="6-回收数据库资源"><a href="#6-回收数据库资源" class="headerlink" title="6.回收数据库资源"></a>6.回收数据库资源</h2><p>包括关闭<code>ResultSet</code>、 <code>Statement</code>和<code>Connection</code>等资源。</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>下面程序简单示范了<code>JDBC</code>编程,并通过<code>ResultSet</code>获得结果集的过程。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ConnMySql</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 1.加载驱动，使用反射的知识，现在记住这么写。</span></span><br><span class="line">        Class.forName(<span class="string">"com.mysql.jdbc.Driver"</span>);</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 2.使用DriverManager获取数据库连接,</span></span><br><span class="line">                <span class="comment">// 其中返回的Connection就代表了Java程序和数据库的连接</span></span><br><span class="line">                <span class="comment">// 不同数据库的URL写法需要查驱动文档知道，用户名、密码由DBA分配</span></span><br><span class="line">                Connection conn = DriverManager.getConnection(</span><br><span class="line">                        <span class="string">"jdbc:mysql://127.0.0.1:3306/select_test"</span>, <span class="string">"root"</span>,</span><br><span class="line">                        <span class="string">"root"</span>);</span><br><span class="line">                <span class="comment">// 3.使用Connection来创建一个Statment对象</span></span><br><span class="line">                Statement stmt = conn.createStatement();</span><br><span class="line">                <span class="comment">// 4.执行SQL语句</span></span><br><span class="line">                <span class="comment">/*</span></span><br><span class="line"><span class="comment">                 * Statement有三种执行sql语句的方法： 1 execute 可执行任何SQL语句。- 返回一个boolean值，</span></span><br><span class="line"><span class="comment">                 * 如果执行后第一个结果是ResultSet，则返回true，否则返回false 2 executeQuery</span></span><br><span class="line"><span class="comment">                 * 执行Select语句 － 返回查询到的结果集 3 executeUpdate 用于执行DML语句。－ 返回一个整数，</span></span><br><span class="line"><span class="comment">                 * 代表被SQL语句影响的记录条数</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">                ResultSet rs = stmt.executeQuery(<span class="string">"select s.* , teacher_name"</span></span><br><span class="line">                        + <span class="string">" from student_table s , teacher_table t"</span></span><br><span class="line">                        + <span class="string">" where t.teacher_id = s.java_teacher"</span>);</span><br><span class="line">            )</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// ResultSet有系列的getXxx(列索引 | 列名)，用于获取记录指针</span></span><br><span class="line">            <span class="comment">// 指向行、特定列的值，不断地使用next()将记录指针下移一行，</span></span><br><span class="line">            <span class="comment">// 如果移动之后记录指针依然指向有效行，则next()方法返回true。</span></span><br><span class="line">            <span class="keyword">while</span> (rs.next())</span><br><span class="line">            &#123;</span><br><span class="line">                System.out.println(rs.getInt(<span class="number">1</span>) + <span class="string">"\t"</span> + rs.getString(<span class="number">2</span>) + <span class="string">"\t"</span></span><br><span class="line">                        + rs.getString(<span class="number">3</span>) + <span class="string">"\t"</span> + rs.getString(<span class="number">4</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序严格按<code>JDBC</code>访问数据库的步骤执行了一条多表连接査询语句,这条连接查询语句就是前面介绍<code>SQL 92</code>连接时所讲的连接查询语句。<br>运行上面程序,会看到如下所示:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>       张三    <span class="number">1</span>       Yeeku</span><br><span class="line"><span class="number">2</span>       张三    <span class="number">1</span>       Yeeku</span><br><span class="line"><span class="number">3</span>       李四    <span class="number">1</span>       Yeeku</span><br><span class="line"><span class="number">4</span>       王五    <span class="number">2</span>       Leegang</span><br><span class="line"><span class="number">5</span>       _王五   <span class="number">2</span>       Leegang</span><br><span class="line"><span class="number">6</span>       null    <span class="number">2</span>       Leegang</span><br><span class="line"><span class="number">7</span>       赵六    <span class="number">3</span>       Martine</span><br></pre></td></tr></table></figure>
+<p>与前面介绍的步骤略有区别的是,本程序采用了自动关闭资源的<code>try</code>语句来关闭各种数据库资源,<code>Java 7</code>改写了<code>Connection</code>、<code>Statement</code>、 <code>ResultSet</code>等接口,它们都继承了<code>AutoCloseable</code>接口,因此它们都可以由<code>try</code>语句来关闭。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><code>JDBC</code>编程大致按如下步骤进行</p>
+<ul>
+<li>1.加载数据库驱动</li>
+<li>2.通过<code>DriverManager</code>获取数据库连接</li>
+<li>3.通过<code>Connection</code>对象创建<code>Statement</code>对象</li>
+<li>4.使用<code>Statement</code>执行<code>SQL</code>语句</li>
+<li>5.操作结果集</li>
+<li>6.回收数据库资源</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/2ac92d84/" title="13.3.2 JDBC编程步骤">https://lanlan2017.github.io/JavaReadingNotes/2ac92d84/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/2940dac4/" rel="next" title="13.3 JDBC的典型用法 13.3.1 JDBC4.2常用接口和类简介">
+                  <i class="fa fa-chevron-left"></i> 13.3 JDBC的典型用法 13.3.1 JDBC4.2常用接口和类简介
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/514ad364/" rel="prev" title="13.4 执行SQL语句的方式">
+                  13.4 执行SQL语句的方式 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-3-2-JDBC编程步骤"><span class="nav-text">13.3.2 JDBC编程步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-加载数据库驱动"><span class="nav-text">1.加载数据库驱动</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-通过DriverManager获取数据库连接"><span class="nav-text">2.通过DriverManager获取数据库连接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-通过Connection对象创建Statement对象"><span class="nav-text">3.通过Connection对象创建Statement对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-使用Statement执行SQL语句"><span class="nav-text">4.使用Statement执行SQL语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-操作结果集"><span class="nav-text">5.操作结果集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-回收数据库资源"><span class="nav-text">6.回收数据库资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-text">实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-text">小结</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

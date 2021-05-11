@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2.6 JSP脚本中的9个内置对象&amp;nbsp;application&amp;nbsp;config&amp;nbsp;exception&amp;nbsp;out&amp;nbsp;page&amp;nbsp;pageContext&amp;nbsp;request&amp;nbsp;response&amp;nbsp;session&amp;nbsp;_jspService方法源码&amp;nbsp;JSP内置对象_jspService方法的形参或局部变量&amp;nbsp;JS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.6 JSP脚本中的9个内置对象">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/b16bfc14/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="2.6 JSP脚本中的9个内置对象&amp;nbsp;application&amp;nbsp;config&amp;nbsp;exception&amp;nbsp;out&amp;nbsp;page&amp;nbsp;pageContext&amp;nbsp;request&amp;nbsp;response&amp;nbsp;session&amp;nbsp;_jspService方法源码&amp;nbsp;JSP内置对象_jspService方法的形参或局部变量&amp;nbsp;JS">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-06T08:48:05.000Z">
+<meta property="article:modified_time" content="2020-06-10T08:12:30.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b16bfc14/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>2.6 JSP脚本中的9个内置对象 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/b16bfc14/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">2.6 JSP脚本中的9个内置对象<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC2%E7%AB%A0%20JSP%20Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2.6%20JSP%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%849%E4%B8%AA%E5%86%85%E7%BD%AE%E5%AF%B9%E8%B1%A1/2.6%20JSP%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%849%E4%B8%AA%E5%86%85%E7%BD%AE%E5%AF%B9%E8%B1%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-06 08:48:05" itemprop="dateCreated datePublished" datetime="2020-06-06T08:48:05+00:00">2020-06-06</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-10 08:12:30" itemprop="dateModified" datetime="2020-06-10T08:12:30+00:00">2020-06-10</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第2章 JSP Servlet及相关技术详解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2-6-JSP%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%849%E4%B8%AA%E5%86%85%E7%BD%AE%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">2.6 JSP脚本中的9个内置对象</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/b16bfc14/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/b16bfc14/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/b16bfc14/#2-6-JSP脚本中的9个内置对象" class="header_1">2.6 JSP脚本中的9个内置对象</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#application" class="header_2">application</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#config" class="header_2">config</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#exception" class="header_2">exception</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#out" class="header_2">out</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#page" class="header_2">page</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#pageContext" class="header_2">pageContext</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#request" class="header_2">request</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#response" class="header_2">response</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#session" class="header_2">session</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#_jspService方法源码" class="header_2">_jspService方法源码</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#JSP内置对象_jspService方法的形参或局部变量" class="header_2">JSP内置对象_jspService方法的形参或局部变量</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#JSP内置对象智能用于JSP小脚本-JSP输出表达式-不能用于JSP声明" class="header_2">JSP内置对象智能用于JSP小脚本,JSP输出表达式,不能用于JSP声明</a>&nbsp;<br><a href="/JavaReadingNotes/b16bfc14/#只有异常处理页面对应的Servlet中才会初始化exception对象" class="header_2">只有异常处理页面对应的Servlet中才会初始化exception对象</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="2-6-JSP脚本中的9个内置对象"><a href="#2-6-JSP脚本中的9个内置对象" class="headerlink" title="2.6 JSP脚本中的9个内置对象"></a>2.6 JSP脚本中的9个内置对象</h1><p><code>JSP</code>脚本中包含9个内置对象,这9个内置对象都是<code>Servlet API</code>接口的实例,只是<code>JSP</code>规范对它们进行了默认初始化(由<code>JSP</code>页面对应<code>Servlet</code>的<code>_jspService</code>方法来创建这些实例)。也就是说,它们已经是对象,可以直接使用。9个内置对象依次如下</p>
+<h2 id="application"><a href="#application" class="headerlink" title="application"></a>application</h2><p><code>javax.servlet.ServletContext</code>的实例,该实例代表<code>JSP</code>所属的<code>Web</code>应用本身,可用于<code>JSP</code>页面,或者在<code>Servlet</code>之间交换信息。<br>常用的方法有:</p>
+<ul>
+<li><code>getAttribute(String attName)</code>、</li>
+<li><code>setAttribute(String attName, String att Value)</code></li>
+<li><code>getInitParameter(String paramName)</code></li>
+</ul>
+<h2 id="config"><a href="#config" class="headerlink" title="config"></a>config</h2><p><code>javax.servlet.ServletConfig</code>的实例,该实例代表该<code>JSP</code>的配置信息。<br>常用的方法有:<br><code>getInitParameter(String paramName)</code>,<code>getInitParameterNames()</code>等方法。</p>
+<p>事实上,<code>JSP</code>页面通常无须配置,也就不存在配置信息。因此,该对象更多地在<code>Servlet</code>中有效。</p>
+<h2 id="exception"><a href="#exception" class="headerlink" title="exception"></a>exception</h2><p><code>java.lang.Throwable</code>的实例,该实例代表其他页面中的异常和错误。只有当页面是错误处理页面,即编译指令<code>page</code>的<code>isErrorPage</code>属性为<code>true</code>时,该对象才可以使用。<br>常用的方法有:<code>getMessage()</code>和<code>printStackTrace()</code>等。</p>
+<h2 id="out"><a href="#out" class="headerlink" title="out"></a>out</h2><p><code>javax.servlet.jsp.JspWriter</code>的实例,该实例代表<code>JSP</code>页面的输出流,用于输出内容,形成<code>HTML</code>页面。</p>
+<h2 id="page"><a href="#page" class="headerlink" title="page"></a>page</h2><p>代表该页面本身,通常没有太大用处。也就是<code>Servlet</code>中的<code>this</code>,其类型就是生成的<code>Servlet</code>类,能用<code>page</code>的地方就可用<code>this</code></p>
+<h2 id="pageContext"><a href="#pageContext" class="headerlink" title="pageContext"></a>pageContext</h2><p><code>javax.servlet.jsp.PageContext</code>的实例,该对象代表该<code>JSP</code>页面上下文,使用该对象可以访问页面中的共享数据。<br>常用的方法有:<code>getServletContext()</code>和<code>getServletConfig()</code>等。</p>
+<h2 id="request"><a href="#request" class="headerlink" title="request"></a>request</h2><p><code>javax.servlet.http.HttpServletRequest</code>的实例,该对象封装了一次请求,客户端的请求参数都被封装在该对象里。这是一个常用的对象,获取客户端请求参数必须使用该对象。<br>常用的方法有:</p>
+<ul>
+<li><code>getParameter(String paramName)</code>、</li>
+<li><code>getParameterValues(String paramName)</code>、</li>
+<li><code>setAttribute(String attrName, Object attrValue)</code>、</li>
+<li><code>getAttribute(String attrName)</code></li>
+<li><code>setCharacterEncoding(String env)</code>。</li>
+</ul>
+<h2 id="response"><a href="#response" class="headerlink" title="response"></a>response</h2><p><code>javax.servlet.http.HttpServletResponse</code>的实例,代表服务器对客户端的响应。通常很少使用该对象直接响应,而是使用<code>out</code>对象,除非需要生成非字符响应。而<code>response</code>对象常用于重定向。<br>常用的方法有:</p>
+<ul>
+<li><code>getOutputStream()</code>、</li>
+<li><code>sendRedirect(java.lang.String location)</code>。</li>
+</ul>
+<h2 id="session"><a href="#session" class="headerlink" title="session"></a>session</h2><p><code>javax.servlet.http.HttpSession</code>的实例,该对象代表一次会话。当客户端浏览器与站点建立连接时,会话开始;当客户端关闭浏览器时,会话结束。<br>常用的方法有:</p>
+<ul>
+<li><code>getAttribute(String attrName)</code>、</li>
+<li><code>setAttribute(String attrName, Object attrValue)</code>。</li>
+</ul>
+<h2 id="jspService方法源码"><a href="#jspService方法源码" class="headerlink" title="_jspService方法源码"></a>_jspService方法源码</h2><p>进入<code>Tomcat</code>的<code>\work\Catalina\localhost\directive\org\apache\jsp</code>路径下,打开任意一个<code>JSP</code>页面对应生成的<code>Servlet</code>类文件,看到如下代码片段:</p>
+<pre>
+......
+public void _jspService(final javax.servlet.http.HttpServletRequest <strong>request</strong>,
+        final javax.servlet.http.HttpServletResponse <strong>response</strong>)
+        throws java.io.IOException, javax.servlet.ServletException {
+    ......
+    final javax.servlet.jsp.PageContext <strong>pageContext</strong>;
+    javax.servlet.http.HttpSession <strong>session</strong> = null;
+    final javax.servlet.ServletContext <strong>application</strong>;
+    final javax.servlet.ServletConfig <strong>config</strong>;
+    javax.servlet.jsp.JspWriter <strong>out</strong> = null;
+    final java.lang.Object <strong>page</strong> = this;
+    javax.servlet.jsp.JspWriter _jspx_out = null;
+    javax.servlet.jsp.PageContext _jspx_page_context = null;
+
+    try {
+        response.setContentType("text/html; charset=UTF-8");
+        <strong>pageContext</strong> = _jspxFactory.getPageContext(this, request, response, "", true, 8192, true);
+        _jspx_page_context = pageContext;
+        <strong>application</strong> = pageContext.getServletContext();
+        <strong>config</strong> = pageContext.getServletConfig();
+        <strong>session</strong> = pageContext.getSession();
+        <strong>out</strong> = pageContext.getOut();
+        _jspx_out = out;
+    ......
+}
+......
+</pre>
+<p>几乎所有的<code>JSP</code>页面编译后<code>Servlet</code>类都有如上所示的结构,上面<code>Servlet</code>类的粗体字代码表明:<code>request</code>、<code>response</code>两个对象是<code>_jspService</code>方法的<strong>形参</strong>,当<code>Tomcat</code>调用该方法时会初始化这两个对象。<br>而<code>page</code>、<code>pageContext</code>、<code>application</code>、<code>config</code>、<code>session</code>、<code>out</code>都是<code>_jspService</code>方法的<strong>局部变量</strong>,由该方法完成初始化。</p>
+<h2 id="JSP内置对象-jspService方法的形参或局部变量"><a href="#JSP内置对象-jspService方法的形参或局部变量" class="headerlink" title="JSP内置对象_jspService方法的形参或局部变量"></a>JSP内置对象_jspService方法的形参或局部变量</h2><p>通过上面的代码不难发现<code>JSP</code>内置对象的实质:它们要么是<code>_jspService</code>方法的形参,要么是<code>_jspService</code>方法的局部变量,所以可以直接在<code>JSP</code>脚本(脚本将对应于<code>Servlet</code>的<code>jspService</code>方法部分)中调用这些对象,无须创建它们。</p>
+<h2 id="JSP内置对象智能用于JSP小脚本-JSP输出表达式-不能用于JSP声明"><a href="#JSP内置对象智能用于JSP小脚本-JSP输出表达式-不能用于JSP声明" class="headerlink" title="JSP内置对象智能用于JSP小脚本,JSP输出表达式,不能用于JSP声明"></a>JSP内置对象智能用于JSP小脚本,JSP输出表达式,不能用于JSP声明</h2><p>由于<code>JSP</code>内置对象都是在<code>_jspService</code>方法中完成初始化的,因此只能在<code>JSP</code>小脚本、<code>JSP</code>输岀表达式中使用这些内置对象。千万不要在<code>JSP</code>声明中使用它们!否则,系统将提示找不到这些变量。当编写<code>JSP</code>页面时,一定不要仅停留在<code>JSP</code>页面本身来看问题,这样可能导致许多误解,导致无法理解<code>JSP</code>的运行方式。很多书籍上随意介绍这些对象,也是形成误解的原因之一</p>
+<h2 id="只有异常处理页面对应的Servlet中才会初始化exception对象"><a href="#只有异常处理页面对应的Servlet中才会初始化exception对象" class="headerlink" title="只有异常处理页面对应的Servlet中才会初始化exception对象"></a>只有异常处理页面对应的Servlet中才会初始化exception对象</h2><p>细心的读者可能已经发现了:上面的代码中并没有<code>exception</code>内置对象,这与前面介绍的正好相符只有当页面的<code>page</code>指令的<code>isErrorPage</code>属性为<code>true</code>时,才可使用<code>exception</code>对象。也就是说,只有异常处理页面对应的<code>Servlet</code>中才会初始化<code>exception</code>对象</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/b16bfc14/" title="2.6 JSP脚本中的9个内置对象">https://lanlan2017.github.io/JavaReadingNotes/b16bfc14/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/b6089fa7/" rel="next" title="2.5.4 plugin指令 2.5.5 param指令">
+                  <i class="fa fa-chevron-left"></i> 2.5.4 plugin指令 2.5.5 param指令
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/77009ad3/" rel="prev" title="2.6.1 application对象">
+                  2.6.1 application对象 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-6-JSP脚本中的9个内置对象"><span class="nav-text">2.6 JSP脚本中的9个内置对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#application"><span class="nav-text">application</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#config"><span class="nav-text">config</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#exception"><span class="nav-text">exception</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#out"><span class="nav-text">out</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#page"><span class="nav-text">page</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#pageContext"><span class="nav-text">pageContext</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#request"><span class="nav-text">request</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#response"><span class="nav-text">response</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#session"><span class="nav-text">session</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jspService方法源码"><span class="nav-text">_jspService方法源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSP内置对象-jspService方法的形参或局部变量"><span class="nav-text">JSP内置对象_jspService方法的形参或局部变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSP内置对象智能用于JSP小脚本-JSP输出表达式-不能用于JSP声明"><span class="nav-text">JSP内置对象智能用于JSP小脚本,JSP输出表达式,不能用于JSP声明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#只有异常处理页面对应的Servlet中才会初始化exception对象"><span class="nav-text">只有异常处理页面对应的Servlet中才会初始化exception对象</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

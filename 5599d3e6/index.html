@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="15.10.2 使用FileVisitor遍历文件和目录&amp;nbsp;walkFileTree方法&amp;nbsp;文件访问器FileVisitor&amp;nbsp;FileVisitor接口方法&amp;nbsp;FileVisitResult枚举&amp;nbsp;SimpleFileVisitor实现类&amp;nbsp;程序 使用FileVisitor遍历目录 查找指定文件&amp;nbsp; .header_1{margin-lef">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.10.2 使用FileVisitor遍历文件和目录">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/5599d3e6/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="15.10.2 使用FileVisitor遍历文件和目录&amp;nbsp;walkFileTree方法&amp;nbsp;文件访问器FileVisitor&amp;nbsp;FileVisitor接口方法&amp;nbsp;FileVisitResult枚举&amp;nbsp;SimpleFileVisitor实现类&amp;nbsp;程序 使用FileVisitor遍历目录 查找指定文件&amp;nbsp; .header_1{margin-lef">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-06T11:08:42.000Z">
+<meta property="article:modified_time" content="2020-03-15T08:15:11.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/5599d3e6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>15.10.2 使用FileVisitor遍历文件和目录 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/5599d3e6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">15.10.2 使用FileVisitor遍历文件和目录<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC15%E7%AB%A0%20%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15.10%20Java7%E7%9A%84NIO.2/15.10.2%20%E4%BD%BF%E7%94%A8FileVisitor%E9%81%8D%E5%8E%86%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-06 11:08:42" itemprop="dateCreated datePublished" datetime="2020-01-06T11:08:42+00:00">2020-01-06</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-15 08:15:11" itemprop="dateModified" datetime="2020-03-15T08:15:11+00:00">2020-03-15</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-10-Java7%E7%9A%84NIO-2/" itemprop="url" rel="index"><span itemprop="name">15.10 Java7的NIO.2</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/5599d3e6/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/5599d3e6/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/5599d3e6/#15-10-2-使用FileVisitor遍历文件和目录" class="header_1">15.10.2 使用FileVisitor遍历文件和目录</a>&nbsp;<br><a href="/JavaReadingNotes/5599d3e6/#walkFileTree方法" class="header_2">walkFileTree方法</a>&nbsp;<br><a href="/JavaReadingNotes/5599d3e6/#文件访问器FileVisitor" class="header_2">文件访问器FileVisitor</a>&nbsp;<br><a href="/JavaReadingNotes/5599d3e6/#FileVisitor接口方法" class="header_2">FileVisitor接口方法</a>&nbsp;<br><a href="/JavaReadingNotes/5599d3e6/#FileVisitResult枚举" class="header_2">FileVisitResult枚举</a>&nbsp;<br><a href="/JavaReadingNotes/5599d3e6/#SimpleFileVisitor实现类" class="header_2">SimpleFileVisitor实现类</a>&nbsp;<br><a href="/JavaReadingNotes/5599d3e6/#程序-使用FileVisitor遍历目录-查找指定文件" class="header_2">程序 使用FileVisitor遍历目录 查找指定文件</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="15-10-2-使用FileVisitor遍历文件和目录"><a href="#15-10-2-使用FileVisitor遍历文件和目录" class="headerlink" title="15.10.2 使用FileVisitor遍历文件和目录"></a>15.10.2 使用FileVisitor遍历文件和目录</h1><p>在以前的<code>Java</code>版本中,如果程序要遍历指定目录下的所有文件和子目录,则只能使用递归进行遍历,但这种方式不仅复杂,而且灵活性也不高。<br>有了<code>Files</code>工具类的帮助,现在可以用更优雅的方式来遍历文件和子目录。</p>
+<h2 id="walkFileTree方法"><a href="#walkFileTree方法" class="headerlink" title="walkFileTree方法"></a>walkFileTree方法</h2><p><code>Files</code>类提供了如下两个方法来遍历文件和子目录</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>Files</code>类的<code>walkFileTree</code>方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path walkFileTree(Path start, FileVisitor&lt;? super Path&gt; visitor)</code></td>
+<td align="left">遍历<code>start</code>路径下的所有文件和子目录。</td>
+</tr>
+<tr>
+<td align="left"><code>static Path walkFileTree(Path start, Set&lt;FileVisitOption&gt; options, int maxDepth, FileVisitor&lt;? super Path&gt; visitor)</code></td>
+<td align="left">与上一个方法的功能类似。该方法最多遍历<code>maxDepth</code>深度的文件。</td>
+</tr>
+</tbody></table>
+<h2 id="文件访问器FileVisitor"><a href="#文件访问器FileVisitor" class="headerlink" title="文件访问器FileVisitor"></a>文件访问器FileVisitor</h2><p>上面两个方法都需要<code>FileVisitor</code>参数,<code>FileVisitor</code>代表一个<strong>文件访问器</strong>,<code>walkFileTree()</code>方法会自动遍历<code>start</code>路径下的所有文件和子目录,遍历文件和子目录都会“触发”<code>FileVisitor</code>中相应的方法。</p>
+<h2 id="FileVisitor接口方法"><a href="#FileVisitor接口方法" class="headerlink" title="FileVisitor接口方法"></a>FileVisitor接口方法</h2><p><code>FileVisitor</code>接口中定义了如下4个方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>FileVisitor</code>方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>FileVisitResult postVisitDirectory(T dir, IOException exc)</code></td>
+<td align="left"><strong>访问子目录之后</strong>触发该方法</td>
+</tr>
+<tr>
+<td align="left"><code>FileVisitResult preVisitDirectory(T dir, BasicFileAttributes attrs)</code></td>
+<td align="left"><strong>访问子目录之前</strong>触发该方法</td>
+</tr>
+<tr>
+<td align="left"><code>FileVisitResult visitFile(T file, BasicFileAttributes attrs)</code></td>
+<td align="left"><strong>访问<code>file</code>文件时</strong>触发该方法</td>
+</tr>
+<tr>
+<td align="left"><code>FileVisitResult visitFileFailed(T file, IOException exc)</code></td>
+<td align="left"><strong>访问<code>file</code>文件失败时</strong>触发该方法</td>
+</tr>
+</tbody></table>
+<h2 id="FileVisitResult枚举"><a href="#FileVisitResult枚举" class="headerlink" title="FileVisitResult枚举"></a>FileVisitResult枚举</h2><p>上面4个方法都返回一个<code>FileVisitResult</code>对象,<strong><code>FileVisitResult</code>是一个枚举类,代表了访问之后的后续行为</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>FileVisitResult</code>枚举值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>CONTINUE</code></td>
+<td align="left">代表“继续访问”的后续行为</td>
+</tr>
+<tr>
+<td align="left"><code>SKIP_SIBLINGS</code></td>
+<td align="left">代表“继续访问”的后续行为,但不访问该文件或目录的<code>兄弟</code>文件或目录</td>
+</tr>
+<tr>
+<td align="left"><code>SKIP_SUBTREE</code></td>
+<td align="left">代表“继续访问”的后续行为,但不访问该文件或目录的<code>子目录</code>树。</td>
+</tr>
+<tr>
+<td align="left"><code>TERMINATE</code></td>
+<td align="left">代表“中止访问”的后续行为</td>
+</tr>
+</tbody></table>
+<h2 id="SimpleFileVisitor实现类"><a href="#SimpleFileVisitor实现类" class="headerlink" title="SimpleFileVisitor实现类"></a>SimpleFileVisitor实现类</h2><p>实际编程时没必要为<code>FileVisitor</code>的4个方法都提供实现,可以通过继承<code>FileVisitor</code>的实现类<code>SimpleFileVisitor</code>来实现自己的“文件访问器”,这样就根据需要、选择性地重写指定方法了。</p>
+<h2 id="程序-使用FileVisitor遍历目录-查找指定文件"><a href="#程序-使用FileVisitor遍历目录-查找指定文件" class="headerlink" title="程序 使用FileVisitor遍历目录 查找指定文件"></a>程序 使用FileVisitor遍历目录 查找指定文件</h2><p>如下程序示范了使用<code>FileVisitor</code>来遍历文件和子目录。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileVisitorTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历 G:\Desktop\随书源码\疯狂Java讲义(第4版)光盘\codes\15\ 目录下的所有文件和子目录</span></span><br><span class="line">        Files.walkFileTree(Paths.get(<span class="string">"G:"</span>, <span class="string">"Desktop"</span>, <span class="string">"随书源码"</span>, <span class="string">"疯狂Java讲义(第4版)光盘"</span>, <span class="string">"codes"</span>, <span class="string">"15"</span>),</span><br><span class="line">                <span class="keyword">new</span> SimpleFileVisitor&lt;Path&gt;() &#123;</span><br><span class="line">                    <span class="comment">// 访问文件时候触发该方法</span></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> FileVisitResult <span class="title">visitFile</span><span class="params">(Path file, BasicFileAttributes attrs)</span> </span></span><br><span class="line"><span class="function">                            <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                        System.out.println(<span class="string">"正在访问--文件:"</span> + file);</span><br><span class="line">                        <span class="comment">// 找到了FileInputStreamTest.java文件</span></span><br><span class="line">                        <span class="keyword">if</span> (file.endsWith(<span class="string">"FileInputStreamTest.java"</span>)) &#123;</span><br><span class="line">                            System.out.println(<span class="string">"--已经找到目标文件--"</span>);</span><br><span class="line">                            <span class="comment">// 停止</span></span><br><span class="line">                            <span class="keyword">return</span> FileVisitResult.TERMINATE;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 继续</span></span><br><span class="line">                        <span class="keyword">return</span> FileVisitResult.CONTINUE;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 开始访问目录时触发该方法</span></span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> FileVisitResult <span class="title">preVisitDirectory</span><span class="params">(Path dir, BasicFileAttributes attrs)</span> </span></span><br><span class="line"><span class="function">                            <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">                        System.out.println(<span class="string">"正在访问  路径:"</span> + dir);</span><br><span class="line">                        <span class="comment">// 继续</span></span><br><span class="line">                        <span class="keyword">return</span> FileVisitResult.CONTINUE;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中使用了<code>Files</code>工具类的<code>walkFileTree()</code>方法来遍历<code>G:\Desktop\随书源码\疯狂Java讲义(第4版)光盘\codes\15\</code>目录下的所有文件和子目录,如果找到的文件以“<code>FileInputStreamTest.java</code>”结尾,则程序停止遍历:这就<strong>实现了对指定目录进行搜索,直到找到指定文件为止</strong>。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/5599d3e6/" title="15.10.2 使用FileVisitor遍历文件和目录">https://lanlan2017.github.io/JavaReadingNotes/5599d3e6/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/4261f404/" rel="next" title="15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API">
+                  <i class="fa fa-chevron-left"></i> 15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/535e0b1a/" rel="prev" title="15.10.3 使用WatchService监控文件变化">
+                  15.10.3 使用WatchService监控文件变化 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#15-10-2-使用FileVisitor遍历文件和目录"><span class="nav-text">15.10.2 使用FileVisitor遍历文件和目录</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#walkFileTree方法"><span class="nav-text">walkFileTree方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文件访问器FileVisitor"><span class="nav-text">文件访问器FileVisitor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FileVisitor接口方法"><span class="nav-text">FileVisitor接口方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FileVisitResult枚举"><span class="nav-text">FileVisitResult枚举</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SimpleFileVisitor实现类"><span class="nav-text">SimpleFileVisitor实现类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序-使用FileVisitor遍历目录-查找指定文件"><span class="nav-text">程序 使用FileVisitor遍历目录 查找指定文件</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

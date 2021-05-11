@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2.13 Servlet3.1新增的非阻塞式IO&amp;nbsp;ReadListener&amp;nbsp;Servlet中使用非阻塞IO步骤&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;AsyncServlet.java&amp;nbsp;MyReadListener.java&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.hea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.13 Servlet3.1新增的非阻塞式IO">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/8dcbd8d1/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="2.13 Servlet3.1新增的非阻塞式IO&amp;nbsp;ReadListener&amp;nbsp;Servlet中使用非阻塞IO步骤&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;AsyncServlet.java&amp;nbsp;MyReadListener.java&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.hea">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-21T05:16:30.000Z">
+<meta property="article:modified_time" content="2020-06-21T06:47:38.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/8dcbd8d1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>2.13 Servlet3.1新增的非阻塞式IO | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/8dcbd8d1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">2.13 Servlet3.1新增的非阻塞式IO<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC2%E7%AB%A0%20JSP%20Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2.13%20Servlet3.1%E6%96%B0%E5%A2%9E%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%BC%8FIO/2.13%20Servlet3.1%E6%96%B0%E5%A2%9E%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%BC%8FIO.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-21 05:16:30 / 修改时间：06:47:38" itemprop="dateCreated datePublished" datetime="2020-06-21T05:16:30+00:00">2020-06-21</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第2章 JSP Servlet及相关技术详解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2-13-Servlet3-1%E6%96%B0%E5%A2%9E%E7%9A%84%E9%9D%9E%E9%98%BB%E5%A1%9E%E5%BC%8FIO/" itemprop="url" rel="index"><span itemprop="name">2.13 Servlet3.1新增的非阻塞式IO</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/8dcbd8d1/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/8dcbd8d1/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/8dcbd8d1/#2-13-Servlet3-1新增的非阻塞式IO" class="header_1">2.13 Servlet3.1新增的非阻塞式IO</a>&nbsp;<br><a href="/JavaReadingNotes/8dcbd8d1/#ReadListener" class="header_2">ReadListener</a>&nbsp;<br><a href="/JavaReadingNotes/8dcbd8d1/#Servlet中使用非阻塞IO步骤" class="header_2">Servlet中使用非阻塞IO步骤</a>&nbsp;<br><a href="/JavaReadingNotes/8dcbd8d1/#程序示例" class="header_1">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/8dcbd8d1/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/8dcbd8d1/#AsyncServlet-java" class="header_2">AsyncServlet.java</a>&nbsp;<br><a href="/JavaReadingNotes/8dcbd8d1/#MyReadListener-java" class="header_2">MyReadListener.java</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="2-13-Servlet3-1新增的非阻塞式IO"><a href="#2-13-Servlet3-1新增的非阻塞式IO" class="headerlink" title="2.13 Servlet3.1新增的非阻塞式IO"></a>2.13 Servlet3.1新增的非阻塞式IO</h1><p>最新的<code>Java EE 7</code>已经发布,伴随<code>Java EE 7</code>一起发布了<code>Servlet3.1</code>,<code>Servlet3.1</code>引入了少数新特性。<code>Servlet3.1</code>新特性包括强制更改<code>sessionId</code>(由<code>HttpServletRequest</code>的<code>changeSessionId()</code>方法提供)、非阻塞<code>IO</code>等。尤其是<code>Servlet3.1</code>提供的非阻塞IO进行输入、输出,可以更好地提升性能。<br><code>Servlet</code>底层的<code>IO</code>是通过如下两个<code>IO</code>流来支持的。</p>
+<ul>
+<li><code>ServletInputStream</code>:<code>Servlet</code>用于读取数据的输入流。</li>
+<li><code>ServletOutputStream</code>:<code>Servlet</code>用于输出数据的输出流。</li>
+</ul>
+<p>以<code>Servlet</code>读取数据为例,传统的读取方式采用阻塞式<code>IO</code>——当<code>Servlet</code>读取浏览器提交的数据时,如果数据暂时不可用,或数据没有读取完成,<code>Servlet</code>当前所在线程将会被阻塞,无法继续向下执行。</p>
+<h2 id="ReadListener"><a href="#ReadListener" class="headerlink" title="ReadListener"></a>ReadListener</h2><p>从<code>Servlet3.1</code>开始,<code>ServletInputStream</code>新增了一个<code>setReadListener(ReadListener readListener)</code>方法,该方法允许以非阻塞<code>IO</code>读取数据,实现<code>ReadListener</code>监听器需要实现如下三个方法</p>
+<ul>
+<li><code>onAllDataRead()</code>:当所有数据读取完成时激发该方法。</li>
+<li><code>onDataAvailable()</code>:当有数据可用时激发该方法</li>
+<li><code>onError(Throwable t)</code>:读取数据出现错误时激发该方法。</li>
+</ul>
+<p>类似地,<code>ServletOuputStream</code>也提供了<code>setWriterListenerer(WriteListener writeListener)</code>方法,通过这种方式,可以让<code>ServletOuputStream</code>以非阻塞<code>IO</code>进行输出</p>
+<h2 id="Servlet中使用非阻塞IO步骤"><a href="#Servlet中使用非阻塞IO步骤" class="headerlink" title="Servlet中使用非阻塞IO步骤"></a>Servlet中使用非阻塞IO步骤</h2><p>在<code>Servlet</code>中使用非阻塞<code>IO</code>非常简单,主要按如下步骤进行即可:</p>
+<ul>
+<li>调用<code>ServletRequest</code>的<code>startAsync()</code>方法开启异步模式</li>
+<li>通过<code>ServletRequest</code>获取<code>ServletInputStream</code>,并为<code>ServletInputStream</code>设置监听器(<code>ReadListener</code>实现类)。</li>
+<li>实现<code>ReadListener</code>接口来实现监听器,在该监听器的方法中以非阻塞方式读取数据。</li>
+</ul>
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><pre>
+G:\Desktop\随书源码\轻量级Java EE企业应用实战(第5版)\codes\02\2.13\servlet31
+├─async.jsp
+├─form.html
+└─WEB-INF\
+  ├─build.xml
+  ├─classes\
+  │ └─lee\
+  │   ├─AsyncServlet.class
+  │   └─MyReadListener.class
+  ├─lib\
+  ├─src\
+  │ └─lee\
+  │   ├─AsyncServlet.java
+  │   └─MyReadListener.java
+  └─web.xml
+</pre>
+<p>下面的<code>Servlet</code>负责处理表单页面提交的数据,但该<code>Servlet</code>并未使用传统的、阻塞<code>IO</code>来读取客户端数据,而是采用非阻塞<code>IO</code>进行读取。下面是该<code>Servlet</code>的代码。</p>
+<h2 id="AsyncServlet-java"><a href="#AsyncServlet-java" class="headerlink" title="AsyncServlet.java"></a>AsyncServlet.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet</span>(urlPatterns = <span class="string">"/async"</span>, asyncSupported = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        response.setContentType(<span class="string">"text/html;charset=GBK"</span>);</span><br><span class="line">        PrintWriter out = response.getWriter();</span><br><span class="line">        out.println(<span class="string">"&lt;title&gt;非阻塞IO示例&lt;/title&gt;"</span>);</span><br><span class="line">        out.println(<span class="string">"进入Servlet的时间："</span> + <span class="keyword">new</span> java.util.Date() + <span class="string">".&lt;br/&gt;"</span>);</span><br><span class="line">        <span class="comment">// 创建AsyncContext，开始异步调用</span></span><br><span class="line">        AsyncContext context = request.startAsync();</span><br><span class="line">        <span class="comment">// 设置异步调用的超时时长</span></span><br><span class="line">        context.setTimeout(<span class="number">60</span> * <span class="number">1000</span>);</span><br><span class="line">        ServletInputStream input = request.getInputStream();</span><br><span class="line">        <span class="comment">// 为输入流注册监听器</span></span><br><span class="line">        input.setReadListener(<span class="keyword">new</span> MyReadListener(input, context));</span><br><span class="line">        out.println(<span class="string">"结束Servlet的时间："</span> + <span class="keyword">new</span> java.util.Date() + <span class="string">".&lt;br/&gt;"</span>);</span><br><span class="line">        out.flush();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序调用<code>request</code>的<code>startAsync()</code>方法开启异步调用之后,程序中粗体字代码为<code>Servlet</code>输入流注册了一个监听器,这样就无须在该<code>Servlet</code>中使用阻塞<code>IO</code>来获取数据了。而是改为由<code>MyReadListener</code>负责读取数据,这样<code>Servlet</code>就可以继续向下执行,不会因为<code>IO</code>阻塞线程。<br><code>MyReadListener</code>需要实现<code>Readlistener</code>接口,并重写它的三个方法。</p>
+<h2 id="MyReadListener-java"><a href="#MyReadListener-java" class="headerlink" title="MyReadListener.java"></a>MyReadListener.java</h2><p>下面是<code>MyReadListener</code>的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyReadListener</span> <span class="keyword">implements</span> <span class="title">ReadListener</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> ServletInputStream input;</span><br><span class="line">    <span class="keyword">private</span> AsyncContext context;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyReadListener</span><span class="params">(ServletInputStream input, AsyncContext context)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.input = input;</span><br><span class="line">        <span class="keyword">this</span>.context = context;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onDataAvailable</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"数据可用！！"</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 暂停5秒，模拟读取数据是一个耗时操作。</span></span><br><span class="line">            Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">            StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">            <span class="keyword">int</span> len = -<span class="number">1</span>;</span><br><span class="line">            <span class="keyword">byte</span>[] buff = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="comment">// 采用原始IO方式读取浏览器向Servlet提交的数据</span></span><br><span class="line">            <span class="keyword">while</span> (input.isReady() &amp;&amp; (len = input.read(buff)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                String data = <span class="keyword">new</span> String(buff, <span class="number">0</span>, len);</span><br><span class="line">                sb.append(data);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(sb);</span><br><span class="line">            <span class="comment">// 将数据设置为request范围的属性</span></span><br><span class="line">            context.getRequest().setAttribute(<span class="string">"info"</span>, sb.toString());</span><br><span class="line">            <span class="comment">// 转发到视图页面</span></span><br><span class="line">            context.dispatch(<span class="string">"/async.jsp"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onAllDataRead</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"数据读取完成"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable t)</span> </span>&#123;</span><br><span class="line">        t.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中<code>MyReadListener</code>的<code>onDataAvailable()</code>方法先暂停线程5秒,用于模拟耗时操作,接下来程序使用普通<code>IO</code>流读取浏览器提交的数据。<br>如果程序直接让<code>Servlet</code>读取浏览器提交的数据,那么该<code>Servlet</code>就需要阻塞5秒,不能继续向下执行;改为使用非阻塞IO进行读取,虽然读取数据的<code>IO</code>操作需要5秒,但它不会阻塞<code>Servlet</code>执行,因此可以提升<code>Servlet</code>的性能。<br>程序使用一个简单的表单向该<code>Servlet</code>提交请求,该表单内包含了请求数据。提交的表单效果如图2.53所示。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/8dcbd8d1/" title="2.13 Servlet3.1新增的非阻塞式IO">https://lanlan2017.github.io/JavaReadingNotes/8dcbd8d1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/b4bd5cab/" rel="next" title="2.12.4 改进的Servlet API">
+                  <i class="fa fa-chevron-left"></i> 2.12.4 改进的Servlet API
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/c5f258e0/" rel="prev" title="2.14 Tomcat8.5的WebSocket支持">
+                  2.14 Tomcat8.5的WebSocket支持 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-13-Servlet3-1新增的非阻塞式IO"><span class="nav-text">2.13 Servlet3.1新增的非阻塞式IO</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ReadListener"><span class="nav-text">ReadListener</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Servlet中使用非阻塞IO步骤"><span class="nav-text">Servlet中使用非阻塞IO步骤</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目结构"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AsyncServlet-java"><span class="nav-text">AsyncServlet.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyReadListener-java"><span class="nav-text">MyReadListener.java</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="8.2.6 自动装配和精确装配&amp;nbsp;@Autowired注解&amp;nbsp;@Autowired修饰setter时&amp;nbsp;@Autowired修饰普通方法时&amp;nbsp;@Autowired修饰实例变量时&amp;nbsp;@Autowired修饰构造时&amp;nbsp;@Autowired修饰数组类型的成员变量时&amp;nbsp;@Autowired修饰集合类型的实例变量时&amp;nbsp;@Autowired修饰集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.2.6 自动装配和精确装配1 @Autowired注解">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/adf82bcd/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="8.2.6 自动装配和精确装配&amp;nbsp;@Autowired注解&amp;nbsp;@Autowired修饰setter时&amp;nbsp;@Autowired修饰普通方法时&amp;nbsp;@Autowired修饰实例变量时&amp;nbsp;@Autowired修饰构造时&amp;nbsp;@Autowired修饰数组类型的成员变量时&amp;nbsp;@Autowired修饰集合类型的实例变量时&amp;nbsp;@Autowired修饰集">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-01T11:28:49.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/adf82bcd/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>8.2.6 自动装配和精确装配1 @Autowired注解 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/adf82bcd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">8.2.6 自动装配和精确装配1 @Autowired注解<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC8%E7%AB%A0%20%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8.2%20Spring%E7%9A%84%20%E9%9B%B6%E9%85%8D%E7%BD%AE%20%E6%94%AF%E6%8C%81/8.2.6%20%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E5%92%8C%E7%B2%BE%E7%A1%AE%E8%A3%85%E9%85%8D1%20@Autowired%E6%B3%A8%E8%A7%A3.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-01 11:28:49" itemprop="dateCreated datePublished" datetime="2019-09-01T11:28:49+00:00">2019-09-01</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/" itemprop="url" rel="index"><span itemprop="name">第8章 深入使用Spring</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8-2-Spring%E7%9A%84-%E9%9B%B6%E9%85%8D%E7%BD%AE-%E6%94%AF%E6%8C%81/" itemprop="url" rel="index"><span itemprop="name">8.2 Spring的 零配置 支持</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/adf82bcd/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/adf82bcd/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/adf82bcd/#8-2-6-自动装配和精确装配" class="header_1">8.2.6 自动装配和精确装配</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired注解" class="header_1">@Autowired注解</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰setter时" class="header_2">@Autowired修饰setter时</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰普通方法时" class="header_2">@Autowired修饰普通方法时</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰实例变量时" class="header_2">@Autowired修饰实例变量时</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰构造时" class="header_2">@Autowired修饰构造时</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰数组类型的成员变量时" class="header_2">@Autowired修饰数组类型的成员变量时</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰集合类型的实例变量时" class="header_2">@Autowired修饰集合类型的实例变量时</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired修饰集合类型的实例变量时-必须使用泛型" class="header_3">@Autowired修饰集合类型的实例变量时 必须使用泛型</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired主机默认使用byType策略来自动装配" class="header_2">@Autowired主机默认使用byType策略来自动装配</a>&nbsp;<br><a href="/JavaReadingNotes/adf82bcd/#-Autowired根据泛型进行自动装配" class="header_2">@Autowired根据泛型进行自动装配</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="8-2-6-自动装配和精确装配"><a href="#8-2-6-自动装配和精确装配" class="headerlink" title="8.2.6 自动装配和精确装配"></a>8.2.6 自动装配和精确装配</h1><h1 id="Autowired注解"><a href="#Autowired注解" class="headerlink" title="@Autowired注解"></a>@Autowired注解</h1><p><code>Spring</code>提供了<code>@Autowired</code>注解来指定自动装配,<code>@Autowired</code>可以修饰<code>setter</code>方法、<code>普通方法</code>、<code>实例变量</code>和<code>构造器</code>等。</p>
+<h2 id="Autowired修饰setter时"><a href="#Autowired修饰setter时" class="headerlink" title="@Autowired修饰setter时"></a>@Autowired修饰setter时</h2><p>当使用<code>@Autowired</code>标注<code>setter</code>方法时,<strong>默认采用<code>by Type</code>自动装配策略</strong>。<br>例如下面的代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAxe</span><span class="params">(Axe axe)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.axe = axe;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码中使用了<code>@Autowired</code>指定对<code>setAxe()</code>方法进行自动装配, <code>Spring</code>将会自动搜索容器中类型为<code>Axe</code>的<code>Bean</code>实例,并将该<code>Bean</code>实例作为<code>setAxe()</code>方法的参数传入。</p>
+<ul>
+<li>如果正好在容器中找到一个类型为<code>Axe</code>的<code>Bean, Spring</code>就会以该<code>Bean</code>为参数来执行<code>setAxe()</code>方法;</li>
+<li>如果在容器中找到多个类型为<code>Axe</code>的<code>Bean, Spring</code>会引发异常;</li>
+<li>如果在容器中没有找到多个类型为<code>Axe</code>的<code>Bean, Spring</code>什么都不执行,也不会引发异常</li>
+</ul>
+<h2 id="Autowired修饰普通方法时"><a href="#Autowired修饰普通方法时" class="headerlink" title="@Autowired修饰普通方法时"></a>@Autowired修饰普通方法时</h2><p><code>Spring</code>还允许使用<code>@Autowired</code>来标注多个参数的普通方法,如下面的代码所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">prepare</span><span class="params">(Axe axe, Dog dog)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.axe=axe;</span><br><span class="line">        <span class="keyword">this</span>.dog=dog;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当使用<code>@Autowired</code>修饰带多个参数的普通方法时, <code>Spring</code>会自动到容器中寻找类型匹配的<code>Bean</code>,如果恰好为每个参数都找到一个类型匹配的<code>Bean</code>, 则<code>Spring</code>会自动以这些<code>Bean</code>作为参数来调用该方法。<br>以上面的<code>prepare(Axe axe, Dog dog)</code>方法为例, <code>Spring</code>会自动寻找容器中类型为<code>Axe</code>的<code>Bean</code>以及类型为<code>Dog</code>的<code>Bean</code>,如果在容器中恰好找到一个类型为<code>Axe</code>和一个类型为<code>Dog</code>的<code>Bean</code>, <code>Spring</code>就会以这两个<code>Bean</code>作为参数来调用<code>prepare</code>方法。</p>
+<p><code>@Autowired</code>也可用于修饰构造器和实例变量,如下面的代码所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Axe axe;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Chinese</span><span class="params">(Axe axe, Dog dog)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.axe=axe;</span><br><span class="line">        <span class="keyword">this</span>.dog=dog;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Autowired修饰实例变量时"><a href="#Autowired修饰实例变量时" class="headerlink" title="@Autowired修饰实例变量时"></a>@Autowired修饰实例变量时</h2><p>当使用<code>@Autowired</code>修饰一个实例变量时, <code>Spring</code>将会把容器中与该实例变量类型匹配的<code>Bean</code>设置为该实例变量的值。<br>例如,程序中使用<code>@Autowired</code>标注了<code>private Axe axe</code>这个实例变量,则<code>Spring</code>会自动搜索容器中类型为<code>Axe</code>的<code>Bean</code>。</p>
+<ul>
+<li>如果恰好找到一个该类型的<code>Bean</code>, 那么<code>Spring</code>就会将该<code>Bean</code>设置成<code>axe</code>实例变量的值;</li>
+<li>如果容器中包含多于一个的<code>Axe</code>实例,则<code>Spring</code>容器会抛出<code>BeanCreateException</code>异常。</li>
+</ul>
+<h2 id="Autowired修饰构造时"><a href="#Autowired修饰构造时" class="headerlink" title="@Autowired修饰构造时"></a>@Autowired修饰构造时</h2><p><code>@Autowired</code>修饰构造时的注入规则与修饰普通方法的规则相同。</p>
+<h2 id="Autowired修饰数组类型的成员变量时"><a href="#Autowired修饰数组类型的成员变量时" class="headerlink" title="@Autowired修饰数组类型的成员变量时"></a>@Autowired修饰数组类型的成员变量时</h2><p><code>@Autowired</code>甚至可以用于修饰数组类型的成员变量,如下面的代码所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> Axe[] axes;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正如在上面的程序中看到的,被<code>@Autowired</code>修饰的<code>axes</code>实例变量的类型是<code>Axe</code>数组,在这种情况下, <code>Spring</code>会自动搜索容器中的<strong>所有<code>Axe</code>实例</strong>,并以这些<code>Axe</code>实例作为数组元素来创建数组,最后将该数组赋给上面<code>Chinese</code>实例的<code>axes</code>实例变量。</p>
+<h2 id="Autowired修饰集合类型的实例变量时"><a href="#Autowired修饰集合类型的实例变量时" class="headerlink" title="@Autowired修饰集合类型的实例变量时"></a>@Autowired修饰集合类型的实例变量时</h2><p>与此类似的是,<code>@Autowired</code>也可标注<code>集合类型</code>的实例变量,或标注<code>形参类型是集合的方法</code>, <code>Spring</code>对这种<code>集合属性</code>、<code>集合形参</code>的处理与前面对数组类型的处理是完全相同的。例如如下代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Set&lt;Axe&gt; axes;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAxes</span><span class="params">(Set&lt;Axe&gt; axes)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.axes=axes;</span><br><span class="line">    &#125;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Autowired修饰集合类型的实例变量时-必须使用泛型"><a href="#Autowired修饰集合类型的实例变量时-必须使用泛型" class="headerlink" title="@Autowired修饰集合类型的实例变量时 必须使用泛型"></a>@Autowired修饰集合类型的实例变量时 必须使用泛型</h3><p>对于这种集合类型的参数而言,<strong>程序代码中必须使用泛型</strong>,正如上面程序中的代码所示,程序指定了该方法参数是<code>Set&lt;Axe&gt;</code>类型,这表明<code>Spring</code>会自动搜索容器中的所有<code>Axe</code>实例,并将这些实例注入到<code>axes</code>实例变量中。<br>如果程序没有使用泛型来指明集合元素的类型,则<code>Spring</code>不知道搜索那些类型的实例来注入集合。</p>
+<h2 id="Autowired主机默认使用byType策略来自动装配"><a href="#Autowired主机默认使用byType策略来自动装配" class="headerlink" title="@Autowired主机默认使用byType策略来自动装配"></a>@Autowired主机默认使用byType策略来自动装配</h2><p>由于<code>@Autowired</code>默认使用<code>byType</code>策略来完成自动装配,系统可能出现有多个匹配类型的候选组件,此时就会导致异常。</p>
+<h2 id="Autowired根据泛型进行自动装配"><a href="#Autowired根据泛型进行自动装配" class="headerlink" title="@Autowired根据泛型进行自动装配"></a>@Autowired根据泛型进行自动装配</h2><p><code>Spring 4.0</code>增强后的<code>@Autowired</code>注解还可以根据泛型进行自动装配。例如,项目中定义了如下<code>Dao</code>组件(后文会介绍,<code>Dao</code>组件是<code>Java EE</code>应用中最重要的一类组件,用于执行数据库访问),本示例的基础<code>Dao</code>组件代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.dao.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.crazyit.app.dao.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseDaoImpl</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">BaseDao</span>&lt;<span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">save</span><span class="params">(T e)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"程序保存对象："</span> + e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>BaseDaolmpl</code>类中定义了所有<code>Dao</code>组件都应该实现的通用方法,而应用的其他<code>Dao</code>组件则只要继承<code>BaseDaolmpl</code>,并指定不同泛型参数即可。例如如下<code>UserDaolmpl</code>和<code>ItemDaoImpl</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(<span class="string">"itemDao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ItemDaoImpl</span> <span class="keyword">extends</span> <span class="title">BaseDaoImpl</span>&lt;<span class="title">Item</span>&gt; <span class="keyword">implements</span> <span class="title">ItemDao</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(<span class="string">"userDao"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserDaoImpl</span> <span class="keyword">extends</span> <span class="title">BaseDaoImpl</span>&lt;<span class="title">User</span>&gt; <span class="keyword">implements</span> <span class="title">UserDao</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来程序希望定义两个<code>Service</code>组件<code>: UserServicelmpl</code>和<code>ItemServicelmp</code>,而<code>UserServicelmpl</code>需要依赖于<code>UserDaolmpl</code>组件, <code>ItemServicelmpl</code>需要依赖于<code>ItemDaolmpl</code>组件,传统的做法可能需要为<code>UserServicelmpl</code>、 <code>ItemServicelmpl</code>分别定义成员变量,并配置依赖注入。<br>考虑到<code>UserDaolmpl</code>、 <code>ItemServicelmpl</code>依赖的都是<code>BaseDaolmpl</code>组件的子类,只是泛型参数不同而程序可以直接定义一个<code>BaseServicelmpl</code>,该组件依赖于<code>BaseDaolmpl</code>即可。例如如下代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseServiceImpl</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">BaseService</span>&lt;<span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> BaseDao&lt;T&gt; dao;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">addEntity</span><span class="params">(T entity)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"调用"</span> + dao + <span class="string">"保存实体："</span> + entity);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中两行粗体字代码指定<code>Spring</code>应该寻找容器中类型为<code>Basedao&lt;T&gt;</code>的<code>Bean</code>,并将该<code>Bean</code>设置为<code>dao</code>实例变量的值。注意到<code>BaseDao&lt;T&gt;</code>类型中的泛型参数<code>T</code>,<code> Spring</code>不仅会根据<code>Basedao</code>类型进行搜索,还会严格匹配泛型参数<code>T</code>。<br>接下来程序只要定义如下<code>UserServicelmpl</code>即可</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(<span class="string">"userService"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserServiceImpl</span> <span class="keyword">extends</span> <span class="title">BaseServiceImpl</span>&lt;<span class="title">User</span>&gt;</span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">UserService</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>UserServiceImpl</code>继承了<code>BaseServiceImpl&lt;User&gt;</code>,这就相当于指定了上面<code>BaseDao&lt;T&gt;</code>类型中<code>T</code>的类型为<code>User</code>,因此<code>Spring</code>会在容器中寻找类型为<code>BaseDao&lt;User&gt;</code>的<code>Bean</code>—此时会找到<code>UserDaoImpl</code>组件,从而实现将<code>UserDaolmpl</code>注入<code>UserServiceImpl</code>组件的功能。<br><code>ItemServiceImpl</code>的处理方法也与此类似,这样就可以很方便地将<code>ItemDaolmpl</code>注入<code>ItemServiceImpl</code>组件——而程序只要在<code>UserServicelmpl</code>、 <code>ItemServiceImpl</code>的基类中定义成员变量,并配置依赖注入即可,这就是<code>Spring</code>从4.0开始增强的自动装配。<br>该示例的主程序如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Spring容器</span></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"resource"</span>)</span><br><span class="line">        ApplicationContext ctx = <span class="keyword">new</span> ClassPathXmlApplicationContext(</span><br><span class="line">                <span class="string">"beans.xml"</span>);</span><br><span class="line">        UserService us = ctx.getBean(<span class="string">"userService"</span>, UserService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        us.addEntity(<span class="keyword">new</span> User());</span><br><span class="line">        ItemService is = ctx.getBean(<span class="string">"itemService"</span>, ItemService<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        is.addEntity(<span class="keyword">new</span> Item());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该主程序只是获取容器中的<code>userService</code>、 <code>itemService</code>两个<code>Bean</code>,并调用它们的方法。编译、运行该示例,可以看到如下输出:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">调用org.crazyit.app.dao.impl.UserDaoImpl@133e16fd保存实体：org.crazyit.app.domain.User@51b279c9</span><br><span class="line">调用org.crazyit.app.dao.impl.ItemDaoImpl@1ad282e0保存实体：org.crazyit.app.domain.Item@7f416310</span><br></pre></td></tr></table></figure>
+<p>从上面输出可以看出,<code>@Autowired</code>可以精确地利用泛型执行自动装配,这样即可实现将<code>UserDaolmpl</code>注入<code>UserServiceImpl</code>组件,将<code>ItemDaolmpl</code>注入<code>Item Servicelmpl</code>组件。</p>
+<!--SSTStop-->
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/adf82bcd/" title="8.2.6 自动装配和精确装配1 @Autowired注解">https://lanlan2017.github.io/JavaReadingNotes/adf82bcd/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/1446d3d6/" rel="next" title="8.2.5 使用@DependsOn和@Lazy改变初始化行为">
+                  <i class="fa fa-chevron-left"></i> 8.2.5 使用@DependsOn和@Lazy改变初始化行为
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/74d114c0/" rel="prev" title="8.2.6 自动装配和精确装配2 @Primary注解">
+                  8.2.6 自动装配和精确装配2 @Primary注解 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8-2-6-自动装配和精确装配"><span class="nav-text">8.2.6 自动装配和精确装配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Autowired注解"><span class="nav-text">@Autowired注解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired修饰setter时"><span class="nav-text">@Autowired修饰setter时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired修饰普通方法时"><span class="nav-text">@Autowired修饰普通方法时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired修饰实例变量时"><span class="nav-text">@Autowired修饰实例变量时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired修饰构造时"><span class="nav-text">@Autowired修饰构造时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired修饰数组类型的成员变量时"><span class="nav-text">@Autowired修饰数组类型的成员变量时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired修饰集合类型的实例变量时"><span class="nav-text">@Autowired修饰集合类型的实例变量时</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Autowired修饰集合类型的实例变量时-必须使用泛型"><span class="nav-text">@Autowired修饰集合类型的实例变量时 必须使用泛型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired主机默认使用byType策略来自动装配"><span class="nav-text">@Autowired主机默认使用byType策略来自动装配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Autowired根据泛型进行自动装配"><span class="nav-text">@Autowired根据泛型进行自动装配</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

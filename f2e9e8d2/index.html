@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="16.6.3 使用阻塞队列(BlockingQueue)控制线程通信&amp;nbsp;BlockingQueue特征&amp;nbsp;BlockingQueue阻塞方法&amp;nbsp;Queue接口方法&amp;nbsp;BlockingQueue方法分类&amp;nbsp;BlockingQueue实现类&amp;nbsp;程序示例 ArrayBlockingQueue阻塞队列&amp;nbsp;程序 使用BlockingQueue实现线程通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="16.6.3 使用阻塞队列(BlockingQueue)控制线程通信">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/f2e9e8d2/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="16.6.3 使用阻塞队列(BlockingQueue)控制线程通信&amp;nbsp;BlockingQueue特征&amp;nbsp;BlockingQueue阻塞方法&amp;nbsp;Queue接口方法&amp;nbsp;BlockingQueue方法分类&amp;nbsp;BlockingQueue实现类&amp;nbsp;程序示例 ArrayBlockingQueue阻塞队列&amp;nbsp;程序 使用BlockingQueue实现线程通">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.6.3/1.png">
+<meta property="article:published_time" content="2020-01-08T09:12:14.000Z">
+<meta property="article:modified_time" content="2020-03-26T03:48:11.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.6.3/1.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/f2e9e8d2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>16.6.3 使用阻塞队列(BlockingQueue)控制线程通信 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/f2e9e8d2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">16.6.3 使用阻塞队列(BlockingQueue)控制线程通信<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC16%E7%AB%A0%20%E5%A4%9A%E7%BA%BF%E7%A8%8B/16.6%20%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1/16.6.3%20%E4%BD%BF%E7%94%A8%E9%98%BB%E5%A1%9E%E9%98%9F%E5%88%97(BlockingQueue)%E6%8E%A7%E5%88%B6%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-08 09:12:14" itemprop="dateCreated datePublished" datetime="2020-01-08T09:12:14+00:00">2020-01-08</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-26 03:48:11" itemprop="dateModified" datetime="2020-03-26T03:48:11+00:00">2020-03-26</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第16章 多线程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/16-6-%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index"><span itemprop="name">16.6 线程通信</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/f2e9e8d2/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/f2e9e8d2/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/f2e9e8d2/#16-6-3-使用阻塞队列-BlockingQueue-控制线程通信" class="header_1">16.6.3 使用阻塞队列(BlockingQueue)控制线程通信</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#BlockingQueue特征" class="header_2">BlockingQueue特征</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#BlockingQueue阻塞方法" class="header_2">BlockingQueue阻塞方法</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#Queue接口方法" class="header_2">Queue接口方法</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#BlockingQueue方法分类" class="header_2">BlockingQueue方法分类</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#BlockingQueue实现类" class="header_2">BlockingQueue实现类</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#程序示例-ArrayBlockingQueue阻塞队列" class="header_2">程序示例 ArrayBlockingQueue阻塞队列</a>&nbsp;<br><a href="/JavaReadingNotes/f2e9e8d2/#程序-使用BlockingQueue实现线程通信" class="header_2">程序 使用BlockingQueue实现线程通信</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="16-6-3-使用阻塞队列-BlockingQueue-控制线程通信"><a href="#16-6-3-使用阻塞队列-BlockingQueue-控制线程通信" class="headerlink" title="16.6.3 使用阻塞队列(BlockingQueue)控制线程通信"></a>16.6.3 使用阻塞队列(BlockingQueue)控制线程通信</h1><p><code>Java5</code>提供了一个<code>BlockingQueue</code>接口,虽然<code>BlockingQueue</code>也是<code>Queue</code>的子接口,但<code>BlockingQueue</code>的主要用途并不是作为容器,而是作为线程同步的工具。</p>
+<h2 id="BlockingQueue特征"><a href="#BlockingQueue特征" class="headerlink" title="BlockingQueue特征"></a>BlockingQueue特征</h2><p><code>BlockingQueue</code>具有一个特征:</p>
+<ul>
+<li>当生产者线程试图向<code>BlockingQueue</code>中放入元素时,如果该队列已满,则该生产者线程被阻塞;</li>
+<li>当消费者线程试图从<code>BlockingQueue</code>中取出元素时,如果该队列已空,则该消费者线程被阻塞</li>
+</ul>
+<p>程序的两个线程通过交替向<code>BlockingQueue</code>中放入元素、取出元素,即可很好地控制线程的通信。</p>
+<h2 id="BlockingQueue阻塞方法"><a href="#BlockingQueue阻塞方法" class="headerlink" title="BlockingQueue阻塞方法"></a>BlockingQueue阻塞方法</h2><p><code>BlockingQueue</code>提供如下两个支持阻塞的方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void put(E e)</code></td>
+<td align="left">尝试把<code>E</code>元素放入<code>BlockingQueue</code>中,如果该队列的元素已满,则阻塞该线程。</td>
+</tr>
+<tr>
+<td align="left"><code>E take()</code></td>
+<td align="left">尝试从<code>BlockingQueue</code>的头部取出元素,如果该队列的元素已空,则阻塞该线程。</td>
+</tr>
+</tbody></table>
+<h2 id="Queue接口方法"><a href="#Queue接口方法" class="headerlink" title="Queue接口方法"></a>Queue接口方法</h2><p><code>BlockingQueue</code>继承了<code>Queue</code>接口,当然也可使用<code>Queue</code>接口中的方法。这些方法归纳起来可分为如下三组。</p>
+<ol>
+<li>在队列尾部插入元素。包括<code>add(E e)</code>、<code>offer(E e)</code>和<code>put(E e)</code>方法,当该队列已满时,这三个方法分别会抛出异常、返回<code>false</code>、<strong>阻塞队列</strong>。</li>
+<li>在队列头部删除并返回删除的元素。包括<code>remove</code>、<code>poll()</code>和<code>take()</code>方法。当该队列已空时,这三个方法分别会抛出异常、返回<code>false</code>、阻塞队列。</li>
+<li>在队列头部取出但不删除元素。包括<code>element()</code>和<code>pek()</code>方法,当队列已空时,这两个方法分别抛出异常、返回<code>false</code></li>
+</ol>
+<h2 id="BlockingQueue方法分类"><a href="#BlockingQueue方法分类" class="headerlink" title="BlockingQueue方法分类"></a>BlockingQueue方法分类</h2><p><code>BlockingQueue</code>包含的方法之间的对应关系如表16.1所示。</p>
+<table>
+<thead>
+<tr>
+<th align="left">功能</th>
+<th align="left">抛出异常</th>
+<th align="left">不同返回值</th>
+<th align="left">阻塞线程</th>
+<th align="left">指定超时时长</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">队尾插入元素</td>
+<td align="left"><code>add(e)</code></td>
+<td align="left"><code>offer(e)</code></td>
+<td align="left"><code>put(e)</code></td>
+<td align="left"><code>offer(e,time,unit)</code></td>
+</tr>
+<tr>
+<td align="left">队头删除元素</td>
+<td align="left"><code>remove()</code></td>
+<td align="left"><code>poll()</code></td>
+<td align="left"><code>take()</code></td>
+<td align="left"><code>poll(time,unit)</code></td>
+</tr>
+<tr>
+<td align="left">获取、不删除元素</td>
+<td align="left"><code>element()</code></td>
+<td align="left"><code>peek()</code></td>
+<td align="left">无</td>
+<td align="left">无</td>
+</tr>
+</tbody></table>
+<h2 id="BlockingQueue实现类"><a href="#BlockingQueue实现类" class="headerlink" title="BlockingQueue实现类"></a>BlockingQueue实现类</h2><p><code>BlockingQueue</code>与其实现类之间的类图如图16.11所示。<br><img src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.6.3/1.png" alt="图片"></p>
+<!-- CrazyJavaHandout4/Chapter16/16.6.3/1 -->
+<p>图16.11中以黑色方框框出的都是<code>Java7</code>新增的阻塞队列。从图16.11可以看到,<code>BlockingQueue</code>包含如下5个实现类。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>BlockingQueue</code>实现类</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>ArrayBlockingQueue</code></td>
+<td align="left">基于数组实现的<code>BlockingQueue</code>队列。</td>
+</tr>
+<tr>
+<td align="left"><code>LinkedBlockingQueue</code></td>
+<td align="left">基于链表实现的<code>BlockingQueue</code>队列。</td>
+</tr>
+<tr>
+<td align="left"><code>SynchronousQueue</code></td>
+<td align="left">同步队列。对该队列的存、取操作必须交替进行。</td>
+</tr>
+<tr>
+<td align="left"><code>PriorityBlockingQueue</code></td>
+<td align="left">它并不是标准的阻塞队列。<br>与前面介绍的<code>PriorityQueue</code>类似,该队列调用<code>remove()</code>、<code>poll()</code>、<code>take()</code>等方法取出元素时,并不是取出队列中存在时间最长的元素,而是<strong>队列中最小的元素</strong>。<br><code>PriorityBlockingQueue</code>判断元素的大小即可根据元素(实现<code>Comparable</code>接口)的本身大小来自然排序,也可使用<code>Comparator</code>进行定制排序。</td>
+</tr>
+<tr>
+<td align="left"><code>DelayQueue</code></td>
+<td align="left">它是一个特殊的<code>BlockingQueue</code>,底层基于<code>PriorityBlockingQueue</code>实现。不过,<code>DelayQueue</code>要求集合元素都实现<code>Delay</code>接口(该接口里只有一个<code>longGetDelay()</code>方法),<code>DelayQueue</code>根据集合元素的<code>getDalay()</code>方法的返回值进行排序</td>
+</tr>
+</tbody></table>
+<h2 id="程序示例-ArrayBlockingQueue阻塞队列"><a href="#程序示例-ArrayBlockingQueue阻塞队列" class="headerlink" title="程序示例 ArrayBlockingQueue阻塞队列"></a>程序示例 ArrayBlockingQueue阻塞队列</h2><p>下面以<code>ArrayBlockingQueue</code>为例介绍阻塞队列的功能和用法。下面先用一个最简单的程序来测试<code>BlockingQueue</code>的<code>put()</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockingQueueTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 定义一个长度为2的阻塞队列</span></span><br><span class="line">        BlockingQueue&lt;String&gt; bq = <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">2</span>);</span><br><span class="line">        bq.put(<span class="string">"Java"</span>); <span class="comment">// 与bq.add("Java"、bq.offer("Java")相同</span></span><br><span class="line">        bq.put(<span class="string">"Java"</span>); <span class="comment">// 与bq.add("Java"、bq.offer("Java")相同</span></span><br><span class="line">        bq.put(<span class="string">"Java"</span>); <span class="comment">// ① 阻塞线程。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序先定义一个大小为2的<code>BlockingQueue</code>,程序先向该队列中放入两个元素,此时队列还没有满,两个元素都可以放入,因此使用<code>put()</code>、<code>add()</code>和<code>offer()</code>方法效果完全一样。当程序试图放入第三个元素时,</p>
+<ul>
+<li>如果使用<code>put()</code>方法尝试放入元素将会阻塞线程,如上面程序①号代码所示。</li>
+<li>此时,如果使用<code>add()</code>方法尝试放入元素将会引发异常;</li>
+<li>此时,如果使用<code>offer()</code>方法尝试放入元素则会返回<code>false</code>,元素不会被放入</li>
+</ul>
+<p>与此类似的是,在<code>BlockingQueue</code>已空的情况下,程序</p>
+<ul>
+<li>使用<code>take()</code>方法尝试取出元素将会<strong>阻塞线程</strong>;</li>
+<li>使用<code>remove()</code>方法尝试取出元素将<strong>引发异常</strong>;</li>
+<li>使用<code>poll()</code>方法尝试取出元素将<strong>返回<code>false</code>,元素不会被删除</strong>.</li>
+</ul>
+<h2 id="程序-使用BlockingQueue实现线程通信"><a href="#程序-使用BlockingQueue实现线程通信" class="headerlink" title="程序 使用BlockingQueue实现线程通信"></a>程序 使用BlockingQueue实现线程通信</h2><p>掌握了<code>BlockingQueue</code>阻塞队列的特性之后,下面程序就可以利用<code>BlockingQueue</code>来实现线程通信了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生产者线程</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BlockingQueue&lt;String&gt; bq;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Producer</span><span class="params">(BlockingQueue&lt;String&gt; bq)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bq = bq;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String[] strArr = <span class="keyword">new</span> String[] &#123; <span class="string">"Java"</span>, <span class="string">"Struts"</span>, <span class="string">"Spring"</span> &#125;;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">999999999</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">"生产者准备生产集合元素！"</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">200</span>);</span><br><span class="line">                <span class="comment">// 尝试放入元素，如果队列已满，线程被阻塞</span></span><br><span class="line">                bq.put(strArr[i % <span class="number">3</span>]);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(getName() + <span class="string">"生产完成："</span> + bq);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 消费者线程</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BlockingQueue&lt;String&gt; bq;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Consumer</span><span class="params">(BlockingQueue&lt;String&gt; bq)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bq = bq;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">"消费者准备消费集合元素！"</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">200</span>);</span><br><span class="line">                <span class="comment">// 尝试取出元素，如果队列已空，线程被阻塞</span></span><br><span class="line">                bq.take();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(getName() + <span class="string">"消费完成："</span> + bq);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockingQueueTest2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建一个容量为1的BlockingQueue</span></span><br><span class="line">        BlockingQueue&lt;String&gt; bq = <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 启动3条生产者线程</span></span><br><span class="line">        <span class="keyword">new</span> Producer(bq).start();</span><br><span class="line">        <span class="keyword">new</span> Producer(bq).start();</span><br><span class="line">        <span class="keyword">new</span> Producer(bq).start();</span><br><span class="line">        <span class="comment">// 启动一条消费者线程</span></span><br><span class="line">        <span class="keyword">new</span> Consumer(bq).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序启动了3个生产者线程向<code>BlockingQueue</code>集合放入元素,启动了1个消费者线程从<code>BlockingQueue</code>集合取出元素。<br>本程序的<code>BlockingQueue</code>集合容量为1,因此3个生产者线程无法连续放入元素,必须等待消费者线程取出一个元素后,3个生产者线程的其中之一才能放入一个元素。运行该程序,会看到如下所示的结果</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Thread-1生产者准备生产集合元素！</span><br><span class="line">Thread-0生产者准备生产集合元素！</span><br><span class="line">Thread-2生产者准备生产集合元素！</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br><span class="line">Thread-0生产完成：[Java]</span><br><span class="line">Thread-0生产者准备生产集合元素！</span><br><span class="line">Thread-3消费完成：[]</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br><span class="line">Thread-2生产完成：[Java]</span><br><span class="line">Thread-2生产者准备生产集合元素！</span><br><span class="line">Thread-1生产完成：[Java]</span><br><span class="line">Thread-1生产者准备生产集合元素！</span><br><span class="line">Thread-3消费完成：[Java]</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br><span class="line">Thread-3消费完成：[]</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br></pre></td></tr></table></figure>
+<p>3个生产者线程都想向<code>BlockingQueue</code>中放入元素,但只要其中一个线程向该队列中放入元素之后,其他生产者线程就必须等待,等待消费者线程取出<code>BlockingQueue</code>队列里的元素。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/f2e9e8d2/" title="16.6.3 使用阻塞队列(BlockingQueue)控制线程通信">https://lanlan2017.github.io/JavaReadingNotes/f2e9e8d2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/7ee502ff/" rel="next" title="16.6.2 使用Condition控制线程通信">
+                  <i class="fa fa-chevron-left"></i> 16.6.2 使用Condition控制线程通信
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/5795df74/" rel="prev" title="16.7 线程组和未处理的异常">
+                  16.7 线程组和未处理的异常 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#16-6-3-使用阻塞队列-BlockingQueue-控制线程通信"><span class="nav-text">16.6.3 使用阻塞队列(BlockingQueue)控制线程通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#BlockingQueue特征"><span class="nav-text">BlockingQueue特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BlockingQueue阻塞方法"><span class="nav-text">BlockingQueue阻塞方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Queue接口方法"><span class="nav-text">Queue接口方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BlockingQueue方法分类"><span class="nav-text">BlockingQueue方法分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BlockingQueue实现类"><span class="nav-text">BlockingQueue实现类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例-ArrayBlockingQueue阻塞队列"><span class="nav-text">程序示例 ArrayBlockingQueue阻塞队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序-使用BlockingQueue实现线程通信"><span class="nav-text">程序 使用BlockingQueue实现线程通信</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

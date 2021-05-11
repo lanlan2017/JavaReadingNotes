@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2.5 Spring MVC执行的流程&amp;nbsp;2.5.1 Spring MVC应用的开发步骤&amp;nbsp;1 web.xml中定义前端控制器&amp;nbsp;2 定义包含表单数据的JSP页面&amp;nbsp;3 定义处理用户请求的Handle类&amp;nbsp;创建Controller实例 调用其方法来处理请求&amp;nbsp;如何知道创建哪个Controller接口的实例&amp;nbsp;控制器分类&amp;nbsp;4 配置Ha">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.5 Spring MVC执行的流程">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/c2d6c002/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="2.5 Spring MVC执行的流程&amp;nbsp;2.5.1 Spring MVC应用的开发步骤&amp;nbsp;1 web.xml中定义前端控制器&amp;nbsp;2 定义包含表单数据的JSP页面&amp;nbsp;3 定义处理用户请求的Handle类&amp;nbsp;创建Controller实例 调用其方法来处理请求&amp;nbsp;如何知道创建哪个Controller接口的实例&amp;nbsp;控制器分类&amp;nbsp;4 配置Ha">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter2/3.png">
+<meta property="article:published_time" content="2019-08-16T23:50:08.000Z">
+<meta property="article:modified_time" content="2020-04-20T09:18:24.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter2/3.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/c2d6c002/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>2.5 Spring MVC执行的流程 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/c2d6c002/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">2.5 Spring MVC执行的流程<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC2%E7%AB%A0%20Spring%20MVC%E7%AE%80%E4%BB%8B/2.5%20Spring%20MVC%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B/2.5%20Spring%20MVC%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-16 23:50:08" itemprop="dateCreated datePublished" datetime="2019-08-16T23:50:08+00:00">2019-08-16</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-20 09:18:24" itemprop="dateModified" datetime="2020-04-20T09:18:24+00:00">2020-04-20</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC2%E7%AB%A0-Spring-MVC%E7%AE%80%E4%BB%8B/" itemprop="url" rel="index"><span itemprop="name">第2章 Spring MVC简介</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC2%E7%AB%A0-Spring-MVC%E7%AE%80%E4%BB%8B/2-5-Spring-MVC%E6%89%A7%E8%A1%8C%E7%9A%84%E6%B5%81%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">2.5 Spring MVC执行的流程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/c2d6c002/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/c2d6c002/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/c2d6c002/#2-5-Spring-MVC执行的流程" class="header_1">2.5 Spring MVC执行的流程</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#2-5-1-Spring-MVC应用的开发步骤" class="header_1">2.5.1 Spring MVC应用的开发步骤</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#1-web-xml中定义前端控制器" class="header_2">1 web.xml中定义前端控制器</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#2-定义包含表单数据的JSP页面" class="header_2">2 定义包含表单数据的JSP页面</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#3-定义处理用户请求的Handle类" class="header_2">3 定义处理用户请求的Handle类</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#创建Controller实例-调用其方法来处理请求" class="header_3">创建Controller实例 调用其方法来处理请求</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#如何知道创建哪个Controller接口的实例" class="header_3">如何知道创建哪个Controller接口的实例</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#控制器分类" class="header_3">控制器分类</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#4-配置Handle" class="header_2">4 配置Handle</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#使用xml配置Handle" class="header_3">使用xml配置Handle</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#使用注解来配置Handle" class="header_3">使用注解来配置Handle</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#5-编写视图资源" class="header_2">5 编写视图资源</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#2-5-2-Spring-MVC执行的流程" class="header_1">2.5.2 Spring MVC执行的流程</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#Spring-MVC-请求响应工作流程" class="header_2">Spring MVC 请求响应工作流程</a>&nbsp;<br><a href="/JavaReadingNotes/c2d6c002/#只需要开发Handler即可" class="header_2">只需要开发Handler即可</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="2-5-Spring-MVC执行的流程"><a href="#2-5-Spring-MVC执行的流程" class="headerlink" title="2.5 Spring MVC执行的流程"></a>2.5 Spring MVC执行的流程</h1><p>下面将对开发<code>Spring MVC</code>应用的过程进行总结,以让读者对<code>Spring MVC</code>有一个大致的了解。</p>
+<h1 id="2-5-1-Spring-MVC应用的开发步骤"><a href="#2-5-1-Spring-MVC应用的开发步骤" class="headerlink" title="2.5.1 Spring MVC应用的开发步骤"></a>2.5.1 Spring MVC应用的开发步骤</h1><p>下面简单介绍 Spring MVC应用的开发步骤。</p>
+<h2 id="1-web-xml中定义前端控制器"><a href="#1-web-xml中定义前端控制器" class="headerlink" title="1 web.xml中定义前端控制器"></a>1 web.xml中定义前端控制器</h2><p>在<code>web.xml</code>文件中定义前端控制器<code>DispatcherServlet</code>来拦截用户请求。<br>由于<code>Web</code>应用是基于<strong>请求/响应</strong>架构的应用,所以不管哪个<code>MVC Web</code>框架,都需要在<code>web.xml</code>中配置该框架的核心<code>Servlet</code>或<code>Filter</code>,这样才可以让该框架介入<code>Web</code>应用。<br>例如,开发<code>Spring MVC</code>应用的<code>第1步</code>就是在<code>web.xml</code>文件中增加如下配置片段:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 定义前端控制器 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>springDispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">init-param</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="name">param-name</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- springmvc-config.xml文件的路径 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">param-value</span>&gt;</span>WEB-INF/springmvc-config.xml<span class="tag">&lt;/<span class="name">param-value</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">init-param</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 项目启动时加载前端控制器 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="name">load-on-startup</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 让spring mvc的前端控制器拦截的请求的模式 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>springDispatcherServlet<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 拦截所有的请求 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-定义包含表单数据的JSP页面"><a href="#2-定义包含表单数据的JSP页面" class="headerlink" title="2 定义包含表单数据的JSP页面"></a>2 定义包含表单数据的JSP页面</h2><p>如果需要以<code>POST</code>方式提交请求,则定义包含表单数据的<code>JSP</code>页面。如果仅仅只是以<code>GET</code>方式发送请求,则无须经过这一步。</p>
+<h2 id="3-定义处理用户请求的Handle类"><a href="#3-定义处理用户请求的Handle类" class="headerlink" title="3 定义处理用户请求的Handle类"></a>3 定义处理用户请求的Handle类</h2><p>定义处理用户请求的<code>Handle</code>类,该类可以实现<code>Controller</code>接口或使用<code>@Controller</code>注解来实现。这一步也是所有<code>MVC</code>框架中必不可少的,因为这个<code>DispatcherServlet</code>就是MVC中的C,也就是前端控制器,该控制器负责接收请求,并将请求分发给对应的<code>Handle</code>类,该<code>Handle</code>类负责调用后台业务逻辑代码来处理请求。</p>
+<h3 id="创建Controller实例-调用其方法来处理请求"><a href="#创建Controller实例-调用其方法来处理请求" class="headerlink" title="创建Controller实例 调用其方法来处理请求"></a>创建Controller实例 调用其方法来处理请求</h3><p>可能有读者会产生疑问: <code>Controller</code>并未接收到用户请求,它怎么能够处理用户的请求呢?<br><code>MVC</code>框架的底层机制是:<strong>前端控制器<code>DispatcherServlet</code>接收到用户请求后,通常会对用户请求进行简单预处理,例如解析、封装参数等,然后通过<mark>反射</mark>来创建<code>Controller</code>实例,并调用<code>Controller</code>的指定方法来处理用户请求</strong>:</p>
+<ul>
+<li>如果是实现<code>Controller</code>接口的<code>Controller</code>,则调用的是<code>handlRequest</code>方法,</li>
+<li>如果是使用基于注解的控制器,则可以调用任意方法</li>
+</ul>
+<h3 id="如何知道创建哪个Controller接口的实例"><a href="#如何知道创建哪个Controller接口的实例" class="headerlink" title="如何知道创建哪个Controller接口的实例"></a>如何知道创建哪个Controller接口的实例</h3><p>这里又产生了一个问题:当<code>Servlet</code>拦截用户请求后,它如何知道创建哪个<code>Controller</code>接口的实例呢?<br>有两种解决方案:</p>
+<ol>
+<li><strong>利用<code>xml</code>配置文件</strong>:例如在<code>xml</code>配置文件中描述<code>hello</code>请求对应使用<code>HelloController</code>类。这就可以让<code>MVC</code>框架知道当接收到<code>hello</code>请求时要创建哪个<code>Controller</code>接口的实例。</li>
+<li><strong>利用注解</strong>:例如使用注解<code>@Controller</code>描述一个类,并使用注解<code>@RequestMapping(value=&quot;/hello&quot;)</code>描述<code>hello</code>请求对应的方法。这样也可以让<code>MVC</code>框架知道要创建哪个<code>Controller</code>接口的实例并调用哪个方法处理请求。</li>
+</ol>
+<h3 id="控制器分类"><a href="#控制器分类" class="headerlink" title="控制器分类"></a>控制器分类</h3><p>根据上面的介绍不难发现,在<code>Spring MVC</code>框架中,<strong>控制器</strong>实际上由两个部分组成:</p>
+<ol>
+<li>即拦截所有用户请求和处理请求的通用代码都由前端控制器<code>DispatcherServlet</code>完成,</li>
+<li>而实际的业务控制(调用后台业务逻辑代码,返回处理结果等)则由<code>Controller</code>处理。</li>
+</ol>
+<h2 id="4-配置Handle"><a href="#4-配置Handle" class="headerlink" title="4 配置Handle"></a>4 配置Handle</h2><h3 id="使用xml配置Handle"><a href="#使用xml配置Handle" class="headerlink" title="使用xml配置Handle"></a>使用xml配置Handle</h3><p><code>Java</code>领域的绝大部分<code>MVC</code>框架都非常喜欢使用<code>xml</code>文件来进行配置管理,这在以前是一种思维定势。即<strong>配置哪个请求对应哪个<code>Controller</code></strong>,从而让前端控制器根据该配置来创建合适的<code>Controller</code>实例,并调用该<code>Controller</code>的业务控制方法。<br>例如,可以采用如下代码片段来配置<code>Handle</code>:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 配置Handle，映射"/hello"请求 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">name</span>=<span class="string">"/hello"</span> <span class="attr">class</span>=<span class="string">"org.fkit.controller.HelloController"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="使用注解来配置Handle"><a href="#使用注解来配置Handle" class="headerlink" title="使用注解来配置Handle"></a>使用注解来配置Handle</h3><p>在<code>Spring2.5</code>之后,推荐使用注解来配置<code>Handle</code>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.controller;</span><br><span class="line">......</span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloController</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    <span class="meta">@RequestMapping</span>(value = <span class="string">"/hello"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> ModelAndView <span class="title">hello</span><span class="params">()</span></span>&#123;......&#125;</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的配置片段指定如果用户请求<code>URL</code>为<code>hello</code>,则使用<code>org.fkit.controller.Hellocontroller</code>来处理。现在几乎所有的<code>MVC</code>框架都使用”约定优于配置”的思想,也就是采用约定方式来规定用户请求地址和<code>Handle</code>之间的对应关系。</p>
+<h2 id="5-编写视图资源"><a href="#5-编写视图资源" class="headerlink" title="5 编写视图资源"></a>5 编写视图资源</h2><p>当<code>Handle</code>处理用户请求结束后,通常会返回一个<code>ModelAndView</code>对象,该对象中应该包含返回的视图名或<mark>视图名</mark>和<mark>模型</mark>,这个视图名就代表需要显示的物理视图资源。如果<code>Handle</code>需要把一些数据传给视图资源,则可以通过模型对象实现。</p>
+<p>经过上面5个步骤,即可基本完成一个<code>Spring MVC</code>处理流程的开发,也就是可以执行一次完整的<code>请求→响应</code>过程。</p>
+<h1 id="2-5-2-Spring-MVC执行的流程"><a href="#2-5-2-Spring-MVC执行的流程" class="headerlink" title="2.5.2 Spring MVC执行的流程"></a>2.5.2 Spring MVC执行的流程</h1><p>上一节所介绍的<code>Spring MVC</code>应用的开发流程实际上是按<code>请求→响应</code>的流程来开发的,下面通过一个流程图来介绍<code>请求→响应</code>的完整流程。图2.5显示了一次请求→响应的完整流程。<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter2/3.png" alt="这里有一张图片"></p>
+<h2 id="Spring-MVC-请求响应工作流程"><a href="#Spring-MVC-请求响应工作流程" class="headerlink" title="Spring MVC 请求响应工作流程"></a>Spring MVC 请求响应工作流程</h2><p>按安照图2.5中所标识的序号, <code>Spring MVC</code>请求→响应的完整工作流程如下</p>
+<ol>
+<li>用户向服务器发送请求,请求被<code>Spring</code>的前端控制器<code>DispatcherServlet</code>截获。</li>
+<li><code>DispatcherServlet</code>对请求<code>URL</code>(统一资源定位符)进行解析,得到<code>URI</code>(请求资源标识符)。然后根据该<code>URI</code>,调用<code>HandlerMapping</code>获得该<code>Handler</code>配置的所有相关的对象,包括<code>Handler</code>对象以及<code>Handler</code>对象对应的<code>拦截器</code>,这些对象会被封装到一个<code>HandlerExecutionChain</code>对象当中返回。</li>
+<li><code>DispatcherServlet</code>根据获得的<code>Handler</code>,选择一个合适的<code>HandlerAdapter</code>。 <code>HandlerAdapter</code>会被用于处理多种<code>Handler</code>,调用<code>Handler</code>实际处理请求的方法,例如<code>hello</code>方法。</li>
+<li>提取请求中的模型数据,开始执行<code>Handler(也就是Controller)</code>。在填充<code>Handler</code>的入参过程中,根据配置<code>Spring</code>将帮你做一些额外的工作:</li>
+</ol>
+<ul>
+<li><strong>消息转换</strong>。将请求消息(如<code>JSON</code>、<code>XML</code>等数据)转换成一个对象,将对象转换为指定的响应信息。</li>
+<li><strong>数据转换</strong>。对请求消息进行数据转换,如<code>String</code>转换成<code>Integer</code>、 <code>Double</code>等。</li>
+<li><strong>数据格式化</strong>。对请求消息进行数据格式化,如将字符串转换成格式化数字或格式化日期等。</li>
+<li><strong>数据验证</strong>。验证数据的有效性(长度、格式等),验证结果存储到<code>BindingResult</code>或<code>Error</code>中。</li>
+</ul>
+<ol start="5">
+<li><code>handler</code>执行完成后,向<code>DispatcherServlet</code>返回一个<code>ModelAndView</code>对象, <code>ModelAndView</code>对象中应该包含<code>视图名</code>或<strong>视图名<code>和</code>模型</strong>.</li>
+<li>根据返回的<code>ModelAndView</code>对象,选择一个合适的<code>ViewResolver</code>(视图解析器)返回给<code>DispatcherServlet</code></li>
+<li><code>ViewResolver</code>结合<code>Model</code>和<code>View</code>来渲染视图。</li>
+<li>将视图渲染结果返回给客户端。</li>
+</ol>
+<h2 id="只需要开发Handler即可"><a href="#只需要开发Handler即可" class="headerlink" title="只需要开发Handler即可"></a>只需要开发Handler即可</h2><p>以上8个步骤, <code>DispatcherServlet</code>、 <code>HandlerMapping</code>、 <code>HandlerAdapter</code>和<code>ViewResolver</code>等对象协同工作,来完成<code>Spring MVC</code>请求→响应的整个工作流程,这些对象所完成的工作对于开发者来说都是不可见的,<strong>开发者并不需要关心这些对象是如何工作的,开发者只需要在<code>Handler(也就是Controller)</code>当中完成对请求的业务处理</strong>。<br>提示关于<code>DispatcherServlet</code>、 <code>HandlerMapping</code>、 <code>HandlerAdapter</code>和<code>ViewResolver</code>等对象协同工作的知识,对于还不了解<code>Spring MVC</code>的读者来说,可能会感觉很难理解,因为这一节的知识涉及<code>Spring MVC</code>的源代码和<code>Spring MVC</code>的设计思想,建议初学者学习完<code>Spring MVC</code>的知识之后再回过头来看本节的内容。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/c2d6c002/" title="2.5 Spring MVC执行的流程">https://lanlan2017.github.io/JavaReadingNotes/c2d6c002/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/e6f472b7/" rel="next" title="2.4 详解DispatcherServlet">
+                  <i class="fa fa-chevron-left"></i> 2.4 详解DispatcherServlet
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/172bf57b/" rel="prev" title="2.6 本章小结">
+                  2.6 本章小结 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-5-Spring-MVC执行的流程"><span class="nav-text">2.5 Spring MVC执行的流程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-5-1-Spring-MVC应用的开发步骤"><span class="nav-text">2.5.1 Spring MVC应用的开发步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-web-xml中定义前端控制器"><span class="nav-text">1 web.xml中定义前端控制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-定义包含表单数据的JSP页面"><span class="nav-text">2 定义包含表单数据的JSP页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-定义处理用户请求的Handle类"><span class="nav-text">3 定义处理用户请求的Handle类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Controller实例-调用其方法来处理请求"><span class="nav-text">创建Controller实例 调用其方法来处理请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何知道创建哪个Controller接口的实例"><span class="nav-text">如何知道创建哪个Controller接口的实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#控制器分类"><span class="nav-text">控制器分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-配置Handle"><span class="nav-text">4 配置Handle</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用xml配置Handle"><span class="nav-text">使用xml配置Handle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用注解来配置Handle"><span class="nav-text">使用注解来配置Handle</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-编写视图资源"><span class="nav-text">5 编写视图资源</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-5-2-Spring-MVC执行的流程"><span class="nav-text">2.5.2 Spring MVC执行的流程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-MVC-请求响应工作流程"><span class="nav-text">Spring MVC 请求响应工作流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#只需要开发Handler即可"><span class="nav-text">只需要开发Handler即可</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

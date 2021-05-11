@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2.12.3 Servlet3提供的异步处理&amp;nbsp;AsyncContext&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;AsyncServlet.java&amp;nbsp;GetBooksTarget.java&amp;nbsp;async.jsp&amp;nbsp;为Servlet开启异步调用&amp;nbsp;web.xml&amp;nbsp;异步监听器&amp;nbsp;MyAsyncListener.java&amp;nbsp;给">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.12.3 Servlet3提供的异步处理">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/b4a521e9/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="2.12.3 Servlet3提供的异步处理&amp;nbsp;AsyncContext&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;AsyncServlet.java&amp;nbsp;GetBooksTarget.java&amp;nbsp;async.jsp&amp;nbsp;为Servlet开启异步调用&amp;nbsp;web.xml&amp;nbsp;异步监听器&amp;nbsp;MyAsyncListener.java&amp;nbsp;给">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-21T02:56:48.000Z">
+<meta property="article:modified_time" content="2020-06-21T06:47:38.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b4a521e9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>2.12.3 Servlet3提供的异步处理 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/b4a521e9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">2.12.3 Servlet3提供的异步处理<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC2%E7%AB%A0%20JSP%20Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2.12%20Servlet3%E6%96%B0%E7%89%B9%E6%80%A7/2.12.3%20Servlet3%E6%8F%90%E4%BE%9B%E7%9A%84%E5%BC%82%E6%AD%A5%E5%A4%84%E7%90%86.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-21 02:56:48 / 修改时间：06:47:38" itemprop="dateCreated datePublished" datetime="2020-06-21T02:56:48+00:00">2020-06-21</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第2章 JSP Servlet及相关技术详解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2-12-Servlet3%E6%96%B0%E7%89%B9%E6%80%A7/" itemprop="url" rel="index"><span itemprop="name">2.12 Servlet3新特性</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/b4a521e9/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/b4a521e9/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/b4a521e9/#2-12-3-Servlet3提供的异步处理" class="header_1">2.12.3 Servlet3提供的异步处理</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#AsyncContext" class="header_2">AsyncContext</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#程序示例" class="header_1">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#AsyncServlet-java" class="header_2">AsyncServlet.java</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#GetBooksTarget-java" class="header_2">GetBooksTarget.java</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#async-jsp" class="header_2">async.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#为Servlet开启异步调用" class="header_2">为Servlet开启异步调用</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#web-xml" class="header_2">web.xml</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#异步监听器" class="header_2">异步监听器</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#MyAsyncListener-java" class="header_2">MyAsyncListener.java</a>&nbsp;<br><a href="/JavaReadingNotes/b4a521e9/#给AsyncContext注册异步监听器" class="header_2">给AsyncContext注册异步监听器</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="2-12-3-Servlet3提供的异步处理"><a href="#2-12-3-Servlet3提供的异步处理" class="headerlink" title="2.12.3 Servlet3提供的异步处理"></a>2.12.3 Servlet3提供的异步处理</h1><p>在以前的<code>Servlet</code>规范中,如果<code>Servlet</code>作为控制器调用了一个耗时的业务方法,那么<code>Servlet</code>必须等到业务方法完全返回之后才会生成响应,这将使得<code>Servlet</code>对业务方法的调用变成一种阻塞式的调用,因此效率比较低。<br><code>Servlet3</code>规范引入了异步处理来解决这个问题,异步处理允许<code>Servlet</code>重新发起一条新线程去调用耗时的业务方法,这样就可避免等待。</p>
+<h2 id="AsyncContext"><a href="#AsyncContext" class="headerlink" title="AsyncContext"></a>AsyncContext</h2><p><code>Servlet3</code>的异步处理是通过<code>AsyncContext</code>类来处理的,<code>Servlet</code>可通过<code>ServletRequest</code>的如下两个方开启异步调用、创建<code>AsyncContext</code>对象。</p>
+<ul>
+<li><code>AsyncContext startAsync()</code></li>
+<li><code>AsyncContext startAsync(ServletRequest, ServletResponse)</code></li>
+</ul>
+<p>重复调用上面的方法将得到同一个<code>AsyncContext</code>对象。<code>AsyncContext</code>对象代表异步处理的上下文,它提供了一些工具方法,可完成设置异步调用的超时时长,<code>dispatch</code>用于请求、启动后台线程、获取<code>request</code>、<code>response</code>对象等功能</p>
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><pre>
+G:\Desktop\随书源码\轻量级Java EE企业应用实战(第5版)\codes\02\2.12\servlet3
+├─async.jsp
+├─upload.jsp
+├─uploadFiles\
+│ └─疯狂iOS讲义（上）—立体图.png
+└─WEB-INF\
+  ├─build.xml
+  ├─classes\
+  │ └─lee\
+  │   ├─AsyncServlet.class
+  │   ├─GetBooksTarget.class
+  │   ├─MyAsyncListener.class
+  │   └─UploadServlet.class
+  ├─lib\
+  │ ├─crazyit.jar
+  │ ├─jstl.jar
+  │ ├─leegang.jar
+  │ └─standard.jar
+  ├─src\
+  │ └─lee\
+  │   ├─AsyncServlet.java
+  │   ├─GetBooksTarget.java
+  │   ├─MyAsyncListener.java
+  │   └─UploadServlet.java
+  └─web.xml
+</pre>
+<h2 id="AsyncServlet-java"><a href="#AsyncServlet-java" class="headerlink" title="AsyncServlet.java"></a>AsyncServlet.java</h2><p>下面是一个进行异步处理的<code>Servlet</code>类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet</span>(urlPatterns = <span class="string">"/async"</span>, asyncSupported = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AsyncServlet</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doGet</span><span class="params">(HttpServletRequest request, HttpServletResponse response)</span> <span class="keyword">throws</span> IOException, ServletException </span>&#123;</span><br><span class="line">        response.setContentType(<span class="string">"text/html;charset=GBK"</span>);</span><br><span class="line">        PrintWriter out = response.getWriter();</span><br><span class="line">        out.println(<span class="string">"&lt;title&gt;异步调用示例&lt;/title&gt;"</span>);</span><br><span class="line">        out.println(<span class="string">"进入Servlet的时间："</span> + <span class="keyword">new</span> java.util.Date() + <span class="string">".&lt;br/&gt;"</span>);</span><br><span class="line">        <span class="comment">// 创建AsyncContext，开始异步调用</span></span><br><span class="line">        AsyncContext actx = request.startAsync();</span><br><span class="line">        <span class="comment">// 设置异步调用的超时时长</span></span><br><span class="line">        actx.setTimeout(<span class="number">60</span> * <span class="number">1000</span>);</span><br><span class="line">        <span class="comment">// 启动异步调用的线程，该线程以异步方式执行</span></span><br><span class="line">        actx.start(<span class="keyword">new</span> GetBooksTarget(actx));</span><br><span class="line">        out.println(<span class="string">"结束Servlet的时间："</span> + <span class="keyword">new</span> java.util.Date() + <span class="string">".&lt;br/&gt;"</span>);</span><br><span class="line">        out.flush();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的<code>Servlet</code>类中代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建AsyncContext，开始异步调用</span></span><br><span class="line">AsyncContext actx = request.startAsync();</span><br><span class="line"><span class="comment">// 设置异步调用的超时时长</span></span><br><span class="line">actx.setTimeout(<span class="number">60</span> * <span class="number">1000</span>);</span><br><span class="line"><span class="comment">// 启动异步调用的线程，该线程以异步方式执行</span></span><br><span class="line">actx.start(<span class="keyword">new</span> GetBooksTarget(actx));</span><br></pre></td></tr></table></figure>
+<p>创建了<code>AsyncContext</code>对象,并通过该对象以异步方式启动了一条后台线程。该线程执行体模拟调用耗时的业务方法.</p>
+<h2 id="GetBooksTarget-java"><a href="#GetBooksTarget-java" class="headerlink" title="GetBooksTarget.java"></a>GetBooksTarget.java</h2><p>下面是线程执行体的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">GetBooksTarget</span> <span class="keyword">implements</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> AsyncContext actx = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GetBooksTarget</span><span class="params">(AsyncContext actx)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.actx = actx;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 等待5秒钟，以模拟业务方法的执行</span></span><br><span class="line">            Thread.sleep(<span class="number">5</span> * <span class="number">1000</span>);</span><br><span class="line">            ServletRequest request = actx.getRequest();</span><br><span class="line">            List&lt;String&gt; books = <span class="keyword">new</span> ArrayList&lt;String&gt;();</span><br><span class="line">            books.add(<span class="string">"疯狂Java讲义"</span>);</span><br><span class="line">            books.add(<span class="string">"轻量级Java EE企业应用实战"</span>);</span><br><span class="line">            books.add(<span class="string">"疯狂前端开发讲义"</span>);</span><br><span class="line">            request.setAttribute(<span class="string">"books"</span>, books);</span><br><span class="line">            actx.dispatch(<span class="string">"/async.jsp"</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>该线程执行体内让线程暂停5秒来模拟调用耗时的业务方法,最后调用<code>AsyncContext</code>的<code>dispatch</code>方法把请求<code>dispatch</code>到指定<code>JSP</code>页面.</p>
+<h2 id="async-jsp"><a href="#async-jsp" class="headerlink" title="async.jsp"></a>async.jsp</h2><p>被异步请求<code>dispatch</code>的目标页面需要指定<code>session=&quot;false&quot;</code>“,表明该页面不会重新创建<code>session</code>。下面是<code>async.jsp</code>页面的代码。</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=GBK"</span> language=<span class="string">"java"</span></span><br><span class="line">    session=<span class="string">"false"</span>%&gt;</span><br><span class="line">&lt;%@ taglib prefix=<span class="string">"c"</span> uri=<span class="string">"http://java.sun.com/jsp/jstl/core"</span> %&gt;</span><br><span class="line">&lt;ul&gt;</span><br><span class="line">&lt;c:forEach items=<span class="string">"$&#123;books&#125;"</span> <span class="keyword">var</span>=<span class="string">"book"</span>&gt;</span><br><span class="line">    &lt;li&gt;$&#123;book&#125;&lt;/li&gt;</span><br><span class="line">&lt;/c:forEach&gt;</span><br><span class="line">&lt;/ul&gt;</span><br><span class="line">&lt;%out.println(<span class="string">"业务调用结束的时间："</span> + <span class="keyword">new</span> java.util.Date());</span><br><span class="line"><span class="keyword">if</span> (request.isAsyncStarted()) &#123;</span><br><span class="line">    <span class="comment">// 完成异步调用</span></span><br><span class="line">    request.getAsyncContext().complete();</span><br><span class="line">&#125;%&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的页面只是一个普通<code>JSP</code>页面,只是使用了<code>JSTL</code>标签库来迭代输出<code>books</code>集合,因此读者需要将<code>JSTL</code>的两个<code>JAR</code>包复制到<code>Web</code>应用的<code>WEB-INF\lib</code>路径下。</p>
+<h2 id="为Servlet开启异步调用"><a href="#为Servlet开启异步调用" class="headerlink" title="为Servlet开启异步调用"></a>为Servlet开启异步调用</h2><p>对于希望启用异步调用的<code>Servlet</code>而言,开发者必须显式指定开启异步调用,为<code>Servlet</code>开启异步调用有两种方式。</p>
+<ol>
+<li>为<code>@WebServlet</code>指定<code>asyncSupported=true</code>属性</li>
+<li>在<code>web.xml</code>文件的<code>&lt;servlet&gt;</code>元素中增加<code>&lt;async-supported&gt;</code>子元素</li>
+</ol>
+<h2 id="web-xml"><a href="#web-xml" class="headerlink" title="web.xml"></a>web.xml</h2><p>例如,希望开启上面<code>Servlet</code>的异步调用可通过如下配置片段:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">servlet</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>async<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-class</span>&gt;</span>lee.AsyncServlet<span class="tag">&lt;/<span class="name">servlet-class</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">async-supported</span>&gt;</span>true<span class="tag">&lt;/<span class="name">async-supported</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;<span class="name">servlet-mapping</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">servlet-name</span>&gt;</span>async<span class="tag">&lt;/<span class="name">servlet-name</span>&gt;</span> </span><br><span class="line">    <span class="tag">&lt;<span class="name">url-pattern</span>&gt;</span>/async<span class="tag">&lt;/<span class="name">url-pattern</span>&gt;</span> </span><br><span class="line"><span class="tag">&lt;/<span class="name">servlet-mapping</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>对于支持异步调用的<code>Servlet</code>来说,当<code>Servlet</code>以异步方式启用新线程之后,该<code>Servlet</code>的执行不会被阻塞,该<code>Servlet</code>将可以向客户端浏览器生成响应——当新线程执行完成后,新线程生成的响应再次被送往客户端浏览器。<br>通过浏览器访问上面的<code>Servlet</code>将看到如图2.51所示的页面</p>
+<h2 id="异步监听器"><a href="#异步监听器" class="headerlink" title="异步监听器"></a>异步监听器</h2><p>当<code>Servlet</code>启用异步调用的线程之后,该线程的执行过程对开发者是透明的。但在有些情况下,开发者需要了解该异步线程的执行细节,并针对特定的执行结果进行针对性处理,这可借助于<code>Servlet3</code>提供的异步监听器来实现。<br>异步监听器需要实现<code>AsyncListener</code>接口,实现该接口的监听器类需要实现如下4个方法。</p>
+<ul>
+<li><code>onStartAsync(AsyncEvent even)</code>:当异步调用开始时触发该方法。</li>
+<li><code>onComplete(AsyncEvent even)</code>:当异步调用完成时触发该方法。</li>
+<li><code>onError(AsyncEvent even)</code>:当异步调用出错时触发该方法。</li>
+<li><code>onTimeout(AsyncEvent even)</code>:当异步调用超时时触发该方法。</li>
+</ul>
+<h2 id="MyAsyncListener-java"><a href="#MyAsyncListener-java" class="headerlink" title="MyAsyncListener.java"></a>MyAsyncListener.java</h2><p>接下来为上面的异步调用定义如下监听器类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyAsyncListener</span> <span class="keyword">implements</span> <span class="title">AsyncListener</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onComplete</span><span class="params">(AsyncEvent event)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"------异步调用完成------"</span> + <span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(AsyncEvent event)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onStartAsync</span><span class="params">(AsyncEvent event)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"------异步调用开始------"</span> + <span class="keyword">new</span> Date());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTimeout</span><span class="params">(AsyncEvent event)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面实现的异步监听器类只实现了<code>onStartAsync</code>、<code>onComplete</code>两个方法,表明该监听器只能监听异步调用开始、异步调用完成两个事件。</p>
+<h2 id="给AsyncContext注册异步监听器"><a href="#给AsyncContext注册异步监听器" class="headerlink" title="给AsyncContext注册异步监听器"></a>给AsyncContext注册异步监听器</h2><p>提供了异步监听器之后,还需要通过<code>AsyncContext</code>来注册监听器,调用该对象的<code>addListener()</code>方法即可注册监听器。例如,在上面的<code>Servlet</code>中增加如下代码即可注册监听器:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">AsyncContext actx=request.startAsync();</span><br><span class="line"><span class="comment">//为该异步调用注册监听器</span></span><br><span class="line">actx.addListener(<span class="keyword">new</span> MyAsyncListener());</span><br></pre></td></tr></table></figure>
+<p>为异步调用注册了监听器之后,接下来的异步调用过程将会不断地触发该监听器的不同方法。<br>虽然上面的<code>MyAsyncListener</code>监听器类可以监听异步调用开始、异步调用完成两个事件,但从实际运行的结果来看,它并不能监听到异步调用开始事件,这可能是因为注册该监听器时异步调用已经开始了的缘故。<br>需要指出的是,虽然上面介绍的例子都是基于<code>Servlet</code>的,但由于<code>Filter</code>与<code>Servlet</code>具有很大的相似性,因此<code>Servlet3</code>规范完全支持在<code>Filter</code>中使用异步调用。在<code>Filter</code>中进行异步调用与在<code>Servlet</code>中进行异步调用的效果完全相似,故此处不再赘述。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/b4a521e9/" title="2.12.3 Servlet3提供的异步处理">https://lanlan2017.github.io/JavaReadingNotes/b4a521e9/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/986ab7fd/" rel="next" title="2.12.2 Servlet3的Web模块支持">
+                  <i class="fa fa-chevron-left"></i> 2.12.2 Servlet3的Web模块支持
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/b4bd5cab/" rel="prev" title="2.12.4 改进的Servlet API">
+                  2.12.4 改进的Servlet API <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-12-3-Servlet3提供的异步处理"><span class="nav-text">2.12.3 Servlet3提供的异步处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#AsyncContext"><span class="nav-text">AsyncContext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目结构"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AsyncServlet-java"><span class="nav-text">AsyncServlet.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GetBooksTarget-java"><span class="nav-text">GetBooksTarget.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#async-jsp"><span class="nav-text">async.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为Servlet开启异步调用"><span class="nav-text">为Servlet开启异步调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web-xml"><span class="nav-text">web.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步监听器"><span class="nav-text">异步监听器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MyAsyncListener-java"><span class="nav-text">MyAsyncListener.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#给AsyncContext注册异步监听器"><span class="nav-text">给AsyncContext注册异步监听器</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

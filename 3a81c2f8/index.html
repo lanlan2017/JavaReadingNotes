@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="8.2 Spring的&quot;零配置&quot;支持&amp;nbsp;8.2.1 搜索Bean类&amp;nbsp;Rails框架的做法&amp;nbsp;Spring框架的做法&amp;nbsp;标注Bean类的注解&amp;nbsp;使用context Schema指定搜索路径&amp;nbsp;使用注解方式时将类名首字母变小写得到Bean的名称&amp;nbsp;使用注解设置Bean的名称&amp;nbsp;@Lookup注解执行方法注入&amp;nbsp;lookup-me">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.2 Spring的 零配置 支持 8.2.1 搜索Bean类">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/3a81c2f8/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="8.2 Spring的&quot;零配置&quot;支持&amp;nbsp;8.2.1 搜索Bean类&amp;nbsp;Rails框架的做法&amp;nbsp;Spring框架的做法&amp;nbsp;标注Bean类的注解&amp;nbsp;使用context Schema指定搜索路径&amp;nbsp;使用注解方式时将类名首字母变小写得到Bean的名称&amp;nbsp;使用注解设置Bean的名称&amp;nbsp;@Lookup注解执行方法注入&amp;nbsp;lookup-me">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-31T20:43:35.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/3a81c2f8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>8.2 Spring的 零配置 支持 8.2.1 搜索Bean类 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/3a81c2f8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">8.2 Spring的 零配置 支持 8.2.1 搜索Bean类<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC8%E7%AB%A0%20%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8.2%20Spring%E7%9A%84%20%E9%9B%B6%E9%85%8D%E7%BD%AE%20%E6%94%AF%E6%8C%81/8.2%20Spring%E7%9A%84%20%E9%9B%B6%E9%85%8D%E7%BD%AE%20%E6%94%AF%E6%8C%81%208.2.1%20%E6%90%9C%E7%B4%A2Bean%E7%B1%BB.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-31 20:43:35" itemprop="dateCreated datePublished" datetime="2019-08-31T20:43:35+00:00">2019-08-31</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/" itemprop="url" rel="index"><span itemprop="name">第8章 深入使用Spring</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8-2-Spring%E7%9A%84-%E9%9B%B6%E9%85%8D%E7%BD%AE-%E6%94%AF%E6%8C%81/" itemprop="url" rel="index"><span itemprop="name">8.2 Spring的 零配置 支持</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/3a81c2f8/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/3a81c2f8/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/3a81c2f8/#8-2-Spring的"零配置"支持" class="header_1">8.2 Spring的"零配置"支持</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#8-2-1-搜索Bean类" class="header_1">8.2.1 搜索Bean类</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#Rails框架的做法" class="header_2">Rails框架的做法</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#Spring框架的做法" class="header_2">Spring框架的做法</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#标注Bean类的注解" class="header_2">标注Bean类的注解</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#使用context-Schema指定搜索路径" class="header_2">使用context Schema指定搜索路径</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#使用注解方式时将类名首字母变小写得到Bean的名称" class="header_2">使用注解方式时将类名首字母变小写得到Bean的名称</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#使用注解设置Bean的名称" class="header_2">使用注解设置Bean的名称</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#-Lookup注解执行方法注入" class="header_2">@Lookup注解执行方法注入</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#lookup-method元素复习" class="header_3">lookup-method元素复习</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#-Lookup注解通过value属性指定要注入的Bean的id" class="header_3">@Lookup注解通过value属性指定要注入的Bean的id</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#扫描bean的时候对bean进行过滤" class="header_2">扫描bean的时候对bean进行过滤</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#include-filte元素" class="header_3">include-filte元素</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#程序示例" class="header_1">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/3a81c2f8/#beans-xml" class="header_2">beans.xml</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="8-2-Spring的”零配置”支持"><a href="#8-2-Spring的”零配置”支持" class="headerlink" title="8.2 Spring的”零配置”支持"></a>8.2 Spring的”零配置”支持</h1><p>以前的<code>Java</code>框架大多采用<code>XML</code>作为配置文件,时至今日,也许是受<code>Rails</code>框架的启发，几乎所有的主流<code>Java</code>框架都打算支持<code>&quot;零配置&quot;</code>特性。现在要介绍的<code>Spring</code>,都开始支持使用注解来代替<code>XML</code>配置文件。</p>
+<h1 id="8-2-1-搜索Bean类"><a href="#8-2-1-搜索Bean类" class="headerlink" title="8.2.1 搜索Bean类"></a>8.2.1 搜索Bean类</h1><p>既然不再使用<code>Spring</code>配置文件来配置任何<code>Bean</code>实例,那么只能希望<code>Spring</code>会自动搜索某些路径下的<code>Java</code>类,并将这些<code>Java</code>类注册成<code>Bean</code>实例。</p>
+<h2 id="Rails框架的做法"><a href="#Rails框架的做法" class="headerlink" title="Rails框架的做法"></a>Rails框架的做法</h2><p><code>Rails</code>框架的处理比较简单,它采用一种所谓的”约定优于配置”的方式,它要求将不同组件放在不同路径下,而**<code>Rails</code>框架中是加载固定路径下的所有组件**。</p>
+<h2 id="Spring框架的做法"><a href="#Spring框架的做法" class="headerlink" title="Spring框架的做法"></a>Spring框架的做法</h2><p><code>Spring</code>没有采用”约定优于配置”的策略,** <code>Spring</code>依然要求程序员显式指定搜索哪些路径下的<code>Java</code>类**, **<code>Spring</code>将会把合适的<code>Java</code>类全部注册成<code>Spring Bean</code>**。</p>
+<h2 id="标注Bean类的注解"><a href="#标注Bean类的注解" class="headerlink" title="标注Bean类的注解"></a>标注Bean类的注解</h2><p>那现在的问题是:<code>Spring</code>怎么知道应该把哪些<code>Java</code>类当成<code>Bean</code>类处理呢?这就需要使用注解了, <code>Spring</code>通过使用一些特殊的注解来标注<code>Bean</code>类。<code>Spring</code>提供了如下几个注解来标注<code>Spring Bean</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">注解</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>@Component</code></td>
+<td align="left">标注一个普通的<code>Spring Bean</code>类。</td>
+</tr>
+<tr>
+<td align="left"><code>@Controller</code></td>
+<td align="left">标注一个控制器组件类。</td>
+</tr>
+<tr>
+<td align="left"><code>@Service</code></td>
+<td align="left">标注一个业务逻辑组件类。</td>
+</tr>
+<tr>
+<td align="left"><code>@Repository</code></td>
+<td align="left">标注一个<code>DAO</code>组件类。</td>
+</tr>
+<tr>
+<td align="left">如果需要定义一个普通的<code>Spring Bean</code>,则直接使用<code>@Component</code>标注即可。但如果用<code>@Reepository</code>、<code>@Service</code>或<code>@Controller</code>来标注这些<code>Bean</code>类,这些<code>Bean</code>类将被作为特殊的<code>Java EE</code>组件对待,也许能更好地被工具处理,或与切面进行关联。例如,这些典型化的注解可以成为理想的切入点目标。</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>@Controller</code>、<code>@Service</code>和<code>@Repository</code>能携带更多语义,因此,如果需要在<code>Java EE</code>应用中使用这些标注时,应尽量考虑使用<code>@Controller</code>、<code>@Service</code>和<code>@Repository</code>来代替通用的 <code>@Component</code>标注。</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h2 id="使用context-Schema指定搜索路径"><a href="#使用context-Schema指定搜索路径" class="headerlink" title="使用context Schema指定搜索路径"></a>使用context Schema指定搜索路径</h2><p>指定了某些类可作为<code>Spring Bean</code>类使用后,最后还需要让<code>Spring</code>搜索指定路径,此时需要在<code>Spring</code>配置文件中导入 <code>context Schema</code>,并指定一个简单的搜索路径。</p>
+<p>下面示例定义了一系列<code>Java</code>类,并使用<code>@Component</code>来标注它们。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.*;</span><br><span class="line"><span class="keyword">import</span> org.crazyit.app.service.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Axe axe;</span><br><span class="line">    <span class="comment">// axe的setter方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setAxe</span><span class="params">(Axe axe)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.axe = axe;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 实现Person接口的useAxe()方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">useAxe</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(axe.chop());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.*;</span><br><span class="line"><span class="keyword">import</span> org.crazyit.app.service.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SteelAxe</span> <span class="keyword">implements</span> <span class="title">Axe</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">chop</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"钢斧砍柴真快"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这些<code>Java</code>类与前面介绍的<code>Bean</code>类没有太大区别,只是每个<code>Java</code>类都使用了<code>@Component</code>标注,这表明这些<code>Java</code>类都将作为<code>Spring</code>的<code>Bean</code>类。<br>接下来需要在<code>Spring</code>配置文件中指定搜索路径, <code>Spring</code>将会自动搜索该路径下的所有<code>Java</code>类,并根据这些<code>Java</code>类来创建<code>Bean</code>实例。本应用的配置文件如下。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/context/spring-context.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 自动扫描指定包及其子包下的所有Bean类 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span></span></span><br><span class="line"><span class="tag">        <span class="attr">base-package</span>=<span class="string">"org.crazyit.app.service"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的配置文件中最后一行代码指定<code>Spring</code>将会把<code>org.crazyit.app.service</code>包及其子包下的所有<code>Java</code>类都当成<code>Spring Bean</code>来处理,并为每个<code>Java</code>类创建对应的<code>Bean</code>实例。经过上面的步骤, <code>Spring</code>容器中自动就会增加三个<code>Bean</code>实例(前面定义的三个类都是位于<code>org.crazyit.app.service.impl</code>包下的)。<br>主程序如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.*;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Spring容器</span></span><br><span class="line">        <span class="meta">@SuppressWarnings</span>(<span class="string">"resource"</span>)</span><br><span class="line">        ApplicationContext ctx = <span class="keyword">new</span> ClassPathXmlApplicationContext(</span><br><span class="line">                <span class="string">"beans.xml"</span>);</span><br><span class="line">        <span class="comment">// 获取Spring容器中的所有Bean实例的名</span></span><br><span class="line">        String[] BeanDefinitionNames = ctx.getBeanDefinitionNames();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; BeanDefinitionNames.length; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(BeanDefinitionNames[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中输出了<code>Spring</code>容器中所有<code>Bean</code>实例的名称,运行上面的程序,将看到如下输出结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">chinese</span><br><span class="line">steelAxe</span><br><span class="line">stoneAxe</span><br><span class="line">org.springframework.context.annotation.internalConfigurationAnnotationProcessor</span><br><span class="line">org.springframework.context.annotation.internalAutowiredAnnotationProcessor</span><br><span class="line">org.springframework.context.annotation.internalCommonAnnotationProcessor</span><br><span class="line">org.springframework.context.event.internalEventListenerProcessor</span><br><span class="line">org.springframework.context.event.internalEventListenerFactory</span><br></pre></td></tr></table></figure>
+<h2 id="使用注解方式时将类名首字母变小写得到Bean的名称"><a href="#使用注解方式时将类名首字母变小写得到Bean的名称" class="headerlink" title="使用注解方式时将类名首字母变小写得到Bean的名称"></a>使用注解方式时将类名首字母变小写得到Bean的名称</h2><p>从上面的运行结果可以看出, <code>Spring</code>容器中三个<code>Bean</code>实例的名称分别为<code>chinese</code>、 <code>steelAxe</code>和<code>stoneAxe</code>,那么这些名称是从哪里来的呢?</p>
+<ul>
+<li>在基于<code>XML</code>配置方式下,每个<code>Bean</code>实例的名称都由其<code>id</code>属性指定的;</li>
+<li>在基于注解的方式下, <code>Spring</code>通过将该<code>Bean</code>类的<strong>类名的首字母变成小写,其他字母不变</strong>的规则得到<code>Bean</code>的名称。</li>
+</ul>
+<h2 id="使用注解设置Bean的名称"><a href="#使用注解设置Bean的名称" class="headerlink" title="使用注解设置Bean的名称"></a>使用注解设置Bean的名称</h2><p>当然<code>Spring</code>也允许在使用<code>@Component</code>标注时指定<code>Bean</code>实例的名称,例如如下代码片段:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span>(<span class="string">"axe"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SteelAxe</span> <span class="keyword">implements</span> <span class="title">Axe</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">chop</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"钢斧砍柴真快"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的粗体字代码指定该<code>Bean</code>实例的名称为<code>axe</code>.</p>
+<p>在默认情况下, <code>Spring</code>会自动搜索所有以<code>@Component</code>、<code>@Controller</code>、<code>@Service</code>和<code>@Repository</code>标注的<code>Java</code>类,并将它们当成<code>Spring Bean</code>来处理。</p>
+<h2 id="Lookup注解执行方法注入"><a href="#Lookup注解执行方法注入" class="headerlink" title="@Lookup注解执行方法注入"></a>@Lookup注解执行方法注入</h2><p><code>Spring</code>还提供了<code>@Lookup</code>注解来执行<code>lookup</code>方法注入,其实 <code>@Lookup</code>注解的作用完全等同于<code>&lt;lookup-method&gt;</code>元素。</p>
+<h3 id="lookup-method元素复习"><a href="#lookup-method元素复习" class="headerlink" title="lookup-method元素复习"></a>lookup-method元素复习</h3><p>使用<code>&lt;lookup-method&gt;</code>元素。需要指定如下两个属性</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>lookup-method</code>元素属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>name</code></td>
+<td align="left">指定要执行<code>lookup</code>方法注入的方法名。</td>
+</tr>
+<tr>
+<td align="left"><code>bean</code></td>
+<td align="left">指定<code>lookup</code>方法要注入的<code>Bean</code>的<code>id</code>。</td>
+</tr>
+</tbody></table>
+<h3 id="Lookup注解通过value属性指定要注入的Bean的id"><a href="#Lookup注解通过value属性指定要注入的Bean的id" class="headerlink" title="@Lookup注解通过value属性指定要注入的Bean的id"></a>@Lookup注解通过value属性指定要注入的Bean的id</h3><p>而<code>@Lookup</code>注解则直接修饰需要执行<code>lookup</code>方法注入的方法,因此不需要指定<code>name</code>属性,该<code>@Lookup</code>注解要指定一个<code>value</code>属性, <code>value</code>属性就等同于<code>&lt;lookup-method&gt;</code>元素的<code>bean</code>属性,也就是用来指定<code>lookup</code>方法要注入<code>Bean</code>的<code>id</code>。</p>
+<h2 id="扫描bean的时候对bean进行过滤"><a href="#扫描bean的时候对bean进行过滤" class="headerlink" title="扫描bean的时候对bean进行过滤"></a>扫描bean的时候对bean进行过滤</h2><p>除此之外,还可通过为<code>&lt;component-scan&gt;</code>元素添加<code>&lt;include-filter&gt;</code>或<code>&lt;exclude-filter&gt;</code>子元素来指定<code>Spring Bean</code>类,其中:</p>
+<ul>
+<li><code>&lt;include-filter&gt;</code>用于强制<code>Spring</code>处理某些<code>Bean</code>类,即使这些类没有使用<code>Spring</code>注解修饰;</li>
+<li><code>&lt;exclude-filter&gt;</code>则用于强制将某些<code>Spring</code>注解修饰的类排除在外。</li>
+</ul>
+<h3 id="include-filte元素"><a href="#include-filte元素" class="headerlink" title="include-filte元素"></a>include-filte元素</h3><p><code>&lt;include-filter&gt;</code>元素用于指定<strong>满足该规则的<code>Java</code>类会被当成<code>Bean</code>类处理</strong>,<code>&lt;exclude-filter&gt;</code>指定满足该规则的<code>Java</code>类不会被当成<code>Bean</code>类处理。使用这两个元素时都要求指定如下两个属性：</p>
+<table>
+<thead>
+<tr>
+<th align="left">属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>type</code></td>
+<td align="left">指定过滤器类型。</td>
+</tr>
+<tr>
+<td align="left"><code>expression</code></td>
+<td align="left">指定过滤器所需要的表达式。</td>
+</tr>
+</tbody></table>
+<!--replace:aspectj=aspect j&Aspectj=Aspect j-->
+
+<p><code>Spring</code>内建支持如下4种过滤器。</p>
+<table>
+<thead>
+<tr>
+<th align="left">过滤器</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>annotation</code></td>
+<td align="left">注解过滤器,该过滤器需要指定一个注解名,如<code>lee.AnnotationTest</code></td>
+</tr>
+<tr>
+<td align="left"><code>assignable</code></td>
+<td align="left">类名过滤器,该过滤器直接指定一个<code>Java</code>类。</td>
+</tr>
+<tr>
+<td align="left"><code>regex</code></td>
+<td align="left">正则表达式过滤器,该过滤器指定一个正则表达式,匹配该正则表达式的<code>Java</code>类将满足该过滤规则,如<code>org\.example\.Default.*</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>aspectj</code></td>
+<td align="left"><code>Aspectj</code>过滤器,如<code>org.example..* Service+</code>。</td>
+</tr>
+</tbody></table>
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">FilterScan</span></span></span><br><span class="line"><span class="function">└─<span class="title">src</span>\</span></span><br><span class="line"><span class="function">  ├─<span class="title">beans.xml</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">lee</span>\</span></span><br><span class="line"><span class="function">  │ └─<span class="title">BeanTest.java</span></span></span><br><span class="line"><span class="function">  └─<span class="title">org</span>\</span></span><br><span class="line"><span class="function">    └─<span class="title">crazyit</span>\</span></span><br><span class="line"><span class="function">      └─<span class="title">app</span>\</span></span><br><span class="line"><span class="function">        └─<span class="title">service</span>\</span></span><br><span class="line"><span class="function">          ├─<span class="title">Axe.java</span></span></span><br><span class="line"><span class="function">          ├─<span class="title">impl</span>\</span></span><br><span class="line"><span class="function">          │ ├─<span class="title">Chinese.java</span></span></span><br><span class="line"><span class="function">          │ ├─<span class="title">SteelAxe.java</span></span></span><br><span class="line"><span class="function">          │ └─<span class="title">StoneAxe.java</span></span></span><br><span class="line"><span class="function">          └─<span class="title">Person.java</span></span></span><br></pre></td></tr></table></figure>
+<p>例如,下面配置文件指定所有以<code>Chinese</code>结尾的类、以<code>Axe</code>结尾的类都将被当成<code>Spring Bean</code>处理。</p>
+<h2 id="beans-xml"><a href="#beans-xml" class="headerlink" title="beans.xml"></a>beans.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">"http://www.springframework.org/schema/context"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/context/spring-context.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 自动扫描指定包及其子包下的所有Bean类 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span></span></span><br><span class="line"><span class="tag">        <span class="attr">base-package</span>=<span class="string">"org.crazyit.app.service"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 只将以Chinese、Axe结尾的类当成Spring容器中的Bean --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">"regex"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">expression</span>=<span class="string">".*Chinese"</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">context:include-filter</span> <span class="attr">type</span>=<span class="string">"regex"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">expression</span>=<span class="string">".*Axe"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">context:component-scan</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<!--SSTStop-->
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/3a81c2f8/" title="8.2 Spring的 零配置 支持 8.2.1 搜索Bean类">https://lanlan2017.github.io/JavaReadingNotes/3a81c2f8/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/ba66180b/" rel="next" title="8.1.5 重写占位符配置器">
+                  <i class="fa fa-chevron-left"></i> 8.1.5 重写占位符配置器
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/fc99568b/" rel="prev" title="8.2.2 指定Bean的作用域">
+                  8.2.2 指定Bean的作用域 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8-2-Spring的”零配置”支持"><span class="nav-text">8.2 Spring的”零配置”支持</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-2-1-搜索Bean类"><span class="nav-text">8.2.1 搜索Bean类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Rails框架的做法"><span class="nav-text">Rails框架的做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring框架的做法"><span class="nav-text">Spring框架的做法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#标注Bean类的注解"><span class="nav-text">标注Bean类的注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用context-Schema指定搜索路径"><span class="nav-text">使用context Schema指定搜索路径</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用注解方式时将类名首字母变小写得到Bean的名称"><span class="nav-text">使用注解方式时将类名首字母变小写得到Bean的名称</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用注解设置Bean的名称"><span class="nav-text">使用注解设置Bean的名称</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lookup注解执行方法注入"><span class="nav-text">@Lookup注解执行方法注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lookup-method元素复习"><span class="nav-text">lookup-method元素复习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Lookup注解通过value属性指定要注入的Bean的id"><span class="nav-text">@Lookup注解通过value属性指定要注入的Bean的id</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#扫描bean的时候对bean进行过滤"><span class="nav-text">扫描bean的时候对bean进行过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#include-filte元素"><span class="nav-text">include-filte元素</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#beans-xml"><span class="nav-text">beans.xml</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

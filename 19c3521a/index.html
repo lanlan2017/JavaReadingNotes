@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="12.11 使用JTable和TableModel创建表格&amp;nbsp;12.11.1 创建表格&amp;nbsp;程序 使用二维数组和一维数组创建简单表格&amp;nbsp;JTable表格数据是字符串&amp;nbsp;通过TableModel处理特殊的表格数据&amp;nbsp;设置JTable列宽调整方式 setAutoResizeMode方法&amp;nbsp;TableColumn&amp;nbsp;设置是否选中整行&amp;nbsp;设置是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12.11 使用JTable和TableModel创建表格">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/19c3521a/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="12.11 使用JTable和TableModel创建表格&amp;nbsp;12.11.1 创建表格&amp;nbsp;程序 使用二维数组和一维数组创建简单表格&amp;nbsp;JTable表格数据是字符串&amp;nbsp;通过TableModel处理特殊的表格数据&amp;nbsp;设置JTable列宽调整方式 setAutoResizeMode方法&amp;nbsp;TableColumn&amp;nbsp;设置是否选中整行&amp;nbsp;设置是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.11.1/1.png">
+<meta property="article:published_time" content="2020-02-24T11:30:14.000Z">
+<meta property="article:modified_time" content="2020-03-03T04:57:54.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.11.1/1.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/19c3521a/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>12.11 使用JTable和TableModel创建表格 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/19c3521a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">12.11 使用JTable和TableModel创建表格<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC12%E7%AB%A0%20Swing%E7%BC%96%E7%A8%8B/12.11%20%E4%BD%BF%E7%94%A8JTable%E5%92%8CTableModel%E5%88%9B%E5%BB%BA%E8%A1%A8%E6%A0%BC/12.11%20%E4%BD%BF%E7%94%A8JTable%E5%92%8CTableModel%E5%88%9B%E5%BB%BA%E8%A1%A8%E6%A0%BC.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-02-24 11:30:14" itemprop="dateCreated datePublished" datetime="2020-02-24T11:30:14+00:00">2020-02-24</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-03 04:57:54" itemprop="dateModified" datetime="2020-03-03T04:57:54+00:00">2020-03-03</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC12%E7%AB%A0-Swing%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第12章 Swing编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC12%E7%AB%A0-Swing%E7%BC%96%E7%A8%8B/12-11-%E4%BD%BF%E7%94%A8JTable%E5%92%8CTableModel%E5%88%9B%E5%BB%BA%E8%A1%A8%E6%A0%BC/" itemprop="url" rel="index"><span itemprop="name">12.11 使用JTable和TableModel创建表格</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/19c3521a/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/19c3521a/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/19c3521a/#12-11-使用JTable和TableModel创建表格" class="header_1">12.11 使用JTable和TableModel创建表格</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#12-11-1-创建表格" class="header_1">12.11.1 创建表格</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#程序-使用二维数组和一维数组创建简单表格" class="header_2">程序 使用二维数组和一维数组创建简单表格</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#JTable表格数据是字符串" class="header_2">JTable表格数据是字符串</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#通过TableModel处理特殊的表格数据" class="header_2">通过TableModel处理特殊的表格数据</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#设置JTable列宽调整方式-setAutoResizeMode方法" class="header_2">设置JTable列宽调整方式 setAutoResizeMode方法</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#TableColumn" class="header_2">TableColumn</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#设置是否选中整行" class="header_2">设置是否选中整行</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#设置是否选中整列" class="header_2">设置是否选中整列</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#选中单元格" class="header_2">选中单元格</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#ListSelectionModel" class="header_2">ListSelectionModel</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#-JTable-的选择模式" class="header_3">`JTable`的选择模式</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#代码-改变JTable的选择模式" class="header_2">代码 改变JTable的选择模式</a>&nbsp;<br><a href="/JavaReadingNotes/19c3521a/#程序" class="header_2">程序</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="12-11-使用JTable和TableModel创建表格"><a href="#12-11-使用JTable和TableModel创建表格" class="headerlink" title="12.11 使用JTable和TableModel创建表格"></a>12.11 使用JTable和TableModel创建表格</h1><p>表格也是<code>GUI</code>程序中常用的组件,表格是一个由多行、多列组成的二维显示区。<code>Swing</code>的<code>JTable</code>以及相关类提供了这种表格支持,通过使用<code>JTable</code>以及相关类,程序既可以使用简单的代码创建岀表格来显示二维数据,也可以开发出功能丰富的表格,还可以为表格定制各种显示外观、编辑特性。</p>
+<h1 id="12-11-1-创建表格"><a href="#12-11-1-创建表格" class="headerlink" title="12.11.1 创建表格"></a>12.11.1 创建表格</h1><p>使用<code>JTable</code>来创建表格是非常容易的事情,<code>JTable</code>可以把一个二维数据包装成一个表格,这个二维数据既可以是一个二维数组,也可以是集合元素为<code>Vector</code>的<code>Vector</code>对象(<code>Vector</code>里包含<code>Vector</code>形成二维数据)。除此之外,为了给该表格的每一列指定列标题,还需要传入一个一维数据作为列标题,这个维数据既可以是一维数组,也可以是<code>Vector</code>对象。</p>
+<h2 id="程序-使用二维数组和一维数组创建简单表格"><a href="#程序-使用二维数组和一维数组创建简单表格" class="headerlink" title="程序 使用二维数组和一维数组创建简单表格"></a>程序 使用二维数组和一维数组创建简单表格</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleTable</span> </span>&#123;</span><br><span class="line">    JFrame jf = <span class="keyword">new</span> JFrame(<span class="string">"简单表格"</span>);</span><br><span class="line">    JTable table;</span><br><span class="line">    <span class="comment">// 定义二维数组作为表格数据</span></span><br><span class="line">    Object[][] tableData = &#123;</span><br><span class="line">            <span class="keyword">new</span> Object[] &#123; <span class="string">"李清照"</span>, <span class="number">29</span>, <span class="string">"女"</span> &#125;, </span><br><span class="line">            <span class="keyword">new</span> Object[] &#123; <span class="string">"苏格拉底"</span>, <span class="number">56</span>, <span class="string">"男"</span> &#125;,</span><br><span class="line">            <span class="keyword">new</span> Object[] &#123; <span class="string">"李白"</span>, <span class="number">35</span>, <span class="string">"男"</span> &#125;, </span><br><span class="line">            <span class="keyword">new</span> Object[] &#123; <span class="string">"弄玉"</span>, <span class="number">18</span>, <span class="string">"女"</span> &#125;, </span><br><span class="line">            <span class="keyword">new</span> Object[] &#123; <span class="string">"虎头"</span>, <span class="number">2</span>, <span class="string">"男"</span> &#125; </span><br><span class="line">        &#125;;</span><br><span class="line">    <span class="comment">// 定义一维数据作为列标题</span></span><br><span class="line">    Object[] columnTitle = &#123; <span class="string">"姓名"</span>, <span class="string">"年龄"</span>, <span class="string">"性别"</span> &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 以二维数组和一维数组来创建一个JTable对象</span></span><br><span class="line">        table = <span class="keyword">new</span> JTable(tableData, columnTitle);</span><br><span class="line">        <span class="comment">// 将JTable对象放在JScrollPane中，</span></span><br><span class="line">        <span class="comment">// 并将该JScrollPane放在窗口中显示出来</span></span><br><span class="line">        jf.add(<span class="keyword">new</span> JScrollPane(table));</span><br><span class="line">        jf.pack();</span><br><span class="line">        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span><br><span class="line">        jf.setVisible(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> SimpleTable().init();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的粗体字代码创建了两个<code>Object</code>数组,第一个二维数组作为<code>JTable</code>的数据,第二个维数组作为<code>JTable</code>的列标题。创建二维数组时利用了<code>JDK1.5</code>提供的自动装箱功能—虽然直接指定的数组元素是<code>int</code>类型的整数,但系统会将它包装成<code>Integer</code>对象。</p>
+<h2 id="JTable表格数据是字符串"><a href="#JTable表格数据是字符串" class="headerlink" title="JTable表格数据是字符串"></a>JTable表格数据是字符串</h2><p>在默认情况下,<code>JTable</code>的表格数据、表格列标题全部是字符串内容,因此<code>JTable</code>会使用这些<code>Object</code>对象的<code>toString()</code>方法的返回值作为表格数据、表格列标题。</p>
+<h2 id="通过TableModel处理特殊的表格数据"><a href="#通过TableModel处理特殊的表格数据" class="headerlink" title="通过TableModel处理特殊的表格数据"></a>通过TableModel处理特殊的表格数据</h2><p>如果需要特殊对待某些表格数据,例如把它们当成图标或其他类型的对象来处理,则可以通过特定的<code>TableModel</code>或指定自己的单元格绘制器来实现。<br>在默认情况下,<code>JTable</code>的所有单元格、列标题显示的全部是字符串内容。除此之外,通常应该将<code>JTable</code>对象放在<code>JScrollPane</code>容器中,由<code>JScrollPane</code>为<code>JTable</code>提供<code>ViewPort</code>。<br>运行上面程序,会看到如图12.47所示的简单表格。<br><img src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.11.1/1.png"></p>
+<ul>
+<li>虽然生成如图12.47所示表格的代码非常简单,但这个表格已经表现出丰富的功能。该表格具有如下几个功能。</li>
+<li>当表格高度不足以显示所有的数据行时,该表格会自动显示滚动条。</li>
+<li>当把鼠标移动到两列之间的分界符时,鼠标形状会变成可调整大小的形状,表明用户可以自由调整表格列的大小。</li>
+<li>当在表格列上按下鼠标并拖动时,可以将表格的整列拖动到其他位置</li>
+<li>当单击某一个单元格时,系统会自动选中该单元格所在的行。</li>
+<li>当双击某一个单元格时,系统会自动进入该单元格的修改状态</li>
+</ul>
+<h2 id="设置JTable列宽调整方式-setAutoResizeMode方法"><a href="#设置JTable列宽调整方式-setAutoResizeMode方法" class="headerlink" title="设置JTable列宽调整方式 setAutoResizeMode方法"></a>设置JTable列宽调整方式 setAutoResizeMode方法</h2><p>在上面的程序中,<strong>当拖动两列分界线来调整某列的列宽时,将看到该列后面的所有列的列宽都会发生相应的改变,但该列前面的所有列的列宽都不会发生改变,整个表格的宽度不会发生改变</strong></p>
+<!-- CrazyJavaHandout4/Chapter12/12.11.1/1 -->
+<p><code>JTable</code>提供了一个<code>setAutoResizeMode()</code>方法来控制这种调整方式:</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void setAutoResizeMode(int mode)</code></td>
+<td align="left">Sets the table’s auto resize mode when the table is resized.</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left"><code>setAutoResizeMode</code>方法<code>mode</code>参数值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>JTable.AUTO_RESIZE_OFF</code></td>
+<td align="left">关闭<code>JTable</code>的自动调整功能,当调整某一列的宽度时,其他列的宽度不会发生改变,<strong>只有表格的宽度会随之改变</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>JTable.AUTO_RESIZE_NEXT_COLUMN</code></td>
+<td align="left">只调整下一列的宽度,其他列及表格的宽度不会发生改变。</td>
+</tr>
+<tr>
+<td align="left"><code>JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS</code></td>
+<td align="left"><strong>平均调整当前列后面所有列的宽度,当前列的前面所有列及表格的宽度都不会发生变化</strong>,这是<strong>默认的调整方式</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>JTable.AUTO_RESIZE_LAST_COLUMN</code></td>
+<td align="left">只调整最后一列的宽度,其他列及表格的宽度不会发生改变。</td>
+</tr>
+<tr>
+<td align="left"><code>JTable.AUTO_RESIZE_ALL_COLUMNS</code></td>
+<td align="left"><strong>平均调整表格中所有列的宽度</strong>,表格的宽度不会发生改变。</td>
+</tr>
+</tbody></table>
+<p><code>JTable</code>默认采用平均调整当前列后面所有列的宽度的方式,这种方式允许用户从左到右依次调整每列的宽度,以达到最好的显示效果。<br>尽量避免使用<strong>平均调整表格中所有列的宽度</strong>的方式,这种方式将会导致用户调整某列时,其余所有列都随之发生改变,从而使得用户很难把毎一列的宽度都调整到具有最好的显示效果</p>
+<h2 id="TableColumn"><a href="#TableColumn" class="headerlink" title="TableColumn"></a>TableColumn</h2><p>如果需要精确控制每一列的宽度,则可通过<code>TableColumn</code>对象来实现。**<code>JTable</code>使用<code>TableColumn</code>来表示表格中的每一列,<code>JTable</code>中表格列的所有属性,如最佳宽度、是否可调整宽度、最小和最大宽度等都保存在该<code>TableColumn</code>中**。此外,<code>TableColumn</code>还允许为该列指定特定的单元格绘制器和单元格编辑器(这些内容将在后面讲解)。<br><code>TableColumn</code>具有如下方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>TableColumn</code>类方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void setMaxWidth(int maxWidth)</code></td>
+<td align="left">设置该列的最大宽度。如果指定的<code>maxWidth</code>小于该列的最小宽度,则<code>maxWidth</code>被设置成最小宽度。</td>
+</tr>
+<tr>
+<td align="left"><code>void setMinWidth(int minWidth)</code></td>
+<td align="left">设置该列的最小宽度。</td>
+</tr>
+<tr>
+<td align="left"><code>void setPreferredWidth(int preferredWidth)</code></td>
+<td align="left">设置该列的最佳宽度。</td>
+</tr>
+<tr>
+<td align="left"><code>void setResizable(boolean isResizable)</code></td>
+<td align="left">设置是否可以调整该列的宽度。</td>
+</tr>
+<tr>
+<td align="left"><code>void sizeWidthToFit()</code></td>
+<td align="left">调整该列的宽度,以适合其标题单元格的宽度。</td>
+</tr>
+</tbody></table>
+<h2 id="设置是否选中整行"><a href="#设置是否选中整行" class="headerlink" title="设置是否选中整行"></a>设置是否选中整行</h2><p>在默认情况下,当用户单击<code>JTable</code>的任意一个单元格时,系统默认会选中该单元格所在行的的x也就是说,<code>JTable</code>表格默认的选择单元是行。当然也可通过<code>JTable</code>提供的<code>setRowSelectionAllowed()</code>方来改变这种设置,如果为该方法传入<code>false</code>参数,则可以关闭这种每次选择一行的方式。</p>
+<h2 id="设置是否选中整列"><a href="#设置是否选中整列" class="headerlink" title="设置是否选中整列"></a>设置是否选中整列</h2><p>除此之外,<code>JTable</code>还提供了一个<code>setColumnSelectionAllowed()</code>方法,该方法用于控制选择单元是否是列,如果为该方法传入<code>true</code>参数,则当用户单击某个单元格时,系统会选中该单元格所在的列。</p>
+<h2 id="选中单元格"><a href="#选中单元格" class="headerlink" title="选中单元格"></a>选中单元格</h2><p>如果同时调用<code>setColumnSelectionAllowed(true)</code>和<code>setRowSelectionAllowed(true)</code>方法,则该表格的选择单元是单元格。</p>
+<p>实际上,同时调用这两个方法相当于调用<code>setCellSelectionEnabled(true)</code>方法。与此相反,如果调用<code>setCellSelectionEnabled(false)</code>方法,则相当于同时调用<code>setColumnSelectionAllowed(false)</code>和<code>setRow Allowed(false)</code>方法,即用户无法选中该表格的任何地方。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>JTable</code>的方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void setRowSelectionAllowed(boolean rowSelectionAllowed)</code></td>
+<td align="left">Sets whether the rows in this model can be selected.</td>
+</tr>
+<tr>
+<td align="left"><code>void setColumnSelectionAllowed(boolean columnSelectionAllowed)</code></td>
+<td align="left">Sets whether the columns in this model can be selected.</td>
+</tr>
+<tr>
+<td align="left"><code>void setCellSelectionEnabled(boolean cellSelectionEnabled)</code></td>
+<td align="left">Sets whether this table allows both a column selection and a row selection to exist simultaneously.</td>
+</tr>
+</tbody></table>
+<h2 id="ListSelectionModel"><a href="#ListSelectionModel" class="headerlink" title="ListSelectionModel"></a>ListSelectionModel</h2><p>与<code>JList</code>、<code>JTree</code>类似的是,<strong><code>JTable</code>使用了一个<code>ListSelectionModel</code>表示该表格的选择状态</strong>,程序可以通过<code>ListSelectionModel</code>来控制<code>JTable</code>的选择模式。</p>
+<p><strong>注意</strong>:保存<code>JTable</code>选择状态的<code>model</code>类就是<code>ListselectionModel</code>,这并不是笔误。</p>
+<h3 id="JTable的选择模式"><a href="#JTable的选择模式" class="headerlink" title="JTable的选择模式"></a><code>JTable</code>的选择模式</h3><p><code>JTable</code>的选择模式有如下三种</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>ListselectionModel</code>属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static int MULTIPLE_INTERVAL_SELECTION</code></td>
+<td align="left">没有任何限制,可以选择表格中任何表格单元,这是默认的选择模式。通过<code>Shift</code>和<code>Ctrl</code>辅助键的帮助可以选择多个表格单元</td>
+</tr>
+<tr>
+<td align="left"><code>static int SINGLE_INTERVAL_SELECTION</code></td>
+<td align="left">选择单个连续区域,该选项可以选择多个表格单元,但多个表格单元之间必须是连续的。通过<code>Shift</code>辅助键的帮助来选择连续区域。</td>
+</tr>
+<tr>
+<td align="left"><code>static int SINGLE_SELECTION</code></td>
+<td align="left">只能选择单个表格单元。</td>
+</tr>
+</tbody></table>
+<h2 id="代码-改变JTable的选择模式"><a href="#代码-改变JTable的选择模式" class="headerlink" title="代码 改变JTable的选择模式"></a>代码 改变JTable的选择模式</h2><p>程序通常通过如下代码来改变<code>JTable</code>的选择模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置该表格只能选中单个表格单元</span></span><br><span class="line">jTable.getSelectionModel().setSelectionMode(ListselectionMode.SINGLE_SELECTION);</span><br></pre></td></tr></table></figure>
+<h2 id="程序"><a href="#程序" class="headerlink" title="程序"></a>程序</h2><p>下面程序示范了如何控制每列的宽度、控制表格的宽度调整模式、改变表格的选择单元和表格的选择模式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"><span class="keyword">import</span> javax.swing.table.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdjustingWidth</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    JFrame jf = <span class="keyword">new</span> JFrame(<span class="string">"调整表格列宽"</span>);</span><br><span class="line">    JMenuBar menuBar = <span class="keyword">new</span> JMenuBar();</span><br><span class="line">    JMenu adjustModeMenu = <span class="keyword">new</span> JMenu(<span class="string">"调整方式"</span>);</span><br><span class="line">    JMenu selectUnitMenu = <span class="keyword">new</span> JMenu(<span class="string">"选择单元"</span>);</span><br><span class="line">    JMenu selectModeMenu = <span class="keyword">new</span> JMenu(<span class="string">"选择方式"</span>);</span><br><span class="line">    <span class="comment">// 定义5个单选框按钮，用以控制表格的宽度调整方式</span></span><br><span class="line">    JRadioButtonMenuItem[] adjustModesItem = <span class="keyword">new</span> JRadioButtonMenuItem[<span class="number">5</span>];</span><br><span class="line">    <span class="comment">// 定义3个单选框按钮，用以控制表格的选择方式</span></span><br><span class="line">    JRadioButtonMenuItem[] selectModesItem = <span class="keyword">new</span> JRadioButtonMenuItem[<span class="number">3</span>];</span><br><span class="line">    JCheckBoxMenuItem rowsItem = <span class="keyword">new</span> JCheckBoxMenuItem(<span class="string">"选择行"</span>);</span><br><span class="line">    JCheckBoxMenuItem columnsItem = <span class="keyword">new</span> JCheckBoxMenuItem(<span class="string">"选择列"</span>);</span><br><span class="line">    JCheckBoxMenuItem cellsItem = <span class="keyword">new</span> JCheckBoxMenuItem(<span class="string">"选择单元格"</span>);</span><br><span class="line">    ButtonGroup adjustBg = <span class="keyword">new</span> ButtonGroup();</span><br><span class="line">    ButtonGroup selectBg = <span class="keyword">new</span> ButtonGroup();</span><br><span class="line">    <span class="comment">// 定义一个int类型的数组，用于保存表格所有的宽度调整方式</span></span><br><span class="line">    <span class="keyword">int</span>[] adjustModes = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;</span><br><span class="line">        JTable.AUTO_RESIZE_OFF</span><br><span class="line">        , JTable.AUTO_RESIZE_NEXT_COLUMN</span><br><span class="line">        , JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS</span><br><span class="line">        , JTable.AUTO_RESIZE_LAST_COLUMN</span><br><span class="line">        , JTable.AUTO_RESIZE_ALL_COLUMNS</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">int</span>[] selectModes = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;</span><br><span class="line">        ListSelectionModel.MULTIPLE_INTERVAL_SELECTION</span><br><span class="line">        , ListSelectionModel.SINGLE_INTERVAL_SELECTION</span><br><span class="line">        , ListSelectionModel.SINGLE_SELECTION</span><br><span class="line">    &#125;;</span><br><span class="line">    JTable table;</span><br><span class="line">    <span class="comment">// 定义二维数组作为表格数据</span></span><br><span class="line">    Object[][] tableData =</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">new</span> Object[]&#123;<span class="string">"李清照"</span> , <span class="number">29</span> , <span class="string">"女"</span>&#125;,</span><br><span class="line">        <span class="keyword">new</span> Object[]&#123;<span class="string">"苏格拉底"</span>, <span class="number">56</span> , <span class="string">"男"</span>&#125;,</span><br><span class="line">        <span class="keyword">new</span> Object[]&#123;<span class="string">"李白"</span>, <span class="number">35</span> , <span class="string">"男"</span>&#125;,</span><br><span class="line">        <span class="keyword">new</span> Object[]&#123;<span class="string">"弄玉"</span>, <span class="number">18</span> , <span class="string">"女"</span>&#125;,</span><br><span class="line">        <span class="keyword">new</span> Object[]&#123;<span class="string">"虎头"</span> , <span class="number">2</span> , <span class="string">"男"</span>&#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="comment">// 定义一维数据作为列标题</span></span><br><span class="line">    Object[] columnTitle = &#123;<span class="string">"姓名"</span> , <span class="string">"年龄"</span> , <span class="string">"性别"</span>&#125;;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 以二维数组和一维数组来创建一个JTable对象</span></span><br><span class="line">        table = <span class="keyword">new</span> JTable(tableData , columnTitle);</span><br><span class="line">        <span class="comment">// -----------为窗口安装设置表格调整方式的菜单-----------</span></span><br><span class="line">        adjustModesItem[<span class="number">0</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"只调整表格"</span>);</span><br><span class="line">        adjustModesItem[<span class="number">1</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"只调整下一列"</span>);</span><br><span class="line">        adjustModesItem[<span class="number">2</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"平均调整余下列"</span>);</span><br><span class="line">        adjustModesItem[<span class="number">3</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"只调整最后一列"</span>);</span><br><span class="line">        adjustModesItem[<span class="number">4</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"平均调整所有列"</span>);</span><br><span class="line">        menuBar.add(adjustModeMenu);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; adjustModesItem.length ; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 默认选中第三个菜单项，即对应表格默认的宽度调整方式</span></span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">2</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                adjustModesItem[i].setSelected(<span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            adjustBg.add(adjustModesItem[i]);</span><br><span class="line">            adjustModeMenu.add(adjustModesItem[i]);</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> index = i;</span><br><span class="line">            <span class="comment">// 为设置调整方式的菜单项添加监听器</span></span><br><span class="line">            adjustModesItem[i].addActionListener(evt -&gt;</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 如果当前菜单项处于选中状态，表格使用对应的调整方式</span></span><br><span class="line">                <span class="keyword">if</span> (adjustModesItem[index].isSelected())</span><br><span class="line">                &#123;</span><br><span class="line">                    table.setAutoResizeMode(adjustModes[index]);   <span class="comment">//①</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// -----------为窗口安装设置表格选择方式的菜单-----------</span></span><br><span class="line">        selectModesItem[<span class="number">0</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"无限制"</span>);</span><br><span class="line">        selectModesItem[<span class="number">1</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"单独的连续区"</span>);</span><br><span class="line">        selectModesItem[<span class="number">2</span>] = <span class="keyword">new</span> JRadioButtonMenuItem(<span class="string">"单选"</span>);</span><br><span class="line">        menuBar.add(selectModeMenu);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; selectModesItem.length ; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 默认选中第一个菜单项，即对应表格默认的选择方式</span></span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">0</span>)</span><br><span class="line">            &#123;</span><br><span class="line">            selectModesItem[i].setSelected(<span class="keyword">true</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            selectBg.add(selectModesItem[i]);</span><br><span class="line">            selectModeMenu.add(selectModesItem[i]);</span><br><span class="line">            <span class="keyword">final</span> <span class="keyword">int</span> index = i;</span><br><span class="line">            <span class="comment">// 为设置选择方式的菜单项添加监听器</span></span><br><span class="line">            selectModesItem[i].addActionListener(evt -&gt; &#123;</span><br><span class="line">                <span class="comment">// 如果当前菜单项处于选中状态，表格使用对应的选择方式s</span></span><br><span class="line">                <span class="keyword">if</span> (selectModesItem[index].isSelected())</span><br><span class="line">                &#123;</span><br><span class="line">                    table.getSelectionModel().setSelectionMode</span><br><span class="line">                        (selectModes[index]);     <span class="comment">//②</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        menuBar.add(selectUnitMenu);</span><br><span class="line">        <span class="comment">// -----为窗口安装设置表格选择单元的菜单-----</span></span><br><span class="line">        rowsItem.setSelected(table.getRowSelectionAllowed());</span><br><span class="line">        columnsItem.setSelected(table.getColumnSelectionAllowed());</span><br><span class="line">        cellsItem.setSelected(table.getCellSelectionEnabled());</span><br><span class="line">        rowsItem.addActionListener(event -&gt; &#123;</span><br><span class="line">            table.clearSelection();</span><br><span class="line">            <span class="comment">// 如果该菜单项处于选中状态，设置表格的选择单元是行</span></span><br><span class="line">            table.setRowSelectionAllowed(rowsItem.isSelected());</span><br><span class="line">            <span class="comment">// 如果选择行、选择列同时被选中，其实质是选择单元格</span></span><br><span class="line">            cellsItem.setSelected(table.getCellSelectionEnabled());</span><br><span class="line">        &#125;);</span><br><span class="line">        selectUnitMenu.add(rowsItem);</span><br><span class="line">        columnsItem.addActionListener(event -&gt; &#123;</span><br><span class="line">            table.clearSelection();</span><br><span class="line">            <span class="comment">// 如果该菜单项处于选中状态，设置表格的选择单元是列</span></span><br><span class="line">            table.setColumnSelectionAllowed(columnsItem.isSelected());</span><br><span class="line">            <span class="comment">// 如果选择行、选择列同时被选中，其实质是选择单元格</span></span><br><span class="line">            cellsItem.setSelected(table.getCellSelectionEnabled());</span><br><span class="line">        &#125;);</span><br><span class="line">        selectUnitMenu.add(columnsItem);</span><br><span class="line">        cellsItem.addActionListener(event -&gt; &#123;</span><br><span class="line">            table.clearSelection();</span><br><span class="line">            <span class="comment">// 如果该菜单项处于选中状态，设置表格的选择单元是单元格</span></span><br><span class="line">            table.setCellSelectionEnabled(cellsItem.isSelected());</span><br><span class="line">            <span class="comment">// 该选项的改变会同时影响选择行、选择列两个菜单</span></span><br><span class="line">            rowsItem.setSelected(table.getRowSelectionAllowed());</span><br><span class="line">            columnsItem.setSelected(table.getColumnSelectionAllowed());</span><br><span class="line">        &#125;);</span><br><span class="line">        selectUnitMenu.add(cellsItem);</span><br><span class="line">        jf.setJMenuBar(menuBar);</span><br><span class="line">        <span class="comment">// 分别获取表格的三个表格列，并设置三列的最小宽度，最佳宽度和最大宽度</span></span><br><span class="line">        TableColumn nameColumn = table.getColumn(columnTitle[<span class="number">0</span>]);</span><br><span class="line">        nameColumn.setMinWidth(<span class="number">40</span>);</span><br><span class="line">        TableColumn ageColumn = table.getColumn(columnTitle[<span class="number">1</span>]);</span><br><span class="line">        ageColumn.setPreferredWidth(<span class="number">50</span>);</span><br><span class="line">        TableColumn genderColumn = table.getColumn(columnTitle[<span class="number">2</span>]);</span><br><span class="line">        genderColumn.setMaxWidth(<span class="number">50</span>);</span><br><span class="line">        <span class="comment">// 将JTable对象放在JScrollPane中，并将该JScrollPane放在窗口中显示出来</span></span><br><span class="line">        jf.add(<span class="keyword">new</span> JScrollPane(table));</span><br><span class="line">        jf.pack();</span><br><span class="line">        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span><br><span class="line">        jf.setVisible(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> AdjustingWidth().init();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的①号粗体字代码根据单选钮菜单来设置表格的宽度调整方式,②号粗体字代码根据单选钮菜单来设置表格的选择模式,最后一段粗体字代码通过<code>JTable</code>的<code>getColumn()</code>方法获取指定列,并分别设置三列的最佳、最大、最小宽度。如果选中“只调整表格”菜单项,并把第一列宽度拖大,将看到如图12.48所示的界面<br>上面程序中还有三段粗体字代码,分别用于为三个复选框菜单添加监听器,根据复选框菜单的选中状态来决定表格的选择单元。如果程序采用<code>JTable</code>默认的选择模式(无限制的选择模式),并设置表格的选择单元是单元格,则可看到如图12.49所示的界面。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/19c3521a/" title="12.11 使用JTable和TableModel创建表格">https://lanlan2017.github.io/JavaReadingNotes/19c3521a/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/c3dd988/" rel="next" title="12.11.3 TableColumnMode和监听器">
+                  <i class="fa fa-chevron-left"></i> 12.11.3 TableColumnMode和监听器
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/914dd4b9/" rel="prev" title="12.11.4 实现排序">
+                  12.11.4 实现排序 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#12-11-使用JTable和TableModel创建表格"><span class="nav-text">12.11 使用JTable和TableModel创建表格</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12-11-1-创建表格"><span class="nav-text">12.11.1 创建表格</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#程序-使用二维数组和一维数组创建简单表格"><span class="nav-text">程序 使用二维数组和一维数组创建简单表格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JTable表格数据是字符串"><span class="nav-text">JTable表格数据是字符串</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过TableModel处理特殊的表格数据"><span class="nav-text">通过TableModel处理特殊的表格数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置JTable列宽调整方式-setAutoResizeMode方法"><span class="nav-text">设置JTable列宽调整方式 setAutoResizeMode方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TableColumn"><span class="nav-text">TableColumn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置是否选中整行"><span class="nav-text">设置是否选中整行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设置是否选中整列"><span class="nav-text">设置是否选中整列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#选中单元格"><span class="nav-text">选中单元格</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ListSelectionModel"><span class="nav-text">ListSelectionModel</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JTable的选择模式"><span class="nav-text">JTable的选择模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#代码-改变JTable的选择模式"><span class="nav-text">代码 改变JTable的选择模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序"><span class="nav-text">程序</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

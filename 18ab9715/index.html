@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="10.1.3 多对多&amp;nbsp;示例: ManyToManyTest&amp;nbsp;创建数据库表&amp;nbsp;创建持久化类&amp;nbsp;创建持久化类User.java&amp;nbsp;创建持久化类Order.java&amp;nbsp;创建持久化类Article.java&amp;nbsp;创建XML映射文件&amp;nbsp;UserMapper.xml&amp;nbsp;OrderMapper.xml&amp;nbsp;提示&amp;nbsp;Artic">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.1.3 多对多">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/18ab9715/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="10.1.3 多对多&amp;nbsp;示例: ManyToManyTest&amp;nbsp;创建数据库表&amp;nbsp;创建持久化类&amp;nbsp;创建持久化类User.java&amp;nbsp;创建持久化类Order.java&amp;nbsp;创建持久化类Article.java&amp;nbsp;创建XML映射文件&amp;nbsp;UserMapper.xml&amp;nbsp;OrderMapper.xml&amp;nbsp;提示&amp;nbsp;Artic">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-08T16:20:27.000Z">
+<meta property="article:modified_time" content="2020-06-22T08:11:29.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/18ab9715/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>10.1.3 多对多 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/18ab9715/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">10.1.3 多对多<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC10%E7%AB%A0%20%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/10.1%20MyBatis%E5%85%B3%E8%81%94%E6%98%A0%E5%B0%84/10.1.3%20%E5%A4%9A%E5%AF%B9%E5%A4%9A.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-08 16:20:27" itemprop="dateCreated datePublished" datetime="2019-06-08T16:20:27+00:00">2019-06-08</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-22 08:11:29" itemprop="dateModified" datetime="2020-06-22T08:11:29+00:00">2020-06-22</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/" itemprop="url" rel="index"><span itemprop="name">第10章 深入使用MyBatis</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/10-1-MyBatis%E5%85%B3%E8%81%94%E6%98%A0%E5%B0%84/" itemprop="url" rel="index"><span itemprop="name">10.1 MyBatis关联映射</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/18ab9715/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/18ab9715/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/18ab9715/#10-1-3-多对多" class="header_1">10.1.3 多对多</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#示例-ManyToManyTest" class="header_1">示例: ManyToManyTest</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#创建数据库表" class="header_2">创建数据库表</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#创建持久化类" class="header_2">创建持久化类</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#创建持久化类User-java" class="header_3">创建持久化类User.java</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#创建持久化类Order-java" class="header_3">创建持久化类Order.java</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#创建持久化类Article-java" class="header_3">创建持久化类Article.java</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#创建XML映射文件" class="header_2">创建XML映射文件</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#UserMapper-xml" class="header_3">UserMapper.xml</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#OrderMapper-xml" class="header_3">OrderMapper.xml</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#提示" class="header_4">提示</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#ArticleMapper-xml" class="header_3">ArticleMapper.xml</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#编写Mapper接口" class="header_2">编写Mapper接口</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#UserMapper接口" class="header_3">UserMapper接口</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#OrderMapper接口" class="header_3">OrderMapper接口</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#编写测试类" class="header_2">编写测试类</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#总结" class="header_1">总结</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#collection标签" class="header_2">collection标签</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#collection标签的属性" class="header_3">collection标签的属性</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#collection标签的子标签" class="header_3">collection标签的子标签</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#association标签" class="header_2">association标签</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#association标签的属性" class="header_3">association标签的属性</a>&nbsp;<br><a href="/JavaReadingNotes/18ab9715/#association标签的子标签" class="header_3">association标签的子标签</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="10-1-3-多对多"><a href="#10-1-3-多对多" class="headerlink" title="10.1.3 多对多"></a>10.1.3 多对多</h1><p>在实际项目开发中,多对多关系也是非常常见的关系,比如,一个购物系统中,一个用户可以有多个订单,这是一对多的关系;一个订单中可以购买多种商品,<strong>一种商品也可以属于多个不同的订单,订单和商品之间就是多对多的关系</strong>。对于数据库中<strong>多对多的关系建议使用一个中间表来维护关系</strong>,<strong>中间表中的订单<code>id</code>作为外键参照订单表的<code>id</code>,商品<code>id</code>作为外键参照商品表的<code>id</code>。</strong>下面我们就用一个示例来看看<code>MyBatis</code>怎么处理多对多关系.</p>
+<h1 id="示例-ManyToManyTest"><a href="#示例-ManyToManyTest" class="headerlink" title="示例: ManyToManyTest"></a>示例: ManyToManyTest</h1><h2 id="创建数据库表"><a href="#创建数据库表" class="headerlink" title="创建数据库表"></a>创建数据库表</h2><p>首先,给之前创建的<code>mybatis</code>数据库创建三个表<code>tb_user</code>、<code>tb_article</code>和<code>tb_order</code>,再创建一个中间表维护<code>tb_article</code>和<code>tb_order</code>的关系,并插入测试数据。<code>SQL</code>脚本如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> mybatis;</span><br><span class="line"><span class="comment"># 创建用户表</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> <span class="string">`tb_user`</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tb_user`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`username`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`loginname`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`password`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`phone`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`address`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4;</span><br><span class="line"><span class="comment"># 插入用户</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_user`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'小明'</span>, <span class="string">'xiaoming'</span>, <span class="string">'xiaoming'</span>, <span class="string">'123456789123'</span>, <span class="string">'北京'</span>);</span><br><span class="line"><span class="comment"># 创建商品表</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> <span class="string">`tb_article`</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tb_article`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`price`</span> <span class="keyword">double</span> <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`remark`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4;</span><br><span class="line"><span class="comment"># 插入商品</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_article`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'商品1'</span>, <span class="string">'123.12'</span>, <span class="string">'xxx的伟大著作'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_article`</span> <span class="keyword">VALUES</span> (<span class="string">'2'</span>, <span class="string">'商品2'</span>, <span class="string">'12.3'</span>, <span class="string">'yyy的伟大著作'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_article`</span> <span class="keyword">VALUES</span> (<span class="string">'3'</span>, <span class="string">'商品3'</span>, <span class="string">'34.22'</span>, <span class="string">'zzz的著作'</span>);</span><br><span class="line"><span class="comment"># 创建订单表</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> <span class="string">`tb_order`</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tb_order`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`code`</span> <span class="built_in">varchar</span>(<span class="number">32</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`total`</span> <span class="keyword">double</span> <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`user_id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>),</span><br><span class="line">  <span class="keyword">KEY</span> <span class="string">`user_id`</span> (<span class="string">`user_id`</span>),</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`tb_order_ibfk_1`</span> <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span> (<span class="string">`user_id`</span>) <span class="keyword">REFERENCES</span> <span class="string">`tb_user`</span> (<span class="string">`id`</span>) <span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">CASCADE</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="keyword">CASCADE</span></span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4;</span><br><span class="line"><span class="comment"># 插入订单</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_order`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'abcseeeahoaugoeijgiej'</span>, <span class="string">'223.33'</span>, <span class="string">'1'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_order`</span> <span class="keyword">VALUES</span> (<span class="string">'2'</span>, <span class="string">'sfaofosfhodsfuefie'</span>, <span class="string">'111.22'</span>, <span class="string">'1'</span>);</span><br><span class="line"><span class="comment"># 创建订单-商品关系表</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> <span class="string">`tb_item`</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tb_item`</span> (</span><br><span class="line">  <span class="string">`order_id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span>,</span><br><span class="line">  <span class="string">`article_id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> <span class="keyword">DEFAULT</span> <span class="string">'0'</span>,</span><br><span class="line">  <span class="string">`amount`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`order_id`</span>,<span class="string">`article_id`</span>),</span><br><span class="line">  <span class="keyword">KEY</span> <span class="string">`article_id`</span> (<span class="string">`article_id`</span>),</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`tb_item_ibfk_1`</span> <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span> (<span class="string">`order_id`</span>) <span class="keyword">REFERENCES</span> <span class="string">`tb_order`</span> (<span class="string">`id`</span>) <span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">CASCADE</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="keyword">CASCADE</span>,</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> <span class="string">`tb_item_ibfk_2`</span> <span class="keyword">FOREIGN</span> <span class="keyword">KEY</span> (<span class="string">`article_id`</span>) <span class="keyword">REFERENCES</span> <span class="string">`tb_article`</span> (<span class="string">`id`</span>) <span class="keyword">ON</span> <span class="keyword">DELETE</span> <span class="keyword">CASCADE</span> <span class="keyword">ON</span> <span class="keyword">UPDATE</span> <span class="keyword">CASCADE</span></span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4;</span><br><span class="line"><span class="comment"># 插入商品-订单</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_item`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'1'</span>, <span class="string">'1'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_item`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'2'</span>, <span class="string">'1'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_item`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'3'</span>, <span class="string">'3'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_item`</span> <span class="keyword">VALUES</span> (<span class="string">'2'</span>, <span class="string">'1'</span>, <span class="string">'2'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_item`</span> <span class="keyword">VALUES</span> (<span class="string">'2'</span>, <span class="string">'2'</span>, <span class="string">'3'</span>);</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>tb_order</code>表的<code>user_id</code>作为外键参照<code>tb_user</code>表的主键<code>id</code>。</li>
+<li><code>tb_item</code>表作为中间表,用来维护<code>tb_article</code>和<code>tb_order</code>的多对多关系,<code>tb_item</code>表的<ul>
+<li><code>order_id</code>作为外键参照<code>tb_order</code>表的主键<code>id</code>,</li>
+<li><code>article_id</code>作为外键参照<code>tb_artic1e</code>表的主键<code>id</code>.</li>
+</ul>
+</li>
+</ul>
+<p>在<code>mybatis</code>数据库中执行<code>SQL</code>脚本,完成创建数据库和表的操作。</p>
+<h2 id="创建持久化类"><a href="#创建持久化类" class="headerlink" title="创建持久化类"></a>创建持久化类</h2><p>接下来,创建一个<code>User</code>对象、一个<code>Article</code>对象和一个<code>Order</code>对象分别映射<code>tb_user</code>,<code>tb_article</code>和<code>tb_order</code>表。</p>
+<h3 id="创建持久化类User-java"><a href="#创建持久化类User-java" class="headerlink" title="创建持久化类User.java"></a>创建持久化类User.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">private</span> Integer id;  <span class="comment">// 用户id，主键</span></span><br><span class="line">    <span class="keyword">private</span> String username;  <span class="comment">// 用户名</span></span><br><span class="line">    <span class="keyword">private</span> String loginname; <span class="comment">// 登录名</span></span><br><span class="line">    <span class="keyword">private</span> String password;  <span class="comment">// 密码</span></span><br><span class="line">    <span class="keyword">private</span> String phone;    <span class="comment">// 联系电话</span></span><br><span class="line">    <span class="keyword">private</span> String address;  <span class="comment">// 收货地址</span></span><br><span class="line">    <span class="comment">// 用户和订单是一对多的关系，即一个用户可以有多个订单</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Order&gt; orders;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">(String username, String loginname, String password, String phone, String address)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.username = username;</span><br><span class="line">        <span class="keyword">this</span>.loginname = loginname;</span><br><span class="line">        <span class="keyword">this</span>.password = password;</span><br><span class="line">        <span class="keyword">this</span>.phone = phone;</span><br><span class="line">        <span class="keyword">this</span>.address = address;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User [id="</span> + id + <span class="string">", username="</span> + username + <span class="string">", loginname="</span> + loginname</span><br><span class="line">                + <span class="string">", password="</span> + password + <span class="string">", phone="</span> + phone + <span class="string">", address="</span> + address + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用户和订单之间是一对多的关系,即一个用户可以有多个订单。在<code>User</code>类中定义了个<code>orders</code>属性,该属性是一个<code>List</code>集合,用来映射一对多的关联关系,表示一个用户有多个订单.</p>
+<h3 id="创建持久化类Order-java"><a href="#创建持久化类Order-java" class="headerlink" title="创建持久化类Order.java"></a>创建持久化类Order.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Order</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">private</span> Integer id;  <span class="comment">// 订单id，主键</span></span><br><span class="line">    <span class="keyword">private</span> String code;  <span class="comment">// 订单编号</span></span><br><span class="line">    <span class="keyword">private</span> Double total; <span class="comment">// 订单总金额</span></span><br><span class="line">    <span class="comment">// 订单和用户是多对一的关系，即一个订单只属于一个用户</span></span><br><span class="line">    <span class="keyword">private</span> User user;</span><br><span class="line">    <span class="comment">// 订单和商品是多对多的关系，即一个订单可以包含多种商品</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Article&gt; articles;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Order</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Order</span><span class="params">(String code, Double total)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.code = code;</span><br><span class="line">        <span class="keyword">this</span>.total = total;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Order [id="</span> + id + <span class="string">", code="</span> + code + <span class="string">", total="</span> + total + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>订单和用户之间是多对一的关系,一个订单只属于一个用户,在<code>Order</code>类中定义了一个<code>user</code>属性,用来映射多对一的关联关系,表示该订单的用户;</li>
+<li>订单和商品之间是多对多的关系,即一个订单中可以包含多种商品,在<code>Order</code>类中定义了一个<code>articles</code>属性该属性是一个<code>List</code>集合,用来映射多对多的关联关系,表示一个订单中包含多种商品。</li>
+</ul>
+<h3 id="创建持久化类Article-java"><a href="#创建持久化类Article-java" class="headerlink" title="创建持久化类Article.java"></a>创建持久化类Article.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Article</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">private</span> Integer id;        <span class="comment">// 商品id，主键</span></span><br><span class="line">    <span class="keyword">private</span> String name;    <span class="comment">// 商品名称</span></span><br><span class="line">    <span class="keyword">private</span> Double price;    <span class="comment">// 商品价格</span></span><br><span class="line">    <span class="keyword">private</span> String remark;    <span class="comment">// 商品描述</span></span><br><span class="line">    <span class="comment">// 商品和订单是多对多的关系，即一种商品可以包含在多个订单中</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Order&gt; orders;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Article</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Article</span><span class="params">(String name, Double price, String remark)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.price = price;</span><br><span class="line">        <span class="keyword">this</span>.remark = remark;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Article [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", price="</span> + price + <span class="string">", remark="</span> + remark</span><br><span class="line">                + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>商品和订单之间是多对多的关系,即一种商品可以出现在多个订单中。在<code>Article</code>类中定义了一个<code>orders</code>属性,该属性是一个<code>List</code>集合,用来映射多对多的关联关系,表示该商品关联的多个订单。</p>
+<h2 id="创建XML映射文件"><a href="#创建XML映射文件" class="headerlink" title="创建XML映射文件"></a>创建XML映射文件</h2><p>再接下来是<code>XML</code>映射文件。</p>
+<h3 id="UserMapper-xml"><a href="#UserMapper-xml" class="headerlink" title="UserMapper.xml"></a>UserMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">"-//mybatis.org//DTD Mapper 3.0//EN"</span> </span></span><br><span class="line"><span class="meta"><span class="meta-string">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namespace指用户自定义的命名空间。 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"org.fkit.mapper.UserMapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"selectUserById"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultMap</span>=<span class="string">"userResultMap"</span>&gt;</span> SELECT * FROM tb_user WHERE id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span></span></span><br><span class="line"><span class="tag">        <span class="attr">type</span>=<span class="string">"org.fkit.domain.User"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"userResultMap"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"id"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"id"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"username"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"username"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"loginname"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"loginname"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"password"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"password"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"phone"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"phone"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"address"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"address"</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 一对多关联映射:collection --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"orders"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">javaType</span>=<span class="string">"ArrayList"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"id"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">ofType</span>=<span class="string">"org.fkit.domain.User"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">select</span>=<span class="string">"org.fkit.mapper.OrderMapper.selectOrderByUserId"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">fetchType</span>=<span class="string">"lazy"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"id"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"id"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"code"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"code"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"total"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"total"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>UserMapper.xml</code>中定义了一个<code>select</code>标签,该标签根据<code>id</code>查询用户信息。由于<code>User</code>类除了简单的属性<code>id</code>、<code>username</code>、<code>loginname</code>、<code>password</code>、<code>phone</code>和<code>address</code>之外,还有关联对象<code>orders</code>,所以返回的是一个名为<code>userResultMap</code>的<code>resultMap</code>。由于<code>orders</code>是一个<code>List</code>集合,因此<code>userResultMap</code>中使用了<code>collection</code>元素映射一对多的关联关系。<br><code>collection</code>元素说明如下:</p>
+<ul>
+<li><code>select</code>属性表示会使用<code>column</code>属性的<code>id</code>值作为参数执行<code>OrderMapper</code>中定义的<code>selectOrderByUserId</code>标签,以查询该用户下的所有订单,</li>
+<li>查询出的数据将被封装到<code>property</code>表示的<code>orders</code>对象当中。注意,一对多使用的都是<code>lazy</code>(懒加载)。</li>
+</ul>
+<h3 id="OrderMapper-xml"><a href="#OrderMapper-xml" class="headerlink" title="OrderMapper.xml"></a>OrderMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">"-//mybatis.org//DTD Mapper 3.0//EN"</span> </span></span><br><span class="line"><span class="meta"><span class="meta-string">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namespace指用户自定义的命名空间。 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"org.fkit.mapper.OrderMapper"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 注意，如果查询出来的列同名，例如tb_user表的id和tb_order表的id都是id，同名，需要使用别名区分 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"selectOrderById"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultMap</span>=<span class="string">"orderResultMap"</span>&gt;</span> SELECT u.*,o.id AS oid,CODE,total,user_id FROM tb_user</span><br><span class="line">        u,tb_order o WHERE u.id = o.user_id AND o.id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 根据userid查询订单 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"selectOrderByUserId"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultType</span>=<span class="string">"org.fkit.domain.Order"</span>&gt;</span> SELECT * FROM tb_order WHERE user_id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span></span></span><br><span class="line"><span class="tag">        <span class="attr">type</span>=<span class="string">"org.fkit.domain.Order"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"orderResultMap"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"id"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"oid"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"code"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"code"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"total"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"total"</span>/&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 多对一关联映射:association --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">association</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"user"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">javaType</span>=<span class="string">"org.fkit.domain.User"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"id"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"id"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"username"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"username"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"loginname"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"loginname"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"password"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"password"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"phone"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"phone"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"address"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"address"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">association</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 多对多映射的关键:collection --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">"articles"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">javaType</span>=<span class="string">"ArrayList"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">"oid"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">ofType</span>=<span class="string">"org.fkit.domain.Article"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">select</span>=<span class="string">"org.fkit.mapper.ArticleMapper.selectArticleByOrderId"</span></span></span><br><span class="line"><span class="tag">            <span class="attr">fetchType</span>=<span class="string">"lazy"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"id"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"id"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"name"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"name"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"price"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"price"</span>/&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span></span></span><br><span class="line"><span class="tag">                <span class="attr">property</span>=<span class="string">"remark"</span></span></span><br><span class="line"><span class="tag">                <span class="attr">column</span>=<span class="string">"remark"</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="selectOrderByUserId"><a href="#selectOrderByUserId" class="headerlink" title="selectOrderByUserId"></a>selectOrderByUserId</h4><p><code>OrderMapper.xml</code>中定义了一个<code>id=&quot;selectOrderByUserId&quot;</code>的select标签.其根据用户<code>id</code>查询订单信息,返回的是简单的<code>Order</code>对象.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 根据userid查询订单 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">"selectOrderByUserId"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">resultType</span>=<span class="string">"org.fkit.domain.Order"</span>&gt;</span> SELECT * FROM tb_order WHERE user_id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="selectOrderById"><a href="#selectOrderById" class="headerlink" title="selectOrderById"></a>selectOrderById</h4><p>同时定义了一个<code>id=&quot;selectOrderById&quot;</code>的select标签,其根据订单id查询订单信息,由于<code>Order</code>类和用户是多对一关系,和商品是多对多关系,而<strong>多对一通常都是立即加载</strong>,因此SQL语句是一条关联了<code>tb_user</code>和<code>tb_order</code>的多表查询语句。查询结果返回个名为<code>orderResultMap</code>的<code>resultMap</code>。</p>
+<p><code>orderResultMap</code>中使用了<strong>association元素映射多对一的关联关系</strong>,其将查询到的用户信息装载到<code>Order</code>对象的<code>user</code>属性当中.</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">"selectOrderById"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">resultMap</span>=<span class="string">"orderResultMap"</span>&gt;</span> SELECT u.*,o.id AS oid,CODE,total,user_id FROM tb_user</span><br><span class="line">    u,tb_order o WHERE u.id = o.user_id AND o.id = #&#123;id&#125;</span><br><span class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>orderResultMap</code>中还使用了<code>collection</code>元素映射多对多的关联关系,<code>select</code>属性表示会使用<code>column</code>属性的<code>oid</code>值作为参数执行<code>ArticleMapper</code>中定义的<code>selectArticleByOrderId</code>查询该订单中的所有商品,查询出的数据将被封装到<code>property</code>属性表示的<code>articles</code>对象当中。注意,<strong>一对多使用的都是<code>lazy</code>(懒加载)</strong>.</p>
+<h4 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h4><p>因为多表查询返回的结果集中<code>tb_user</code>有个<code>id</code>列,<code>tb_order</code>也有个<code>id</code>列,当列同名时<code>MyBatis</code>使用的元素中的<code>colum</code>属性如果是<code>id</code>,则<code>MyBatis</code>会默认使用査询出的第一个<code>id</code>列。<strong>为了区分同名的列,最好的方法是给列取一个别名</strong>。<code>SQL</code>语句中的<code>o.id As oid</code>,<code>resultMap</code>中的<code>column=&quot;oid&quot;</code>就是指使用的是<code>tb_order</code>表的<code>id</code>值。</p>
+<h3 id="ArticleMapper-xml"><a href="#ArticleMapper-xml" class="headerlink" title="ArticleMapper.xml"></a>ArticleMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">"-//mybatis.org//DTD Mapper 3.0//EN"</span> </span></span><br><span class="line"><span class="meta"><span class="meta-string">"http://mybatis.org/dtd/mybatis-3-mapper.dtd"</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namespace指用户自定义的命名空间。 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">"org.fkit.mapper.ArticleMapper"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">"selectArticleByOrderId"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">"int"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultType</span>=<span class="string">"org.fkit.domain.Article"</span>&gt;</span> SELECT * FROM tb_article WHERE id IN ( SELECT article_id</span><br><span class="line">        FROM tb_item WHERE order_id = #&#123;id&#125; )</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>ArticleMapper.xml</code>中定义了一个<code>id=&quot;selectArticleByOrderId&quot;</code>的select标签,其根据订单<code>id</code>查询订单关联的所有商品,由于订单和商品是多对多的关系,数据库使用了一个中间表<code>tb_item</code>维护多对多的关系,故此处使用了一个子查询,首先根据订单<code>id</code>到中间表中査询出所有的商品,之后根据所有商品的<code>id</code>查询出所有的商品信息,并将这些信息封装到<code>Article</code>对象当中。</p>
+<h2 id="编写Mapper接口"><a href="#编写Mapper接口" class="headerlink" title="编写Mapper接口"></a>编写Mapper接口</h2><p>再接下来是<code>mapper</code>接口对象。</p>
+<h3 id="UserMapper接口"><a href="#UserMapper接口" class="headerlink" title="UserMapper接口"></a>UserMapper接口</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</span><br><span class="line">    <span class="function">User <span class="title">selectUserById</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="OrderMapper接口"><a href="#OrderMapper接口" class="headerlink" title="OrderMapper接口"></a>OrderMapper接口</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderMapper</span> </span>&#123;</span><br><span class="line">    <span class="function">Order <span class="title">selectOrderById</span><span class="params">(<span class="keyword">int</span> id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="编写测试类"><a href="#编写测试类" class="headerlink" title="编写测试类"></a>编写测试类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ManyToManyTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 定义SqlSession变量</span></span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 创建SqlSession实例</span></span><br><span class="line">            sqlSession = FKSqlSessionFactory.getSqlSession();</span><br><span class="line">            ManyToManyTest t = <span class="keyword">new</span> ManyToManyTest();</span><br><span class="line">            <span class="comment">// 根据用户id查询用户，测试一对多</span></span><br><span class="line">            <span class="comment">// t.testSelectUserById(sqlSession);</span></span><br><span class="line">            <span class="comment">// 根据订单id查询订单，测试多对多</span></span><br><span class="line">            t.testSelectOrderById(sqlSession);</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭SqlSession</span></span><br><span class="line">            <span class="keyword">if</span> (sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 测试一对多，查询班级User（一）的时候级联查询订单Order（多）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectUserById</span><span class="params">(SqlSession sqlSession)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 获得UserMapper接口的代理对象</span></span><br><span class="line">        UserMapper um = sqlSession.getMapper(UserMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="comment">// 调用selectUserById方法</span></span><br><span class="line">        User user = um.selectUserById(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 查看查询到的user对象信息</span></span><br><span class="line">        System.out.println(user.getId() + <span class="string">" "</span> + user.getUsername());</span><br><span class="line">        <span class="comment">// 查看user对象关联的订单信息</span></span><br><span class="line">        List&lt;Order&gt; orders = user.getOrders();</span><br><span class="line">        orders.forEach(order -&gt; System.out.println(order));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 测试多对多，查询订单Order（多）的时候级联查询订单的商品Article（多）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectOrderById</span><span class="params">(SqlSession sqlSession)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 获得OrderMapper接口的代理对象</span></span><br><span class="line">        OrderMapper om = sqlSession.getMapper(OrderMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">        <span class="comment">// 调用selectOrderById方法</span></span><br><span class="line">        Order order = om.selectOrderById(<span class="number">2</span>);</span><br><span class="line">        <span class="comment">// 查看查询到的order对象信息</span></span><br><span class="line">        System.out.println(order.getId() + <span class="string">" "</span> + order.getCode() + <span class="string">" "</span> + order.getTotal());</span><br><span class="line">        <span class="comment">// 查看order对象关联的用户信息</span></span><br><span class="line">        User user = order.getUser();</span><br><span class="line">        System.out.println(user);</span><br><span class="line"><span class="comment">//        // 查看order对象关联的商品信息</span></span><br><span class="line"><span class="comment">//        List&lt;Article&gt; articles = order.getArticles();</span></span><br><span class="line"><span class="comment">//        articles.forEach(article -&gt; System.out.println(article));</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行<code>ManyToManyTest</code>类的<code>main</code>方法,首先测试<code>testSelectUserById()</code>方法,根据用户<code>id</code>查询用户。控制台显示如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT * FROM tb_user WHERE id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line"><span class="number">1</span> 小明</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT * FROM tb_order WHERE user_id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">2</span></span><br><span class="line">Order [id=<span class="number">1</span>, code=abcseeeahoaugoeijgiej, total=<span class="number">223</span>.<span class="number">33</span>]</span><br><span class="line">Order [id=<span class="number">2</span>, code=sfaofosfhodsfuefie, total=<span class="number">111</span>.<span class="number">22</span>]</span><br></pre></td></tr></table></figure>
+<p>可以看到,<code>MyBatis</code>执行了根据用户<code>id</code>查询用户的<code>SQL</code>语句,查询出了用户信息;<br>由于在测试方法中立即又获取了用户的订单集合,所以<code>MyBatis</code>又执行了根据用户<code>id</code>查询订单的<code>SQL</code>语句,查询出了该用户的两个订单.<br>接下来测试<code>testSelectOrderById()</code>方法,根据订单<code>id</code>查询订单信息。控制台显示:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT u.*,o.id AS oid,CODE,total,user_id FROM tb_user u,tb_order o WHERE u.id = o.user_id AND o.id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">2</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line"><span class="number">2</span> sfaofosfhodsfuefie <span class="number">111</span>.<span class="number">22</span></span><br><span class="line">User [id=<span class="number">1</span>, username=小明, loginname=xiaoming, password=xiaoming, phone=<span class="number">123456789123</span>, address=北京]</span><br></pre></td></tr></table></figure>
+<p>可以看到,<code>MyBatis</code>执行了一个多表连接查询,同时查询出了订单信息和用户信息,由于测试方法中注释了查询订单中的商品代码,故<code>MyBatis</code>采用了懒加载机制,没有立即查询商品信息。<br>取消<code>testSelectOrderById()</code>方法中査询订单中的商品的代码注释,再次执行。控制台显示如下：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT u.*,o.id AS oid,CODE,total,user_id FROM tb_user u,tb_order o WHERE u.id = o.user_id AND o.id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">2</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line"><span class="number">2</span> sfaofosfhodsfuefie <span class="number">111</span>.<span class="number">22</span></span><br><span class="line">User [id=<span class="number">1</span>, username=小明, loginname=xiaoming, password=xiaoming, phone=<span class="number">123456789123</span>, address=北京]</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT * FROM tb_article WHERE id <span class="keyword">IN</span> ( SELECT article_id FROM tb_item WHERE order_id = ? ) </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">2</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">2</span></span><br><span class="line">Article [id=<span class="number">1</span>, name=商品<span class="number">1</span>, price=<span class="number">123</span>.<span class="number">12</span>, remark=xxx的伟大著作]</span><br><span class="line">Article [id=<span class="number">2</span>, name=商品<span class="number">2</span>, price=<span class="number">12</span>.<span class="number">3</span>, remark=yyy的伟大著作]</span><br></pre></td></tr></table></figure>
+<p>可以看到,<code>MyBatis</code>执行了<code>ArticleMapper.xml</code>中定义的子查询,查询出了订单所关联的所有商品信息.</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="collection标签"><a href="#collection标签" class="headerlink" title="collection标签"></a>collection标签</h2><h3 id="collection标签的属性"><a href="#collection标签的属性" class="headerlink" title="collection标签的属性"></a>collection标签的属性</h3><p>-<code>property</code>属性指定集合的变量名<br>-<code>javaType</code>属性指定集合的类型<br>-<code>ofType</code>属性指定集合中存放的元素的类型<br>-<code>select</code>属性指定关联查询的<code>select</code>标签<br>-<code>column</code>属性指定要将哪一列,作为<code>select</code>标签关联的查询语句的参数.</p>
+<h3 id="collection标签的子标签"><a href="#collection标签的子标签" class="headerlink" title="collection标签的子标签"></a>collection标签的子标签</h3><p>这些子标签表示集合中元素的各个属性.</p>
+<h2 id="association标签"><a href="#association标签" class="headerlink" title="association标签"></a>association标签</h2><p>对于多对一,一对一联系,使用<code>多表连接查询</code>即可.</p>
+<h3 id="association标签的属性"><a href="#association标签的属性" class="headerlink" title="association标签的属性"></a>association标签的属性</h3><ul>
+<li><code>property</code>设置持久化对象的属性</li>
+<li><code>javaType</code>设置该属性的类型</li>
+</ul>
+<h3 id="association标签的子标签"><a href="#association标签的子标签" class="headerlink" title="association标签的子标签"></a>association标签的子标签</h3><p>这些子标签表示关联的持久化对象的各个属性.</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/18ab9715/" title="10.1.3 多对多">https://lanlan2017.github.io/JavaReadingNotes/18ab9715/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/26e4bb72/" rel="next" title="10.1.2 一对多">
+                  <i class="fa fa-chevron-left"></i> 10.1.2 一对多
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/77909a3d/" rel="prev" title="10.2 MyBatis动态SQL 10.2.0测试项目框架">
+                  10.2 MyBatis动态SQL 10.2.0测试项目框架 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-1-3-多对多"><span class="nav-text">10.1.3 多对多</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#示例-ManyToManyTest"><span class="nav-text">示例: ManyToManyTest</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建数据库表"><span class="nav-text">创建数据库表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建持久化类"><span class="nav-text">创建持久化类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建持久化类User-java"><span class="nav-text">创建持久化类User.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建持久化类Order-java"><span class="nav-text">创建持久化类Order.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建持久化类Article-java"><span class="nav-text">创建持久化类Article.java</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建XML映射文件"><span class="nav-text">创建XML映射文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UserMapper-xml"><span class="nav-text">UserMapper.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OrderMapper-xml"><span class="nav-text">OrderMapper.xml</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#selectOrderByUserId"><span class="nav-text">selectOrderByUserId</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#selectOrderById"><span class="nav-text">selectOrderById</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#提示"><span class="nav-text">提示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ArticleMapper-xml"><span class="nav-text">ArticleMapper.xml</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写Mapper接口"><span class="nav-text">编写Mapper接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UserMapper接口"><span class="nav-text">UserMapper接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OrderMapper接口"><span class="nav-text">OrderMapper接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编写测试类"><span class="nav-text">编写测试类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#collection标签"><span class="nav-text">collection标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#collection标签的属性"><span class="nav-text">collection标签的属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#collection标签的子标签"><span class="nav-text">collection标签的子标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#association标签"><span class="nav-text">association标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#association标签的属性"><span class="nav-text">association标签的属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#association标签的子标签"><span class="nav-text">association标签的子标签</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

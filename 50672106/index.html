@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="8.6.5 SortedMap接口和TreeMap实现类&amp;nbsp;TreeMap数据结构 红黑树&amp;nbsp;自然排序 定制排序&amp;nbsp;TreeMap判断两个key相等的标准&amp;nbsp;理解Comparable接口的compareTo方法&amp;nbsp;理解Comparator接口的compare方法&amp;nbsp;作为key的自定义类的要求&amp;nbsp;Java使用Map来实现的Set&amp;nbsp;Se">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.6.5 SortedMap接口和TreeMap实现类">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/50672106/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="8.6.5 SortedMap接口和TreeMap实现类&amp;nbsp;TreeMap数据结构 红黑树&amp;nbsp;自然排序 定制排序&amp;nbsp;TreeMap判断两个key相等的标准&amp;nbsp;理解Comparable接口的compareTo方法&amp;nbsp;理解Comparator接口的compare方法&amp;nbsp;作为key的自定义类的要求&amp;nbsp;Java使用Map来实现的Set&amp;nbsp;Se">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-11T18:16:53.000Z">
+<meta property="article:modified_time" content="2020-03-09T10:34:04.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/50672106/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>8.6.5 SortedMap接口和TreeMap实现类 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/50672106/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">8.6.5 SortedMap接口和TreeMap实现类<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC8%E7%AB%A0%20Java%E9%9B%86%E5%90%88/8.6%20Java%208%E5%A2%9E%E5%BC%BA%E7%9A%84Map%E9%9B%86%E5%90%88/8.6.5%20SortedMap%E6%8E%A5%E5%8F%A3%E5%92%8CTreeMap%E5%AE%9E%E7%8E%B0%E7%B1%BB.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-11 18:16:53" itemprop="dateCreated datePublished" datetime="2019-07-11T18:16:53+00:00">2019-07-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-09 10:34:04" itemprop="dateModified" datetime="2020-03-09T10:34:04+00:00">2020-03-09</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC8%E7%AB%A0-Java%E9%9B%86%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">第8章 Java集合</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC8%E7%AB%A0-Java%E9%9B%86%E5%90%88/8-6-Java-8%E5%A2%9E%E5%BC%BA%E7%9A%84Map%E9%9B%86%E5%90%88/" itemprop="url" rel="index"><span itemprop="name">8.6 Java 8增强的Map集合</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/50672106/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/50672106/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/50672106/#8-6-5-SortedMap接口和TreeMap实现类" class="header_1">8.6.5 SortedMap接口和TreeMap实现类</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#TreeMap数据结构-红黑树" class="header_2">TreeMap数据结构 红黑树</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#自然排序-定制排序" class="header_2">自然排序 定制排序</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#TreeMap判断两个key相等的标准" class="header_2">TreeMap判断两个key相等的标准</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#理解Comparable接口的compareTo方法" class="header_2">理解Comparable接口的compareTo方法</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#理解Comparator接口的compare方法" class="header_2">理解Comparator接口的compare方法</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#作为key的自定义类的要求" class="header_2">作为key的自定义类的要求</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#Java使用Map来实现的Set" class="header_2">Java使用Map来实现的Set</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#Set和Map的关系" class="header_2">Set和Map的关系</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#返回key或Entry的方法" class="header_2">返回key或Entry的方法</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#查找最大最小的key" class="header_3">查找最大最小的key</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#查找给定key的前一个或后一个key" class="header_3">查找给定key的前一个或后一个key</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#查找最大最小key对应的Entry" class="header_3">查找最大最小key对应的Entry</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#查找给定key的前一个或后一个key对应的Entry" class="header_3">查找给定key的前一个或后一个key对应的Entry</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#截取子Map的方法" class="header_2">截取子Map的方法</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#截取指定区间" class="header_3">截取指定区间</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#向前截取" class="header_3">向前截取</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#向后截取" class="header_3">向后截取</a>&nbsp;<br><a href="/JavaReadingNotes/50672106/#实例" class="header_2">实例</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="8-6-5-SortedMap接口和TreeMap实现类"><a href="#8-6-5-SortedMap接口和TreeMap实现类" class="headerlink" title="8.6.5 SortedMap接口和TreeMap实现类"></a>8.6.5 SortedMap接口和TreeMap实现类</h1><p>正如<code>Set</code>接口派生出<code>SortedSet</code>子接口有一个<code>TreeSet</code>实现类一样,<code>Map</code>接口也派生的<code>SortedMap</code>子接口也有一个<code>TreeMap</code>实现类.</p>
+<h2 id="TreeMap数据结构-红黑树"><a href="#TreeMap数据结构-红黑树" class="headerlink" title="TreeMap数据结构 红黑树"></a>TreeMap数据结构 红黑树</h2><p><code>TreeMap</code>就是一个<code>红黑树</code>数据结构,每个<code>key-value</code>对即作为红黑树的一个节点。 <code>TreeMap</code>存储<code>key-value</code>对(节点)时,需要根据<code>key</code>对节点进行排序。 <strong><code>TreeMap</code>可以保证所有的<code>key-value</code>对处于有序状态</strong>。 </p>
+<h2 id="自然排序-定制排序"><a href="#自然排序-定制排序" class="headerlink" title="自然排序 定制排序"></a>自然排序 定制排序</h2><p><code>TreeMap</code>也有两种排序方式:</p>
+<ul>
+<li><strong>自然排序</strong>:<code>TreeMap</code>的所有<code>key</code>必须实现<code>Comparable</code>接口,而且所有的<code>key</code>应该是同一个类的对象,否则将会抛出<code>ClassCastException</code>异常。</li>
+<li><strong>定制排序</strong>:创建<code>TreeMap</code>时,传入一个<code>Comparator</code>对象,该对象负责对<code>TreeMap</code>中的所有<code>key</code>进行排序。采用定制排序时不要求<code>Map</code>的<code>key</code>实现<code>Comparable</code>接口。</li>
+</ul>
+<h2 id="TreeMap判断两个key相等的标准"><a href="#TreeMap判断两个key相等的标准" class="headerlink" title="TreeMap判断两个key相等的标准"></a>TreeMap判断两个key相等的标准</h2><p>类似于<code>TreeSet</code>中判断两个元素相等的标准, <code>TreeMap</code>中判断两个<code>key</code>相等的标准是:<br><strong>如果两个<code>key</code>通过<code>compareTo()</code>方法返回<code>0</code>, 那么<code>TreeMap</code>就认为这两个<code>key</code>是相等的</strong>。</p>
+<h2 id="理解Comparable接口的compareTo方法"><a href="#理解Comparable接口的compareTo方法" class="headerlink" title="理解Comparable接口的compareTo方法"></a>理解Comparable接口的compareTo方法</h2><ul>
+<li>如果<code>对象.compareTo(参数)</code>返回<strong>0</strong>,则表示该对象和参数相等.</li>
+<li>如果<code>对象.compareTo(参数)</code>返回<strong>正数</strong>,则表示该对象大于参数.</li>
+<li>如果<code>对象.compareTo(参数)</code>返回<strong>负数</strong>,则表示该对象小于参数.</li>
+</ul>
+<p>为了便于记忆可以把<code>Comparable</code>接口的<code>compareTo</code>方法理解为<code>减去</code>的意思,也就是说<code>对象.compareTo(参数)</code>意思为<code>对象减去参数</code>.</p>
+<ul>
+<li>如果对象减去参数等于<code>0</code>,则两者相等.</li>
+<li>如果对象减去参数大于0,则对象大于参数,</li>
+<li>如果对象减去参数小于0则对象小于参数。</li>
+</ul>
+<h2 id="理解Comparator接口的compare方法"><a href="#理解Comparator接口的compare方法" class="headerlink" title="理解Comparator接口的compare方法"></a>理解Comparator接口的compare方法</h2><p>同样的<code>Comparator</code>接口的<code>compare(参数1,参数2)</code>可以理解为<code>前面的参数减去后面的参数</code>的计算结果.也就是<strong>参数1<code>减去</code>参数2</strong>,所以:</p>
+<ul>
+<li>如果参数1减去参数2等于0时,两者相等,</li>
+<li>如果参数1减去参数2大于0,则参数1大于参数2,</li>
+<li>如果参数1减去参数2小于0,则参数1小于参数2.</li>
+</ul>
+<h2 id="作为key的自定义类的要求"><a href="#作为key的自定义类的要求" class="headerlink" title="作为key的自定义类的要求"></a>作为key的自定义类的要求</h2><p>如果使用自定义类作为<code>TreeMap</code>的<code>key</code>,且想让<code>TreeMap</code>良好地工作,则重写该类的<code>equals()</code>方法和<code>compareTo()</code>方法时应保持一致的返回结果:<br>**两个<code>key</code>通过<code>equals</code>方法比较返回<code>true</code>时,它们通过<code>compareTo()</code>方法比较应该返回<code>0</code>**。如果<code>equals()</code>方法与<code>compareTo()</code>方法的返回结果不一致, <code>TreeMap</code>与<code>Map</code>接口的规则就会冲突。</p>
+<h2 id="Java使用Map来实现的Set"><a href="#Java使用Map来实现的Set" class="headerlink" title="Java使用Map来实现的Set"></a>Java使用Map来实现的Set</h2><p>再次强调:<code>Set</code>和<code>Map</code>的关系十分密切,<code>Java</code>源码就是先实现了<code>HashMap</code>、<code>TreeMap</code>等集合,然后通过包装一个所有的<code>value</code>都为<code>null</code>的<code>Map</code>集合实现了<code>Set</code>集合类。</p>
+<h2 id="Set和Map的关系"><a href="#Set和Map的关系" class="headerlink" title="Set和Map的关系"></a>Set和Map的关系</h2><p>再次强调:<code>Set</code>和<code>Map</code>的关系十分密切,<code>Java</code>源码就是先实现了<code>HashMap</code>、 <code>TreeMap</code>等集合,然后<strong>通过包装一个所有的<code>value</code>都为<code>null</code>的<code>Map</code>集合来实现<code>Set</code>集合类</strong>。</p>
+<h2 id="返回key或Entry的方法"><a href="#返回key或Entry的方法" class="headerlink" title="返回key或Entry的方法"></a>返回key或Entry的方法</h2><p>与<code>TreeSet</code>类似的是, <code>TreeMap</code>中也提供了一系列根据<code>key</code>顺序访问<code>key-value</code>对的方法。</p>
+<h3 id="查找最大最小的key"><a href="#查找最大最小的key" class="headerlink" title="查找最大最小的key"></a>查找最大最小的key</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>K firstKey()</code></td>
+<td align="left">返回该<code>Map</code>中的最小<code>key</code>值,如果该<code>Map</code>为空,则返回<code>null</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>K lastKey()</code></td>
+<td align="left">返回该<code>Map</code>中的最大<code>key</code>值,如果该<code>Map</code>为空或不存在这样的<code>key</code>,则都返回<code>null</code>。</td>
+</tr>
+</tbody></table>
+<h3 id="查找给定key的前一个或后一个key"><a href="#查找给定key的前一个或后一个key" class="headerlink" title="查找给定key的前一个或后一个key"></a>查找给定key的前一个或后一个key</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>K higherKey(K key)</code></td>
+<td align="left">返回该<code>Map</code>中大于参数<code>key</code>的最小<code>key</code>值。如果该<code>Map</code>为空或不存在这样的<code>key-value</code>对,则都返回<code>null</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>K lowerKey(K key)</code></td>
+<td align="left">返回该<code>Map</code>中小于参数<code>key</code>的最大<code>key</code>值。如果该<code>Map</code>为空或不存在这样的<code>key</code>,则都返回<code>null</code></td>
+</tr>
+</tbody></table>
+<h3 id="查找最大最小key对应的Entry"><a href="#查找最大最小key对应的Entry" class="headerlink" title="查找最大最小key对应的Entry"></a>查找最大最小key对应的Entry</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Map.Entry&lt;K,​V&gt; firstEntry()</code></td>
+<td align="left">返回该<code>Map</code>中最小<code>key</code>所对应的<code>key-value</code>对,如果该<code>Map</code>为空,则返回<code>null</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>Map.Entry&lt;K,​V&gt; lastEntry()</code></td>
+<td align="left">返回该<code>Map</code>中最大<code>key</code>所对应的 <code>key-value</code>对,如果该<code>Map</code>为空或不存在这样的<code>key-value</code>对,则都返回<code>null</code>。</td>
+</tr>
+</tbody></table>
+<h3 id="查找给定key的前一个或后一个key对应的Entry"><a href="#查找给定key的前一个或后一个key对应的Entry" class="headerlink" title="查找给定key的前一个或后一个key对应的Entry"></a>查找给定key的前一个或后一个key对应的Entry</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Map.Entry&lt;K,​V&gt; higherEntry(K key)</code></td>
+<td align="left">返回该<code>Map</code>中大于参数<code>key</code>的最小<code>key</code>所对应的<code>key-value</code>对。如果该<code>Map</code>为空,则返回<code>null</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>Map.Entry&lt;K,​V&gt; lowerEntry(K key)</code></td>
+<td align="left">返回该<code>Map</code>中小于参数<code>key</code>的最大<code>key</code>所对应的<code>key-value</code>对。如果该<code>Map</code>为空或不存在这样的 <code>key-value</code>对,则都返回<code>null</code></td>
+</tr>
+</tbody></table>
+<h2 id="截取子Map的方法"><a href="#截取子Map的方法" class="headerlink" title="截取子Map的方法"></a>截取子Map的方法</h2><h3 id="截取指定区间"><a href="#截取指定区间" class="headerlink" title="截取指定区间"></a>截取指定区间</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>SortedMap&lt;K,​V&gt; subMap(K fromKey, K toKey)</code></td>
+<td align="left">返回该<code>Map</code>的子<code>Map</code>,其<code>key</code>的范围是从<code>fromKey</code>(包括)到<code>toKey</code>(不包括)。<code>subXXX()</code>方法遵循<code>前闭后开</code>原则。</td>
+</tr>
+<tr>
+<td align="left"><code>NavigableMap&lt;K,​V&gt; subMap(K fromKey, boolean fromInclusive, K toKey, boolean toInclusive)</code></td>
+<td align="left">返回该<code>Map</code>的子<code>Map</code>,其<code>key</code>的范围是从 <code>fromKey</code>到<code>toKey</code>,是否包括<code>fromKey</code>取决于第二个参数,是否包括<code>toKey</code>取决于第四个参数.</td>
+</tr>
+</tbody></table>
+<h3 id="向前截取"><a href="#向前截取" class="headerlink" title="向前截取"></a>向前截取</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>SortedMap&lt;K,​V&gt; headMap(K toKey)</code></td>
+<td align="left">返回该<code>Map</code>的子<code>Map</code>,其<code>key</code>的范围是小于<code>toKey</code>的所有<code>key</code>,不包括<code>toKey</code>.</td>
+</tr>
+<tr>
+<td align="left"><code>NavigableMap&lt;K,​V&gt; headMap(K toKey, boolean inclusive)</code></td>
+<td align="left">Returns a view of the portion of this map whose keys are less than (or equal to, if inclusive is true) toKey.</td>
+</tr>
+</tbody></table>
+<h3 id="向后截取"><a href="#向后截取" class="headerlink" title="向后截取"></a>向后截取</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>SortedMap&lt;K,​V&gt; tailMap(K fromKey)</code></td>
+<td align="left">返回该<code>Map</code>的子<code>Map</code>,其<code>key</code>的范围是大于<code>fromKey</code>(包括)的所有<code>key</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>NavigableMap&lt;K,​V&gt; tailMap(K fromKey, boolean inclusive)</code></td>
+<td align="left">返回该<code>Map</code>的子<code>Map</code>,其<code>key</code>的范围是大于<code>fromKey</code>的所有<code>key</code>,子<code>Map</code>是否包括第一个<code>fromKey</code>取决于第二个参数.</td>
+</tr>
+</tbody></table>
+<p>表面上看起来这些方法很复杂,其实它们很简单。因为<code>TreeMap</code>中的<code>key-value</code>对是有序的,所以增加了访问第一个、最后一个、前一个、后一个、<code>key-value</code>对的方法,并提供了几个从<code>TreeMap</code>中截取子<code>TreeMap</code>的方法。</p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>下面以自然排序为例,介绍<code>TreeMap</code>的基本用法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">R</span> <span class="keyword">implements</span> <span class="title">Comparable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> count;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">R</span><span class="params">(<span class="keyword">int</span> count)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.count = count;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"R[count:"</span> + count + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 根据count来判断两个对象是否相等。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">this</span> == obj)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        <span class="keyword">if</span> (obj != <span class="keyword">null</span> &amp;&amp; obj.getClass() == R<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class">        </span>&#123;</span><br><span class="line">            R r = (R)obj;</span><br><span class="line">            <span class="keyword">return</span> r.count == <span class="keyword">this</span>.count;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 根据count属性值来判断两个对象的大小。</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compareTo</span><span class="params">(Object obj)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        R r = (R)obj;</span><br><span class="line">        <span class="keyword">return</span> count &gt; r.count ? <span class="number">1</span> :</span><br><span class="line">            count &lt; r.count ? -<span class="number">1</span> : <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TreeMapTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        TreeMap tm = <span class="keyword">new</span> TreeMap();</span><br><span class="line">        tm.put(<span class="keyword">new</span> R(<span class="number">3</span>) , <span class="string">"轻量级Java EE企业应用实战"</span>);</span><br><span class="line">        tm.put(<span class="keyword">new</span> R(-<span class="number">5</span>) , <span class="string">"疯狂Java讲义"</span>);</span><br><span class="line">        tm.put(<span class="keyword">new</span> R(<span class="number">9</span>) , <span class="string">"疯狂Android讲义"</span>);</span><br><span class="line">        System.out.println(tm);</span><br><span class="line">        <span class="comment">// 返回该TreeMap的第一个Entry对象</span></span><br><span class="line">        System.out.println(tm.firstEntry());</span><br><span class="line">        <span class="comment">// 返回该TreeMap的最后一个key值</span></span><br><span class="line">        System.out.println(tm.lastKey());</span><br><span class="line">        <span class="comment">// 返回该TreeMap的比new R(2)大的最小key值。</span></span><br><span class="line">        System.out.println(tm.higherKey(<span class="keyword">new</span> R(<span class="number">2</span>)));</span><br><span class="line">        <span class="comment">// 返回该TreeMap的比new R(2)小的最大的key-value对。</span></span><br><span class="line">        System.out.println(tm.lowerEntry(<span class="keyword">new</span> R(<span class="number">2</span>)));</span><br><span class="line">        <span class="comment">// 返回该TreeMap的子TreeMap</span></span><br><span class="line">        System.out.println(tm.subMap(<span class="keyword">new</span> R(-<span class="number">1</span>) , <span class="keyword">new</span> R(<span class="number">4</span>)));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中定义了一个<code>R</code>类,该类重写了<code>equals</code>方法,并实现了<code>Comparable</code>接口,所以可以使用该R对象作为<code>TreeMap</code>的<code>key</code>,该<code>TreeMap</code>使用自然排序。运行上面程序,看到如下运行结果:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;R[count:-5]&#x3D;疯狂Java讲义, R[count:3]&#x3D;轻量级Java EE企业应用实战, R[count:9]&#x3D;疯狂Android讲义&#125;</span><br><span class="line">R[count:-5]&#x3D;疯狂Java讲义</span><br><span class="line">R[count:9]</span><br><span class="line">R[count:3]</span><br><span class="line">R[count:-5]&#x3D;疯狂Java讲义</span><br><span class="line">&#123;R[count:3]&#x3D;轻量级Java EE企业应用实战&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/50672106/" title="8.6.5 SortedMap接口和TreeMap实现类">https://lanlan2017.github.io/JavaReadingNotes/50672106/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/12fdc454/" rel="next" title="8.6.4 使用Properties读写属性文件">
+                  <i class="fa fa-chevron-left"></i> 8.6.4 使用Properties读写属性文件
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/554c719d/" rel="prev" title="8.6.6 WeakHashMap实现类">
+                  8.6.6 WeakHashMap实现类 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8-6-5-SortedMap接口和TreeMap实现类"><span class="nav-text">8.6.5 SortedMap接口和TreeMap实现类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#TreeMap数据结构-红黑树"><span class="nav-text">TreeMap数据结构 红黑树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自然排序-定制排序"><span class="nav-text">自然排序 定制排序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TreeMap判断两个key相等的标准"><span class="nav-text">TreeMap判断两个key相等的标准</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理解Comparable接口的compareTo方法"><span class="nav-text">理解Comparable接口的compareTo方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理解Comparator接口的compare方法"><span class="nav-text">理解Comparator接口的compare方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#作为key的自定义类的要求"><span class="nav-text">作为key的自定义类的要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java使用Map来实现的Set"><span class="nav-text">Java使用Map来实现的Set</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Set和Map的关系"><span class="nav-text">Set和Map的关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#返回key或Entry的方法"><span class="nav-text">返回key或Entry的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查找最大最小的key"><span class="nav-text">查找最大最小的key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找给定key的前一个或后一个key"><span class="nav-text">查找给定key的前一个或后一个key</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找最大最小key对应的Entry"><span class="nav-text">查找最大最小key对应的Entry</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查找给定key的前一个或后一个key对应的Entry"><span class="nav-text">查找给定key的前一个或后一个key对应的Entry</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#截取子Map的方法"><span class="nav-text">截取子Map的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#截取指定区间"><span class="nav-text">截取指定区间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向前截取"><span class="nav-text">向前截取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向后截取"><span class="nav-text">向后截取</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-text">实例</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

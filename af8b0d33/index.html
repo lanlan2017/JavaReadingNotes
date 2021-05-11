@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="3.2.6 页面转发&amp;nbsp;1. 转发到JSP页面&amp;nbsp;请求处理方法返回值是字符串的情况&amp;nbsp;服务器内部跳转&amp;nbsp;客户端重定向&amp;nbsp;请求处理方法返回值是ModelAndView的情况&amp;nbsp;服务器内部跳转&amp;nbsp;客户端重定向&amp;nbsp;客户端重定向特点&amp;nbsp;客户端重定向无法访问WEB-INF下的资源文件&amp;nbsp;客户端重定向的资源文件要使用完整路径&amp;nb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.2.6页面转发">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/af8b0d33/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="3.2.6 页面转发&amp;nbsp;1. 转发到JSP页面&amp;nbsp;请求处理方法返回值是字符串的情况&amp;nbsp;服务器内部跳转&amp;nbsp;客户端重定向&amp;nbsp;请求处理方法返回值是ModelAndView的情况&amp;nbsp;服务器内部跳转&amp;nbsp;客户端重定向&amp;nbsp;客户端重定向特点&amp;nbsp;客户端重定向无法访问WEB-INF下的资源文件&amp;nbsp;客户端重定向的资源文件要使用完整路径&amp;nb">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-18T09:11:57.000Z">
+<meta property="article:modified_time" content="2020-04-26T02:50:05.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/af8b0d33/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>3.2.6页面转发 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/af8b0d33/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">3.2.6页面转发<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC3%E7%AB%A0%20Spring%20MVC%E7%9A%84%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/3.2%20@RequestMapping%E6%B3%A8%E8%A7%A3/3.2.6%E9%A1%B5%E9%9D%A2%E8%BD%AC%E5%8F%91.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-18 09:11:57" itemprop="dateCreated datePublished" datetime="2019-08-18T09:11:57+00:00">2019-08-18</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-26 02:50:05" itemprop="dateModified" datetime="2020-04-26T02:50:05+00:00">2020-04-26</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC3%E7%AB%A0-Spring-MVC%E7%9A%84%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第3章 Spring MVC的常用注解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC3%E7%AB%A0-Spring-MVC%E7%9A%84%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/3-2-RequestMapping%E6%B3%A8%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">3.2 @RequestMapping注解</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/af8b0d33/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/af8b0d33/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/af8b0d33/#3-2-6-页面转发" class="header_1">3.2.6 页面转发</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#1-转发到JSP页面" class="header_2">1. 转发到JSP页面</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#请求处理方法返回值是字符串的情况" class="header_3">请求处理方法返回值是字符串的情况</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#服务器内部跳转" class="header_4">服务器内部跳转</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向" class="header_4">客户端重定向</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#请求处理方法返回值是ModelAndView的情况" class="header_3">请求处理方法返回值是ModelAndView的情况</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#服务器内部跳转" class="header_4">服务器内部跳转</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向" class="header_4">客户端重定向</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向特点" class="header_3">客户端重定向特点</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向无法访问WEB-INF下的资源文件" class="header_4">客户端重定向无法访问WEB-INF下的资源文件</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向的资源文件要使用完整路径" class="header_4">客户端重定向的资源文件要使用完整路径</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#2-转发到控制器的请求处理方法" class="header_2">2. 转发到控制器的请求处理方法</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#请求处理方法的返回值是字符串的情况" class="header_3">请求处理方法的返回值是字符串的情况</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#服务器内部跳转到另一个请求处理方法" class="header_4">服务器内部跳转到另一个请求处理方法</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向到另一个请求处理方法" class="header_4">客户端重定向到另一个请求处理方法</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#请求处理方法的返回值是ModelAndView对象时" class="header_3">请求处理方法的返回值是ModelAndView对象时</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#服务器内部跳转到另一个请求处理方法" class="header_4">服务器内部跳转到另一个请求处理方法</a>&nbsp;<br><a href="/JavaReadingNotes/af8b0d33/#客户端重定向到另一个请求处理方法" class="header_4">客户端重定向到另一个请求处理方法</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="3-2-6-页面转发"><a href="#3-2-6-页面转发" class="headerlink" title="3.2.6 页面转发"></a>3.2.6 页面转发</h1><p>在<code>JSP</code>中页面转发有两种情况:服务器内部跳转(<code>forward</code>)和客户端重定向(<code>redirect</code>)。 <code>Spring MVC</code>选择页面转发的方式也非常简单。</p>
+<h2 id="1-转发到JSP页面"><a href="#1-转发到JSP页面" class="headerlink" title="1. 转发到JSP页面"></a>1. 转发到JSP页面</h2><h3 id="请求处理方法返回值是字符串的情况"><a href="#请求处理方法返回值是字符串的情况" class="headerlink" title="请求处理方法返回值是字符串的情况"></a>请求处理方法返回值是字符串的情况</h3><h4 id="服务器内部跳转"><a href="#服务器内部跳转" class="headerlink" title="服务器内部跳转"></a>服务器内部跳转</h4><p>若请求处理方法<strong>返回字符串</strong>,默认使用服务器内部跳转( <code>forward</code>)。示例代码如下:<br><code>return &quot;main&quot;;</code></p>
+<h4 id="客户端重定向"><a href="#客户端重定向" class="headerlink" title="客户端重定向"></a>客户端重定向</h4><p>如果希望客户端重定向(<code>redirect</code>),在返回的字符串前面加上<code>&quot;redirect:/&quot;</code>。示例代码如下:<br><code>return &quot;redirect:/main.jsp&quot;;</code></p>
+<h3 id="请求处理方法返回值是ModelAndView的情况"><a href="#请求处理方法返回值是ModelAndView的情况" class="headerlink" title="请求处理方法返回值是ModelAndView的情况"></a>请求处理方法返回值是ModelAndView的情况</h3><h4 id="服务器内部跳转-1"><a href="#服务器内部跳转-1" class="headerlink" title="服务器内部跳转"></a>服务器内部跳转</h4><p>若请求处理方法返回<code>ModelAndView</code>,则可以使用<code>setViewName</code>方法来说设置要转发的页面,如果直接传入字符串参数,则使用服务器内部跳转(<code>forward</code>)。示例代码如下:<br><code>mv.setViewName(&quot;main&quot;);</code></p>
+<h4 id="客户端重定向-1"><a href="#客户端重定向-1" class="headerlink" title="客户端重定向"></a>客户端重定向</h4><p>如果在字符串前面加上<code>redirect:/</code>,则表示使用客户端重定向(<code>redirect</code>)。示例代码如下:<br><code>mv.setViewName(&quot;redirect:/main.jsp&quot;);</code></p>
+<h3 id="客户端重定向特点"><a href="#客户端重定向特点" class="headerlink" title="客户端重定向特点"></a>客户端重定向特点</h3><h4 id="客户端重定向无法访问WEB-INF下的资源文件"><a href="#客户端重定向无法访问WEB-INF下的资源文件" class="headerlink" title="客户端重定向无法访问WEB-INF下的资源文件"></a>客户端重定向无法访问WEB-INF下的资源文件</h4><p>需要注意的是,由于<strong>客户端重定向(<code>redirect</code>)相当于在浏览器重新发请求</strong>,所以不能访问<code>WEB-INF</code>下的资源文件,而且也必须写资源文件后缀名,即<code>.jsp</code>。</p>
+<h4 id="客户端重定向的资源文件要使用完整路径"><a href="#客户端重定向的资源文件要使用完整路径" class="headerlink" title="客户端重定向的资源文件要使用完整路径"></a>客户端重定向的资源文件要使用完整路径</h4><p>因为此时<code>springmvc-config.xml</code>文件的视图解析器设置的<code>前缀</code>和<code>后缀</code>都将无效,所以该资源文件要使用完整的路径。</p>
+<h2 id="2-转发到控制器的请求处理方法"><a href="#2-转发到控制器的请求处理方法" class="headerlink" title="2. 转发到控制器的请求处理方法"></a>2. 转发到控制器的请求处理方法</h2><h3 id="请求处理方法的返回值是字符串的情况"><a href="#请求处理方法的返回值是字符串的情况" class="headerlink" title="请求处理方法的返回值是字符串的情况"></a>请求处理方法的返回值是字符串的情况</h3><h4 id="服务器内部跳转到另一个请求处理方法"><a href="#服务器内部跳转到另一个请求处理方法" class="headerlink" title="服务器内部跳转到另一个请求处理方法"></a>服务器内部跳转到另一个请求处理方法</h4><p>若请求处理方法返回<strong>字符串</strong>,在返回的字符串前面加上<code>&quot;forward:/&quot;</code>,例如<code>return &quot;forward:/main&quot;;</code>,则服务器内部跳转到名为<code>main</code>的请求处理方法。</p>
+<h4 id="客户端重定向到另一个请求处理方法"><a href="#客户端重定向到另一个请求处理方法" class="headerlink" title="客户端重定向到另一个请求处理方法"></a>客户端重定向到另一个请求处理方法</h4><p>若请求处理方法返回<strong>字符串</strong>,在返回的字符串前面加上<code>&quot;redirect:/&quot;</code>,例如<code>return &quot;redirect:/main&quot;;</code>,则客户端重定向到名为<code>main</code>的请求处理方法。</p>
+<h3 id="请求处理方法的返回值是ModelAndView对象时"><a href="#请求处理方法的返回值是ModelAndView对象时" class="headerlink" title="请求处理方法的返回值是ModelAndView对象时"></a>请求处理方法的返回值是ModelAndView对象时</h3><p>若请求处理方法返回<code>ModelAndView</code>,调用<code>setViewName</code>方法设置需要转发的控制器,</p>
+<h4 id="服务器内部跳转到另一个请求处理方法-1"><a href="#服务器内部跳转到另一个请求处理方法-1" class="headerlink" title="服务器内部跳转到另一个请求处理方法"></a>服务器内部跳转到另一个请求处理方法</h4><p>例如<code>mv.setViewName(&quot;forward:/main&quot;);</code>,则服务器内部跳转到名为<code>main</code>的请求处理方法。</p>
+<h4 id="客户端重定向到另一个请求处理方法-1"><a href="#客户端重定向到另一个请求处理方法-1" class="headerlink" title="客户端重定向到另一个请求处理方法"></a>客户端重定向到另一个请求处理方法</h4><p>例如<code>&quot;mv.setviewName(&quot;redirect:/main&quot;);</code>,则客户端重定向到名为<code>main</code>的请求处理方法。</p>
+<!--SSTStop-->
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/af8b0d33/" title="3.2.6页面转发">https://lanlan2017.github.io/JavaReadingNotes/af8b0d33/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/f91d001f/" rel="next" title="3.2.5 ModelAndView">
+                  <i class="fa fa-chevron-left"></i> 3.2.5 ModelAndView
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/b672b7a5/" rel="prev" title="3.3 @RequestParam注解">
+                  3.3 @RequestParam注解 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#3-2-6-页面转发"><span class="nav-text">3.2.6 页面转发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-转发到JSP页面"><span class="nav-text">1. 转发到JSP页面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#请求处理方法返回值是字符串的情况"><span class="nav-text">请求处理方法返回值是字符串的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务器内部跳转"><span class="nav-text">服务器内部跳转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端重定向"><span class="nav-text">客户端重定向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求处理方法返回值是ModelAndView的情况"><span class="nav-text">请求处理方法返回值是ModelAndView的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务器内部跳转-1"><span class="nav-text">服务器内部跳转</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端重定向-1"><span class="nav-text">客户端重定向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#客户端重定向特点"><span class="nav-text">客户端重定向特点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端重定向无法访问WEB-INF下的资源文件"><span class="nav-text">客户端重定向无法访问WEB-INF下的资源文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端重定向的资源文件要使用完整路径"><span class="nav-text">客户端重定向的资源文件要使用完整路径</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-转发到控制器的请求处理方法"><span class="nav-text">2. 转发到控制器的请求处理方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#请求处理方法的返回值是字符串的情况"><span class="nav-text">请求处理方法的返回值是字符串的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务器内部跳转到另一个请求处理方法"><span class="nav-text">服务器内部跳转到另一个请求处理方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端重定向到另一个请求处理方法"><span class="nav-text">客户端重定向到另一个请求处理方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#请求处理方法的返回值是ModelAndView对象时"><span class="nav-text">请求处理方法的返回值是ModelAndView对象时</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#服务器内部跳转到另一个请求处理方法-1"><span class="nav-text">服务器内部跳转到另一个请求处理方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#客户端重定向到另一个请求处理方法-1"><span class="nav-text">客户端重定向到另一个请求处理方法</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

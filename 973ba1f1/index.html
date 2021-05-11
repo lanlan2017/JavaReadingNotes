@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="13.4.3 使用 PreparedStatement执行SQL语句&amp;nbsp;注意&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{m">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.4.3 使用 PreparedStatement执行SQL语句">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/973ba1f1/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="13.4.3 使用 PreparedStatement执行SQL语句&amp;nbsp;注意&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{m">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-04T14:35:37.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/973ba1f1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>13.4.3 使用 PreparedStatement执行SQL语句 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/973ba1f1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">13.4.3 使用 PreparedStatement执行SQL语句<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC13%E7%AB%A0%20MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13.4%20%E6%89%A7%E8%A1%8CSQL%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%96%B9%E5%BC%8F/13.4.3%20%E4%BD%BF%E7%94%A8%20PreparedStatement%E6%89%A7%E8%A1%8CSQL%E8%AF%AD%E5%8F%A5.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-04 14:35:37" itemprop="dateCreated datePublished" datetime="2019-07-04T14:35:37+00:00">2019-07-04</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第13章 MySQL数据库与JDBC编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13-4-%E6%89%A7%E8%A1%8CSQL%E8%AF%AD%E5%8F%A5%E7%9A%84%E6%96%B9%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">13.4 执行SQL语句的方式</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/973ba1f1/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/973ba1f1/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/973ba1f1/#13-4-3-使用-PreparedStatement执行SQL语句" class="header_1">13.4.3 使用 PreparedStatement执行SQL语句</a>&nbsp;<br><a href="/JavaReadingNotes/973ba1f1/#注意" class="header_2">注意</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="13-4-3-使用-PreparedStatement执行SQL语句"><a href="#13-4-3-使用-PreparedStatement执行SQL语句" class="headerlink" title="13.4.3 使用 PreparedStatement执行SQL语句"></a>13.4.3 使用 PreparedStatement执行SQL语句</h1><p>如果经常需要反复执行一条结构相似的<code>SQL</code>语句,例如如下两条<code>SQL</code>语句:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> student_table <span class="keyword">values</span>(<span class="literal">null</span>, <span class="string">'张三'</span>, <span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> student_table <span class="keyword">values</span>(<span class="literal">null</span>, <span class="string">'李四'</span>, <span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>对于这两条<code>SQL</code>语句而言,它们的结构基本相似,只是执行插入时插入的值不同而已。对于这种情况,可以使用带<code>占位符</code>(<code>?</code>)参数的<code>SQL</code>语句来代替它:<br><code>insert into student_table values(null,?,?);</code><br>但<code>Statement</code>执行<code>SQL</code>语句时不允许使用问号占位符参数,而且这个问号占位符参数必须获得值后以执行。为了满足这种功能,<code>JDBC</code>提供了<code>PreparedStatement</code>接口,它是<code>Statement</code>接口的子接口,它可以预编译<code>SQL</code>语句,<strong>预编译后的<code>SQL</code>语句被存储在<code>PreparedStatement</code>对象中,然后可以使用该对象多次高效地执行该语句</strong>。简而言之,<strong>使用<code>PreparedStatement</code>比使用<code>Statement</code>的效率要高</strong>。<br>创建<code>PreparedStatement</code>对象使用<code>Connection</code>的<code>prepareStatement()</code>方法,该方法需要传入一个<code>SQL</code>字符串,该<code>SQL</code>字符串可以包含<code>占位符</code>参数。如下代码所示:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pstmt=conn.prepareStatement(<span class="string">"insert into student_table values (null,?,1)"</span>);</span><br></pre></td></tr></table></figure>
+<p><code>PreparedStatement</code>也提供了<code>execute()</code>、<code>executeUpdate()</code>、<code>executeQuery()</code>三个方法来执行<code>SQL</code>语句,不过这三个方法无须传入参数,因为<code>PreparedStatement</code>已存储了预编译的<code>SQL</code>语句。<br>使用<code>PreparedStatement</code>预编译<code>SQL</code>语句时,该<code>SQL</code>语句可以带<code>占位符</code>参数,因此在执行<code>SQL</code>语句之前必须为这些参数传入参数值, <code>Preparedstatement</code>提供了以下两种方式来传入参数值:</p>
+<ul>
+<li>如果程序知道预编译<code>SQL</code>语句中各参数的类型(如参数类型为<code>Xxx</code>),则使用<code>setXxx(int index, Xxx value)</code>方法来传入参数值。</li>
+<li>如果程序不清楚预编译<code>SQL</code>语句中各参数的类型,则可以使用<code>setObject()</code>方法来传入参数,由<code>PreparedStatement</code>来负责类型转换。</li>
+</ul>
+<p>下面程序示范了使用<code>Statement</code>和<code>PreparedStatement</code>分别插入100条记录的对比。使用<code>Statement</code>需要传入100条<code>SQL</code>语句,但使用<code>PreparedStatement</code>则只需要传入1条预编译的<code>SQL</code>语句,然后100次为该<code>PreparedStatement</code>的参数设值即可.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PreparedStatementTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String driver;</span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line">    <span class="keyword">private</span> String user;</span><br><span class="line">    <span class="keyword">private</span> String pass;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initParam</span><span class="params">(String paramFile)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 使用Properties类来加载属性文件</span></span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        props.load(<span class="keyword">new</span> FileInputStream(paramFile));</span><br><span class="line">        driver = props.getProperty(<span class="string">"driver"</span>);</span><br><span class="line">        url = props.getProperty(<span class="string">"url"</span>);</span><br><span class="line">        user = props.getProperty(<span class="string">"user"</span>);</span><br><span class="line">        pass = props.getProperty(<span class="string">"pass"</span>);</span><br><span class="line">        <span class="comment">// 1.加载驱动</span></span><br><span class="line">        Class.forName(driver);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insertUseStatement</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 2.获取数据库连接</span></span><br><span class="line">                Connection conn = DriverManager.getConnection(url, user, pass);</span><br><span class="line">                <span class="comment">// 3.使用Connection来创建一个Statment对象</span></span><br><span class="line">                Statement stmt = conn.createStatement())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 需要使用100条SQL语句来插入100条记录</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                stmt.executeUpdate(<span class="string">"insert into student_table values("</span></span><br><span class="line">                        + <span class="string">" null ,'姓名"</span> + i + <span class="string">"' , 1)"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(</span><br><span class="line">                    <span class="string">"使用Statement费时:"</span> + (System.currentTimeMillis() - start));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insertUsePrepare</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">long</span> start = System.currentTimeMillis();</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 2.获取数据库连接</span></span><br><span class="line">                Connection conn = DriverManager.getConnection(url, user, pass);</span><br><span class="line">                <span class="comment">// 3.使用Connection来创建一个PreparedStatement对象</span></span><br><span class="line">                PreparedStatement pstmt = conn.prepareStatement(</span><br><span class="line">                        <span class="string">"insert into student_table values(null,?,1)"</span>))</span><br><span class="line"></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 100次为PreparedStatement的参数设值，就可以插入100条记录</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                pstmt.setString(<span class="number">1</span>, <span class="string">"姓名"</span> + i);</span><br><span class="line">                pstmt.executeUpdate();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(<span class="string">"使用PreparedStatement费时:"</span></span><br><span class="line">                    + (System.currentTimeMillis() - start));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        PreparedStatementTest pt = <span class="keyword">new</span> PreparedStatementTest();</span><br><span class="line">        pt.initParam(<span class="string">"mysql.ini"</span>);</span><br><span class="line">        pt.insertUseStatement();</span><br><span class="line">        pt.insertUsePrepare();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多次运行上面程序,可以发现使用<code>PreparedStatement</code>插入100条记录所用的时间比使用<code>Statement</code>插入100条记录所用的时间少,这表明**<code>PreparedStatement</code>的执行效率比<code>Statement</code>的执行效率高**。<br>除此之外,使用<code>PreparedStatement</code>还有一个优势——当<code>SQL</code>语句中要使用参数时,无须”拼接<code>SQL</code>字符串。而使用<code>Statement</code>则要”拼接”<code>SQL</code>字符串,这是相当容易出现错误的,尤其是当<code>SQL</code>语句中有多个字符串参数时。使用<code>PreparedStatement</code>则只需要使用问号占位符来代替这些参数即可,降低了编程复杂度。<br>使用<code>PreparedStatement</code>还有一个很好的作用—用于防止<code>SQL</code>注入(<code>SQL</code>注入是一个较常见的<code>Cracker</code>入侵方式,它利用<code>SQL</code>语句的漏洞来入侵)。<br>下面以一个简单的登录窗口为例来介绍这种<code>SQL</code>注入的结果。下面登录窗口包含两个文本框,个用于输入用户名,一个用于输入密码,系统根据用户输入与<code>jdbc_test</code>表里的记录进行匹配,如果找到相应记录则提示登录成功.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> jdbc.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.awt.BorderLayout;</span><br><span class="line"><span class="keyword">import</span> java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> java.sql.Connection;</span><br><span class="line"><span class="keyword">import</span> java.sql.DriverManager;</span><br><span class="line"><span class="keyword">import</span> java.sql.ResultSet;</span><br><span class="line"><span class="keyword">import</span> java.sql.Statement;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"><span class="keyword">import</span> javax.swing.JButton;</span><br><span class="line"><span class="keyword">import</span> javax.swing.JFrame;</span><br><span class="line"><span class="keyword">import</span> javax.swing.JOptionPane;</span><br><span class="line"><span class="keyword">import</span> javax.swing.JTextField;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFrame</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String PROP_FILE = <span class="string">"mysql.ini"</span>;</span><br><span class="line">    <span class="keyword">private</span> String driver;</span><br><span class="line">    <span class="comment">// url是数据库的服务地址</span></span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line">    <span class="keyword">private</span> String user;</span><br><span class="line">    <span class="keyword">private</span> String pass;</span><br><span class="line">    <span class="comment">// 登录界面的GUI组件</span></span><br><span class="line">    <span class="keyword">private</span> JFrame jf = <span class="keyword">new</span> JFrame(<span class="string">"登录"</span>);</span><br><span class="line">    <span class="keyword">private</span> JTextField userField = <span class="keyword">new</span> JTextField(<span class="number">20</span>);</span><br><span class="line">    <span class="keyword">private</span> JTextField passField = <span class="keyword">new</span> JTextField(<span class="number">20</span>);</span><br><span class="line">    <span class="keyword">private</span> JButton loginButton = <span class="keyword">new</span> JButton(<span class="string">"登录"</span>);</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Properties connProp = <span class="keyword">new</span> Properties();</span><br><span class="line">        connProp.load(<span class="keyword">new</span> FileInputStream(PROP_FILE));</span><br><span class="line">        driver = connProp.getProperty(<span class="string">"driver"</span>);</span><br><span class="line">        url = connProp.getProperty(<span class="string">"url"</span>);</span><br><span class="line">        user = connProp.getProperty(<span class="string">"user"</span>);</span><br><span class="line">        pass = connProp.getProperty(<span class="string">"pass"</span>);</span><br><span class="line">        <span class="comment">// 加载驱动</span></span><br><span class="line">        Class.forName(driver);</span><br><span class="line">        <span class="comment">// 为登录按钮添加事件监听器</span></span><br><span class="line">        loginButton.addActionListener(e -&gt;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 登录成功则显示“登录成功”</span></span><br><span class="line">            <span class="keyword">if</span> (validate(userField.getText(), passField.getText()))</span><br><span class="line">            &#123;</span><br><span class="line">                JOptionPane.showMessageDialog(jf, <span class="string">"登录成功"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 否则显示“登录失败”</span></span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                JOptionPane.showMessageDialog(jf, <span class="string">"登录失败"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        jf.add(userField, BorderLayout.NORTH);</span><br><span class="line">        jf.add(passField);</span><br><span class="line">        jf.add(loginButton, BorderLayout.SOUTH);</span><br><span class="line">        jf.pack();</span><br><span class="line">        jf.setVisible(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">validate</span><span class="params">(String userName, String userPass)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 执行查询的SQL语句</span></span><br><span class="line">        String sql = <span class="string">"select * from jdbc_test "</span> + <span class="string">"where jdbc_name='"</span> + userName</span><br><span class="line">                + <span class="string">"' and jdbc_desc='"</span> + userPass + <span class="string">"'"</span>;</span><br><span class="line">        System.out.println(sql);</span><br><span class="line">        <span class="keyword">try</span> (Connection conn = DriverManager.getConnection(url, user, pass);</span><br><span class="line">                Statement stmt = conn.createStatement();</span><br><span class="line">                ResultSet rs = stmt.executeQuery(sql))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 如果查询的ResultSet里有超过一条的记录，则登录成功</span></span><br><span class="line">            <span class="keyword">if</span> (rs.next())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// private boolean validate(String userName, String userPass)</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">// try (Connection conn = DriverManager.getConnection(url, user, pass);</span></span><br><span class="line">    <span class="comment">// PreparedStatement pstmt = conn.prepareStatement(</span></span><br><span class="line">    <span class="comment">// "select * from jdbc_test where jdbc_name=? and jdbc_desc=?"))</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">// pstmt.setString(1, userName);</span></span><br><span class="line">    <span class="comment">// pstmt.setString(2, userPass);</span></span><br><span class="line">    <span class="comment">// try (ResultSet rs = pstmt.executeQuery())</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">// // 如果查询的ResultSet里有超过一条的记录，则登录成功</span></span><br><span class="line">    <span class="comment">// if (rs.next())</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">// return true;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// &#125; catch (Exception e)</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">// e.printStackTrace();</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="comment">// return false;</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> LoginFrame().init();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行上面程序,如果用户正常输入其用户名、密码当然没有问题,输入正确可以正常登录,输入错误将提示输入失败。但如果这个用户是一个<code>Cracker</code>,他可以在文本框中输入<code>&#39; or true or &#39;</code>,这个输入明显是不正确的,但当单击”登录”按钮后也会显示”登录成功”对话框。可以在程序运行的后台看到如下<code>SOL</code>语句:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from jdbc_test where jdbc_name='' or true or '' and jdbc_desc=''</span><br></pre></td></tr></table></figure>
+<p>看到这条<code>SQL</code>语句,读者应该不难明白为什么这样输入也可以显示”正常登录”对话框了,因为<code>Cracker</code>直接输入了<code>true</code>,而<code>SQL</code>把这个<code>true</code>当成了直接量。<br>如果把上面的<code>validate()</code>方法注释掉,然后取消另一个<code>validate()</code>方法的注释,换成使用<code>PreparedStatement</code>来执行验证.<br>这样,即使用户输入了:<code>&#39; or true or &#39;</code>,系统一样会显示”登录失败”对话框.<br>总体来看,使用<code>PreparedStatement</code>比使用<code>Statement</code>多了如下三个好处:</p>
+<ul>
+<li><code>PreparedStatement</code>预编译<code>SQL</code>语句,性能更好。</li>
+<li><code>PreparedStatement</code>无须”拼接”<code>SQL</code>语句,编程更简单。</li>
+<li><code>PreparedStatement</code>可以防止<code>SQL</code>注入,安全性更好。</li>
+</ul>
+<p>基于以上三点,通常推荐避免使用<code>Statement</code>来执行<code>SQL</code>语句,改为使用<code>PreparedStatement</code>执行<code>SQL</code>语句.</p>
+<h2 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h2><p>使用<code>PreparedStatement</code>执行带占位符参数的<code>SQL</code>语句时,<code>SQL</code>语句中的占位符参数只能代替普通值,不要使用占位符参数代替表名、列名等数据库对象,更不要用占位符参数来代替<code>SQL</code>语句中的<code>Insert</code>、 <code>select</code>等关键字。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/973ba1f1/" title="13.4.3 使用 PreparedStatement执行SQL语句">https://lanlan2017.github.io/JavaReadingNotes/973ba1f1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/8b945643/" rel="next" title="13.4.2 使用execute方法执行SQL语句">
+                  <i class="fa fa-chevron-left"></i> 13.4.2 使用execute方法执行SQL语句
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/50709bfb/" rel="prev" title="13.4.4 使用CallableStatement调用存储过程">
+                  13.4.4 使用CallableStatement调用存储过程 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-4-3-使用-PreparedStatement执行SQL语句"><span class="nav-text">13.4.3 使用 PreparedStatement执行SQL语句</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#注意"><span class="nav-text">注意</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

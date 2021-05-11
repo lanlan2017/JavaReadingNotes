@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="8.4.2 使用AspectJ实现AOP&amp;nbsp;1. 下载和安装AspectJ&amp;nbsp;如何下载AspectJ&amp;nbsp;如何安装AspectJ&amp;nbsp;AspectJ是纯绿色软件&amp;nbsp;2. AspectJ使用入门&amp;nbsp;程序示例&amp;nbsp;Hello.java&amp;nbsp;World.java&amp;nbsp;AspectJTest.java&amp;nbsp;AuthAspect.java&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.4.2 使用AspectJ实现AOP">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/8b759433/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="8.4.2 使用AspectJ实现AOP&amp;nbsp;1. 下载和安装AspectJ&amp;nbsp;如何下载AspectJ&amp;nbsp;如何安装AspectJ&amp;nbsp;AspectJ是纯绿色软件&amp;nbsp;2. AspectJ使用入门&amp;nbsp;程序示例&amp;nbsp;Hello.java&amp;nbsp;World.java&amp;nbsp;AspectJTest.java&amp;nbsp;AuthAspect.java&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/3.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/4.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/5.png">
+<meta property="article:published_time" content="2019-09-03T17:49:27.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/3.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/8b759433/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>8.4.2 使用AspectJ实现AOP | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/8b759433/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">8.4.2 使用AspectJ实现AOP<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC8%E7%AB%A0%20%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8.4%20Spring%E7%9A%84AOP/8.4.2%20%E4%BD%BF%E7%94%A8AspectJ%E5%AE%9E%E7%8E%B0AOP.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-03 17:49:27" itemprop="dateCreated datePublished" datetime="2019-09-03T17:49:27+00:00">2019-09-03</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/" itemprop="url" rel="index"><span itemprop="name">第8章 深入使用Spring</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8-4-Spring%E7%9A%84AOP/" itemprop="url" rel="index"><span itemprop="name">8.4 Spring的AOP</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/8b759433/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/8b759433/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/8b759433/#8-4-2-使用AspectJ实现AOP" class="header_1">8.4.2 使用AspectJ实现AOP</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#1-下载和安装AspectJ" class="header_1">1. 下载和安装AspectJ</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#如何下载AspectJ" class="header_2">如何下载AspectJ</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#如何安装AspectJ" class="header_2">如何安装AspectJ</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AspectJ是纯绿色软件" class="header_2">AspectJ是纯绿色软件</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#2-AspectJ使用入门" class="header_1">2. AspectJ使用入门</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#程序示例" class="header_1">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#Hello-java" class="header_2">Hello.java</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#World-java" class="header_2">World.java</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AspectJTest-java" class="header_2">AspectJTest.java</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AuthAspect-java" class="header_2">AuthAspect.java</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#LogAspect-java" class="header_2">LogAspect.java</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#TxAspect-java" class="header_2">TxAspect.java</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AspectJ的作用" class="header_2">AspectJ的作用</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AspectJ在编译时增强类的功能" class="header_2">AspectJ在编译时增强类的功能</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AOP达到的效果" class="header_2">AOP达到的效果</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#AOP实现分类" class="header_2">AOP实现分类</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#静态AOP性能好需要编译器" class="header_3">静态AOP性能好需要编译器</a>&nbsp;<br><a href="/JavaReadingNotes/8b759433/#Spring-AOP" class="header_3">Spring AOP</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="8-4-2-使用AspectJ实现AOP"><a href="#8-4-2-使用AspectJ实现AOP" class="headerlink" title="8.4.2 使用AspectJ实现AOP"></a>8.4.2 使用AspectJ实现AOP</h1><p><code>AspectJ</code>是一个基于<code>Java</code>语言的<code>AOP</code>框架,提供了强大的<code>AOP</code>功能,其他很多<code>AOP</code>框架都借鉴或采纳其中的一些思想。由于<code>Spring</code>的<code>AOP</code>与<code>AspectJ</code>进行了很好的集成,因此掌握<code>AspectJ</code>是学习<code>Spring AOP</code>的基础。<br><code>AspectJ</code>是<code>Java</code>语言的一个<code>AOP</code>实现,其主要包括两个部分:</p>
+<ul>
+<li>一个部分定义了如何表达、定义<code>AOP</code>编程中的语法规范,通过这套语法规范,可以方便地用<code>AOP</code>来解决<code>Java</code>语言中存在的交叉关注点的问题;</li>
+<li>另一个部分是工具部分,包括编译器、调试工具等。</li>
+</ul>
+<p><code>AspectJ</code>是最早的、功能比较强大的<code>AOP</code>实现之一,对整套<code>AOP</code>机制都有较好的实现,很多其他语言的<code>AOP</code>实现,也借鉴或采纳了<code>AspectJ</code>中的很多设计。在<code>Java</code>领域, <code>AspectJ</code>中的很多语法结构基本上已成为<code>AOP</code>领域的标准。<br>从<code>Spring2.0</code>开始, <code>Spring AOP</code>已经引入了对<code>AspectJ</code>的支持,并允许直接使用<code>AspectJ</code>进行<code>AOP</code>编程,而<code>Spring</code>自身的<code>AOP API</code>也努力与<code>Aspect</code>保持一致。因此,学习<code>Spring AOP</code>就必然需要从<code>AspectJ</code>开始,因为它是<code>Jawa</code>领域最流行的<code>AOP</code>解决方案。即使不用<code>Spring</code>框架,也可以直接使用<code>AspectJ</code>进行<code>AOP</code>编程。<br><code>AspectJ</code>是<code>Eclipse</code>下面的一个开源子项目,其最新的<code>1.9.0RC2</code>版本(1.9系列才支持<code>Java9)</code>于2017年11月9日发布,这也是本书所使用的<code>Aspect</code>版本。</p>
+<h1 id="1-下载和安装AspectJ"><a href="#1-下载和安装AspectJ" class="headerlink" title="1. 下载和安装AspectJ"></a>1. 下载和安装AspectJ</h1><!--replace:aspectj=aspect j&aspectjrt=aspect j r t-->
+
+<p>下载和安装<code>AspectJ</code>请按如下步骤进行。</p>
+<h2 id="如何下载AspectJ"><a href="#如何下载AspectJ" class="headerlink" title="如何下载AspectJ"></a>如何下载AspectJ</h2><ol>
+<li>登录<a href="http://www.eclipse.org/aspectj/downloads.php" target="_blank" rel="noopener">AspectJ站点</a>,下载<code>Aspect</code>的最新版本1.9.x,本书下载<code>AspectJ1.9.0.RC2</code>版本。</li>
+<li>下载完成后得到一个<code>aspectj-1.9.0.RC2.jar</code>文件,该文件名中的1.9.0表示<code>AspectJ</code>的版本号。</li>
+</ol>
+<h2 id="如何安装AspectJ"><a href="#如何安装AspectJ" class="headerlink" title="如何安装AspectJ"></a>如何安装AspectJ</h2><ol>
+<li>启动命令行窗口,进入<code>aspectj-19.0.RC2.jar</code>文件所在的路径,输入命令: <code>java -jar aspectj-19.0.RC2.jar</code>,将看到如图8.5所示的对话框。<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/3.png" alt="这里有一张图片"></li>
+<li>单击<code>&quot;Next&quot;</code>按钮,系统将出现如图8.6所示的对话框,该对话框用于选择<code>JDK</code>安装路径.、<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/4.png" alt="这里有一张图片"></li>
+<li>如果<code>JDK</code>安装路径正确,则直接单击<code>&quot;Next&quot;</code>按钮;否则应该通过右边的<code>&quot;Browse&quot;</code>按钮来选择<code>JDK</code>安装路径。正确选择了<code>JDK</code>安装路径后单击<code>&quot;Next&quot;</code>按钮,系统将出现如图8.7所示的对话框,该对话框用于选择<code>AspectJ</code>的安装路径。<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/QingLiangJiJavaEEQiYeYingYongShiZhan5/ch8/5.png" alt="这里有一张图片"></li>
+<li>选择了合适的安装路径后,单击<code>&quot;Install&quot;</code>按钮,程序开始安装<code>AspectJ</code>,安装结束后出现一个对话框,单击该对话框中的<code>&quot;Next&quot;</code>按钮,将弹出安装完成对话框,如图8.8所示。</li>
+<li>正如图8.8中所提示的,安装了<code>AspectJ</code>之后,系统还应该将<code>AspectJ</code>安装目录下的<code>bin</code>路径添加到<code>PATH</code>环境变量中,将<code>AspectJ</code>安装目录下的<code>lib</code>目录下的<code>aspectjrt.jar</code>添加到<code>CLASSPATH</code>环境变量中。<ol>
+<li><code>Aspect</code>提供了编译、运行<code>Aspect</code>的一些工具命令,这些工具命令放在<code>AspectJ</code>的<code>bin</code>路径下,而<code>lib</code>路径下的<code>aspectjrt.jar</code>则是<code>Aspect</code>.的运行时环境,所以需要分别添加这两个环境变量——就像安装了<code>JDK</code>也需要添加环境变量一样.</li>
+</ol>
+</li>
+</ol>
+<h2 id="AspectJ是纯绿色软件"><a href="#AspectJ是纯绿色软件" class="headerlink" title="AspectJ是纯绿色软件"></a>AspectJ是纯绿色软件</h2><p>本书没有将<code>Aspect</code>安装在<code>C盘</code>,这是因为<code>AspectJ</code>是”纯绿色”软件,安装<code>Aspect</code>的实质是解压缩了一个压缩包,并不需要向<code>Windows</code>注册表、系统路径里添加任何”垃圾”信息,因此保留<code>Aspect</code>安装后的文件夹,即使以后重装<code>Windows</code>系统, <code>AspectJ</code>也不会受到任何影响。</p>
+<h1 id="2-AspectJ使用入门"><a href="#2-AspectJ使用入门" class="headerlink" title="2. AspectJ使用入门"></a>2. AspectJ使用入门</h1><p>成功安装了<code>AspectJ</code>之后,将会在<code>AspectJ</code>的安装路径中看到如下文件结构。</p>
+<ol>
+<li><code>bin</code>:该路径下存放了<code>aj</code>、<code>aj5</code>、<code>ajc</code>、 <code>ajdoc</code>、 <code>ajbrowser</code>等命令,其中<code>ajc</code>命令最常用,它的作用类似于<code>Javac</code>,用于对普通的<code>Java</code>类进行编译时增强</li>
+<li><code>docs</code>:该路径下存放了<code>AspectJ</code>的使用说明、参考手册、<code>API</code>文档等文档。</li>
+<li><code>lib</code>:该路径下的4个<code>JAR</code>文件是<code>AspectJ</code>的核心类库。</li>
+<li>相关授权文件。</li>
+</ol>
+<p>虽然<code>AspectJ</code>是<code>Eclipse</code>基金组织的开源项目,而且提供了<code>Eclipse</code>的<code>ADT</code>插件( <code>Aspect Development Tools)</code>来开发<code>AspectJ</code>应用,但<code>AspectJ</code>并不依赖于<code>Eclipse</code>工具。<br>实际上, <code>AspectJ</code>的用法非常简单,就像使用<code>JDK</code>编译、运行<code>Java</code>程序一样。</p>
+<!--SSTStop-->
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">G:\<span class="title">Desktop</span>\随书源码\轻量级<span class="title">Java</span> <span class="title">EE</span>企业应用实战(第5版)\<span class="title">codes</span>\08\8.4\<span class="title">AspectJQs</span></span></span><br><span class="line"><span class="function">├─<span class="title">AspectJTest.java</span></span></span><br><span class="line"><span class="function">├─<span class="title">AuthAspect.java</span></span></span><br><span class="line"><span class="function">├─<span class="title">Hello.java</span></span></span><br><span class="line"><span class="function">├─<span class="title">LogAspect.java</span></span></span><br><span class="line"><span class="function">├─<span class="title">TxAspect.java</span></span></span><br><span class="line"><span class="function">└─<span class="title">World.java</span></span></span><br></pre></td></tr></table></figure>
+<p>下面通过一个简单的程序来示范<code>AspectJ</code>的用法。</p>
+<h2 id="Hello-java"><a href="#Hello-java" class="headerlink" title="Hello.java"></a>Hello.java</h2><p>首先编写两个简单的<code>Java</code>类,这两个<code>Java</code>类用于模拟系统中的业务组件,实际上无论多少个类,<code>AspectJ</code>的处理方式都是一样的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个简单方法，模拟应用中的删除用户的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteUser</span><span class="params">(Integer id)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"执行Hello组件的deleteUser删除用户："</span> + id);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 定义一个addUser()方法，模拟应用中的添加用户的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">addUser</span><span class="params">(String name , String pass)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"执行Hello组件的addUser添加用户："</span> + name);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">20</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="World-java"><a href="#World-java" class="headerlink" title="World.java"></a>World.java</h2><p>另一个<code>World</code>组件类如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">World</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个简单方法，模拟应用中的业务逻辑方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"执行World组件的bar()方法"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面两个业务组件类总共定义了三个方法,用于模拟系统所包含的三个业务逻辑方法,实际上无论多少个方法, <code>AspectJ</code>的处理方式都是一样的。</p>
+<h2 id="AspectJTest-java"><a href="#AspectJTest-java" class="headerlink" title="AspectJTest.java"></a>AspectJTest.java</h2><p>下面使用一个主程序来模拟系统调用两个业务组件的三个业务方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.crazyit.app.service.Hello;</span><br><span class="line"><span class="keyword">import</span> org.crazyit.app.service.World;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AspectJTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Hello hello = <span class="keyword">new</span> Hello();</span><br><span class="line">        hello.addUser(<span class="string">"孙悟空"</span> , <span class="string">"7788"</span>);</span><br><span class="line">        hello.deleteUser(<span class="number">1</span>);</span><br><span class="line">        World world = <span class="keyword">new</span> World();</span><br><span class="line">        world.bar();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用最原始的<code>javac.exe</code>命令来编译这三个源程序:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">G:\<span class="title">Desktop</span>\随书源码\轻量级<span class="title">Java</span> <span class="title">EE</span>企业应用实战(第5版)\<span class="title">codes</span>\08\8.4\<span class="title">AspectJQs</span>&gt;<span class="title">javac</span> -<span class="title">d</span> . <span class="title">Hello.java</span></span></span><br><span class="line"><span class="function"><span class="title">G</span>:\<span class="title">Desktop</span>\随书源码\轻量级<span class="title">Java</span> <span class="title">EE</span>企业应用实战(第5版)\<span class="title">codes</span>\08\8.4\<span class="title">AspectJQs</span>&gt;<span class="title">javac</span> -<span class="title">d</span> . <span class="title">World.java</span></span></span><br><span class="line"><span class="function"><span class="title">G</span>:\<span class="title">Desktop</span>\随书源码\轻量级<span class="title">Java</span> <span class="title">EE</span>企业应用实战(第5版)\<span class="title">codes</span>\08\8.4\<span class="title">AspectJQs</span>&gt;<span class="title">javac</span> -<span class="title">d</span> . <span class="title">AspectJTest.java</span></span></span><br></pre></td></tr></table></figure>
+<p>然后使用<code>java.exe</code>命令来执行<code>AspectJTest</code>类,程序输出如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">G:\<span class="title">Desktop</span>\随书源码\轻量级<span class="title">Java</span> <span class="title">EE</span>企业应用实战(第5版)\<span class="title">codes</span>\08\8.4\<span class="title">AspectJQs</span>&gt;<span class="title">java</span> <span class="title">lee.AspectJTest</span></span></span><br><span class="line"><span class="function">执行<span class="title">Hello</span>组件的<span class="title">addUser</span>添加用户：孙悟空</span></span><br><span class="line"><span class="function">执行<span class="title">Hello</span>组件的<span class="title">deleteUser</span>删除用户：1</span></span><br><span class="line"><span class="function">执行<span class="title">World</span>组件的<span class="title">bar</span>()方法</span></span><br></pre></td></tr></table></figure>
+<p>假设现在客户要求在执行所有业务方法之前先执行权限检査,如果使用传统的编程方式,开发者必须先定义一个权限检査的方法,然后由此打开每个业务方法,并修改业务方法的源代码,增加调用权限检查的方法—但这种方式需要对所有业务组件中的每个业务方法都进行修改,因此不仅容易引入新的错误,而且维护成本相当大。</p>
+<h2 id="AuthAspect-java"><a href="#AuthAspect-java" class="headerlink" title="AuthAspect.java"></a>AuthAspect.java</h2><p>如果使用<code>AspectJ</code>的<code>AOP</code>支持,则只要添加如下特殊的<code>&quot;Java类&quot;</code>即可:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.aspect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> aspect AuthAspect</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 指定在执行org.crazyit.app.service包中任意类的、任意方法 之前 执行下面代码块</span></span><br><span class="line">    <span class="comment">// 第一个星号表示返回值不限；第二个星号表示类名不限；</span></span><br><span class="line">    <span class="comment">// 第三个星号表示方法名不限；圆括号中..代表任意个数、类型不限的形参</span></span><br><span class="line">    before(): execution(* org.crazyit.app.service.*.*(..))</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">"模拟进行权限检查..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可能读者已经发现了,上面的类文件中不是使用<code>class</code>、 <code>interface</code>、<code>enum</code>定义<code>Java</code>类,而是使用了<code>aspect</code>难道<code>Java</code>又新增了关键字?没有!上面的<code>AuthAspect</code>根本不是一个<code>Java</code>类,所以<code>aspect</code>也不是<code>Java</code>支持的关键字,它只是<code>AspectJ</code>才能识别的关键字。<br>上面的代码也不是方法,它只是指定在执行某些类的某些方法之前, <code>AspectJ</code>将会自动先调用该代码块中的代码。<br>正如前面提到的,<code>Java</code>无法识别<code>AuthAspect.java</code>文件的内容,所以要使用<code>ajc.bat</code>命令来编译上面的<code>Java</code>程序.</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ajc -<span class="number">1</span>.<span class="number">8</span> -d . *.java</span><br></pre></td></tr></table></figure>
+<p>可以把<code>ajc.bat</code>理解成增强版的<code>javac.exe</code>命令,都用于编译<code>Java</code>程序,区别是<code>ajc.bat</code>命令可识别<code>AspectJ</code>的语法。</p>
+<p>由于<code>ajc</code>命令默认兼容<code>JDK1.4</code>源代码,因此它默认不支持自动装箱、自动拆箱等功能。所以上面使用该命令时指定了<code>-1.8</code>选项,表明让<code>ajc</code>命令兼容<code>JDK1.8</code>。<br>运行该<code>AspectJTest</code>类依然无须任何改变,还是使用如下命令运行<code>AspectJTest</code>类:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java lee.AspectJTest</span><br></pre></td></tr></table></figure>
+<p>运行该程序,将看到一个令人惊喜的结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">G:\<span class="title">Desktop</span>\<span class="title">Test</span>\<span class="title">AspectJQs</span>&gt;<span class="title">mytree</span> <span class="title">f</span></span></span><br><span class="line"><span class="function"><span class="title">G</span>:\<span class="title">Desktop</span>\<span class="title">Test</span>\<span class="title">AspectJQs</span></span></span><br><span class="line"><span class="function">├─<span class="title">AspectJTest.java</span></span></span><br><span class="line"><span class="function">├─<span class="title">AuthAspect.java</span></span></span><br><span class="line"><span class="function">├─<span class="title">Hello.java</span></span></span><br><span class="line"><span class="function">└─<span class="title">World.java</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">G</span>:\<span class="title">Desktop</span>\<span class="title">Test</span>\<span class="title">AspectJQs</span>&gt;<span class="title">ajc</span> -1.8 -<span class="title">d</span> . *.<span class="title">java</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">G</span>:\<span class="title">Desktop</span>\<span class="title">Test</span>\<span class="title">AspectJQs</span>&gt;<span class="title">java</span> <span class="title">lee.AspectJTest</span></span></span><br><span class="line"><span class="function">模拟进行权限检查...</span></span><br><span class="line"><span class="function">执行<span class="title">Hello</span>组件的<span class="title">addUser</span>添加用户：孙悟空</span></span><br><span class="line"><span class="function">模拟进行权限检查...</span></span><br><span class="line"><span class="function">执行<span class="title">Hello</span>组件的<span class="title">deleteUser</span>删除用户：1</span></span><br><span class="line"><span class="function">模拟进行权限检查...</span></span><br><span class="line"><span class="function">执行<span class="title">World</span>组件的<span class="title">bar</span>()方法</span></span><br></pre></td></tr></table></figure>
+<p>从上面的运行结果来看,完全不需要对<code>Hello.java</code>、 <code>World.java</code>等业务组件进行任何修改,但同时又可以满足客户的需求—上面的程序只是在控制台打印了<code>&quot;模拟进行权限检査&quot;</code>这个字符串来模拟权限检查,实际上也可用实际的权限检查代码来代替这行简单的语句,这就可以满足客户需求了。</p>
+<h2 id="LogAspect-java"><a href="#LogAspect-java" class="headerlink" title="LogAspect.java"></a>LogAspect.java</h2><p>如果客户再次提出新需求,比如需要在执行所有的业务方法之后增加记录日志的功能,那也很简单,只要再定义一个<code>LogAspect</code>,程序如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.aspect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> aspect LogAspect</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 定义一个PointCut，其名为logPointcut，</span></span><br><span class="line">    <span class="comment">// 该Pointcut代表了后面给出的切入点表达式，这样可复用该切入点表达式</span></span><br><span class="line">    <span class="function">pointcut <span class="title">logPointcut</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        :<span class="title">execution</span><span class="params">(* org.crazyit.app.service.*.*(..)</span>)</span>;</span><br><span class="line">    after():logPointcut()</span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(<span class="string">"模拟记录日志..."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的粗体字代码定义了一个<code>pointcut logPointcut()</code>,这种用法就是为后面的切入点表达式起个名字,方便后面复用这个切入点表达式—假如程序中有多个代码块需要使用该切入点表达式,这些代码块都可直接复用此处定义的<code>logPointcut</code>,,而不是重复书写烦琐的切入点表达式。<br>再次使用如下命令来编译上面的<code>Java</code>程序:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ajc -<span class="number">1</span>.<span class="number">8</span> -d . *.java</span><br></pre></td></tr></table></figure>
+<p>再次运行<code>lee.AspectJTest</code>类,将看到如下运行结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">G:\<span class="title">Desktop</span>\<span class="title">Test</span>\<span class="title">AspectJQs</span>&gt;<span class="title">ajc</span> -1.8 -<span class="title">d</span> . *.<span class="title">java</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">G</span>:\<span class="title">Desktop</span>\<span class="title">Test</span>\<span class="title">AspectJQs</span>&gt;<span class="title">java</span> <span class="title">lee.AspectJTest</span></span></span><br><span class="line"><span class="function">模拟进行权限检查...</span></span><br><span class="line"><span class="function">执行<span class="title">Hello</span>组件的<span class="title">addUser</span>添加用户：孙悟空</span></span><br><span class="line"><span class="function">模拟记录日志...</span></span><br><span class="line"><span class="function">模拟进行权限检查...</span></span><br><span class="line"><span class="function">执行<span class="title">Hello</span>组件的<span class="title">deleteUser</span>删除用户：1</span></span><br><span class="line"><span class="function">模拟记录日志...</span></span><br><span class="line"><span class="function">模拟进行权限检查...</span></span><br><span class="line"><span class="function">执行<span class="title">World</span>组件的<span class="title">bar</span>()方法</span></span><br><span class="line"><span class="function">模拟记录日志...</span></span><br></pre></td></tr></table></figure>
+<h2 id="TxAspect-java"><a href="#TxAspect-java" class="headerlink" title="TxAspect.java"></a>TxAspect.java</h2><p>假如现在需要在业务组件的所有业务方法之前启动事务,并在方法执行结束时关闭事务,同样只要定义如下<code>TXAspect</code>即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.aspect;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> aspect TxAspect</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// 指定在执行org.crazyit.app.service包中任意类的、任意方法时执行下面代码块</span></span><br><span class="line">    <span class="function">Object <span class="title">around</span><span class="params">()</span>:<span class="title">call</span><span class="params">(* org.crazyit.app.service.*.*(..)</span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"== 模拟开启事务..."</span>);</span><br><span class="line">        <span class="comment">// 回调原来的目标方法</span></span><br><span class="line">        Object rvt = proceed();</span><br><span class="line">        System.out.println(<span class="string">"== 模拟结束事务..."</span>);</span><br><span class="line">        <span class="keyword">return</span> rvt;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码:<code>Object rvt = proceed();</code>指定<code>proceed</code>代表回调原来的目标方法,这样位于<code>proceed</code>代码之前的代码就会被添加在目标方法之前,位于<code>proceed</code>代码之后的代码就会被添加在目标方法之后。</p>
+<p>如果再次使用<code>ajc.bat</code>命令来编译上面所有的<code>Java</code>类,并执行<code>lee.AspectJTest</code>,此时将会发现系统中两个业务组件所包含的业务方法已经变得”十分强大”了,但并未修改过<code>Hello.java</code>、 <code>World.java</code>的源代码</p>
+<!--SSTStart-->
+<h2 id="AspectJ的作用"><a href="#AspectJ的作用" class="headerlink" title="AspectJ的作用"></a>AspectJ的作用</h2><p>这就是**<code>AspectJ</code>的作用:开发者无须修改源代码,但又可以为这些组件的方法添加新的功能。**</p>
+<h2 id="AspectJ在编译时增强类的功能"><a href="#AspectJ在编译时增强类的功能" class="headerlink" title="AspectJ在编译时增强类的功能"></a>AspectJ在编译时增强类的功能</h2><p>如果读者安装过<code>Java</code>的反编译工具,则可以反编译前面程序生成的<code>Hello.class</code>、 <code>World.class</code>文件,将发现该<code>Hello.class</code>、 <code>World.class</code>文件不是由<code>Hello.java</code>、 <code>World.java</code>文件编译得到的,<code>Hello.class</code>,<code>World.class</code>里新增了很多内容,这表明<code>AspectJ</code>在编译时已增强了<code>Hello.class</code>, <code>World.class</code>类的功能,因此<code>AspectJ</code>通常被称为编译时增强的<code>AOP</code>框架。</p>
+<h2 id="AOP达到的效果"><a href="#AOP达到的效果" class="headerlink" title="AOP达到的效果"></a>AOP达到的效果</h2><p><code>AOP</code>要达到的效果是,<strong>保证在程序员不修改源代码的前提下,为系统中业务组件的多个业务方法添加某种通用功能</strong>。但<code>AOP</code>的实际上依然要去修改业务组件的多个业务方法的源代码,只不过是这个修改由<code>AOP</code>框架完成的,不需要程序员手动修改。</p>
+<h2 id="AOP实现分类"><a href="#AOP实现分类" class="headerlink" title="AOP实现分类"></a>AOP实现分类</h2><p><code>AOP</code>实现按<code>AOP</code>框架修改源代码的时机可分为两类:</p>
+<ol>
+<li>静态<code>AOP</code>实现:<code>AOP</code>框架在编译阶段对程序进行修改,即实现对目标类的增强,生成静态的<code>AOP</code>代理类(生成的<code>*.class</code>文件已经被改掉了,需要使用特定的编译器)。这以<code>AspectJ</code>为代表。</li>
+<li>动态<code>AOP</code>实现:<code>AOP</code>框架在运行阶段动态生成<code>AOP</code>代理(在内存中以<code>JDK</code>动态代理或<code>cglib</code>动态地生成<code>AOP</code>代理类),以实现对目标对象的增强。这以<code>Spring AOP</code>为代表。</li>
+</ol>
+<h3 id="静态AOP性能好需要编译器"><a href="#静态AOP性能好需要编译器" class="headerlink" title="静态AOP性能好需要编译器"></a>静态AOP性能好需要编译器</h3><p>一般来说,静态<code>AOP</code>实现具有较好的性能,但需要使用特殊的编译器。动态<code>AOP</code>实现是纯<code>Java</code>实现,因此无须特殊的编译器,但是通常性能略差。</p>
+<h3 id="Spring-AOP"><a href="#Spring-AOP" class="headerlink" title="Spring AOP"></a>Spring AOP</h3><p><code>Spring AOP</code>就是动态<code>AOP</code>实现的代表, <code>Spring AOP</code>不需要在编译时对目标类进行增强,而是在运行时生成目标类的代理类,该代理类要么与目标类<code>实现相同的接口</code>,要么<code>作为目标类的子类</code>,总之,代理类都对目标类进行了增强处理</p>
+<ul>
+<li><code>实现相同的接口</code>方式是<code>JDK</code>动态代理的处理策略,</li>
+<li><code>作为目标类的子类</code>是<code>cglib</code>代理的处理策略。</li>
+</ul>
+<p>一般来说,编译时增强的<code>AOP</code>框架在性能上更有优势,因为运行时动态增强的<code>AOP</code>框架需要每次运行时都进行动态增强。</p>
+<p>可能有读者对<code>AspectJ</code>更深入的知识感兴趣,但本书的重点并不是介绍<code>AspectJ</code>,因此如果读者希望掌握如何定义<code>AspectJ</code>中的<code>Aspect</code>、 <code>Pointcut</code>等内容,可参考<code>AspectJ</code>安装路径下的<code>doc</code>目录里的<code>quick5.pdf</code>文件。</p>
+<!--SSTStop-->
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/8b759433/" title="8.4.2 使用AspectJ实现AOP">https://lanlan2017.github.io/JavaReadingNotes/8b759433/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/b16e076e/" rel="next" title="8.4 Spring的AOP 8.4.1 为什么需要AOP">
+                  <i class="fa fa-chevron-left"></i> 8.4 Spring的AOP 8.4.1 为什么需要AOP
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/2eb1cd6c/" rel="prev" title="8.4.3 AOP的基本概念">
+                  8.4.3 AOP的基本概念 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8-4-2-使用AspectJ实现AOP"><span class="nav-text">8.4.2 使用AspectJ实现AOP</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-下载和安装AspectJ"><span class="nav-text">1. 下载和安装AspectJ</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何下载AspectJ"><span class="nav-text">如何下载AspectJ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何安装AspectJ"><span class="nav-text">如何安装AspectJ</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AspectJ是纯绿色软件"><span class="nav-text">AspectJ是纯绿色软件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-AspectJ使用入门"><span class="nav-text">2. AspectJ使用入门</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Hello-java"><span class="nav-text">Hello.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#World-java"><span class="nav-text">World.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AspectJTest-java"><span class="nav-text">AspectJTest.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AuthAspect-java"><span class="nav-text">AuthAspect.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LogAspect-java"><span class="nav-text">LogAspect.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TxAspect-java"><span class="nav-text">TxAspect.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AspectJ的作用"><span class="nav-text">AspectJ的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AspectJ在编译时增强类的功能"><span class="nav-text">AspectJ在编译时增强类的功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOP达到的效果"><span class="nav-text">AOP达到的效果</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AOP实现分类"><span class="nav-text">AOP实现分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#静态AOP性能好需要编译器"><span class="nav-text">静态AOP性能好需要编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Spring-AOP"><span class="nav-text">Spring AOP</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

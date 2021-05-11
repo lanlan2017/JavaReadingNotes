@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="10.6.3 处理用户登录&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.6.3 处理用户登录">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/bef7b4b5/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="10.6.3 处理用户登录&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-11T19:33:50.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:57.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/bef7b4b5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>10.6.3 处理用户登录 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/bef7b4b5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">10.6.3 处理用户登录<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/5%20%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery%20AngularJS%20Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/%E7%AC%AC10%E7%AB%A0%20jQuery+Bootstrap%E6%95%B4%E5%90%88%E5%BC%80%E5%8F%91%20%E7%94%B5%E5%AD%90%E6%8B%8D%E5%8D%96%E7%B3%BB%E7%BB%9F/10.6%20%E5%89%8D%E7%AB%AF%E6%95%B4%E5%90%88%E5%BC%80%E5%8F%91/10.6.3%20%E5%A4%84%E7%90%86%E7%94%A8%E6%88%B7%E7%99%BB%E5%BD%95.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-11 19:33:50" itemprop="dateCreated datePublished" datetime="2019-08-11T19:33:50+00:00">2019-08-11</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:57" itemprop="dateModified" datetime="2020-02-07T01:34:57+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/5-%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery-AngularJS-Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" itemprop="url" rel="index"><span itemprop="name">5 疯狂前端开发讲义JQuery AngularJS Bootstrap前端开发实战</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/5-%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery-AngularJS-Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/%E7%AC%AC10%E7%AB%A0-jQuery-Bootstrap%E6%95%B4%E5%90%88%E5%BC%80%E5%8F%91-%E7%94%B5%E5%AD%90%E6%8B%8D%E5%8D%96%E7%B3%BB%E7%BB%9F/" itemprop="url" rel="index"><span itemprop="name">第10章 jQuery+Bootstrap整合开发 电子拍卖系统</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/5-%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery-AngularJS-Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/%E7%AC%AC10%E7%AB%A0-jQuery-Bootstrap%E6%95%B4%E5%90%88%E5%BC%80%E5%8F%91-%E7%94%B5%E5%AD%90%E6%8B%8D%E5%8D%96%E7%B3%BB%E7%BB%9F/10-6-%E5%89%8D%E7%AB%AF%E6%95%B4%E5%90%88%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">10.6 前端整合开发</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/bef7b4b5/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/bef7b4b5/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/bef7b4b5/#10-6-3-处理用户登录" class="header_1">10.6.3 处理用户登录</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="10-6-3-处理用户登录"><a href="#10-6-3-处理用户登录" class="headerlink" title="10.6.3 处理用户登录"></a>10.6.3 处理用户登录</h1><p>该系统有一些功能只有登录用户才能使用。如果用户单击页面上方的”登录”链接,链接上的事件处理函数将会在目标页面上装载<code>login.html</code>页面,该页面的内容主要是一个表单—该页面不需要有完整的页面内容,只要有表单部分即可。下面是该页面的代码。<br>程序清单：codes\10\auction\WebContent\login.html</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"js/login.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"container"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 登录界面  --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"page-header"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">h1</span>&gt;</span>用户登录<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">class</span>=<span class="string">"form-horizontal"</span> <span class="attr">method</span>=<span class="string">"post"</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- .form-group相当于.row对应响应式布局的一行 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-sm-6"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">placeholder</span>=<span class="string">"用户名/邮箱"</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">id</span>=<span class="string">"loginUser"</span> <span class="attr">name</span>=<span class="string">"loginUser"</span> <span class="attr">required</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">minlength</span>=<span class="string">"3"</span> <span class="attr">maxlength</span>=<span class="string">"10"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-sm-6"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">"form-control"</span> <span class="attr">placeholder</span>=<span class="string">"密码"</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">id</span>=<span class="string">"loginPass"</span> <span class="attr">type</span>=<span class="string">"password"</span> <span class="attr">name</span>=<span class="string">"loginPass"</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">required</span> <span class="attr">minlength</span>=<span class="string">"3"</span> <span class="attr">maxlength</span>=<span class="string">"10"</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-sm-6"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"input-group"</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">input</span> <span class="attr">class</span>=<span class="string">"form-control "</span> <span class="attr">id</span>=<span class="string">"vercode"</span></span></span><br><span class="line"><span class="tag">                        <span class="attr">name</span>=<span class="string">"vercode"</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">placeholder</span>=<span class="string">"验证码"</span></span></span><br><span class="line"><span class="tag">                        <span class="attr">required</span> <span class="attr">pattern</span>=<span class="string">"\w&#123;6&#125;"</span>&gt;</span> <span class="tag">&lt;<span class="name">span</span></span></span><br><span class="line"><span class="tag">                        <span class="attr">class</span>=<span class="string">"input-group-addon"</span> <span class="attr">id</span>=<span class="string">"basic-addon2"</span>&gt;</span></span><br><span class="line">                        验证码：<span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"auth.jpg"</span> <span class="attr">name</span>=<span class="string">"d"</span> <span class="attr">id</span>=<span class="string">"d"</span></span></span><br><span class="line"><span class="tag">                        <span class="attr">alt</span>=<span class="string">"验证码"</span> /&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">span</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"form-group"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"col-sm-6"</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"btn-group btn-group-justified"</span> <span class="attr">role</span>=<span class="string">"group"</span></span></span><br><span class="line"><span class="tag">                    <span class="attr">aria-label</span>=<span class="string">"..."</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"btn-group"</span> <span class="attr">role</span>=<span class="string">"group"</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"submit"</span> <span class="attr">id</span>=<span class="string">"loginBtn"</span></span></span><br><span class="line"><span class="tag">                            <span class="attr">class</span>=<span class="string">"btn btn-success"</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"glyphicon glyphicon-log-in"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="symbol">&amp;nbsp;</span>登录</span><br><span class="line">                        <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这个页面就是一个简单的表单,当用户单击页面上的”登录”按钮时,系统会触发登录处理。登录处理由页面上加载的<code>login.js</code>负责。浏览该页面可以看到如图10.11所示的登录界面。</p>
+<p>由图10.11可看到,系统登录使用了一个随机图形验证码。使用随机图形验证码是为了增加系统安全性,防止<code>Cracker</code>暴力破解。该图形验证码实质上就是一个<code>Servlet</code>,与普通的<code>Servlet</code>不同的是,该<code>Servlet</code>不生成文本内容,而是生成图形内容,其代码如下。<br>程序清单：codes\10\auction\src\org\crazyit\auction\web\AuthImg.java</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.auction.web;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.awt.Color;</span><br><span class="line"><span class="keyword">import</span> java.awt.Font;</span><br><span class="line"><span class="keyword">import</span> java.awt.Graphics;</span><br><span class="line"><span class="keyword">import</span> java.awt.image.BufferedImage;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="keyword">import</span> javax.imageio.ImageIO;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServlet;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletResponse;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpSession;</span><br><span class="line"></span><br><span class="line"><span class="meta">@WebServlet</span>(urlPatterns =&#123;<span class="string">"/auth.jpg"</span>&#125;)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AuthImg</span> <span class="keyword">extends</span> <span class="title">HttpServlet</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="comment">// 定义图形验证码中绘制字符的字体</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Font mFont = <span class="keyword">new</span> Font(<span class="string">"Arial Black"</span>, Font.PLAIN, <span class="number">16</span>);</span><br><span class="line">    <span class="comment">// 定义图形验证码的大小</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> IMG_WIDTH = <span class="number">100</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> IMG_HEIGTH = <span class="number">18</span>;</span><br><span class="line">    <span class="comment">// 定义一个获取随机颜色的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Color <span class="title">getRandColor</span><span class="params">(<span class="keyword">int</span> fc, <span class="keyword">int</span> bc)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">if</span> (fc &gt; <span class="number">255</span>)</span><br><span class="line">            fc = <span class="number">255</span>;</span><br><span class="line">        <span class="keyword">if</span> (bc &gt; <span class="number">255</span>)</span><br><span class="line">            bc = <span class="number">255</span>;</span><br><span class="line">        <span class="keyword">int</span> r = fc + random.nextInt(bc - fc);</span><br><span class="line">        <span class="keyword">int</span> g = fc + random.nextInt(bc - fc);</span><br><span class="line">        <span class="keyword">int</span> b = fc + random.nextInt(bc - fc);</span><br><span class="line">        <span class="comment">// 得到随机颜色</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Color(r, g, b);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 重写service方法，生成对客户端的响应</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">            HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException, IOException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 设置禁止缓存</span></span><br><span class="line">        response.setHeader(<span class="string">"Pragma"</span>, <span class="string">"No-cache"</span>);</span><br><span class="line">        response.setHeader(<span class="string">"Cache-Control"</span>, <span class="string">"no-cache"</span>);</span><br><span class="line">        response.setDateHeader(<span class="string">"Expires"</span>, <span class="number">0</span>);</span><br><span class="line">        response.setContentType(<span class="string">"image/jpeg"</span>);</span><br><span class="line">        BufferedImage image = <span class="keyword">new</span> BufferedImage(IMG_WIDTH, IMG_HEIGTH,</span><br><span class="line">                BufferedImage.TYPE_INT_RGB);</span><br><span class="line">        Graphics g = image.getGraphics();</span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line">        g.setColor(getRandColor(<span class="number">200</span>, <span class="number">250</span>));</span><br><span class="line">        <span class="comment">// 填充背景色</span></span><br><span class="line">        g.fillRect(<span class="number">1</span>, <span class="number">1</span>, IMG_WIDTH - <span class="number">1</span>, IMG_HEIGTH - <span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 为图形验证码绘制边框</span></span><br><span class="line">        g.setColor(<span class="keyword">new</span> Color(<span class="number">102</span>, <span class="number">102</span>, <span class="number">102</span>));</span><br><span class="line">        g.drawRect(<span class="number">0</span>, <span class="number">0</span>, IMG_WIDTH - <span class="number">1</span>, IMG_HEIGTH - <span class="number">1</span>);</span><br><span class="line">        g.setColor(getRandColor(<span class="number">160</span>, <span class="number">200</span>));</span><br><span class="line">        <span class="comment">// 生成随机干扰线</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">80</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> x = random.nextInt(IMG_WIDTH - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">int</span> y = random.nextInt(IMG_HEIGTH - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">int</span> xl = random.nextInt(<span class="number">6</span>) + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> yl = random.nextInt(<span class="number">12</span>) + <span class="number">1</span>;</span><br><span class="line">            g.drawLine(x, y, x + xl, y + yl);</span><br><span class="line">        &#125;</span><br><span class="line">        g.setColor(getRandColor(<span class="number">160</span>, <span class="number">200</span>));</span><br><span class="line">        <span class="comment">// 生成随机干扰线</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">80</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">int</span> x = random.nextInt(IMG_WIDTH - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">int</span> y = random.nextInt(IMG_HEIGTH - <span class="number">1</span>);</span><br><span class="line">            <span class="keyword">int</span> xl = random.nextInt(<span class="number">12</span>) + <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">int</span> yl = random.nextInt(<span class="number">6</span>) + <span class="number">1</span>;</span><br><span class="line">            g.drawLine(x, y, x - xl, y - yl);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 设置绘制字符的字体</span></span><br><span class="line">        g.setFont(mFont);</span><br><span class="line">        <span class="comment">// 用于保存系统生成的随机字符串</span></span><br><span class="line">        String sRand = <span class="string">""</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">6</span>; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            String tmp = getRandomChar();</span><br><span class="line">            sRand += tmp;</span><br><span class="line">            <span class="comment">// 获取随机颜色</span></span><br><span class="line">            g.setColor(<span class="keyword">new</span> Color(<span class="number">20</span> + random.nextInt(<span class="number">110</span>),</span><br><span class="line">                    <span class="number">20</span> + random.nextInt(<span class="number">110</span>), <span class="number">20</span> + random.nextInt(<span class="number">110</span>)));</span><br><span class="line">            <span class="comment">// 在图片上绘制系统生成的随机字符</span></span><br><span class="line">            g.drawString(tmp, <span class="number">15</span> * i + <span class="number">10</span>, <span class="number">15</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 获取HttpSesssion对象</span></span><br><span class="line">        HttpSession session = request.getSession(<span class="keyword">true</span>);</span><br><span class="line">        <span class="comment">// 将随机字符串放入HttpSesssion对象中</span></span><br><span class="line">        session.setAttribute(<span class="string">"rand"</span>, sRand);</span><br><span class="line">        g.dispose();</span><br><span class="line">        <span class="comment">// 向输出流中输出图片</span></span><br><span class="line">        ImageIO.write(image, <span class="string">"JPEG"</span>, response.getOutputStream());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 定义获取随机字符串方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> String <span class="title">getRandomChar</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 生成一个0、1、2的随机数字</span></span><br><span class="line">        <span class="keyword">int</span> rand = (<span class="keyword">int</span>) Math.round(Math.random() * <span class="number">2</span>);</span><br><span class="line">        <span class="keyword">long</span> itmp = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">char</span> ctmp = <span class="string">'\u0000'</span>;</span><br><span class="line">        <span class="keyword">switch</span> (rand)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 生成大写字母</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span> :</span><br><span class="line">                itmp = Math.round(Math.random() * <span class="number">25</span> + <span class="number">65</span>);</span><br><span class="line">                ctmp = (<span class="keyword">char</span>) itmp;</span><br><span class="line">                <span class="keyword">return</span> String.valueOf(ctmp);</span><br><span class="line">            <span class="comment">// 生成小写字母</span></span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span> :</span><br><span class="line">                itmp = Math.round(Math.random() * <span class="number">25</span> + <span class="number">97</span>);</span><br><span class="line">                ctmp = (<span class="keyword">char</span>) itmp;</span><br><span class="line">                <span class="keyword">return</span> String.valueOf(ctmp);</span><br><span class="line">            <span class="comment">// 生成数字</span></span><br><span class="line">            <span class="keyword">default</span> :</span><br><span class="line">                itmp = Math.round(Math.random() * <span class="number">9</span>);</span><br><span class="line">                <span class="keyword">return</span> itmp + <span class="string">""</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>编写完该<code>Servlet</code>后,使用<code>Annotation</code>将它的<code>URL</code>映射为<code>/auth.jsp</code>,这样即可在<code>HTML</code>页面中通过如下方式显示图形验证码:</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">name</span>=<span class="string">"d"</span> <span class="attr">src</span>=<span class="string">"auth.jsp"</span> <span class="attr">alt</span>=<span class="string">"验证码"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>图形验证码</code>与使用普通图片并没有太大的区别,唯一的区别是将原来指定普通图片的<code>src</code>属性改为指定图形验证码<code>Servlet</code>的<code>URL</code>。<br>处理用户登录的<code>login.js</code>代码如下。<br>程序清单：codes\10\auction\WebContent\js\login.js</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义登录的JS</span></span><br><span class="line"><span class="comment">// 文档加载完成以后进行异步登录</span></span><br><span class="line">$(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 取消对话框中两个按钮上绑定的事件处理函数</span></span><br><span class="line">    $(<span class="string">"#sure"</span>).unbind(<span class="string">"click"</span>);</span><br><span class="line">    $(<span class="string">"#cancelBn"</span>).unbind(<span class="string">"click"</span>);</span><br><span class="line">    $(<span class="string">".form-horizontal"</span>).submit(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="comment">// 发起异步登录</span></span><br><span class="line">        $.post(<span class="string">"auction/loginAjax"</span>, $(<span class="string">".form-horizontal"</span>).serializeArray()</span><br><span class="line">            , <span class="function"><span class="keyword">function</span> (<span class="params">data</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (data.error) &#123;</span><br><span class="line">                    $(<span class="string">"#tip"</span>).html(<span class="string">"&lt;span style='color:red;'&gt;"</span> + data.error + <span class="string">"&lt;/span&gt;"</span>);</span><br><span class="line">                    $(<span class="string">'#myModal'</span>).modal(<span class="string">'show'</span>);</span><br><span class="line">                    <span class="keyword">return</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">switch</span> (data) &#123;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">'-2'</span>: <span class="comment">// 验证码不正确</span></span><br><span class="line">                        $(<span class="string">"#tip"</span>).html(<span class="string">"&lt;span style='color:red;'&gt;您输入的验证码不正确，请重新输入&lt;/span&gt;"</span>);</span><br><span class="line">                        $(<span class="string">"#vercode"</span>).val(<span class="string">''</span>);</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">'-1'</span>: <span class="comment">// 用户名、密码不正确</span></span><br><span class="line">                        $(<span class="string">"#tip"</span>).html(<span class="string">"&lt;span style='color:red;'&gt;您输入的用户名、密码不正确，请重新输入&lt;/span&gt;"</span>);</span><br><span class="line">                        $(<span class="string">".form-horizontal"</span>).get(<span class="number">0</span>).reset(); <span class="comment">// 重设表单</span></span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                    <span class="keyword">case</span> <span class="string">'1'</span>: <span class="comment">// 用户名、密码正确</span></span><br><span class="line">                        $(<span class="string">"#tip"</span>).html(<span class="string">"&lt;span style='color:red;'&gt;登录成功,您可以继续使用系统了&lt;/span&gt;"</span>);</span><br><span class="line">                        <span class="comment">// 为对话框中的"确定"按钮绑定单击事件处理函数</span></span><br><span class="line">                        $(<span class="string">"#sure"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</span><br><span class="line">                            goPage(<span class="string">"home.html"</span>);</span><br><span class="line">                        &#125;)</span><br><span class="line">                        <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="comment">// 显示对话框</span></span><br><span class="line">                $(<span class="string">'#myModal'</span>).modal(<span class="string">'show'</span>);</span><br><span class="line">            &#125;);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>在代码的开始部分取消了对话框中两个按钮上绑定的事件处理函数,接下来粗体字代码使用<code>jQuery</code>的<code>post()</code>方法向<code>auction/loginAjax</code>提交异步请求,随后可处理用户的登录请求。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/bef7b4b5/" title="10.6.3 处理用户登录">https://lanlan2017.github.io/JavaReadingNotes/bef7b4b5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/e0e46e9/" rel="next" title="10.6.2 浏览所有流拍物品">
+                  <i class="fa fa-chevron-left"></i> 10.6.2 浏览所有流拍物品
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/49d6ea74/" rel="prev" title="10.6.4 管理物品">
+                  10.6.4 管理物品 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-6-3-处理用户登录"><span class="nav-text">10.6.3 处理用户登录</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

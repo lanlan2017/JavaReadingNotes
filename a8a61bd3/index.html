@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="16.9 线程相关类&amp;nbsp;16.9.1 Threadlocal类&amp;nbsp;线程局部变量的作用&amp;nbsp;ThreadLocal常用方法&amp;nbsp;程序 ThreadLocal示例&amp;nbsp;ThreadLocal和加锁同步的区别&amp;nbsp;ThreadeLocal不能替代同步&amp;nbsp;什么时候用同步机制 什么时候使用&#96;ThreadLocal&#96;&amp;nbsp; .header_1{margin">
+<meta property="og:type" content="article">
+<meta property="og:title" content="16.9 线程相关类 16.9.1 Threadlocal类">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/a8a61bd3/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="16.9 线程相关类&amp;nbsp;16.9.1 Threadlocal类&amp;nbsp;线程局部变量的作用&amp;nbsp;ThreadLocal常用方法&amp;nbsp;程序 ThreadLocal示例&amp;nbsp;ThreadLocal和加锁同步的区别&amp;nbsp;ThreadeLocal不能替代同步&amp;nbsp;什么时候用同步机制 什么时候使用&#96;ThreadLocal&#96;&amp;nbsp; .header_1{margin">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-10T05:37:52.000Z">
+<meta property="article:modified_time" content="2020-03-27T10:30:54.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/a8a61bd3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>16.9 线程相关类 16.9.1 Threadlocal类 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/a8a61bd3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">16.9 线程相关类 16.9.1 Threadlocal类<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC16%E7%AB%A0%20%E5%A4%9A%E7%BA%BF%E7%A8%8B/16.9%20%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%B1%BB/16.9%20%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%B1%BB%2016.9.1%20Threadlocal%E7%B1%BB.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-10 05:37:52" itemprop="dateCreated datePublished" datetime="2020-01-10T05:37:52+00:00">2020-01-10</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-27 10:30:54" itemprop="dateModified" datetime="2020-03-27T10:30:54+00:00">2020-03-27</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第16章 多线程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/16-9-%E7%BA%BF%E7%A8%8B%E7%9B%B8%E5%85%B3%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">16.9 线程相关类</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/a8a61bd3/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/a8a61bd3/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/a8a61bd3/#16-9-线程相关类" class="header_1">16.9 线程相关类</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#16-9-1-Threadlocal类" class="header_1">16.9.1 Threadlocal类</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#线程局部变量的作用" class="header_2">线程局部变量的作用</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#ThreadLocal常用方法" class="header_2">ThreadLocal常用方法</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#程序-ThreadLocal示例" class="header_2">程序 ThreadLocal示例</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#ThreadLocal和加锁同步的区别" class="header_2">ThreadLocal和加锁同步的区别</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#ThreadeLocal不能替代同步" class="header_2">ThreadeLocal不能替代同步</a>&nbsp;<br><a href="/JavaReadingNotes/a8a61bd3/#什么时候用同步机制-什么时候使用-ThreadLocal" class="header_2">什么时候用同步机制 什么时候使用`ThreadLocal`</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="16-9-线程相关类"><a href="#16-9-线程相关类" class="headerlink" title="16.9 线程相关类"></a>16.9 线程相关类</h1><p><code>Java</code>还为线程安全提供了一些工具类,如<code>ThreadLocal</code>类,它代表一个<strong>线程局部变量</strong>,<strong>通过把数据放在<code>ThreadLocal</code>中就可以<mark>让每个线程创建一个该变量的副本</mark>,从而避免并发访问的线程安全问题</strong>。除此之外,<code>Java5</code>还新增了大量的线程安全类。</p>
+<h1 id="16-9-1-Threadlocal类"><a href="#16-9-1-Threadlocal类" class="headerlink" title="16.9.1 Threadlocal类"></a>16.9.1 Threadlocal类</h1><p>早在<code>JDK1.2</code>推出之时,<code>Java</code>就为多线程编程提供了一个<code>ThreadLocal</code>类;从<code>Java5.0</code>以后,<code>Java</code>引入了泛型支持,<code>Java</code>为该<code>ThreadLocal</code>类增加了泛型支持,即:<code>ThreadLocal&lt;T&gt;</code>。<strong>通过使用<code>ThreadLocal</code>类可以简化多线程编程时的并发访问,使用这个<code>ThreadLocal</code>类可以很简捷地隔离多线程程序的竞争资源</strong>.<br><code>ThreadLocal</code>,是<code>ThreadLocalVariable</code>(线程局部变量)的意思,也许将它命名为<code>ThreadLocalVar</code>更加合适。</p>
+<h2 id="线程局部变量的作用"><a href="#线程局部变量的作用" class="headerlink" title="线程局部变量的作用"></a>线程局部变量的作用</h2><p>线程局部变量(<code>ThreadLocal</code>)的功用其实非常简单,就是<strong>为每一个使用该变量的线程都提供一个变量值的副本,使每一个线程都可以独立地改变自己的副本,而不会和其他线程的副本冲突</strong>。从线程的角度看,<strong>就好像每一个线程都完全拥有该变量一样</strong>。</p>
+<h2 id="ThreadLocal常用方法"><a href="#ThreadLocal常用方法" class="headerlink" title="ThreadLocal常用方法"></a>ThreadLocal常用方法</h2><p><code>ThreadLocal</code>类的用法非常简单,它只提供了如下三个<code>public</code>方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>T get()</code></td>
+<td align="left">返回此线程局部变量中当前线程副本中的值。</td>
+</tr>
+<tr>
+<td align="left"><code>void remove()</code></td>
+<td align="left">删除此线程局部变量中当前线程的值。</td>
+</tr>
+<tr>
+<td align="left"><code>void set(T value)</code></td>
+<td align="left">设置此线程局部变量中当前线程副本中的值</td>
+</tr>
+<tr>
+<td align="left"><code>protected T initialValue()</code></td>
+<td align="left">Returns the current thread’s “initial value” for this thread-local variable.</td>
+</tr>
+<tr>
+<td align="left"><code>static &lt;S&gt; ThreadLocal&lt;S&gt; withInitial(Supplier&lt;? extends S&gt; supplier)</code></td>
+<td align="left">Creates a thread local variable.</td>
+</tr>
+</tbody></table>
+<h2 id="程序-ThreadLocal示例"><a href="#程序-ThreadLocal示例" class="headerlink" title="程序 ThreadLocal示例"></a>程序 ThreadLocal示例</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Account</span> </span>&#123;</span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * 定义一个ThreadLocal类型的变量，该变量将是一个线程局部变量 每个线程都会保留该变量的一个副本</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> ThreadLocal&lt;String&gt; name = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义一个初始化name成员变量的构造器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Account</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name.set(str);</span><br><span class="line">        <span class="comment">// 下面代码用于访问当前线程的name副本的值</span></span><br><span class="line">        System.out.println(<span class="string">"---"</span> + <span class="keyword">this</span>.name.get());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// name的setter和getter方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name.get();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String str)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name.set(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyTest</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个Account类型的成员变量</span></span><br><span class="line">    <span class="keyword">private</span> Account account;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyTest</span><span class="params">(Account account, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">        <span class="keyword">this</span>.account = account;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 循环10次</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) &#123;</span><br><span class="line">            <span class="comment">// 当i == 6时输出将账户名替换成当前线程名</span></span><br><span class="line">            <span class="keyword">if</span> (i == <span class="number">6</span>) &#123;</span><br><span class="line">                account.setName(getName());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 输出同一个账户的账户名和循环变量</span></span><br><span class="line">            System.out.println(account.getName() + <span class="string">" 账户的i值："</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 启动两条线程，两条线程共享同一个Account</span></span><br><span class="line">        Account at = <span class="keyword">new</span> Account(<span class="string">"初始名"</span>);</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * 虽然两条线程共享同一个账户，即只有一个账户名</span></span><br><span class="line"><span class="comment">         * 但由于账户名是ThreadLocal类型的，所以每条线程 都完全拥有各自的账户名副本，</span></span><br><span class="line"><span class="comment">         * 所以从i == 6之后，将看到两条 线程访问同一个账户时看到不同的账户名。</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        <span class="keyword">new</span> MyTest(at, <span class="string">"线程甲"</span>).start();</span><br><span class="line">        <span class="keyword">new</span> MyTest(at, <span class="string">"线程乙"</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于程序中的账户名是一个<code>ThreadLocal</code>变量,所以虽然程序中只有一个<code>Account</code>对象,但两个子线程将会产生两个账户名(主线程也持有一个账户名的副本)。两个线程进行循环时都会在<code>i==6</code>时<strong>将账户名 改为 线程名</strong>,这样就可以看到两个线程拥有两个账户名的情形:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">---初始名</span><br><span class="line">null 账户的i值：0</span><br><span class="line">null 账户的i值：0</span><br><span class="line">null 账户的i值：1</span><br><span class="line">null 账户的i值：1</span><br><span class="line">null 账户的i值：2</span><br><span class="line">null 账户的i值：2</span><br><span class="line">null 账户的i值：3</span><br><span class="line">null 账户的i值：3</span><br><span class="line">null 账户的i值：4</span><br><span class="line">null 账户的i值：5</span><br><span class="line">null 账户的i值：4</span><br><span class="line">线程乙 账户的i值：6</span><br><span class="line">null 账户的i值：5</span><br><span class="line">线程乙 账户的i值：7</span><br><span class="line">线程甲 账户的i值：6</span><br><span class="line">线程乙 账户的i值：8</span><br><span class="line">线程甲 账户的i值：7</span><br><span class="line">线程乙 账户的i值：9</span><br><span class="line">线程甲 账户的i值：8</span><br><span class="line">线程甲 账户的i值：9</span><br></pre></td></tr></table></figure>
+<p>从上面程序可以看出,实际上账户名有三个副本,主线程一个,另外启动的两个线程各一个,它们的值互不干扰,<strong>每个线程完全拥有自己的<code>ThreadLocal</code>变量,这就是<code>ThreadLocal</code>的用途</strong>。</p>
+<h2 id="ThreadLocal和加锁同步的区别"><a href="#ThreadLocal和加锁同步的区别" class="headerlink" title="ThreadLocal和加锁同步的区别"></a>ThreadLocal和加锁同步的区别</h2><p><code>ThreadLocal</code>和其他所有的同步机制一样,<strong>都是为了解决多线程中对同一变量的访问冲突</strong>.</p>
+<ul>
+<li>在普通的同步机制中,<strong>是通过对象加锁来实现多个线程对同一变量的安全访问的。该<mark>变量是多个线程共享的</mark></strong>,所以要使用这种同步机制,需要很细致地分析在什么时候对变量进行读写,什么时候需要锁定某个对象,什么时候释放该对象的锁等。在这种情况下,系统并没有将这份资源复制多份,只是采用了安全机制来控制对这份资源的访问而已。</li>
+<li><code>ThreadLocal</code>从另一个角度来解决多线程的并发访问,<code>ThreadLocal</code>将需要并发访问的资源复制多份,<strong>每个线程拥有一份资源</strong>,每个线程都拥有自己的资源副本,从而也就没有必要对该变量进行同步了,<code>ThreadLocal</code>提供了线程安全的共享对象,在编写多线程代码时,可以把不安全的整个变量封装进<code>ThreadLocal</code>,或者把该对象与线程相关的状态使用<code>ThreadLocal</code>保存。</li>
+</ul>
+<h2 id="ThreadeLocal不能替代同步"><a href="#ThreadeLocal不能替代同步" class="headerlink" title="ThreadeLocal不能替代同步"></a>ThreadeLocal不能替代同步</h2><p><code>ThreadLocal</code>并不能替代同步机制,两者面向的问题领域不同。</p>
+<ul>
+<li><strong>同步机制是为了同步多个线程对相同资源的并发访问,是多个线程之间进行通信的有效方式</strong>;</li>
+<li>而<code>ThreadLocal</code>是为了隔离多个线程的数据共享,<strong>从根本上避免多个线程之间对共享资源(变量)的竞争</strong>,也就不需要对多个线程进行同步了。</li>
+</ul>
+<h2 id="什么时候用同步机制-什么时候使用ThreadLocal"><a href="#什么时候用同步机制-什么时候使用ThreadLocal" class="headerlink" title="什么时候用同步机制 什么时候使用ThreadLocal"></a>什么时候用同步机制 什么时候使用<code>ThreadLocal</code></h2><p>通常建议:</p>
+<ul>
+<li><strong>如果多个线程之间需要共享资源,以达到线程之间的通信功能</strong>,就使用<strong>同步机制</strong>;</li>
+<li><strong>如果仅仅需要隔离多个线程之间的共享冲突,则可以使用<code>ThreadLocal</code></strong></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/a8a61bd3/" title="16.9 线程相关类 16.9.1 Threadlocal类">https://lanlan2017.github.io/JavaReadingNotes/a8a61bd3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/a4641bde/" rel="next" title="16.8.2 Java8增强的ForkJoinPool">
+                  <i class="fa fa-chevron-left"></i> 16.8.2 Java8增强的ForkJoinPool
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/8df965bc/" rel="prev" title="16.9.2 包装线程不安全的集合">
+                  16.9.2 包装线程不安全的集合 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#16-9-线程相关类"><span class="nav-text">16.9 线程相关类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16-9-1-Threadlocal类"><span class="nav-text">16.9.1 Threadlocal类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#线程局部变量的作用"><span class="nav-text">线程局部变量的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ThreadLocal常用方法"><span class="nav-text">ThreadLocal常用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序-ThreadLocal示例"><span class="nav-text">程序 ThreadLocal示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ThreadLocal和加锁同步的区别"><span class="nav-text">ThreadLocal和加锁同步的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ThreadeLocal不能替代同步"><span class="nav-text">ThreadeLocal不能替代同步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么时候用同步机制-什么时候使用ThreadLocal"><span class="nav-text">什么时候用同步机制 什么时候使用ThreadLocal</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="2.11.2 表达式语言&amp;nbsp;表达式语法格式&amp;nbsp;1. 表达式语言支持的算术运算符和逻辑运算符&amp;nbsp;JSP 表达式 中使用算术运算符&amp;nbsp;arithmeticOperator.jsp&amp;nbsp;测试&amp;nbsp;JSP 表达式 中使用逻辑运算符&amp;nbsp;2. 表达式语言的内置对象&amp;nbsp;JSP表达式的11个内置对象&amp;nbsp;implicit-objects.jsp&amp;n">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.11.2 表达式语言">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/bec1bedb/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="2.11.2 表达式语言&amp;nbsp;表达式语法格式&amp;nbsp;1. 表达式语言支持的算术运算符和逻辑运算符&amp;nbsp;JSP 表达式 中使用算术运算符&amp;nbsp;arithmeticOperator.jsp&amp;nbsp;测试&amp;nbsp;JSP 表达式 中使用逻辑运算符&amp;nbsp;2. 表达式语言的内置对象&amp;nbsp;JSP表达式的11个内置对象&amp;nbsp;implicit-objects.jsp&amp;n">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-10T06:29:14.000Z">
+<meta property="article:modified_time" content="2020-06-10T08:12:30.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/bec1bedb/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>2.11.2 表达式语言 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/bec1bedb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">2.11.2 表达式语言<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC2%E7%AB%A0%20JSP%20Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2.11%20JSP2%E7%89%B9%E6%80%A7/2.11.2%20%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%AD%E8%A8%80.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-06-10 06:29:14 / 修改时间：08:12:30" itemprop="dateCreated datePublished" datetime="2020-06-10T06:29:14+00:00">2020-06-10</time>
+            </span>
+          
+            
+
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第2章 JSP Servlet及相关技术详解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2-11-JSP2%E7%89%B9%E6%80%A7/" itemprop="url" rel="index"><span itemprop="name">2.11 JSP2特性</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/bec1bedb/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/bec1bedb/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/bec1bedb/#2-11-2-表达式语言" class="header_1">2.11.2 表达式语言</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#表达式语法格式" class="header_2">表达式语法格式</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#1-表达式语言支持的算术运算符和逻辑运算符" class="header_2">1. 表达式语言支持的算术运算符和逻辑运算符</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#JSP-表达式-中使用算术运算符" class="header_3">JSP 表达式 中使用算术运算符</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#arithmeticOperator-jsp" class="header_4">arithmeticOperator.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#测试" class="header_4">测试</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#JSP-表达式-中使用逻辑运算符" class="header_3">JSP 表达式 中使用逻辑运算符</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#2-表达式语言的内置对象" class="header_2">2. 表达式语言的内置对象</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#JSP表达式的11个内置对象" class="header_3">JSP表达式的11个内置对象</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#implicit-objects-jsp" class="header_3">implicit-objects.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#3-表达式语言的自定义函数" class="header_2">3. 表达式语言的自定义函数</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#表达式语言中自定义函数的步骤" class="header_3">表达式语言中自定义函数的步骤</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#开发函数处理类" class="header_4">开发函数处理类</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#使用标签库定义函数" class="header_4">使用标签库定义函数</a>&nbsp;<br><a href="/JavaReadingNotes/bec1bedb/#在JSP页面的EL中使用函数" class="header_4">在JSP页面的EL中使用函数</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="2-11-2-表达式语言"><a href="#2-11-2-表达式语言" class="headerlink" title="2.11.2 表达式语言"></a>2.11.2 表达式语言</h1><p>表达式语言(<code>Expression Language</code>)是一种简化的数据访问方式。使用表达式语言可以方便地访问<code>JSP</code>的隐含对象和<code>JavaBeans</code>组件,在<code>JSP2</code>规范中,建议尽量使用表达式语言使<code>JSP</code>文件的格式一致,避免使用<code>JSP</code>小脚本。<br>表达式语言可用于简化<code>JSP</code>页面的开发,允许美工设计人员使用表达式语言的语法获取业务逻辑组件传过来的变量值。<br>表达式语言是<code>JSP2</code>的一个重要特性,它并不是一种通用的程序语言,而仅仅是一种数据访问语言,可以方便地访问应用程序数据,建议避免使用<code>JSP</code>小脚本。实际上,<code>Servlet3.1</code>规范再次强化了表达式语言的功能.</p>
+<h2 id="表达式语法格式"><a href="#表达式语法格式" class="headerlink" title="表达式语法格式"></a>表达式语法格式</h2><p>表达式语言的语法格式是:</p>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$&#123;expression&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-表达式语言支持的算术运算符和逻辑运算符"><a href="#1-表达式语言支持的算术运算符和逻辑运算符" class="headerlink" title="1. 表达式语言支持的算术运算符和逻辑运算符"></a>1. 表达式语言支持的算术运算符和逻辑运算符</h2><p>表达式语言支持的算术运算符和逻辑运算符非常多,所有在<code>Java</code>语言里支持的算术运算符,表达式语言都可以使用;甚至<code>Java</code>语言不支持的一些算术运算符和逻辑运算符,表达式语言也支持。</p>
+<h3 id="JSP-表达式-中使用算术运算符"><a href="#JSP-表达式-中使用算术运算符" class="headerlink" title="JSP 表达式 中使用算术运算符"></a>JSP 表达式 中使用算术运算符</h3><h4 id="arithmeticOperator-jsp"><a href="#arithmeticOperator-jsp" class="headerlink" title="arithmeticOperator.jsp"></a>arithmeticOperator.jsp</h4><p>下面的<code>JSP</code>页面示范了在表达式语言中使用<strong>算术运算符</strong>。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=GBK"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 表达式语言 - 算术运算符 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;表达式语言 - 算术运算符&lt;/h2&gt;&lt;hr/&gt;</span><br><span class="line">    &lt;table border=<span class="string">"1"</span> bgcolor=<span class="string">"#aaaadd"</span>&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;&lt;b&gt;表达式语言&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;&lt;b&gt;计算结果&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 直接输出常量 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算加法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1.2 + 2.3&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1.2 + 2.3&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算加法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1.2E4 + 1.4&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1.2E4 + 1.4&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算减法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;-4 - 2&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;-4 - 2&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算乘法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;21 * 2&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;21 * 2&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算除法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;3/4&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;3/4&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算除法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;3 div 4&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;3 div 4&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算除法 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;3/0&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;3/0&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算求余 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;10%4&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;10%4&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算求余 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;10 mod 4&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;10 mod 4&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 计算三目运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;(1==2) ? 3 : 4&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;(1==2) ? 3 : 4&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的页面中示范了表达式语言所支持的加、减、乘、除、求余等<strong>算术运算符</strong>的功能,读者可能也发现了表达式语言还支持<code>div</code>、<code>mod</code>等运算符。而且<strong>表达式语言把所有数值都当成浮点数处理</strong>,所以3/0的实质是3.0/0.0,得到的结果应该是<code>Infinity</code>.</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>浏览<code>arithmeticOperator.jsp</code>页面,将看到如图2.46所示的效果。</p>
+<p>如果需要在支持表达式语言的页面中正常输出“<code>$</code>”符号,则在“<code>$</code>”符号前加转义字符“<code>\</code>”,否则系统以为“<code>$</code>”是表达式语言的特殊标记</p>
+<h3 id="JSP-表达式-中使用逻辑运算符"><a href="#JSP-表达式-中使用逻辑运算符" class="headerlink" title="JSP 表达式 中使用逻辑运算符"></a>JSP 表达式 中使用逻辑运算符</h3><p>也可以在表达式语言中使用<strong>逻辑运算符</strong>,如下面的<code>JSP</code>页面所示。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 表达式语言 - 逻辑运算符 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;表达式语言 - 逻辑运算符&lt;/h2&gt;&lt;hr/&gt;</span><br><span class="line">    数字之间的比较：</span><br><span class="line">    &lt;table border=<span class="string">"1"</span> bgcolor=<span class="string">"#aaaadd"</span>&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;&lt;b&gt;表达式语言&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;&lt;b&gt;计算结果&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 直接比较两个数字 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1 &amp;lt; 2&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1 &lt; 2&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用lt比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1 lt 2&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1 lt 2&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用&gt;比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1 &amp;gt; (4/2)&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1 &gt; (4/2)&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用gt比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;1 gt (4/2)&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;1 gt (4/2)&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用&gt;=比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;4.0 &amp;gt= 3&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;4.0 &gt;= 3&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用ge比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;4.0 ge 3&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;4.0 ge 3&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用&lt;=比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;4 &amp;lt;= 3&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;4 &lt;= 3&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用le比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;4 le 3&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;4 le 3&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用==比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;100.0 == 100&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;100.0 == 100&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用eq比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;100.0 eq 100&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;100.0 eq 100&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用!=比较运算符 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;(10*10) != 100&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;(10*10) != 100&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!--  先执行运算，再进行比较运算，使用ne比较运算符--&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;(10*10) ne 100&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;(10*10) ne 100&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">    字符之间的比较：</span><br><span class="line">    &lt;table border=<span class="string">"1"</span> bgcolor=<span class="string">"#aaaadd"</span>&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;&lt;b&gt;表达式语言&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;&lt;b&gt;计算结果&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;'a' &amp;lt; 'b'&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;'a' &lt; 'b'&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;'hip' &amp;gt; 'hit'&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;'hip' &gt; 'hit'&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;'4' &amp;gt; 3&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;'4' &gt; 3&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>从上面程序的粗体字代码中可以看出:<br>表达式语言不仅可在数字与数字之间比较,还可在字符与字符之间比较,字符串的比较是根据其对应<code>Unicode</code>值来比较大小的。</p>
+<h2 id="2-表达式语言的内置对象"><a href="#2-表达式语言的内置对象" class="headerlink" title="2. 表达式语言的内置对象"></a>2. 表达式语言的内置对象</h2><p>使用表达式语言可以直接获取请求参数值,可以获取页面中<code>JavaBean</code>的指定属性值,获取请求头及获取<code>page</code>、<code>request</code>、<code>session</code>和<code>application</code>范围的属性值等,这些都得益于表达式语言的内置对象。</p>
+<h3 id="JSP表达式的11个内置对象"><a href="#JSP表达式的11个内置对象" class="headerlink" title="JSP表达式的11个内置对象"></a>JSP表达式的11个内置对象</h3><p>表达式语言包含如下11个内置对象</p>
+<ol>
+<li><code>pageContext</code>:代表该页面的<code>pageContext</code>对象,与<code>JSP</code>的<code>pageContext</code>内置对象相同。</li>
+<li><code>pageScope</code>:用于获取<code>page</code>范围的属性值。</li>
+<li><code>requestScope</code>:用于获取<code>request</code>范围的属性值。</li>
+<li><code>sessionScope</code>:用于获取<code>session</code>范围的属性值。</li>
+<li><code>applicationScope</code>:用于获取<code>application</code>范围的属性值。</li>
+<li><code>param</code>:用于获取请求的参数值</li>
+<li><code>paramValues</code>:用于获取请求的参数值,与<code>param</code>的区别在于,该对象用于获取属性值为数组的属性值。</li>
+<li><code>header</code>:用于获取请求头的属性值。</li>
+<li><code>headerValues</code>:用于获取请求头的属性值,与<code>header</code>的区别在于,该对象用于获取属性值为数组的属性值。</li>
+<li><code>initParam</code>:用于获取请求<code>Web</code>应用的初始化参数</li>
+<li><code>cookie</code>:用于获取指定的<code>Cookie</code>值。</li>
+</ol>
+<h3 id="implicit-objects-jsp"><a href="#implicit-objects-jsp" class="headerlink" title="implicit-objects.jsp"></a>implicit-objects.jsp</h3><p>下面的<code>JSP</code>页面示范了如何使用表达式语言的内置对象的方法。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; 表达式语言 - 内置对象 &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;表达式语言 - 内置对象&lt;/h2&gt;</span><br><span class="line">    请输入你的名字：</span><br><span class="line">    &lt;!-- 通过表单提交请求参数 --&gt;</span><br><span class="line">    &lt;form action=<span class="string">"implicit-objects.jsp"</span> method=<span class="string">"post"</span>&gt;</span><br><span class="line">        &lt;!-- 通过$&#123;param[<span class="string">'name'</span>]&#125; 获取请求参数 --&gt;</span><br><span class="line">        你的名字 = &lt;input type=<span class="string">"text"</span> name=<span class="string">"name"</span> value=<span class="string">"$&#123;param['name']&#125;"</span>/&gt;</span><br><span class="line">        &lt;input type=<span class="string">"submit"</span> value=<span class="string">'提交'</span>/&gt;</span><br><span class="line">    &lt;/form&gt;&lt;br/&gt;</span><br><span class="line">    &lt;% session.setAttribute(<span class="string">"user"</span> , <span class="string">"abc"</span>);</span><br><span class="line">    <span class="comment">// 下面三行代码添加Cookie</span></span><br><span class="line">    Cookie c = <span class="keyword">new</span> Cookie(<span class="string">"name"</span> , <span class="string">"yeeku"</span>);</span><br><span class="line">    c.setMaxAge(<span class="number">24</span> * <span class="number">3600</span>);</span><br><span class="line">    response.addCookie(c);</span><br><span class="line">    %&gt;</span><br><span class="line">    &lt;table border=<span class="string">"1"</span> width=<span class="string">"660"</span> bgcolor=<span class="string">"#aaaadd"</span>&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td width="170"&gt;&lt;b&gt;功能&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">            &lt;td width="200"&gt;&lt;b&gt;表达式语言&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">            &lt;td width="300"&gt;&lt;b&gt;计算结果&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;!-- 使用两种方式获取请求参数值 --&gt;</span><br><span class="line">            &lt;td&gt;取得请求参数值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;param.name&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;param.name&#125;&amp;nbsp;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;取得请求参数值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;param["name"]&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;param["name"]&#125;&amp;nbsp;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;!-- 使用两种方式获取指定请求头信息 --&gt;</span><br><span class="line">            &lt;td&gt;取得请求头的值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;header.host&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;header.host&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;取得请求头的值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;header["accept"]&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;header["accept"]&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 获取Web应用的初始化参数值 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;取得初始化参数值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;initParam["author"]&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;initParam["author"]&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 获取session返回的属性值 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;取得session的属性值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;sessionScope["user"]&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;sessionScope["user"]&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 获取指定Cookie的值 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;取得指定Cookie的值&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;cookie["name"].value&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;cookie["name"].value&#125;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>浏览上面页面,并通过页面中表单来提交请求,将看到如图2.47所示的效果。</p>
+<h2 id="3-表达式语言的自定义函数"><a href="#3-表达式语言的自定义函数" class="headerlink" title="3. 表达式语言的自定义函数"></a>3. 表达式语言的自定义函数</h2><p>表达式语言除了可以使用基本的运算符外,还可以使用自定义函数。通过自定义函数,能够大大加强表达式语言的功能。自定义函数的开发步骤非常类似于标签的开发步骤,定义方式也几乎一样。区别在于自定义标签直接在页面上生成输出,而自定义函数则需要在表达式语言中使用。<br>函数功能大大扩充了<code>EL</code>的功能,<code>EL</code>本身只是一种数据访问语言,因此它不支持调用方法。如果需要在<code>EL</code>中进行更复杂的处理,就可以通过函数来完成。**函数的本质是:提供一种语法允许在<code>EL</code>中调用某个类的<mark>静态方法</mark>**。</p>
+<h3 id="表达式语言中自定义函数的步骤"><a href="#表达式语言中自定义函数的步骤" class="headerlink" title="表达式语言中自定义函数的步骤"></a>表达式语言中自定义函数的步骤</h3><p>下面介绍表达式语言中自定义函数的开发步骤。</p>
+<h4 id="开发函数处理类"><a href="#开发函数处理类" class="headerlink" title="开发函数处理类"></a>开发函数处理类</h4><p>函数处理类就是普通类,这个普通类中包含若干个静态方法,每个静态方法都可定义成一个函数。实际上这个步骤也是可省略的,完全可以直接使用<code>JDK</code>或其他项目提供的类,只要这个类包含静态方法即可.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Functions</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 对字符串进行反转</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">reverse</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> StringBuffer(text).reverse().toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 统计字符串的个数</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">countChar</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> text.length();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完全可以直接使用<code>JDK</code>或其他项目提供的类作为函数处理类,只要这个类包含静态方法即可。</p>
+<h4 id="使用标签库定义函数"><a href="#使用标签库定义函数" class="headerlink" title="使用标签库定义函数"></a>使用标签库定义函数</h4><p>定义函数的方法与定义标签的方法大致相似。</p>
+<ul>
+<li>在<code>&lt;taglib&gt;</code>元素下增加<code>&lt;tag&gt;</code>元素用于定义自定义标签;</li>
+<li>在<code>&lt;taglib&gt;</code>元素下增加<code>&lt;function&gt;</code>元素则用于定义自定义函数。每个<code>&lt;function&gt;</code>素只要三个子元素即可。<ul>
+<li><code>name</code>:指定自定义函数的函数名</li>
+<li><code>function-class</code>:指定自定义函数的处理类。</li>
+<li><code>function-signature</code>:指定自定义函数对应的方法。</li>
+</ul>
+</li>
+</ul>
+<p>下面的标签库定义(<code>TLD</code>)文件将上面的<code>Functions.java</code>类中所包含的两个方法定义成两个函数</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">taglib</span> <span class="attr">xmlns</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://java.sun.com/xml/ns/j2ee </span></span></span><br><span class="line"><span class="tag"><span class="string">    web-jsptaglibrary_2_0.xsd"</span> <span class="attr">version</span>=<span class="string">"2.0"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tlib-version</span>&gt;</span>1.0<span class="tag">&lt;/<span class="name">tlib-version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">short-name</span>&gt;</span>crazyit<span class="tag">&lt;/<span class="name">short-name</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 定义该标签库的URI --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">uri</span>&gt;</span>http://www.crazyit.org/tags<span class="tag">&lt;/<span class="name">uri</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 定义第一个函数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">function</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义函数名:reverse --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>reverse<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义函数的处理类 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">function-class</span>&gt;</span>lee.Functions<span class="tag">&lt;/<span class="name">function-class</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义函数的实现方法--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">function-signature</span>&gt;</span></span><br><span class="line">            java.lang.String reverse(java.lang.String)<span class="tag">&lt;/<span class="name">function-signature</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 定义第二个函数: countChar --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">function</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义函数名:countChar --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>countChar<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义函数的处理类 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">function-class</span>&gt;</span>lee.Functions<span class="tag">&lt;/<span class="name">function-class</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 定义函数的实现方法--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">function-signature</span>&gt;</span>int countChar(java.lang.String)</span><br><span class="line">            <span class="tag">&lt;/<span class="name">function-signature</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">function</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">taglib</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的粗体字代码定义了两个函数,不难发现其实定义函数比定义自定义标签更简单,<strong>因为自定义函数只需配置三个子元素即可,变化更少</strong>。</p>
+<h4 id="在JSP页面的EL中使用函数"><a href="#在JSP页面的EL中使用函数" class="headerlink" title="在JSP页面的EL中使用函数"></a>在JSP页面的EL中使用函数</h4><p>一样需要先导入标签库,然后再使用函数。下面是使用函数的<code>JSP</code>页面代码。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=UTF-8"</span> language=<span class="string">"java"</span> errorPage=<span class="string">""</span> %&gt;</span><br><span class="line">&lt;%@ taglib prefix=<span class="string">"crazyit"</span> uri=<span class="string">"http://www.crazyit.org/tags"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;title&gt; new document &lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;表达式语言 - 自定义函数&lt;/h2&gt;&lt;hr/&gt;</span><br><span class="line">    请输入一个字符串：</span><br><span class="line">    &lt;form action=<span class="string">"useFunctions.jsp"</span> method=<span class="string">"post"</span>&gt;</span><br><span class="line">        字符串 = &lt;input type=<span class="string">"text"</span> name=<span class="string">"name"</span> value=<span class="string">"$&#123;param['name']&#125;"</span>&gt;</span><br><span class="line">        &lt;input type=<span class="string">"submit"</span>  value=<span class="string">"提交"</span>&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">    &lt;table border=<span class="string">"1"</span> bgcolor=<span class="string">"aaaadd"</span>&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">        &lt;td&gt;&lt;b&gt;表达式语言&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">        &lt;td&gt;&lt;b&gt;计算结果&lt;/b&gt;&lt;/td&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;param["name"]&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;param["name"]&#125;&amp;nbsp;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!--  使用reverse函数--&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;crazyit:reverse(param["name"])&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;crazyit:reverse(param["name"])&#125;&amp;nbsp;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;crazyit:reverse(crazyit:reverse(param["name"]))&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;crazyit:reverse(crazyit:reverse(param["name"]))&#125;&amp;nbsp;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">        &lt;!-- 使用countChar函数 --&gt;</span><br><span class="line">        &lt;tr&gt;</span><br><span class="line">            &lt;td&gt;\$&#123;crazyit:countChar(param["name"])&#125;&lt;/td&gt;</span><br><span class="line">            &lt;td&gt;$&#123;crazyit:countChar(param["name"])&#125;&amp;nbsp;&lt;/td&gt;</span><br><span class="line">        &lt;/tr&gt;</span><br><span class="line">    &lt;/table&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>如上面程序中粗体字代码所示,导入标签库定义文件后(实质上也是函数库定义文件),就可以在表达式语言中使用函数定义库文件里定义的各函数了。<br>通过上面的介绍不难发现自定义函数的实质:就是将指定<code>Java</code>类的静态方法暴露成可以在<code>EL</code>中使用的函数,所以可以定义成函数的方法必须用<code>public static</code>修饰。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/bec1bedb/" title="2.11.2 表达式语言">https://lanlan2017.github.io/JavaReadingNotes/bec1bedb/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/ccd5aa76/" rel="next" title="2.10.2 配置Listener">
+                  <i class="fa fa-chevron-left"></i> 2.10.2 配置Listener
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/60a6119e/" rel="prev" title="2.11.3 Tag File支持">
+                  2.11.3 Tag File支持 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-11-2-表达式语言"><span class="nav-text">2.11.2 表达式语言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#表达式语法格式"><span class="nav-text">表达式语法格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-表达式语言支持的算术运算符和逻辑运算符"><span class="nav-text">1. 表达式语言支持的算术运算符和逻辑运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP-表达式-中使用算术运算符"><span class="nav-text">JSP 表达式 中使用算术运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#arithmeticOperator-jsp"><span class="nav-text">arithmeticOperator.jsp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP-表达式-中使用逻辑运算符"><span class="nav-text">JSP 表达式 中使用逻辑运算符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-表达式语言的内置对象"><span class="nav-text">2. 表达式语言的内置对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP表达式的11个内置对象"><span class="nav-text">JSP表达式的11个内置对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implicit-objects-jsp"><span class="nav-text">implicit-objects.jsp</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-表达式语言的自定义函数"><span class="nav-text">3. 表达式语言的自定义函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#表达式语言中自定义函数的步骤"><span class="nav-text">表达式语言中自定义函数的步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#开发函数处理类"><span class="nav-text">开发函数处理类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用标签库定义函数"><span class="nav-text">使用标签库定义函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#在JSP页面的EL中使用函数"><span class="nav-text">在JSP页面的EL中使用函数</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

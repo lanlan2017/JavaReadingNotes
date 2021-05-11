@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="7.5.2 容器中Bean的作用域&amp;nbsp;通过scope属性执行Bean的作用域&amp;nbsp;程序示例&amp;nbsp;beans.xml&amp;nbsp;BeanTest.java&amp;nbsp;通过singleton属性指定Bean的作用域&amp;nbsp;request和session作用域&amp;nbsp;如何使得request作用域生效&amp;nbsp;程序示例2&amp;nbsp;Spring MVC默认支持request作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.5.2 容器中Bean的作用域">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/dcd14c65/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="7.5.2 容器中Bean的作用域&amp;nbsp;通过scope属性执行Bean的作用域&amp;nbsp;程序示例&amp;nbsp;beans.xml&amp;nbsp;BeanTest.java&amp;nbsp;通过singleton属性指定Bean的作用域&amp;nbsp;request和session作用域&amp;nbsp;如何使得request作用域生效&amp;nbsp;程序示例2&amp;nbsp;Spring MVC默认支持request作">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-26T14:03:40.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/dcd14c65/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>7.5.2 容器中Bean的作用域 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/dcd14c65/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">7.5.2 容器中Bean的作用域<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC7%E7%AB%A0%20Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/7.5%20Spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Bean/7.5.2%20%E5%AE%B9%E5%99%A8%E4%B8%ADBean%E7%9A%84%E4%BD%9C%E7%94%A8%E5%9F%9F.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-26 14:03:40" itemprop="dateCreated datePublished" datetime="2019-08-26T14:03:40+00:00">2019-08-26</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">第7章 Spring的基本用法</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/7-5-Spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Bean/" itemprop="url" rel="index"><span itemprop="name">7.5 Spring容器中的Bean</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/dcd14c65/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/dcd14c65/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/dcd14c65/#7-5-2-容器中Bean的作用域" class="header_1">7.5.2 容器中Bean的作用域</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#通过scope属性执行Bean的作用域" class="header_2">通过scope属性执行Bean的作用域</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#程序示例" class="header_2">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#beans-xml" class="header_2">beans.xml</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#BeanTest-java" class="header_2">BeanTest.java</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#通过singleton属性指定Bean的作用域" class="header_2">通过singleton属性指定Bean的作用域</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#request和session作用域" class="header_2">request和session作用域</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#如何使得request作用域生效" class="header_2">如何使得request作用域生效</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#程序示例2" class="header_2">程序示例2</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#Spring-MVC默认支持request作用域" class="header_2">Spring MVC默认支持request作用域</a>&nbsp;<br><a href="/JavaReadingNotes/dcd14c65/#test-jsp" class="header_2">test.jsp</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="7-5-2-容器中Bean的作用域"><a href="#7-5-2-容器中Bean的作用域" class="headerlink" title="7.5.2 容器中Bean的作用域"></a>7.5.2 容器中Bean的作用域</h1><p>当通过<code>Spring</code>容器创建一个<code>Bean</code>实例时,不仅可以完成<code>Bean</code>实例的实例化,还可以为<code>Bean</code>指定特定的作用域。 <code>Spring</code>支持如下6种作用域</p>
+<!--replace:websocket=web socket&prototype=proto type-->
+
+<table>
+<thead>
+<tr>
+<th align="left">作用域</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>singleton</code></td>
+<td align="left">单例模式,在整个<code>Spring IoC</code>容器中, <code>singleton</code>作用域的<code>Bean</code>将只生成一个实例。</td>
+</tr>
+<tr>
+<td align="left"><code>prototype</code></td>
+<td align="left">每次通过容器的<code>getBean()</code>方法获取<code>prototype</code>作用域的<code>Bean</code>时,都将产生一个新的<code>Bean</code>实例</td>
+</tr>
+<tr>
+<td align="left"><code>request</code></td>
+<td align="left">对于一次<code>HTTP</code>请求,<code>request</code>作用域的<code>Bean</code>将只生成一个实例,这意味着,在同一次<code>HTTP</code>请求内,程序每次请求该<code>Bean</code>,得到的总是同一个实例。只有在<code>web</code>应用中使用<code>Spring</code>时,该作用域才真正有效。</td>
+</tr>
+<tr>
+<td align="left"><code>session</code></td>
+<td align="left">对于一次<code>HTTP</code>会话,<code>session</code>作用域的<code>Bean</code>将只生成一个实例,这意味着,在同一次<code>HTTP</code>会话内,程序每次请求该<code>Bean</code>,得到的总是同一个实例。只有在<code>Web</code>应用中使用<code>Spring</code>时,该作用域才真正有效.</td>
+</tr>
+<tr>
+<td align="left"><code>application</code></td>
+<td align="left">对应整个<code>Web</code>应用,该<code>Bean</code>只生成一个实例。这意味着,在整个<code>Web</code>应用内,程序每次请求该<code>Bean</code>时,得到的总是同一个实例。只有在<code>web</code>应用中使用<code>Spring</code>时,该作用域才真正有效。</td>
+</tr>
+<tr>
+<td align="left"><code>websocket</code></td>
+<td align="left">在整个<code>WebSocket</code>的通信过程中,该<code>Bean</code>只生成一个实例。只有在<code>web</code>应用中使用<code>Spring</code>时,该作用域才真正有效。</td>
+</tr>
+</tbody></table>
+<p>比较常用的是<code>singleton</code>和<code>prototype</code>两种作用域,</p>
+<ul>
+<li>对于<code>singleton</code>作用域的<code>Bean</code>,每次请求该<code>Bean</code>都将获得相同的实例。容器负责跟踪<code>Bean</code>实例的状态,负责维护<code>Bean</code>实例的生命周期行为;</li>
+<li>如果一个<code>Bean</code>被设置成<code>prototype</code>作用域,程序每次请求该<code>id</code>的<code>Bean, Spring</code>都会新建一个<code>Bean</code>实例,然后返回给程序。在这种情况下, <code>Spring</code>容器仅仅使用<code>new</code>关键字创建<code>Bean</code>实例,一旦创建成功,容器就不再跟踪实例,也不会维护<code>Bean</code>实例的状态。</li>
+</ul>
+<p>如果不指定<code>Bean</code>的作用域, <code>Spring</code>默认使用<code>singleton</code>作用域。<code>Java</code>在创建<code>Java</code>实例时,需要进行内存申请;销毁实例时,需要完成垃圾回收,这些工作都会导致系统开销的增加。因此, <strong><code>prototype</code>作用域的<code>Bean</code>的创建、销毁代价比较大</strong>。而<code>singleton</code>作用域的<code>Bean</code>实例一旦创建成功,就可以重复使用。因此,应该尽量避免将<code>Bean</code>设置成<code>prototype</code>作用域。</p>
+<h2 id="通过scope属性执行Bean的作用域"><a href="#通过scope属性执行Bean的作用域" class="headerlink" title="通过scope属性执行Bean的作用域"></a>通过scope属性执行Bean的作用域</h2><p><code>Spring</code>配置文件通过<code>scope</code>属性指定<code>Bean</code>的作用域,该属性可以接受<code>singleton</code>、 <code>prototype</code>、<code>request</code>、<code>session</code>和<code>globalSession</code>五个值,分别代表上面介绍的5个作用域。</p>
+<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">scope</span></span></span><br><span class="line"><span class="function">└─<span class="title">src</span>\</span></span><br><span class="line"><span class="function">  ├─<span class="title">beans.xml</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">lee</span>\</span></span><br><span class="line"><span class="function">  │ └─<span class="title">BeanTest.java</span></span></span><br><span class="line"><span class="function">  └─<span class="title">org</span>\</span></span><br><span class="line"><span class="function">    └─<span class="title">crazyit</span>\</span></span><br><span class="line"><span class="function">      └─<span class="title">app</span>\</span></span><br><span class="line"><span class="function">        └─<span class="title">service</span>\</span></span><br><span class="line"><span class="function">          └─<span class="title">Person.java</span></span></span><br></pre></td></tr></table></figure>
+<p>下面的配置文件中配置<code>singleton</code>作用域的<code>Bean</code>和<code>prototype</code>作用域<code>Bean</code>各有一个。</p>
+<h2 id="beans-xml"><a href="#beans-xml" class="headerlink" title="beans.xml"></a>beans.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置一个singleton作用域Bean实例 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"p1"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.Person"</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置一个prototype Bean实例 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"p2"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.Person"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">scope</span>=<span class="string">"prototype"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"date"</span> <span class="attr">class</span>=<span class="string">"java.util.Date"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>从上面的代码中可以看到,</p>
+<ul>
+<li>配置<code>p1</code>对象时没有指定<code>scope</code>属性,则它默认是一个<code>singleton</code>作用域的<code>Bean</code>;</li>
+<li>而<code>p2</code>则指定了<code>scope=&quot;prototype&quot;</code>属性,这表明它是一个<code>prototype</code>作用域的<code>Bean</code>。</li>
+<li>除此之外,上面配置文件还配置了一个<code>id</code>为<code>date</code>的<code>singleton</code>作用域的<code>Bean</code></li>
+</ul>
+<h2 id="BeanTest-java"><a href="#BeanTest-java" class="headerlink" title="BeanTest.java"></a>BeanTest.java</h2><p>主程序通过如下代码来测试两个<code>Bean</code>的区别。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.*;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.support.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeanTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 以类加载路径下的beans.xml文件创建Spring容器</span></span><br><span class="line">        ApplicationContext ctx = <span class="keyword">new</span> ClassPathXmlApplicationContext(</span><br><span class="line">                <span class="string">"beans.xml"</span>);    <span class="comment">// ①</span></span><br><span class="line">        <span class="comment">// 判断两次请求singleton作用域的Bean实例是否相等</span></span><br><span class="line">        System.out.println(ctx.getBean(<span class="string">"p1"</span>) == ctx.getBean(<span class="string">"p1"</span>));</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 判断两次请求prototype作用域的Bean实例是否相等</span></span><br><span class="line">        System.out.println(ctx.getBean(<span class="string">"p2"</span>) == ctx.getBean(<span class="string">"p2"</span>));</span><br><span class="line">        System.out.println(ctx.getBean(<span class="string">"date"</span>));</span><br><span class="line">        Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">        System.out.println(ctx.getBean(<span class="string">"date"</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>程序执行结果如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">true</span><br><span class="line">false</span><br><span class="line">Mon Aug 26 16:14:21 CST 2019</span><br><span class="line">Mon Aug 26 16:14:21 CST 2019</span><br></pre></td></tr></table></figure>
+<p>从上面的运行结果可以看出,<br>对于<code>singleton</code>作用域的<code>Bean</code>,每次请求该<code>id</code>的<code>Bean</code>,都将返回同个共享实例,因而两次获取的<code>Bean</code>实例完全相同;<br>但对<code>prototype</code>作用域的<code>Bean</code>,每次请求该<code>id</code>的<code>Bean</code>都将产生新的实例,因此两次请求获得的<code>Bean</code>实例不相同。<br>上面程序的最后还分两次获取,并输出<code>Spring</code>容器中<code>id</code>为<code>date</code>的<code>Bean</code>代表的时间,虽然程序获取、输出两个<code>date</code>的时间相差一秒,但由于<code>id</code>为<code>date</code>的<code>Bean</code>是一个<code>singleton Bean</code>,该<code>Bean</code>会随着容器的初始化而初始化——也就是在①号代码处, <code>date Bean</code>已经被创建出来了,因此无论程序何时访问、输出<code>date Bean</code>所代表的时间,永远输出①号代码的执行时间。</p>
+<h2 id="通过singleton属性指定Bean的作用域"><a href="#通过singleton属性指定Bean的作用域" class="headerlink" title="通过singleton属性指定Bean的作用域"></a>通过singleton属性指定Bean的作用域</h2><p>早期指定<code>Bean</code>的作用域也可通过<code>singleton</code>属性指定,该属性只接受两个属性值:<code>true</code>和<code>false</code>,分别代表<code>singleton</code>和<code>prototype</code>作用域。使用<code>singleton</code>属性则无法指定其他三个作用域,实际上<code>Spring 2.x</code>不推荐使用<code>singleton</code>属性指定<code>Bean</code>的作用域, <code>singleton</code>属性是<code>Spring 1.2.x</code>的方式</p>
+<h2 id="request和session作用域"><a href="#request和session作用域" class="headerlink" title="request和session作用域"></a>request和session作用域</h2><p>对于<code>request</code>作用域,查看如下<code>Bean</code>定义:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"loginAction"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.struts.LoginAction"</span> <span class="attr">scope</span>=<span class="string">"request"</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+<p>针对每次<code>HTTP</code>请求,<code>Spring</code>容器会创建一个全新的<code>id</code>为<code>loginAction</code>的<code>Bean</code>实例,且该<code>loginAction Bean</code>实例仅在当前<code>HttpRequest</code>内有效。因此,<strong>如果程序需要,完全可以自由更改<code>Bean</code>实例的内部状态;其他请求所获得的<code>loginAction Bean</code>实例无法感觉到这种内部状态的改变</strong>。当处理请求结束时, <code>request</code>作用域的<code>Bean</code>实例将被销毁。<br><code>request</code>、 <code>session</code>作用域的<code>Bean</code>只对<code>Web</code>应用才真正有效。实际上<strong>通常只会将<code>Web</code>应用的控制器<code>Bean</code>指定成<code>request</code>作用域</strong>。<br><code>session</code>作用域与<code>request</code>作用域完全类似,区别在于:<code>request</code>作用域的<code>Bean</code>对于每次<code>HTTP</code>请求有效,而<code>session</code>作用域的<code>Bean</code>则对于每次<code>Http Session</code>有效。<br><code>request</code>和<code>session</code>作用域只在<code>Web</code>应用中才有效,并且必须在<code>web</code>应用中增加额外配置才会生效。<strong>为了让<code>request</code>和<code>session</code>两个作用域生效,必须将<code>HTTP</code>请求对象绑定到为该请求提供服务的线程上,这使得具有<code>request</code>和<code>session</code>作用域的<code>Bean</code>实例能够在后面的调用链中被访问到</strong>。</p>
+<h2 id="如何使得request作用域生效"><a href="#如何使得request作用域生效" class="headerlink" title="如何使得request作用域生效"></a>如何使得request作用域生效</h2><p>在<code>Web</code>应用的<code>web.xml</code>文件中增加如下<code>Listener</code>配置,该<code>Listener</code>负责使<code>request</code>作用域生效:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span></span><br><span class="line">        org.springframework.web.context.request.RequestContextListener</span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>一旦在<code>web.xml</code>中增加了如上所示配置,程序就可以在<code>Spring</code>配置文件中使用<code>request</code>或<code>session</code>作用域了。下面的配置文件配置了一个实现类为<code>Person</code>的<code>Bean</code>实例,其作用域是<code>request</code>。配置文件代码如下。</p>
+<h2 id="程序示例2"><a href="#程序示例2" class="headerlink" title="程序示例2"></a>程序示例2</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定使用request作用域 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"p"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.Person"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">scope</span>=<span class="string">"request"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样<code>Spring</code>容器会为每次<code>HTTP</code>请求生成一个<code>Person</code>实例,当该请求响应结束时,该实例也随之消失。</p>
+<h2 id="Spring-MVC默认支持request作用域"><a href="#Spring-MVC默认支持request作用域" class="headerlink" title="Spring MVC默认支持request作用域"></a>Spring MVC默认支持request作用域</h2><p>如果<code>Web</code>应用直接使用<code>Spring MVC</code>作为<code>MVC</code>框架,即用<code>Spring</code>的<code>DispatcherServlet</code>或<code>DispatcherPortlet</code>来拦截所有用户请求,则无须这些额外的配置,因为<code>Spring</code>的<code>DispatcherServlet</code>和<code>DispatcherPortlet</code>已经处理了所有和请求有关的状态处理。<br>接下来本示例使用一个简单的<code>JSP</code>脚本来测试该<code>request</code>作用域,该<code>JSP</code>脚本两次向<code>Spring</code>容器请求获取<code>id</code>为<code>p</code>的<code>Bean</code>-当用户请求访问该页面时,由于在同一个页面内,因此可以看到<code>Spring</code>容器两次返回的是同一个<code>Bean</code>。该<code>JSP</code>脚本如下。</p>
+<h2 id="test-jsp"><a href="#test-jsp" class="headerlink" title="test.jsp"></a>test.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=<span class="string">"text/html; charset=GBK"</span> language=<span class="string">"java"</span></span><br><span class="line">    errorPage=<span class="string">""</span>%&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">"org.springframework.web.context.*"</span>%&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">"org.springframework.web.context.support.*"</span>%&gt;</span><br><span class="line">&lt;%@ page <span class="keyword">import</span>=<span class="string">"org.crazyit.app.service.*"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html PUBLIC <span class="string">"-//W3C//DTD XHTML 1.0 Transitional//EN"</span></span><br><span class="line">    <span class="string">"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"</span>&gt;</span><br><span class="line">&lt;html xmlns=<span class="string">"http://www.w3.org/1999/xhtml"</span>&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;title&gt;Spring Bean的作用域&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;%</span><br><span class="line">        <span class="comment">// 获取Web应用初始化的Spring容器</span></span><br><span class="line">        WebApplicationContext ctx = WebApplicationContextUtils</span><br><span class="line">                .getWebApplicationContext(application);</span><br><span class="line">        <span class="comment">// 两次获取容器中id为p的Bean</span></span><br><span class="line">        Person p1 = (Person) ctx.getBean(<span class="string">"p"</span>);</span><br><span class="line">        Person p2 = (Person) ctx.getBean(<span class="string">"p"</span>);</span><br><span class="line">        out.println((p1 == p2) + <span class="string">"&lt;br/&gt;"</span>);</span><br><span class="line">        out.println(p1);</span><br><span class="line">    %&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>使用浏览器请求该页面,将可以看到浏览器中输出如下内容:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">true</span><br><span class="line">org.crazyit.app.service.Person@5b82005</span><br></pre></td></tr></table></figure>
+<p>如果读者再次刷该页面,将可以看到该页面依然输出<code>true</code>,但程序访问、输出的<code>Person Bean</code>不再是前一次请求得到的<code>Bean</code>。<br>关于<code>HttpRequest</code>和<code>HttpSession</code>的作用范围,请参看第2章中关于<code>Web</code>编程的介绍<br><code>Spring5</code>不仅可以为<code>Bean</code>指定已经存在的6个作用域,还支持自定义作用域。关于自定义作用域的内容,请参看<code>Spring</code>官方文档等资料。</p>
+<!--SSTStop-->
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/dcd14c65/" title="7.5.2 容器中Bean的作用域">https://lanlan2017.github.io/JavaReadingNotes/dcd14c65/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/59bb5897/" rel="next" title="7.5.1 Bean的基本定义和Bean别名">
+                  <i class="fa fa-chevron-left"></i> 7.5.1 Bean的基本定义和Bean别名
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/9e0fe197/" rel="prev" title="7.5.3 配置依赖">
+                  7.5.3 配置依赖 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-5-2-容器中Bean的作用域"><span class="nav-text">7.5.2 容器中Bean的作用域</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#通过scope属性执行Bean的作用域"><span class="nav-text">通过scope属性执行Bean的作用域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#beans-xml"><span class="nav-text">beans.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BeanTest-java"><span class="nav-text">BeanTest.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#通过singleton属性指定Bean的作用域"><span class="nav-text">通过singleton属性指定Bean的作用域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#request和session作用域"><span class="nav-text">request和session作用域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何使得request作用域生效"><span class="nav-text">如何使得request作用域生效</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例2"><span class="nav-text">程序示例2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-MVC默认支持request作用域"><span class="nav-text">Spring MVC默认支持request作用域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#test-jsp"><span class="nav-text">test.jsp</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

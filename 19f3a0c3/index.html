@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="3.9 jQuery的Deferred对象&amp;nbsp;3.9.1 jQuery的异步调用&amp;nbsp;Deferred详解&amp;nbsp;如何创建Deferred对象&amp;nbsp;Deferred提供的3个耗时状态&amp;nbsp;修改Deferred状态的方法&amp;nbsp;Deferred对象的方法详解&amp;nbsp;监听操作的方法&amp;nbsp;调用监听操作方法的方法&amp;nbsp;返回Promise对象的方法&amp;nbsp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.9 jQuery的Deferred对象 3.9.1 jQuery的异步调用">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/19f3a0c3/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="3.9 jQuery的Deferred对象&amp;nbsp;3.9.1 jQuery的异步调用&amp;nbsp;Deferred详解&amp;nbsp;如何创建Deferred对象&amp;nbsp;Deferred提供的3个耗时状态&amp;nbsp;修改Deferred状态的方法&amp;nbsp;Deferred对象的方法详解&amp;nbsp;监听操作的方法&amp;nbsp;调用监听操作方法的方法&amp;nbsp;返回Promise对象的方法&amp;nbsp">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-26T12:29:12.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:57.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/19f3a0c3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>3.9 jQuery的Deferred对象 3.9.1 jQuery的异步调用 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/19f3a0c3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">3.9 jQuery的Deferred对象 3.9.1 jQuery的异步调用<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/5%20%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery%20AngularJS%20Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/%E7%AC%AC3%E7%AB%A0%20jQuery%E5%BA%93%E8%AF%A6%E8%A7%A3/3.9%20jQuery%E7%9A%84Deferred%E5%AF%B9%E8%B1%A1/3.9%20jQuery%E7%9A%84Deferred%E5%AF%B9%E8%B1%A1%203.9.1%20jQuery%E7%9A%84%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-26 12:29:12" itemprop="dateCreated datePublished" datetime="2019-07-26T12:29:12+00:00">2019-07-26</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:57" itemprop="dateModified" datetime="2020-02-07T01:34:57+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/5-%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery-AngularJS-Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/" itemprop="url" rel="index"><span itemprop="name">5 疯狂前端开发讲义JQuery AngularJS Bootstrap前端开发实战</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/5-%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery-AngularJS-Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/%E7%AC%AC3%E7%AB%A0-jQuery%E5%BA%93%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第3章 jQuery库详解</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/5-%E7%96%AF%E7%8B%82%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E8%AE%B2%E4%B9%89JQuery-AngularJS-Bootstrap%E5%89%8D%E7%AB%AF%E5%BC%80%E5%8F%91%E5%AE%9E%E6%88%98/%E7%AC%AC3%E7%AB%A0-jQuery%E5%BA%93%E8%AF%A6%E8%A7%A3/3-9-jQuery%E7%9A%84Deferred%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">3.9 jQuery的Deferred对象</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/19f3a0c3/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/19f3a0c3/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/19f3a0c3/#3-9-jQuery的Deferred对象" class="header_1">3.9 jQuery的Deferred对象</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#3-9-1-jQuery的异步调用" class="header_1">3.9.1 jQuery的异步调用</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#Deferred详解" class="header_2">Deferred详解</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#如何创建Deferred对象" class="header_3">如何创建Deferred对象</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#Deferred提供的3个耗时状态" class="header_3">Deferred提供的3个耗时状态</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#修改Deferred状态的方法" class="header_3">修改Deferred状态的方法</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#Deferred对象的方法详解" class="header_3">Deferred对象的方法详解</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#监听操作的方法" class="header_4">监听操作的方法</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#调用监听操作方法的方法" class="header_4">调用监听操作方法的方法</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#返回Promise对象的方法" class="header_4">返回Promise对象的方法</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#查询一步操作所处的执行状态" class="header_4">查询一步操作所处的执行状态</a>&nbsp;<br><a href="/JavaReadingNotes/19f3a0c3/#程序示例" class="header_2">程序示例</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="3-9-jQuery的Deferred对象"><a href="#3-9-jQuery的Deferred对象" class="headerlink" title="3.9 jQuery的Deferred对象"></a>3.9 jQuery的Deferred对象</h1><p>在进行<code>JavaScript</code>开发的过程中,经常会遇到要执行耗时任务的情况,该任务可能是远程<code>Ajax</code> 调用,也可能是本地的耗时操作,总之不能立即有结果。遇到这种情况,通常就需要采用回调函数来监听该耗时操作的执行情况,当耗时操作执行完成后,自动激发相应的回调函数。<code>jQuery</code>为解决这类问题提供了<code>Deferred</code>对象。</p>
+<h1 id="3-9-1-jQuery的异步调用"><a href="#3-9-1-jQuery的异步调用" class="headerlink" title="3.9.1 jQuery的异步调用"></a>3.9.1 jQuery的异步调用</h1><p>在<code>jQuery</code>以前的版本中,当我们使用<code>$.ajax()</code>方法进行<code>Ajax</code>调用时,通常的代码格式如下:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$.ajax(&#123;</span><br><span class="line">    url:<span class="string">"pro"</span>,</span><br><span class="line">    data:$(<span class="string">"#userForm"</span>).serializeArray(),</span><br><span class="line">    success:successFunction,</span><br><span class="line">    error:errorFunction</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>在该<code>Ajax</code>调用中通过<code>success</code>和<code>error</code>分别指定了调用成功、调用失败时的回调函数,这是<code>jQuery</code>传统的管理回调函数的方式,这种方式虽然简单、直观,但编程一致性并不好,因为调用不同耗时操作时可能需要通过不同选项来指定回调函数。<br><code>Deferred</code> 对象则改变了这种局面,<code>Deferred</code> 对象允许用”一致”的代码来管理回调函数。例如通过<code>done()</code>方法添加回调成功的回调函数,通过<code>fail()</code>方法添加调用失败的回调函数……从<code>jQuery 1.5</code>开始,<code>$.ajax()</code>方法返回的就是<code>Deferred</code>对象,因此<code>jQuery</code>允许我们采用如下形式来完成<code>Ajax</code>调用。</p>
+<!--SSTStop-->
+
+<p>下面的示例使用<code>Deferred</code>对象改写了前面的<code>Ajax</code>示例,程序如下。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"author"</span> <span class="attr">content</span>=<span class="string">"Yeeku.H.Lee(CrazyIt.org)"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=utf-8"</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>使用jQuery的get方法<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">h3</span>&gt;</span>请输入你的信息：<span class="tag">&lt;/<span class="name">h3</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">id</span>=<span class="string">"userForm"</span>&gt;</span></span><br><span class="line">        用户名: <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">name</span>=<span class="string">"user"</span> /&gt;</span> <span class="tag">&lt;<span class="name">br</span> /&gt;</span> 喜欢的图书: <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">            <span class="attr">multiple</span>=<span class="string">"multiple"</span> <span class="attr">name</span>=<span class="string">"books"</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"java"</span>&gt;</span>疯狂Java讲义<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"javaee"</span>&gt;</span>轻量级Java EE企业应用实战<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"ajax"</span>&gt;</span>疯狂前端开发讲义<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"xml"</span>&gt;</span>疯狂XML讲义<span class="tag">&lt;/<span class="name">option</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">select</span>&gt;</span> <span class="tag">&lt;<span class="name">br</span> /&gt;</span> <span class="tag">&lt;<span class="name">input</span> <span class="attr">id</span>=<span class="string">"load"</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">value</span>=<span class="string">"发送异步GET请求"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">hr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"show"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"jquery-3.1.1.js"</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line">        </span><br><span class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">        <span class="comment">// 为id为load的按钮绑定事件处理函数</span></span></span><br><span class="line"><span class="javascript">        $(<span class="string">"#load"</span>).click(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span></span><br><span class="line"><span class="actionscript">            <span class="comment">// `$.ajax()`方法返回的就是`Deferred`对象</span></span></span><br><span class="line"><span class="javascript">            $.ajax(&#123;</span></span><br><span class="line"><span class="actionscript">                url : <span class="string">"pro"</span>,</span></span><br><span class="line"><span class="javascript">                data : $(<span class="string">"#userForm"</span>).serializeArray()</span></span><br><span class="line">            &#125;)</span><br><span class="line"><span class="actionscript">            <span class="comment">// 使用`Deferred`对象的done()方法添加“执行成功”的回调函数</span></span></span><br><span class="line"><span class="actionscript">            .done(<span class="function"><span class="keyword">function</span><span class="params">(data, statusText)</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">                $(<span class="string">"#show"</span>).empty();</span></span><br><span class="line"><span class="javascript">                $(<span class="string">"#show"</span>).append(<span class="string">"服务器响应状态为："</span> + statusText + <span class="string">"&lt;br /&gt;"</span>);</span></span><br><span class="line"><span class="javascript">                $(<span class="string">"#show"</span>).append(data);</span></span><br><span class="line">            &#125;)</span><br><span class="line"><span class="actionscript">            <span class="comment">// 使用`Deferred`对象的fail方法添加“执行失败”的回调函数</span></span></span><br><span class="line"><span class="actionscript">            .fail(<span class="function"><span class="keyword">function</span><span class="params">()</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">                alert(<span class="string">"服务器响应出错！"</span>);</span></span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;);</span><br><span class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>该程序调用了<code>$.ajax()</code>方法来发送异步请求,该方法将会返回一个<code>Deferred</code> 对象,接下来通过<code>Deferred</code>对象的<code>done()</code>方法和<code>fail()</code>方法分别添加调用成功、调用失败的回调函数。<br>提示:通过上面的示例不难看出<code>jQuery</code> 中<code>Deferred</code>的设计:</p>
+<!--SSTStart-->
+<p><code>Deferred</code>其实就是<code>JavaScript</code>新增的<code>Promise</code>对象。它们都可对所有”耗时操作”的回调函数进行统一管理,就像<code>jQuery</code>最初提供的<code>jQuery</code>对象一样。**<code>jQuery</code>对象对所有<code>DOM</code>元素进行了统一管理,从而提供了一致的编程模型<strong>。而</strong><code>Deferred</code>对象或<code>Promise</code>对象则可对所有耗时操作进行统一管理**。因此<code>jQuery</code>完全可能对原有的<code>Ajax</code>进行全新设计,从传统编程模型全面过渡到使用<code>Deferred</code>来管理回调函数。</p>
+<!--SSTStop-->
+<!--SSTStart-->
+<h2 id="Deferred详解"><a href="#Deferred详解" class="headerlink" title="Deferred详解"></a>Deferred详解</h2><h3 id="如何创建Deferred对象"><a href="#如何创建Deferred对象" class="headerlink" title="如何创建Deferred对象"></a>如何创建Deferred对象</h3><p>除了可以调用<code>$.ajax()</code>方法返回<code>Deferred</code>对象之外,<code>jQuery</code>专门提供了**<code>jQuery.Deferred()</code>方法来创建<code>Deferred</code>对象**。</p>
+<h3 id="Deferred提供的3个耗时状态"><a href="#Deferred提供的3个耗时状态" class="headerlink" title="Deferred提供的3个耗时状态"></a>Deferred提供的3个耗时状态</h3><p><code>Deferred</code>对象提供了以下三种状态来表示耗时操作的执行结果:</p>
+<ol>
+<li><code>pending</code>状态:<code>pending</code>表示任务执行中,未完成。此时将执行<code>Deferred</code>对象<code>progress()</code>方法添加的回调函数。</li>
+<li><code>fulfilled</code>状态<code>:fulfilled</code>表示任务完成了,该任务会执行<code>resolve</code>函数;进而执行<code>Deferred</code>对象<code>done()</code>方法添加的回调函数。</li>
+<li><code>rejected</code>状态<code>:rejected</code>表示任务失败了,该任务会执行<code>reject</code>函数;进而执行<code>fail()</code>方法添加的回调函数。</li>
+</ol>
+<h3 id="修改Deferred状态的方法"><a href="#修改Deferred状态的方法" class="headerlink" title="修改Deferred状态的方法"></a>修改Deferred状态的方法</h3><p>为了让开发者手动改变<code>Deferred</code>对象的状态,<code>Deferred</code>还提供了<code>reject(args)</code>和<code>resolve(args)</code>两个方法,其中</p>
+<ul>
+<li><code>reject(args)</code>方法用于将<code>Deferred</code>对象改为”<code>任务失败</code>“状态,</li>
+<li><code>resolve(args)</code>方法用于将<code>Deferred</code>对象改为”<code>任务完成</code>“状态。</li>
+</ul>
+<h3 id="Deferred对象的方法详解"><a href="#Deferred对象的方法详解" class="headerlink" title="Deferred对象的方法详解"></a>Deferred对象的方法详解</h3><p><code>Deferred</code>对象支持的方法如下。</p>
+<h4 id="监听操作的方法"><a href="#监听操作的方法" class="headerlink" title="监听操作的方法"></a>监听操作的方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>progress(progressCallbacks)</code></td>
+<td align="left">指定在<code>Deferred</code>对象包含的异步操作<code>执行过程中</code>激发的回调函数。</td>
+</tr>
+<tr>
+<td align="left"><code>done(doneCallbacks)</code></td>
+<td align="left">指定<code>Deferred</code>对象包含的异步操作<code>执行成功后激发</code>的回调函数。</td>
+</tr>
+<tr>
+<td align="left"><code>fail(doneCallbacks)</code></td>
+<td align="left">指定<code>Deferred</code>对象包含的异步操作<code>执行失败后激发</code>的回调函数。</td>
+</tr>
+<tr>
+<td align="left"><code>always(alwaysCallbacks [,alwaysCallbacks])</code></td>
+<td align="left">该方法相当于<code>done()</code>、<code>fail()</code>两个方法的合体。也就是说,无论<code>Deferred</code>对象包含的异步操作执行成功还是执行失败,总会激发该方法指定的回调函数。</td>
+</tr>
+<tr>
+<td align="left"><code>then(doneCallbacks,failCallbacks [,progressCallbacks])</code></td>
+<td align="left"><code>then()</code>方法相当于<code>done()</code>、<code>fail()</code>、和<code>progress()</code>三个方法的综合版本,该方法可以分别为<code>Deferred</code>对象包含的异步操作在<code>完成时</code>、<code>失败时</code>、<code>进行中</code>指定一个或多个回调函数。</td>
+</tr>
+</tbody></table>
+<h4 id="调用监听操作方法的方法"><a href="#调用监听操作方法的方法" class="headerlink" title="调用监听操作方法的方法"></a>调用监听操作方法的方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>notify(args)</code></td>
+<td align="left">调用在<code>Deferred</code>对象上通过<code>progress()</code>方法添加的函数,<code>args</code>作为参数传入<code>progress()</code>方法添加的函数。</td>
+</tr>
+<tr>
+<td align="left"><code>notifyWith(context [,args])</code></td>
+<td align="left">类似于<code>notify(args)</code>方法的功能,只是激发<code>progress()</code>方法添加的函数时将传入<code>context</code>和<code>args</code>参数。</td>
+</tr>
+<tr>
+<td align="left"><code>reject(args)</code></td>
+<td align="left">将<code>Deferred</code>对象状态改为”<code>rejected</code>(任务已失败)”,在<code>Deferred</code> 对象上通过<code>fail()</code>方法添加的函数将会被激发,<code>args</code>作为参数传入<code>fail()</code>方法添加的函数。</td>
+</tr>
+<tr>
+<td align="left"><code>rejectWith(context [,args])</code></td>
+<td align="left">类似于<code>reject(args)</code>方法的功能,只是激发<code>fail()</code>方法添加的函数时将传入<code>context</code>和<code>args</code>参数。</td>
+</tr>
+<tr>
+<td align="left"><code>resolve(args)</code></td>
+<td align="left">将<code>Deferred</code>对象状态改为”<code>rejected</code>(任务已完成)”,在<code>Deferred</code>对象上通过<code>done()</code>方法添加的函数将会被激发,<code>args</code>作为参数传入<code>done()</code>方法添加的函数。</td>
+</tr>
+<tr>
+<td align="left"><code>resolveWith(context [,args])</code></td>
+<td align="left">类似于<code>resolve(args)</code>方法的功能,只是激发<code>done()</code>方法添加的函数时将传入<code>context</code>和<code>args</code>参数。</td>
+</tr>
+</tbody></table>
+<h4 id="返回Promise对象的方法"><a href="#返回Promise对象的方法" class="headerlink" title="返回Promise对象的方法"></a>返回Promise对象的方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>promise([target])</code></td>
+<td align="left">返回<code>Deferred</code>对象对应的<code>Promise</code>对象(它相当于<code>Deferred</code>对象的副本,不允许开发者通过<code>Promise</code>对象修改<code>Deferred</code>对象的状态)。如果指定了<code>target</code>参数,则会在该参数指定的对象上增加<code>Deferred</code>接口。</td>
+</tr>
+</tbody></table>
+<h4 id="查询一步操作所处的执行状态"><a href="#查询一步操作所处的执行状态" class="headerlink" title="查询一步操作所处的执行状态"></a>查询一步操作所处的执行状态</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>state()</code></td>
+<td align="left">返回<code>Deferred</code>对象包含的异步操作所处的执行状态。</td>
+</tr>
+<tr>
+<td align="left">该方法返回表示执行状态的字符串,可能返回如下三个字符串。</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<ol>
+<li><code>pending</code>:任务执行中,未完成。</li>
+<li><code>resolved</code>:任务完成。</li>
+<li><code>rejected</code>:任务失败。<!--SSTStop-->
+
+</li>
+</ol>
+<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><p>下面的程序定义了一个耗时操作。程序需要统计出指定范围的所有<code>质数</code>,由于这个过程耗时较长,因此考虑使用<code>Deferred</code>对象来管理回调函数。<code>JavaScript</code>代码如下。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">"author"</span> <span class="attr">content</span>=<span class="string">"Yeeku.H.Lee(CrazyIt.org)"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">"Content-Type"</span> <span class="attr">content</span>=<span class="string">"text/html; charset=utf-8"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span> Deferred对象 <span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span> <span class="attr">src</span>=<span class="string">"../jquery-3.1.1.js"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/javascript"</span>&gt;</span></span><br><span class="line"><span class="actionscript">        <span class="keyword">var</span> calPrime = <span class="function"><span class="keyword">function</span> <span class="params">(start, end)</span> </span>&#123;</span></span><br><span class="line"><span class="actionscript">            <span class="comment">// 定义一个Deferred对象</span></span></span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> dfd = $.Deferred();      <span class="comment">// ①</span></span></span><br><span class="line"><span class="actionscript">            <span class="keyword">try</span> &#123;</span></span><br><span class="line"><span class="actionscript">                <span class="keyword">var</span> result = <span class="string">""</span>;</span></span><br><span class="line">                search:</span><br><span class="line"><span class="actionscript">                <span class="keyword">for</span> (<span class="keyword">var</span> n = start; n &lt;= end; n++) &#123;</span></span><br><span class="line"></span><br><span class="line"><span class="javascript">                    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">2</span>; i &lt;= <span class="built_in">Math</span>.sqrt(n); i++) &#123;</span></span><br><span class="line"><span class="actionscript">                        <span class="comment">// 如果除以n的余数为0，开始判断下一个数字。</span></span></span><br><span class="line">                        if (n % i == 0) &#123;</span><br><span class="line"><span class="actionscript">                            <span class="keyword">continue</span> search;</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line"><span class="actionscript">                    <span class="comment">// 搜集找到的质数</span></span></span><br><span class="line"><span class="actionscript">                    result += (n + <span class="string">","</span>);</span></span><br><span class="line">                &#125;</span><br><span class="line"><span class="actionscript">                <span class="comment">// 当整个“耗时任务”执行完成时，将Deferred对象的状态改为resolved</span></span></span><br><span class="line"><span class="actionscript">                dfd.resolve(result);      <span class="comment">// ②</span></span></span><br><span class="line">            &#125;</span><br><span class="line"><span class="actionscript">            <span class="keyword">catch</span> (e) &#123;</span></span><br><span class="line"><span class="actionscript">                <span class="comment">// 如果程序出现异常，将Deferred对象的状态改为rejected</span></span></span><br><span class="line"><span class="actionscript">                dfd.reject(<span class="string">"任务失败"</span>);   <span class="comment">// ③</span></span></span><br><span class="line">            &#125;</span><br><span class="line"><span class="actionscript">            <span class="keyword">return</span> dfd.promise();</span></span><br><span class="line">        &#125;</span><br><span class="line"><span class="actionscript">        <span class="comment">// 调用calPrime()耗时函数</span></span></span><br><span class="line">        calPrime(1, 1000000)</span><br><span class="line"><span class="actionscript">            <span class="comment">// 通过done()方法添加回调函数</span></span></span><br><span class="line"><span class="actionscript">            .done(<span class="function"><span class="keyword">function</span> <span class="params">(result)</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">                $(<span class="string">"body"</span>).append(result);</span></span><br><span class="line">            &#125;)</span><br><span class="line"><span class="actionscript">            <span class="comment">// 通过fail()方法添加回调函数</span></span></span><br><span class="line"><span class="actionscript">            .fail(<span class="function"><span class="keyword">function</span> <span class="params">(result)</span> </span>&#123;</span></span><br><span class="line"><span class="javascript">                $(<span class="string">"body"</span>).append(<span class="string">"计算出错了！"</span>);</span></span><br><span class="line">            &#125;);</span><br><span class="line">    <span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>该程序中①号代码创建了一个<code>Deferred</code> 对象,该对象用于标识该耗时任务的完成进度:</p>
+<ul>
+<li>当任务完成时,程序调用<code>Deferred</code>对象的<code>resolve()</code>方法将它的状态设为<code>resolved</code>;</li>
+<li>当任务出错时,程序调用<code>Deferred</code>对象的<code>reject()</code>方法将它的状态设为<code>rejected</code>。</li>
+</ul>
+<p><code>calPrime()</code>方法返回<code>Deferred</code>对象的<code>Promise</code>对象,</p>
+<!--SSTStart-->
+<p><code>Promise</code>对象相当于<code>Deferred</code>对象的副本,但<strong>程序不能通过<code>Promise</code>对象来改变<code>Deferred</code>对象的状态</strong>—通过这种方式,即可避免别人在方法外改变<code>Deferred</code>对象的状态。</p>
+<!--SSTStop-->
+
+<p><code>Deferred</code>对象用于表示<code>calPrime()</code>耗时操作的完成状态,因此通常只应该在该方法内改变<code>Deferred</code>对象的状态。为了保证效果,建议将<code>Deferred</code>对象定义成该方法的局部变量,并让该方法返回<code>Deferred</code>对象的<code>Promise</code>对象。<br>在浏览器中执行该<code>JavaScript</code>代码,即可看到当<code>calPrime()</code>耗时操作执行完成后,会自动回调<code>done()</code>方法指定的回调函数。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/19f3a0c3/" title="3.9 jQuery的Deferred对象 3.9.1 jQuery的异步调用">https://lanlan2017.github.io/JavaReadingNotes/19f3a0c3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/f476211b/" rel="next" title="3.8.4 使用get或post方法">
+                  <i class="fa fa-chevron-left"></i> 3.8.4 使用get或post方法
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/6a28e4a5/" rel="prev" title="3.9.2 为多个耗时操作指定回调函数">
+                  3.9.2 为多个耗时操作指定回调函数 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#3-9-jQuery的Deferred对象"><span class="nav-text">3.9 jQuery的Deferred对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-9-1-jQuery的异步调用"><span class="nav-text">3.9.1 jQuery的异步调用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Deferred详解"><span class="nav-text">Deferred详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#如何创建Deferred对象"><span class="nav-text">如何创建Deferred对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deferred提供的3个耗时状态"><span class="nav-text">Deferred提供的3个耗时状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改Deferred状态的方法"><span class="nav-text">修改Deferred状态的方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Deferred对象的方法详解"><span class="nav-text">Deferred对象的方法详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#监听操作的方法"><span class="nav-text">监听操作的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#调用监听操作方法的方法"><span class="nav-text">调用监听操作方法的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#返回Promise对象的方法"><span class="nav-text">返回Promise对象的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询一步操作所处的执行状态"><span class="nav-text">查询一步操作所处的执行状态</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

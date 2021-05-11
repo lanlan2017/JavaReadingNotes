@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="11.3 注解调用存储过程&amp;nbsp;项目结构&amp;nbsp;数据库表&amp;nbsp;创建存储过程&amp;nbsp;持久化对象&amp;nbsp;mapper接口&amp;nbsp;调用存储过程查询select操作&amp;nbsp;查询全部&amp;nbsp;测试类&amp;nbsp;运行效果&amp;nbsp;根据id查询&amp;nbsp;测试类&amp;nbsp;使用存储过程进行update操作&amp;nbsp;测试类&amp;nbsp;调用存储过程进行delete操作&amp;nbsp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="11.3 注解调用存储过程">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/606e7276/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="11.3 注解调用存储过程&amp;nbsp;项目结构&amp;nbsp;数据库表&amp;nbsp;创建存储过程&amp;nbsp;持久化对象&amp;nbsp;mapper接口&amp;nbsp;调用存储过程查询select操作&amp;nbsp;查询全部&amp;nbsp;测试类&amp;nbsp;运行效果&amp;nbsp;根据id查询&amp;nbsp;测试类&amp;nbsp;使用存储过程进行update操作&amp;nbsp;测试类&amp;nbsp;调用存储过程进行delete操作&amp;nbsp">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-17T15:29:19.000Z">
+<meta property="article:modified_time" content="2020-06-05T03:17:50.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/606e7276/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>11.3 注解调用存储过程 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/606e7276/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">11.3 注解调用存储过程<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/4%20Spring+Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC2%E7%89%88)/%E7%AC%AC11%E7%AB%A0%20MyBatis%E7%9A%84%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/11.3%20%E6%B3%A8%E8%A7%A3%E8%B0%83%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/11.3%20%E6%B3%A8%E8%A7%A3%E8%B0%83%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-17 15:29:19" itemprop="dateCreated datePublished" datetime="2019-06-17T15:29:19+00:00">2019-06-17</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-05 03:17:50" itemprop="dateModified" datetime="2020-06-05T03:17:50+00:00">2020-06-05</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC11%E7%AB%A0-MyBatis%E7%9A%84%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">第11章 MyBatis的注解配置</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC11%E7%AB%A0-MyBatis%E7%9A%84%E6%B3%A8%E8%A7%A3%E9%85%8D%E7%BD%AE/11-3-%E6%B3%A8%E8%A7%A3%E8%B0%83%E7%94%A8%E5%AD%98%E5%82%A8%E8%BF%87%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">11.3 注解调用存储过程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/606e7276/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/606e7276/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/606e7276/#11-3-注解调用存储过程" class="header_1">11.3 注解调用存储过程</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#数据库表" class="header_2">数据库表</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#创建存储过程" class="header_2">创建存储过程</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#持久化对象" class="header_2">持久化对象</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#mapper接口" class="header_2">mapper接口</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#调用存储过程查询select操作" class="header_2">调用存储过程查询select操作</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#查询全部" class="header_3">查询全部</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#测试类" class="header_4">测试类</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#运行效果" class="header_4">运行效果</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#根据id查询" class="header_3">根据id查询</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#测试类" class="header_4">测试类</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#使用存储过程进行update操作" class="header_2">使用存储过程进行update操作</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#测试类" class="header_3">测试类</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#调用存储过程进行delete操作" class="header_2">调用存储过程进行delete操作</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#测试类" class="header_3">测试类</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#调用存储过程进行insert操作" class="header_2">调用存储过程进行insert操作</a>&nbsp;<br><a href="/JavaReadingNotes/606e7276/#测试类" class="header_3">测试类</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="11-3-注解调用存储过程"><a href="#11-3-注解调用存储过程" class="headerlink" title="11.3 注解调用存储过程"></a>11.3 注解调用存储过程</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_web2</span>\<span class="title">MyAProcedureTest</span></span></span><br><span class="line"><span class="function">├─<span class="title">src</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">db.properties</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">domain</span></span></span><br><span class="line"><span class="function">│ │ └─<span class="title">User.java</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">fractory</span></span></span><br><span class="line"><span class="function">│ │ └─<span class="title">SqlSessionFratoryTools.java</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">log4j.xml</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">mapper</span></span></span><br><span class="line"><span class="function">│ │ └─<span class="title">UserMapper.java</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">mybatis</span>-<span class="title">config.xml</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">procedure.sql</span></span></span><br><span class="line"><span class="function">│ ├─<span class="title">tb_user.sql</span></span></span><br><span class="line"><span class="function">│ └─<span class="title">test</span></span></span><br><span class="line"><span class="function">│   ├─<span class="title">DeleteTest.java</span></span></span><br><span class="line"><span class="function">│   ├─<span class="title">InsertTest.java</span></span></span><br><span class="line"><span class="function">│   ├─<span class="title">SelectAllTest.java</span></span></span><br><span class="line"><span class="function">│   ├─<span class="title">SelectByIdTest.java</span></span></span><br><span class="line"><span class="function">│   └─<span class="title">UpdateTest.java</span></span></span><br><span class="line"><span class="function">└─<span class="title">WebContent</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">META</span>-<span class="title">INF</span></span></span><br><span class="line"><span class="function">  │ └─<span class="title">MANIFEST.MF</span></span></span><br><span class="line"><span class="function">  └─<span class="title">WEB</span>-<span class="title">INF</span></span></span><br><span class="line"><span class="function">    └─<span class="title">lib</span></span></span><br><span class="line"><span class="function">      ├─<span class="title">commons</span>-<span class="title">logging</span>-1.2.<span class="title">jar</span></span></span><br><span class="line"><span class="function">      ├─<span class="title">log4j</span>-1.2.17.<span class="title">jar</span></span></span><br><span class="line"><span class="function">      ├─<span class="title">log4j</span>-<span class="title">api</span>-2.3.<span class="title">jar</span></span></span><br><span class="line"><span class="function">      ├─<span class="title">log4j</span>-<span class="title">core</span>-2.3.<span class="title">jar</span></span></span><br><span class="line"><span class="function">      ├─<span class="title">mybatis</span>-3.4.5.<span class="title">jar</span></span></span><br><span class="line"><span class="function">      └─<span class="title">mysql</span>-<span class="title">connector</span>-<span class="title">java</span>-5.1.44-<span class="title">bin.jar</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="数据库表"><a href="#数据库表" class="headerlink" title="数据库表"></a>数据库表</h2><p><code>tb_user.sql</code>:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建数据表</span></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> <span class="keyword">IF</span> <span class="keyword">EXISTS</span> <span class="string">`tb_user`</span>;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> <span class="string">`tb_user`</span> (</span><br><span class="line">  <span class="string">`id`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="literal">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  <span class="string">`name`</span> <span class="built_in">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`sex`</span> <span class="built_in">char</span>(<span class="number">2</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  <span class="string">`age`</span> <span class="built_in">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>,</span><br><span class="line">  PRIMARY <span class="keyword">KEY</span> (<span class="string">`id`</span>)</span><br><span class="line">) <span class="keyword">ENGINE</span>=<span class="keyword">InnoDB</span> <span class="keyword">DEFAULT</span> <span class="keyword">CHARSET</span>=utf8mb4;</span><br><span class="line"><span class="comment"># 插入数据</span></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_user`</span> <span class="keyword">VALUES</span> (<span class="string">'1'</span>, <span class="string">'小明'</span>, <span class="string">'男'</span>, <span class="string">'21'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_user`</span> <span class="keyword">VALUES</span> (<span class="string">'2'</span>, <span class="string">'小王'</span>, <span class="string">'男'</span>, <span class="string">'22'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_user`</span> <span class="keyword">VALUES</span> (<span class="string">'3'</span>, <span class="string">'小丽'</span>, <span class="string">'女'</span>, <span class="string">'18'</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> <span class="string">`tb_user`</span> <span class="keyword">VALUES</span> (<span class="string">'4'</span>, <span class="string">'小芳'</span>, <span class="string">'女'</span>, <span class="string">'18'</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="创建存储过程"><a href="#创建存储过程" class="headerlink" title="创建存储过程"></a>创建存储过程</h2><p><code>procedure.sql</code>:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建insert_user存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> insert_user;</span><br><span class="line">DELIMITER &amp;&amp; </span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> insert_user (</span><br><span class="line">    <span class="keyword">OUT</span> v_id <span class="built_in">int</span>,</span><br><span class="line">    <span class="keyword">in</span> v_name <span class="built_in">varchar</span>(<span class="number">18</span>),</span><br><span class="line">    <span class="keyword">in</span> v_sex <span class="built_in">varchar</span>(<span class="number">19</span>),</span><br><span class="line">    <span class="keyword">in</span> v_age <span class="built_in">int</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_user (<span class="keyword">name</span>,sex,age) <span class="keyword">VALUES</span> (v_name,v_sex,v_age);</span><br><span class="line">    <span class="keyword">SET</span> v_id=<span class="keyword">LAST_INSERT_ID</span>();</span><br><span class="line"><span class="keyword">END</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">DELIMITER ;</span><br><span class="line"><span class="comment"># 创建select_user存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> select_all_user;</span><br><span class="line">delimiter &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> select_all_user()</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span>,sex,age <span class="keyword">from</span> tb_user;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">DELIMITER ;</span><br><span class="line"><span class="comment"># 创建select_user_by_id存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> select_user_by_id;</span><br><span class="line">DELIMITER &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> select_user_by_id(<span class="keyword">IN</span> in_id <span class="built_in">INTEGER</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span>,sex,age <span class="keyword">from</span> tb_user <span class="keyword">where</span> <span class="keyword">id</span>=in_id;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">DELIMITER ;</span><br><span class="line"><span class="comment"># 创建update_user_by_id存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> update_user_by_id;</span><br><span class="line">delimiter &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> update_user_by_id (</span><br><span class="line">    <span class="keyword">IN</span> p_id <span class="built_in">int</span>,</span><br><span class="line">    <span class="keyword">IN</span> p_name <span class="built_in">varchar</span>(<span class="number">18</span>),</span><br><span class="line">    <span class="keyword">IN</span> p_sex <span class="built_in">varchar</span>(<span class="number">19</span>),</span><br><span class="line">    <span class="keyword">IN</span> p_age <span class="built_in">int</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">update</span> tb_user <span class="keyword">set</span> <span class="keyword">name</span>=p_name,sex=p_sex,age=p_age</span><br><span class="line">    <span class="keyword">where</span> <span class="keyword">id</span>=p_id;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">delimiter ;</span><br><span class="line"><span class="comment"># 创建delete_user_by_id存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> delete_user_by_id;</span><br><span class="line">delimiter &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> delete_user_by_id(<span class="keyword">IN</span> p_id <span class="built_in">integer</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">delete</span> <span class="keyword">from</span> tb_user <span class="keyword">where</span> <span class="keyword">id</span>=p_id;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
+<h2 id="持久化对象"><a href="#持久化对象" class="headerlink" title="持久化对象"></a>持久化对象</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> domain;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String sex;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"User [id="</span> + id + <span class="string">", name="</span> + name + <span class="string">", sex="</span> + sex + <span class="string">", age="</span> + age + <span class="string">"]"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="mapper接口"><a href="#mapper接口" class="headerlink" title="mapper接口"></a>mapper接口</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> mapper;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Delete;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Insert;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Options;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Select;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.annotations.Update;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.mapping.StatementType;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span></span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 查询所有的用户信息.</span></span><br><span class="line"><span class="comment">     * </span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 包含所有用户信息的List集合.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Select</span>(<span class="string">"&#123;call select_all_user()&#125;"</span>)</span><br><span class="line">    <span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line">    <span class="function">List&lt;User&gt; <span class="title">selectAllUser</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id查询用户信息.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Select</span>(<span class="string">"&#123;call select_user_by_id(#&#123;id,mode=IN&#125;)&#125;"</span>)</span><br><span class="line">    <span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line">    <span class="function">User <span class="title">selectUserById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 插入一个用户信息.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> user</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Insert</span>(<span class="string">"&#123;call insert_user("</span></span><br><span class="line">            + <span class="string">"#&#123;id,mode=OUT,jdbcType=INTEGER&#125;,"</span></span><br><span class="line">            + <span class="string">"#&#123;name,mode=IN&#125;,"</span></span><br><span class="line">            + <span class="string">"#&#123;sex,mode=IN&#125;,"</span></span><br><span class="line">            + <span class="string">"#&#123;age,mode=IN&#125;"</span></span><br><span class="line">            + <span class="string">")&#125;"</span>)</span><br><span class="line">    <span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line">    <span class="function">Integer <span class="title">insertUser</span><span class="params">(User user)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id更新用户信息.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Update</span>(<span class="string">"&#123;call update_user_by_id("</span></span><br><span class="line">            + <span class="string">"#&#123;id,mode=IN&#125;,"</span></span><br><span class="line">            + <span class="string">"#&#123;name,mode=IN&#125;,"</span></span><br><span class="line">            + <span class="string">"#&#123;sex,mode=IN&#125;,"</span></span><br><span class="line">            + <span class="string">"#&#123;age,mode=IN&#125;"</span></span><br><span class="line">            + <span class="string">")&#125;"</span>)</span><br><span class="line">    <span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">updateUserById</span><span class="params">(User user)</span></span>;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id删除用户.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Delete</span>(<span class="string">"&#123;call delete_user_by_id(#&#123;id,mode=IN&#125;)&#125;"</span>)</span><br><span class="line">    <span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deleteUserById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>UserMapper.java</code>只是将之前写在<code>XML</code>文件当中调用存储过程的<code>SQL</code>语句写在了注解当中,注意需要使用<code>@Options(statementType=StatementType.CALLABLE)</code>提供调用存储过程的<code>CALLBALE</code>选项,其他并无不同。</p>
+<h2 id="调用存储过程查询select操作"><a href="#调用存储过程查询select操作" class="headerlink" title="调用存储过程查询select操作"></a>调用存储过程查询select操作</h2><h3 id="查询全部"><a href="#查询全部" class="headerlink" title="查询全部"></a>查询全部</h3><p>存储过程如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 创建select_user存储过程</span><br><span class="line">drop procedure <span class="keyword">if</span> exists select_all_user;</span><br><span class="line">delimiter &amp;&amp;</span><br><span class="line"><span class="function">create procedure <span class="title">select_all_user</span><span class="params">()</span></span></span><br><span class="line"><span class="function">begin</span></span><br><span class="line"><span class="function">    select id,name,sex,age from tb_user</span>;</span><br><span class="line">end</span><br><span class="line">&amp;&amp;</span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+<p>查询所有的<code>mapper</code>接口方法如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select</span>(<span class="string">"&#123;call select_all_user()&#125;"</span>)</span><br><span class="line"><span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line"><span class="function">List&lt;User&gt; <span class="title">selectAllUser</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p><code>select_all_user</code>这个存储过程没有参数,直接在前面加上<code>call</code>调用即可,注意存储过程时不要忘了加上括号,也就是:<code>call 存储过程名称 括号</code>,<br>还有就是放在注解中的存储过程调用语句要用大括号包裹起来,至于为什么,我还不知道,先这样背着.</p>
+<h4 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SelectAllTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 加载mybatis-config.xml,获取SqlSession实例</span></span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            <span class="comment">// 获取mapper接口代理对象</span></span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            List&lt;User&gt; users = userMapper.selectAllUser();</span><br><span class="line">            System.out.println(<span class="string">"----------------------------------"</span>);</span><br><span class="line">            users.forEach(user-&gt; System.out.println(user));</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭会话</span></span><br><span class="line">            <span class="keyword">if</span>(sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="运行效果"><a href="#运行效果" class="headerlink" title="运行效果"></a>运行效果</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> select_all_user()&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: </span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">4</span></span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">0</span></span><br><span class="line">----------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br><span class="line">User [id=<span class="number">2</span>, name=小王, sex=男, age=<span class="number">22</span>]</span><br><span class="line">User [id=<span class="number">3</span>, name=小丽, sex=女, age=<span class="number">18</span>]</span><br><span class="line">User [id=<span class="number">4</span>, name=小芳, sex=女, age=<span class="number">18</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="根据id查询"><a href="#根据id查询" class="headerlink" title="根据id查询"></a>根据id查询</h3><p>用到的存储过程如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建select_user_by_id存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> select_user_by_id;</span><br><span class="line">DELIMITER &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> select_user_by_id(<span class="keyword">IN</span> in_id <span class="built_in">INTEGER</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">select</span> <span class="keyword">id</span>,<span class="keyword">name</span>,sex,age <span class="keyword">from</span> tb_user <span class="keyword">where</span> <span class="keyword">id</span>=in_id;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+<p><code>mapper</code>接口方法如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Select</span>(<span class="string">"&#123;call select_user_by_id(#&#123;id,mode=IN&#125;)&#125;"</span>)</span><br><span class="line"><span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line"><span class="function">User <span class="title">selectUserById</span><span class="params">(Integer id)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>注意存储过程的参数写法,<code>#{id,mode=IN}</code>这个是<code>mybatis</code>的表达式,该表达式中第一项<code>id</code>是参数名称,第二项<code>mode=IN</code>表示这个参数是存储过程的输入参数。</p>
+<h4 id="测试类-1"><a href="#测试类-1" class="headerlink" title="测试类"></a>测试类</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SelectByIdTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 加载mybatis-config.xml,获取SqlSession实例</span></span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            <span class="comment">// 获取mapper接口代理对象</span></span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">"-----------------------------------------------"</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭会话</span></span><br><span class="line">            <span class="keyword">if</span>(sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> select_user_by_id(?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">0</span></span><br><span class="line">-----------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="使用存储过程进行update操作"><a href="#使用存储过程进行update操作" class="headerlink" title="使用存储过程进行update操作"></a>使用存储过程进行update操作</h2><p>对应的存储过程如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建update_user_by_id存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> update_user_by_id;</span><br><span class="line">delimiter &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> update_user_by_id (</span><br><span class="line">    <span class="keyword">IN</span> p_id <span class="built_in">int</span>,</span><br><span class="line">    <span class="keyword">IN</span> p_name <span class="built_in">varchar</span>(<span class="number">18</span>),</span><br><span class="line">    <span class="keyword">IN</span> p_sex <span class="built_in">varchar</span>(<span class="number">19</span>),</span><br><span class="line">    <span class="keyword">IN</span> p_age <span class="built_in">int</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">update</span> tb_user <span class="keyword">set</span> <span class="keyword">name</span>=p_name,sex=p_sex,age=p_age</span><br><span class="line">    <span class="keyword">where</span> <span class="keyword">id</span>=p_id;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
+<p><code>mapper</code>接口方法如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Update</span>(<span class="string">"&#123;call update_user_by_id("</span></span><br><span class="line">        + <span class="string">"#&#123;id,mode=IN&#125;,"</span></span><br><span class="line">        + <span class="string">"#&#123;name,mode=IN&#125;,"</span></span><br><span class="line">        + <span class="string">"#&#123;sex,mode=IN&#125;,"</span></span><br><span class="line">        + <span class="string">"#&#123;age,mode=IN&#125;"</span></span><br><span class="line">        + <span class="string">")&#125;"</span>)</span><br><span class="line"><span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">updateUserById</span><span class="params">(User user)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="测试类-2"><a href="#测试类-2" class="headerlink" title="测试类"></a>测试类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UpdateTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 加载mybatis-config.xml,获取SqlSession实例</span></span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            <span class="comment">// 获取mapper接口代理对象</span></span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">3</span>);</span><br><span class="line">            System.out.println(<span class="string">"----------------------------------"</span>);</span><br><span class="line">            <span class="keyword">if</span>(user != <span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                System.out.println(<span class="string">"更新之前的数据:"</span> + user);</span><br><span class="line">                System.out.println(<span class="string">"----------------------------------"</span>);</span><br><span class="line">                user.setName(<span class="string">"李四"</span>);</span><br><span class="line">                user.setSex(<span class="string">"男"</span>);</span><br><span class="line">                user.setAge(<span class="number">22</span>);</span><br><span class="line">                userMapper.updateUserById(user);</span><br><span class="line">                System.out.println(<span class="string">"----------------------------------"</span>);</span><br><span class="line">                user = userMapper.selectUserById(user.getId());</span><br><span class="line">                System.out.println(<span class="string">"----------------------------------"</span>);</span><br><span class="line">                System.out.println(<span class="string">"更新之后的数据:"</span> + user);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭会话</span></span><br><span class="line">            <span class="keyword">if</span>(sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> select_user_by_id(?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">3</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">0</span></span><br><span class="line">----------------------------------</span><br><span class="line">更新之前的数据:User [id=<span class="number">3</span>, name=小丽, sex=女, age=<span class="number">18</span>]</span><br><span class="line">----------------------------------</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> update_user_by_id(?,?,?,?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">3</span>(Integer), 李四(String), 男(String), <span class="number">22</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">1</span></span><br><span class="line">----------------------------------</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> select_user_by_id(?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">3</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">0</span></span><br><span class="line">----------------------------------</span><br><span class="line">更新之后的数据:User [id=<span class="number">3</span>, name=李四, sex=男, age=<span class="number">22</span>]</span><br></pre></td></tr></table></figure>
+<h2 id="调用存储过程进行delete操作"><a href="#调用存储过程进行delete操作" class="headerlink" title="调用存储过程进行delete操作"></a>调用存储过程进行delete操作</h2><p>测试的存储过程如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建delete_user_by_id存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> delete_user_by_id;</span><br><span class="line">delimiter &amp;&amp;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">procedure</span> delete_user_by_id(<span class="keyword">IN</span> p_id <span class="built_in">integer</span>)</span><br><span class="line"><span class="keyword">begin</span></span><br><span class="line">    <span class="keyword">delete</span> <span class="keyword">from</span> tb_user <span class="keyword">where</span> <span class="keyword">id</span>=p_id;</span><br><span class="line"><span class="keyword">end</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">delimiter ;</span><br></pre></td></tr></table></figure>
+<p>对应的<code>mapper</code>接口方法如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Delete</span>(<span class="string">"&#123;call delete_user_by_id(#&#123;id,mode=IN&#125;)&#125;"</span>)</span><br><span class="line"><span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">deleteUserById</span><span class="params">(Integer id)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="测试类-3"><a href="#测试类-3" class="headerlink" title="测试类"></a>测试类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeleteTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 加载mybatis-config.xml,获取SqlSession实例</span></span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            <span class="comment">// 获取mapper接口代理对象</span></span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">2</span>);</span><br><span class="line">            <span class="keyword">if</span>(user != <span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                System.out.println(<span class="string">"------------------------------------------"</span>);</span><br><span class="line">                System.out.println(<span class="string">"即将删除用户:"</span> + user);</span><br><span class="line">                System.out.println(<span class="string">"------------------------------------------"</span>);</span><br><span class="line">                userMapper.deleteUserById(user.getId());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭会话</span></span><br><span class="line">            <span class="keyword">if</span>(sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> select_user_by_id(?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">2</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">0</span></span><br><span class="line">------------------------------------------</span><br><span class="line">即将删除用户:User [id=<span class="number">2</span>, name=小王, sex=男, age=<span class="number">22</span>]</span><br><span class="line">------------------------------------------</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> delete_user_by_id(?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">2</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="调用存储过程进行insert操作"><a href="#调用存储过程进行insert操作" class="headerlink" title="调用存储过程进行insert操作"></a>调用存储过程进行insert操作</h2><p>用到的存储过程定义如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建insert_user存储过程</span></span><br><span class="line"><span class="keyword">drop</span> <span class="keyword">procedure</span> <span class="keyword">if</span> <span class="keyword">exists</span> insert_user;</span><br><span class="line">DELIMITER &amp;&amp; </span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">PROCEDURE</span> insert_user (</span><br><span class="line">    <span class="keyword">OUT</span> v_id <span class="built_in">int</span>,</span><br><span class="line">    <span class="keyword">in</span> v_name <span class="built_in">varchar</span>(<span class="number">18</span>),</span><br><span class="line">    <span class="keyword">in</span> v_sex <span class="built_in">varchar</span>(<span class="number">19</span>),</span><br><span class="line">    <span class="keyword">in</span> v_age <span class="built_in">int</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">BEGIN</span></span><br><span class="line">    <span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_user (<span class="keyword">name</span>,sex,age) <span class="keyword">VALUES</span> (v_name,v_sex,v_age);</span><br><span class="line">    <span class="keyword">SET</span> v_id=<span class="keyword">LAST_INSERT_ID</span>();</span><br><span class="line"><span class="keyword">END</span></span><br><span class="line">&amp;&amp;</span><br><span class="line">DELIMITER ;</span><br></pre></td></tr></table></figure>
+<p>对应的<code>mapper</code>接口的方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Insert</span>(<span class="string">"&#123;call insert_user("</span></span><br><span class="line">        + <span class="string">"#&#123;id,mode=OUT,jdbcType=INTEGER&#125;,"</span></span><br><span class="line">        + <span class="string">"#&#123;name,mode=IN&#125;,"</span></span><br><span class="line">        + <span class="string">"#&#123;sex,mode=IN&#125;,"</span></span><br><span class="line">        + <span class="string">"#&#123;age,mode=IN&#125;"</span></span><br><span class="line">        + <span class="string">")&#125;"</span>)</span><br><span class="line"><span class="meta">@Options</span>(statementType=StatementType.CALLABLE)</span><br><span class="line"><span class="function">Integer <span class="title">insertUser</span><span class="params">(User user)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="测试类-4"><a href="#测试类-4" class="headerlink" title="测试类"></a>测试类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsertTest</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 加载mybatis-config.xml,获取SqlSession实例</span></span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            <span class="comment">// 获取mapper接口代理对象</span></span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper<span class="class">.<span class="keyword">class</span>)</span>;</span><br><span class="line">            User user = <span class="keyword">new</span> User();</span><br><span class="line">            user.setName(<span class="string">"小张"</span>);</span><br><span class="line">            user.setSex(<span class="string">"男"</span>);</span><br><span class="line">            user.setAge(<span class="number">22</span>);</span><br><span class="line">            userMapper.insertUser(user);</span><br><span class="line">            System.out.println(<span class="string">"---------------------------------------"</span>);</span><br><span class="line">            System.out.println(<span class="string">"生成的主键:"</span> + user.getId());</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭会话</span></span><br><span class="line">            <span class="keyword">if</span>(sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: &#123;<span class="keyword">call</span> insert_user(?,?,?,?)&#125; </span><br><span class="line">DEBUG [main] ==&gt; Parameters: 小张(String), 男(String), <span class="number">22</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">1</span></span><br><span class="line">---------------------------------------</span><br><span class="line">生成的主键:<span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/606e7276/" title="11.3 注解调用存储过程">https://lanlan2017.github.io/JavaReadingNotes/606e7276/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/99881554/" rel="next" title="11.2 基于注解的动态SQL4 delete">
+                  <i class="fa fa-chevron-left"></i> 11.2 基于注解的动态SQL4 delete
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/cfab8049/" rel="prev" title="11.4 注解使用二级缓存">
+                  11.4 注解使用二级缓存 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#11-3-注解调用存储过程"><span class="nav-text">11.3 注解调用存储过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#项目结构"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库表"><span class="nav-text">数据库表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建存储过程"><span class="nav-text">创建存储过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#持久化对象"><span class="nav-text">持久化对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mapper接口"><span class="nav-text">mapper接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用存储过程查询select操作"><span class="nav-text">调用存储过程查询select操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查询全部"><span class="nav-text">查询全部</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试类"><span class="nav-text">测试类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行效果"><span class="nav-text">运行效果</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据id查询"><span class="nav-text">根据id查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#测试类-1"><span class="nav-text">测试类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#使用存储过程进行update操作"><span class="nav-text">使用存储过程进行update操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试类-2"><span class="nav-text">测试类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用存储过程进行delete操作"><span class="nav-text">调用存储过程进行delete操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试类-3"><span class="nav-text">测试类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#调用存储过程进行insert操作"><span class="nav-text">调用存储过程进行insert操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#测试类-4"><span class="nav-text">测试类</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

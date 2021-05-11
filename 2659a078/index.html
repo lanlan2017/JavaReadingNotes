@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="3.1 JSP概述&amp;nbsp;JSP相较Servlet的优点&amp;nbsp;JSP在哪里运行&amp;nbsp;在JSP第一次被请求时 容器要做什么&amp;nbsp;在JSP页面的后续请求时 容器要做什么&amp;nbsp;如何减少第一次调用JSP页面时的花费&amp;nbsp;JSP自带的API包&amp;nbsp;模板数据和语法元素&amp;nbsp;Demo&amp;nbsp;第一个JSP页面&amp;nbsp;JSP页面对应的Servlet&amp;nbsp;J">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.1 JSP概述">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/2659a078/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="3.1 JSP概述&amp;nbsp;JSP相较Servlet的优点&amp;nbsp;JSP在哪里运行&amp;nbsp;在JSP第一次被请求时 容器要做什么&amp;nbsp;在JSP页面的后续请求时 容器要做什么&amp;nbsp;如何减少第一次调用JSP页面时的花费&amp;nbsp;JSP自带的API包&amp;nbsp;模板数据和语法元素&amp;nbsp;Demo&amp;nbsp;第一个JSP页面&amp;nbsp;JSP页面对应的Servlet&amp;nbsp;J">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter3/1.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter3/2.png">
+<meta property="article:published_time" content="2019-03-26T22:57:18.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:54.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter3/1.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/2659a078/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>3.1 JSP概述 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/2659a078/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">3.1 JSP概述<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/3%20Serlet%20JSP%E5%92%8CSpring%20MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%20Servlets%E5%92%8CJSP/%E7%AC%AC3%E7%AB%A0%20Java%20Server%20Pages(JSP)/3.1%20JSP%E6%A6%82%E8%BF%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-03-26 22:57:18" itemprop="dateCreated datePublished" datetime="2019-03-26T22:57:18+00:00">2019-03-26</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:54" itemprop="dateModified" datetime="2020-02-07T01:34:54+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">3 Serlet JSP和Spring MVC初学指南</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-Servlets%E5%92%8CJSP/" itemprop="url" rel="index"><span itemprop="name">第一部分 Servlets和JSP</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-Servlets%E5%92%8CJSP/%E7%AC%AC3%E7%AB%A0-Java-Server-Pages-JSP/" itemprop="url" rel="index"><span itemprop="name">第3章 Java Server Pages(JSP)</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/2659a078/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/2659a078/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/2659a078/#3-1-JSP概述" class="header_2">3.1 JSP概述</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#JSP相较Servlet的优点" class="header_3">JSP相较Servlet的优点</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#JSP在哪里运行" class="header_3">JSP在哪里运行</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#在JSP第一次被请求时-容器要做什么" class="header_3">在JSP第一次被请求时 容器要做什么</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#在JSP页面的后续请求时-容器要做什么" class="header_3">在JSP页面的后续请求时 容器要做什么</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#如何减少第一次调用JSP页面时的花费" class="header_3">如何减少第一次调用JSP页面时的花费</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#JSP自带的API包" class="header_3">JSP自带的API包</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#模板数据和语法元素" class="header_3">模板数据和语法元素</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#Demo" class="header_2">Demo</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#第一个JSP页面" class="header_3">第一个JSP页面</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#JSP页面对应的Servlet" class="header_3">JSP页面对应的Servlet</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#JSP实现类的主体方法" class="header_3">JSP实现类的主体方法</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#说明" class="header_4">说明</a>&nbsp;<br><a href="/JavaReadingNotes/2659a078/#显示今日日期" class="header_3">显示今日日期</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h2 id="3-1-JSP概述"><a href="#3-1-JSP概述" class="headerlink" title="3.1 JSP概述"></a>3.1 JSP概述</h2><h3 id="JSP相较Servlet的优点"><a href="#JSP相较Servlet的优点" class="headerlink" title="JSP相较Servlet的优点"></a>JSP相较Servlet的优点</h3><p>**<code>JSP</code>页面本质上是一个<code>Servlet</code>**。然而，用<code>JSP</code>页面开发比使用<code>Servlet</code>更容易，主要有两个原因。</p>
+<ul>
+<li>首先，不必编译<code>JSP</code>页面；</li>
+<li>其次，<code>JSP</code>页面是一个以<code>.jsp</code>为扩展名的文本文件，可以使用任何文本编辑器来编写它们。</li>
+</ul>
+<h3 id="JSP在哪里运行"><a href="#JSP在哪里运行" class="headerlink" title="JSP在哪里运行"></a>JSP在哪里运行</h3><p><code>JSP</code>页面在<code>JSP</code>容器中运行，一个<code>Servlet</code>容器通常也是<code>JSP</code>容器。例如，<code>Tomcat</code>就是一个<code>Servlet/JSP</code>容器。</p>
+<h3 id="在JSP第一次被请求时-容器要做什么"><a href="#在JSP第一次被请求时-容器要做什么" class="headerlink" title="在JSP第一次被请求时 容器要做什么"></a>在JSP第一次被请求时 容器要做什么</h3><p>当一个<code>JSP</code>页面第一次被请求时，<code>Servlet/JSP</code>容器主要做以下两件事情：<br>（1）把<code>JSP</code>页面转换成<code>JSP</code>页面实现类，该实现类是一个实现<code>javax.servlet.jsp.JspPage</code>接口或其子接口<code>javax.servlet.jsp.HttpJspPage</code>的Java类。而<code>javax.servlet.jsp.JspPage</code>接口又是<code>javax.servlet.Servlet</code>的子接口，这使得**每一个<code>JSP</code>页面都是一个<code>Servlet</code>**。该实现类的类名由<code>Servlet/JSP</code>容器生成。如果出现转换错误，则相关错误信息将被发送到客户端。<br>（2）如果转换成功，<code>Servlet/JSP</code>容器随后编译该<code>Servlet</code>类，并装载和实例化该类，并像其他正常的<code>Servlet</code>一样执行生命周期操作。</p>
+<h3 id="在JSP页面的后续请求时-容器要做什么"><a href="#在JSP页面的后续请求时-容器要做什么" class="headerlink" title="在JSP页面的后续请求时 容器要做什么"></a>在JSP页面的后续请求时 容器要做什么</h3><p>对于同一个<code>JSP</code>页面的后续请求，<code>Servlet/JSP</code>容器会先检查<code>JSP</code>页面是否被修改过。</p>
+<ul>
+<li>如果该<code>JSP</code>页面被修改过，则该<code>JSP</code>页面会被重新转换为<code>Servlet</code>、然后编译并执行。</li>
+<li>如果该<code>JSP</code>页面没有被修改过，则执行已经在内存中的<code>JSP Servlet</code>。</li>
+</ul>
+<p>这样一来，一个<code>JSP</code>页面的第一次调用的实际花费总比后续调用的花费多，因为第一次调用涉及转换和编译。</p>
+<h3 id="如何减少第一次调用JSP页面时的花费"><a href="#如何减少第一次调用JSP页面时的花费" class="headerlink" title="如何减少第一次调用JSP页面时的花费"></a>如何减少第一次调用JSP页面时的花费</h3><p>为了解决这个问题，可以执行下列动作之一：</p>
+<ul>
+<li>配置应用程序，使所有的<code>JSP</code>页面在应用程序启动时被调用,也就是在引用程序启动时就转换和编译，而不是在第一次请求时被调用。</li>
+<li>预编译<code>JSP</code>页面，并将其部署为<code>Servlet</code>。</li>
+</ul>
+<h3 id="JSP自带的API包"><a href="#JSP自带的API包" class="headerlink" title="JSP自带的API包"></a>JSP自带的API包</h3><p><code>JSP</code>自带的<code>API</code>包含4个包,如下所示:</p>
+<ul>
+<li><code>javax.servlet.jsp</code>。这个包包含了用于<code>Servlet/JSP</code>容器将<code>JSP</code>页面翻译为<code>Servlet</code>的核心类和接口。其中的两个重要成员是<code>JspPage</code>和<code>HttpJspPage</code>接口。所有的<code>JSP</code>页面实现类必须实现<code>JspPage</code>或<code>HttpJspPage</code>接口。在<code>HTTP</code>环境下，实现<code>HttpJspPage</code>接口是显而易见的选择。</li>
+<li><code>javax.servlet.jsp.tagext</code>。这个包中包含了用于开发自定义标签的类型。</li>
+<li><code>javax.el</code>。这个包中提供了统一表达式语言的<code>API</code>。</li>
+<li><code>javax.servlet.jsp.el</code>。这个包提供了一组必须由<code>Servlet/JSP</code>容器支持，以便在<code>JSP</code>页面中使用表达式语言的类。</li>
+</ul>
+<p>除了<code>javax.servlet.jsp.tagext</code>，我们很少直接使用<code>JSP API</code>。事实上，编写<code>JSP</code>页面时，我们更关心<code>Servlet API</code>，而非<code>JSP API</code>。当然，我们还需要掌握<code>JSP</code>语法，本章后续会进一步说明。开发<code>JSP</code>容器或<code>JSP</code>编译器时，<code>JSP API</code>已被广泛使用。<br>可以在以下网址查看JSP API：<br><a href="https://docs.oracle.com/javaee/7/api/index.html?javax/servlet/jsp/package-summary.html" target="_blank" rel="noopener">https://docs.oracle.com/javaee/7/api/index.html?javax/servlet/jsp/package-summary.html</a></p>
+<h3 id="模板数据和语法元素"><a href="#模板数据和语法元素" class="headerlink" title="模板数据和语法元素"></a>模板数据和语法元素</h3><p><code>JSP</code>页面可以包含模板数据和语法元素。这里，语法元素是一些具有特殊意义的<code>JSP</code>转换符。例如，“<code>&lt;%</code>”是一个元素，因为它表示在<code>JSP</code>页面中的<code>Java</code>代码块的开始。“<code>%&gt;</code>”也是一个元素，因为它是<code>Java</code>代码块的结束符。<strong>除去语法元素外的一切是模板数据</strong>。<strong>模板数据会原样发送给浏览器</strong>。例如，**<code>JSP</code>页面中的<code>HTML</code>标记和文字都是模板数据**。</p>
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><h3 id="第一个JSP页面"><a href="#第一个JSP页面" class="headerlink" title="第一个JSP页面"></a>第一个JSP页面</h3><p>下面是一个名为welcome.jsp的JSP页面。这个页面仅仅向用户发送一个Welcome。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span><span class="tag">&lt;<span class="name">title</span>&gt;</span>Welcome<span class="tag">&lt;/<span class="name">title</span>&gt;</span><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">Welcome</span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在Tomcat中，welcome.jsp页面在第一次请求时被翻译成名为<code>welcome_jsp</code>的Servlet。你可以在Tomcat工作目录下的子目录中找到生成的Servlet，该Servlet继承<br>自org.apache.jasper. runtime.HttpJspBase抽象类,并实现了javax.servlet.jsp.HttpJspPage接口,org.apache.jasper. runtime.HttpJspBase继承于javax.servlet.http.HttpServlet类。<br>下面是为welcome.jsp生成的Servlet。</p>
+<h3 id="JSP页面对应的Servlet"><a href="#JSP页面对应的Servlet" class="headerlink" title="JSP页面对应的Servlet"></a>JSP页面对应的Servlet</h3><p>JSP页面会被编译成Servlet,并发布到Tomcat安装目录下的<code>\work\Catalina\localhost\项目名\包名\类名_jsp.java</code>,我这里是<code>D:\dev\apache-tomcat-8.5.35\work\Catalina\localhost\app03a\org\apache\jsp\welcome_jsp.java</code>,打开这个文件,内容如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Generated by the Jasper component of Apache Tomcat</span></span><br><span class="line"><span class="comment"> * Version: Apache Tomcat/8.5.35</span></span><br><span class="line"><span class="comment"> * Generated at: 2019-03-26 08:24:51 UTC</span></span><br><span class="line"><span class="comment"> * Note: The last modified time of this file was set to</span></span><br><span class="line"><span class="comment"> *       the last modified time of the source file after</span></span><br><span class="line"><span class="comment"> *       generation to assist with modification tracking.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">package</span> org.apache.jsp;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.jsp.*;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">welcome_jsp</span> <span class="keyword">extends</span> <span class="title">org</span>.<span class="title">apache</span>.<span class="title">jasper</span>.<span class="title">runtime</span>.<span class="title">HttpJspBase</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">org</span>.<span class="title">apache</span>.<span class="title">jasper</span>.<span class="title">runtime</span>.<span class="title">JspSourceDependent</span>,</span></span><br><span class="line"><span class="class">                 <span class="title">org</span>.<span class="title">apache</span>.<span class="title">jasper</span>.<span class="title">runtime</span>.<span class="title">JspSourceImports</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> javax.servlet.jsp.JspFactory _jspxFactory =</span><br><span class="line">          javax.servlet.jsp.JspFactory.getDefaultFactory();</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> java.util.Map&lt;java.lang.String,java.lang.Long&gt; _jspx_dependants;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.util.Set&lt;java.lang.String&gt; _jspx_imports_packages;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> java.util.Set&lt;java.lang.String&gt; _jspx_imports_classes;</span><br><span class="line">  <span class="keyword">static</span> &#123;</span><br><span class="line">    _jspx_imports_packages = <span class="keyword">new</span> java.util.HashSet&lt;&gt;();</span><br><span class="line">    _jspx_imports_packages.add(<span class="string">"javax.servlet"</span>);</span><br><span class="line">    _jspx_imports_packages.add(<span class="string">"javax.servlet.http"</span>);</span><br><span class="line">    _jspx_imports_packages.add(<span class="string">"javax.servlet.jsp"</span>);</span><br><span class="line">    _jspx_imports_classes = <span class="keyword">null</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> javax.el.ExpressionFactory _el_expressionfactory;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">volatile</span> org.apache.tomcat.InstanceManager _jsp_instancemanager;</span><br><span class="line">  <span class="keyword">public</span> java.util.Map&lt;java.lang.String,java.lang.Long&gt; getDependants() &#123;</span><br><span class="line">    <span class="keyword">return</span> _jspx_dependants;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">public</span> java.util.Set&lt;java.lang.String&gt; getPackageImports() &#123;</span><br><span class="line">    <span class="keyword">return</span> _jspx_imports_packages;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">public</span> java.util.Set&lt;java.lang.String&gt; getClassImports() &#123;</span><br><span class="line">    <span class="keyword">return</span> _jspx_imports_classes;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">public</span> javax.el.<span class="function">ExpressionFactory <span class="title">_jsp_getExpressionFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_el_expressionfactory == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_el_expressionfactory == <span class="keyword">null</span>) &#123;</span><br><span class="line">          _el_expressionfactory = _jspxFactory.getJspApplicationContext(getServletConfig().getServletContext()).getExpressionFactory();</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _el_expressionfactory;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">public</span> org.apache.tomcat.<span class="function">InstanceManager <span class="title">_jsp_getInstanceManager</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_jsp_instancemanager == <span class="keyword">null</span>) &#123;</span><br><span class="line">      <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (_jsp_instancemanager == <span class="keyword">null</span>) &#123;</span><br><span class="line">          _jsp_instancemanager = org.apache.jasper.runtime.InstanceManagerFactory.getInstanceManager(getServletConfig());</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _jsp_instancemanager;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspInit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspDestroy</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspService</span><span class="params">(<span class="keyword">final</span> javax.servlet.http.HttpServletRequest request, <span class="keyword">final</span> javax.servlet.http.HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> java.io.IOException, javax.servlet.ServletException </span>&#123;</span><br><span class="line">    <span class="keyword">final</span> java.lang.String _jspx_method = request.getMethod();</span><br><span class="line">    <span class="keyword">if</span> (!<span class="string">"GET"</span>.equals(_jspx_method) &amp;&amp; !<span class="string">"POST"</span>.equals(_jspx_method) &amp;&amp; !<span class="string">"HEAD"</span>.equals(_jspx_method) &amp;&amp; !javax.servlet.DispatcherType.ERROR.equals(request.getDispatcherType())) &#123;</span><br><span class="line">      response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, <span class="string">"JSPs only permit GET POST or HEAD"</span>);</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">final</span> javax.servlet.jsp.PageContext pageContext;</span><br><span class="line">    javax.servlet.http.HttpSession session = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">final</span> javax.servlet.ServletContext application;</span><br><span class="line">    <span class="keyword">final</span> javax.servlet.ServletConfig config;</span><br><span class="line">    javax.servlet.jsp.JspWriter out = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">final</span> java.lang.Object page = <span class="keyword">this</span>;</span><br><span class="line">    javax.servlet.jsp.JspWriter _jspx_out = <span class="keyword">null</span>;</span><br><span class="line">    javax.servlet.jsp.PageContext _jspx_page_context = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      response.setContentType(<span class="string">"text/html"</span>);</span><br><span class="line">      pageContext = _jspxFactory.getPageContext(<span class="keyword">this</span>, request, response,</span><br><span class="line">                  <span class="keyword">null</span>, <span class="keyword">true</span>, <span class="number">8192</span>, <span class="keyword">true</span>);</span><br><span class="line">      _jspx_page_context = pageContext;</span><br><span class="line">      application = pageContext.getServletContext();</span><br><span class="line">      config = pageContext.getServletConfig();</span><br><span class="line">      session = pageContext.getSession();</span><br><span class="line">      out = pageContext.getOut();</span><br><span class="line">      _jspx_out = out;</span><br><span class="line">      out.write(<span class="string">"&lt;html&gt;\r\n"</span>);</span><br><span class="line">      out.write(<span class="string">"&lt;head&gt;&lt;title&gt;Welcome&lt;/title&gt;&lt;/head&gt;\r\n"</span>);</span><br><span class="line">      out.write(<span class="string">"&lt;body&gt;\r\n"</span>);</span><br><span class="line">      out.write(<span class="string">"Welcome\r\n"</span>);</span><br><span class="line">      out.write(<span class="string">"&lt;/body&gt;\r\n"</span>);</span><br><span class="line">      out.write(<span class="string">"&lt;/html&gt;"</span>);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (java.lang.Throwable t) &#123;</span><br><span class="line">      <span class="keyword">if</span> (!(t <span class="keyword">instanceof</span> javax.servlet.jsp.SkipPageException))&#123;</span><br><span class="line">        out = _jspx_out;</span><br><span class="line">        <span class="keyword">if</span> (out != <span class="keyword">null</span> &amp;&amp; out.getBufferSize() != <span class="number">0</span>)</span><br><span class="line">          <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (response.isCommitted()) &#123;</span><br><span class="line">              out.flush();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              out.clearBuffer();</span><br><span class="line">            &#125;</span><br><span class="line">          &#125; <span class="keyword">catch</span> (java.io.IOException e) &#123;&#125;</span><br><span class="line">        <span class="keyword">if</span> (_jspx_page_context != <span class="keyword">null</span>) _jspx_page_context.handlePageException(t);</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(t);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">      _jspxFactory.releasePageContext(_jspx_page_context);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="JSP实现类的主体方法"><a href="#JSP实现类的主体方法" class="headerlink" title="JSP实现类的主体方法"></a>JSP实现类的主体方法</h3><p>正如我们在上面的代码中看到的，<code>JSP</code>页面的主体是<code>_jspService</code>方法,该方法中响应输出如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspService</span><span class="params">(<span class="keyword">final</span> javax.servlet.http.HttpServletRequest request, <span class="keyword">final</span> javax.servlet.http.HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">  <span class="keyword">throws</span> java.io.IOException, javax.servlet.ServletException </span>&#123;</span><br><span class="line">......</span><br><span class="line">  out.write(<span class="string">"&lt;html&gt;\r\n"</span>);</span><br><span class="line">  out.write(<span class="string">"&lt;head&gt;&lt;title&gt;Welcome&lt;/title&gt;&lt;/head&gt;\r\n"</span>);</span><br><span class="line">  out.write(<span class="string">"&lt;body&gt;\r\n"</span>);</span><br><span class="line">  out.write(<span class="string">"Welcome\r\n"</span>);</span><br><span class="line">  out.write(<span class="string">"&lt;/body&gt;\r\n"</span>);</span><br><span class="line">  out.write(<span class="string">"&lt;/html&gt;"</span>);</span><br><span class="line">......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个<code>_jspService</code>方法被定义在<code>HttpJspPage</code>，并被<code>HttpJspBase</code>的<code>service</code>方法调用。<code>HttpJspBase</code>类中的<code>service</code>方法如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">void</span> <span class="title">service</span><span class="params">(HttpServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">        HttpServletResponse response)</span> <span class="keyword">throws</span> ServletException,</span></span><br><span class="line"><span class="function">        IOException </span>&#123;</span><br><span class="line">    _jspService(request, response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个<code>JSP</code>页面不同于一个<code>Servlet</code>的另一个方面是，<code>JSP</code>页面不需要添加注解或在部署描述符中配置来映射<code>URL</code>。在应用程序目录中的每一个<code>JSP</code>页面可以直接在浏览器中输入路径页面访问。</p>
+<p><code>app03a</code>应用程序的结构非常简单，由一个空的<code>WEB-INF</code>目录和<code>welcome.jsp</code>页面构成,如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter3/1.png" alt="这里有一张图片"><br>可以通过如下URL访问welcome.jsp页面：<br><a href="http://localhost:8080/app03a/welcome.jsp" target="_blank" rel="noopener">http://localhost:8080/app03a/welcome.jsp</a></p>
+<h4 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h4><p>添加新的<code>JSP</code>界面后，无须重启<code>Tomcat</code>。</p>
+<h3 id="显示今日日期"><a href="#显示今日日期" class="headerlink" title="显示今日日期"></a>显示今日日期</h3><p><code>todaysDate.jsp</code>:</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.util.Date"</span>%&gt;</span><br><span class="line">&lt;%<span class="meta">@page</span> <span class="keyword">import</span>=<span class="string">"java.text.DateFormat"</span>%&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;&lt;title&gt;显示当前日期&lt;/title&gt;&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    DateFormat dateFormat = </span><br><span class="line">            DateFormat.getDateInstance(DateFormat.LONG);</span><br><span class="line">    String s = dateFormat.format(<span class="keyword">new</span> Date());</span><br><span class="line">    out.println(<span class="string">"当前日期: "</span> + s);</span><br><span class="line">%&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>上面的JSP页面最终编译成:<br><code>E:\apache-tomcat-8.5.35\work\Catalina\localhost\app03a\org\apache\jsp\todaysDate_jsp.java</code><br>这个Servlet,查看这个Servlet,可以看到<code>_jspService</code>方法中的响应输出部分如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">_jspService</span><span class="params">(<span class="keyword">final</span> javax.servlet.http.HttpServletRequest request, <span class="keyword">final</span> javax.servlet.http.HttpServletResponse response)</span></span></span><br><span class="line"><span class="function">  <span class="keyword">throws</span> java.io.IOException, javax.servlet.ServletException </span>&#123;</span><br><span class="line">    ......</span><br><span class="line">    out.write(<span class="string">"&lt;html&gt;\r\n"</span>);</span><br><span class="line">    out.write(<span class="string">"&lt;head&gt;&lt;title&gt;显示当前日期&lt;/title&gt;&lt;/head&gt;\r\n"</span>);</span><br><span class="line">    out.write(<span class="string">"&lt;body&gt;\r\n"</span>);</span><br><span class="line">    DateFormat dateFormat = </span><br><span class="line">        DateFormat.getDateInstance(DateFormat.LONG);</span><br><span class="line">    String s = dateFormat.format(<span class="keyword">new</span> Date());</span><br><span class="line">    out.println(<span class="string">"当前日期: "</span> + s);</span><br><span class="line">    out.write(<span class="string">"\r\n"</span>);</span><br><span class="line">    out.write(<span class="string">"&lt;/body&gt;\r\n"</span>);</span><br><span class="line">    out.write(<span class="string">"&lt;/html&gt;"</span>);</span><br><span class="line">    ......</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在可以通过如下<code>URL</code>访问<code>todaysDate.jsp</code>页面：<br><a href="http://localhost:8080/app03a/todaysDate.jsp" target="_blank" rel="noopener">http://localhost:8080/app03a/todaysDate.jsp</a><br>显示效果如下:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter3/2.png" alt="这里有一张图片"><br><code>todaysDate.jsp</code>页面发送了几个<code>HTML</code>标签和字符串<code>&quot;当前日期: &quot;</code>以及今天的日期到浏览器。<br>请注意两件事情。首先，<code>Java</code>代码可以出现在<code>JSP</code>页面中的任何位置，并通过<code>&lt;%</code>和<code>%&gt;</code>包括起来,这个<code>&lt;%...%&gt;</code>块被称为<code>scriplet</code>。其次，可以使用<code>page</code>指令的<code>import</code>属性导入在<code>JSP</code>页面中使用的<code>Java</code>类型，如果没有导入的类型，必须在代码中写<code>Java</code>类的全路径名称。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/2659a078/" title="3.1 JSP概述">https://lanlan2017.github.io/JavaReadingNotes/2659a078/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/9cc208c7/" rel="next" title="第3章 Java Server Pages(JSP)概述">
+                  <i class="fa fa-chevron-left"></i> 第3章 Java Server Pages(JSP)概述
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/e21151cc/" rel="prev" title="3.2 注释">
+                  3.2 注释 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-JSP概述"><span class="nav-text">3.1 JSP概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP相较Servlet的优点"><span class="nav-text">JSP相较Servlet的优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP在哪里运行"><span class="nav-text">JSP在哪里运行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在JSP第一次被请求时-容器要做什么"><span class="nav-text">在JSP第一次被请求时 容器要做什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#在JSP页面的后续请求时-容器要做什么"><span class="nav-text">在JSP页面的后续请求时 容器要做什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何减少第一次调用JSP页面时的花费"><span class="nav-text">如何减少第一次调用JSP页面时的花费</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP自带的API包"><span class="nav-text">JSP自带的API包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#模板数据和语法元素"><span class="nav-text">模板数据和语法元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Demo"><span class="nav-text">Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#第一个JSP页面"><span class="nav-text">第一个JSP页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP页面对应的Servlet"><span class="nav-text">JSP页面对应的Servlet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSP实现类的主体方法"><span class="nav-text">JSP实现类的主体方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#说明"><span class="nav-text">说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#显示今日日期"><span class="nav-text">显示今日日期</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="7.5.1 Bean的基本定义和Bean别名&amp;nbsp;beans元素&amp;nbsp;bean元素&amp;nbsp;bean元素常用属性&amp;nbsp;通过name属性在定义Bean是给Bean指定别名&amp;nbsp;id属性命名规范&amp;nbsp;为什么要使用别名&amp;nbsp;在其他地方为一个已经存在的Bean实例指定别名&amp;nbsp; .header_1{margin-left: 1em;}.header_2{marg">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.5.1 Bean的基本定义和Bean别名">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/59bb5897/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="7.5.1 Bean的基本定义和Bean别名&amp;nbsp;beans元素&amp;nbsp;bean元素&amp;nbsp;bean元素常用属性&amp;nbsp;通过name属性在定义Bean是给Bean指定别名&amp;nbsp;id属性命名规范&amp;nbsp;为什么要使用别名&amp;nbsp;在其他地方为一个已经存在的Bean实例指定别名&amp;nbsp; .header_1{margin-left: 1em;}.header_2{marg">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-26T12:08:43.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/59bb5897/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>7.5.1 Bean的基本定义和Bean别名 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/59bb5897/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">7.5.1 Bean的基本定义和Bean别名<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC7%E7%AB%A0%20Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/7.5%20Spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Bean/7.5.1%20Bean%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%AE%9A%E4%B9%89%E5%92%8CBean%E5%88%AB%E5%90%8D.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-26 12:08:43" itemprop="dateCreated datePublished" datetime="2019-08-26T12:08:43+00:00">2019-08-26</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">第7章 Spring的基本用法</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/7-5-Spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Bean/" itemprop="url" rel="index"><span itemprop="name">7.5 Spring容器中的Bean</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/59bb5897/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/59bb5897/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/59bb5897/#7-5-1-Bean的基本定义和Bean别名" class="header_1">7.5.1 Bean的基本定义和Bean别名</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#beans元素" class="header_2">beans元素</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#bean元素" class="header_2">bean元素</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#bean元素常用属性" class="header_3">bean元素常用属性</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#通过name属性在定义Bean是给Bean指定别名" class="header_3">通过name属性在定义Bean是给Bean指定别名</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#id属性命名规范" class="header_3">id属性命名规范</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#为什么要使用别名" class="header_3">为什么要使用别名</a>&nbsp;<br><a href="/JavaReadingNotes/59bb5897/#在其他地方为一个已经存在的Bean实例指定别名" class="header_2">在其他地方为一个已经存在的Bean实例指定别名</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="7-5-1-Bean的基本定义和Bean别名"><a href="#7-5-1-Bean的基本定义和Bean别名" class="headerlink" title="7.5.1 Bean的基本定义和Bean别名"></a>7.5.1 Bean的基本定义和Bean别名</h1><h2 id="beans元素"><a href="#beans元素" class="headerlink" title="beans元素"></a>beans元素</h2><p><strong><code>&lt;beans&gt;</code>元素是<code>Spring</code>配置文件的根元素</strong>,该元素可以指定如下属性</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>&lt;beans&gt;</code>元素的属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>default-lazy-init</code></td>
+<td align="left">指定该<code>&lt;beans&gt;</code>元素下配置的所有<code>Bean</code><strong>默认的延迟初始化行为</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>default-merge</code></td>
+<td align="left">指定该<code>&lt;beans&gt;</code>元素下配置的所有<code>Bean</code><strong>默认的<code>merge</code>行为</strong>.</td>
+</tr>
+<tr>
+<td align="left"><code>default- autowire</code></td>
+<td align="left">指定该<code>&lt;beans&gt;</code>元素下配置的所有<code>Bean</code><strong>默认的自动装配行为</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>default-autowire-candidates</code></td>
+<td align="left">指定该<code>&lt;beans&gt;</code>元素下配置的所有<code>Bean</code>**默认是否作为自动装配的候选<code>Bean</code>**。</td>
+</tr>
+<tr>
+<td align="left"><code>default-init-method</code></td>
+<td align="left">指定该<code>&lt;beans&gt;</code>元素下配置的所有<code>Bean</code><strong>默认的初始化方法</strong>。</td>
+</tr>
+<tr>
+<td align="left"><code>default-destroy-method</code></td>
+<td align="left">指定该<code>&lt; beans.&gt;</code>元素下配置的所有<code>Bean</code><strong>默认的回收方法</strong>。</td>
+</tr>
+</tbody></table>
+<p><code>&lt;beans&gt;</code>元素下所能指定的属性都可以在每个<code>&lt;bean&gt;</code>子元素中指定,只要将属性名去掉<code>default</code>即可。也就是<code>bean</code>元素上可以指定<code>lazy-init</code>属性,来配置该<code>Bean</code>的默认延迟初始化行为。<br>在<code>&lt;beans&gt;</code>元素上指定和在<code>&lt;bean&gt;</code>上指定的区别是:</p>
+<ul>
+<li>如果为<code>&lt;bean&gt;</code>元素指定这些属性,只对特定<code>Bean</code>起作用;</li>
+<li>如果为<code>&lt;beans&gt;</code>元素指定这些属性,这些属性将会对<code>&lt;beans&gt;</code>包含的所有<code>Bean</code>都起作用。</li>
+</ul>
+<p>当二者所指定的属性不一致时,<code>&lt;bean&gt;</code>下指定的属性会覆盖<code>&lt;beans&gt;</code>下指定的属性。</p>
+<h2 id="bean元素"><a href="#bean元素" class="headerlink" title="bean元素"></a>bean元素</h2><p><code>&lt;bean&gt;</code>元素是<code>&lt;beans&gt;</code>元素的子元素,<code>&lt;beans&gt;</code>元素可以包含多个<code>&lt;bean&gt;</code>子元素,每个<code>&lt;bean&gt;</code>子元素定义一个<code>Bean</code>,每个<code>Bean</code>对应<code>Spring</code>容器里的一个<code>Java</code>实例。</p>
+<h3 id="bean元素常用属性"><a href="#bean元素常用属性" class="headerlink" title="bean元素常用属性"></a>bean元素常用属性</h3><p>定义<code>Bean</code>时,通常需要指定两个属性。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>&lt;bean&gt;</code>元素常用属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>id</code></td>
+<td align="left">确定该<code>Bean</code>的唯一标识,<strong>容器对<code>Bean</code>的管理、访问,以及该<code>Bean</code>的依赖关系,都通过<code>id</code>属性完成</strong>。<code>Bean</code>的<code>id</code>属性在<code>Spring</code>容器中应该是唯一的.</td>
+</tr>
+<tr>
+<td align="left"><code>class</code></td>
+<td align="left">指定该<code>Bean</code>的具体<code>实现类</code>,这里不能是接口。<code>Spring</code>容器必须知道创建<code>Bean</code>的实现类,而不能是接口。在通常情况下, <code>Spring</code>会直接使用<code>new</code>关键字创建该<code>Bean</code>的实例,因此,这里必须提供<code>Bean</code>实现类的类名。</td>
+</tr>
+<tr>
+<td align="left">在一些特殊的情况下, <code>Spring</code>会采用其他方式创建<code>Bean</code>实例,例如工厂方法等,则<strong>可能不再需要<code>class</code>属性</strong>。这些内容需要参考后面的介绍。</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<h3 id="通过name属性在定义Bean是给Bean指定别名"><a href="#通过name属性在定义Bean是给Bean指定别名" class="headerlink" title="通过name属性在定义Bean是给Bean指定别名"></a>通过name属性在定义Bean是给Bean指定别名</h3><p><code>id</code>属性是容器中<code>Bean</code>的唯一标识,这个<code>id</code>属性必须遵循<code>XML</code>文档的i属性规则,因此有一些特殊要求,例如不能以<code>&quot;/&quot;</code>等特殊字符作为属性值。但在某些特殊的情况下,<code>Bean</code>的标识必须包含这些特殊符号,此时<strong>可以采用<code>name</code>属性,用于指定<code>Bean</code>的别名,通过访问<code>Bean</code>别名也可访问<code>Bean</code>实例</strong>。</p>
+<p>除了可以为<code>&lt;bean&gt;</code>元素指定一个<code>id</code>属性之外,还可以为<code>&lt;bean&gt;</code>元素指定<code>name</code>属性,用于为<code>Bean</code>实例指定<code>别名</code>。</p>
+<p><code>&lt;bean&gt;</code>元素的<code>id</code>属性具有唯一性,而且是一个真正的<code>XML ID</code>属性,因此其他<code>XML</code>元素在引用该<code>id</code>时,可以利用<code>XML</code>解析器的验证功能。</p>
+<h3 id="id属性命名规范"><a href="#id属性命名规范" class="headerlink" title="id属性命名规范"></a>id属性命名规范</h3><p>由于<code>XML</code>规范规定了<code>XML ID</code>标识符必须由<code>字母</code>和<code>数字</code>组成,且<code>只能以字母开头</code>。</p>
+<h3 id="为什么要使用别名"><a href="#为什么要使用别名" class="headerlink" title="为什么要使用别名"></a>为什么要使用别名</h3><p>在一些特殊的情况下(例如与<code>Struts 1</code>整合过程中),必须为某些<code>Bean</code>指定<code>特殊标识名</code>,此时就必须为控制器<code>Bean</code>指定别名。</p>
+<h2 id="在其他地方为一个已经存在的Bean实例指定别名"><a href="#在其他地方为一个已经存在的Bean实例指定别名" class="headerlink" title="在其他地方为一个已经存在的Bean实例指定别名"></a>在其他地方为一个已经存在的Bean实例指定别名</h2><p>在一些极端的情况下,程序无法在定义<code>Bean</code>时就指定所有的别名,而是需要<strong>在其他地方为一个已经存在的<code>Bean</code>实例指定别名</strong>,则可使用<code>&lt;alias&gt;</code>元素来完成,该元素可指定如下两个属性。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>&lt;alias&gt;</code>元素的属性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>name</code></td>
+<td align="left">该属性指定一个<code>Bean</code>实例的标识名,表明将为该<code>Bean</code>实例指定别名。</td>
+</tr>
+<tr>
+<td align="left"><code>alias</code></td>
+<td align="left">指定一个别名。</td>
+</tr>
+</tbody></table>
+<p>例如以下示例配置:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 面代码为该Bean指定三个别名：#abc，@123，abc* --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"person"</span> <span class="attr">class</span>=<span class="string">"..."</span> <span class="attr">name</span>=<span class="string">"#abc,@123,abc*"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">"person"</span> <span class="attr">alias</span>=<span class="string">"jack"</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">alias</span> <span class="attr">name</span>=<span class="string">"jack"</span> <span class="attr">alias</span>=<span class="string">"jackee"</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>上面第一行代码的<code>name</code>属性为该<code>Bean</code>指定了三个别名<code>#abc</code>，<code>@123</code>，<code>abc*</code> ,这些别名中包含了些特殊字符,由此可见,作为别名的字符可以很随意。</li>
+<li>上面配置的后两行代码则用于为已有的<code>person</code>这个<code>Bean</code>指定别名。</li>
+</ul>
+<!--SSTStop-->
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/59bb5897/" title="7.5.1 Bean的基本定义和Bean别名">https://lanlan2017.github.io/JavaReadingNotes/59bb5897/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/71a6157d/" rel="next" title="7.5 Spring容器中的Bean">
+                  <i class="fa fa-chevron-left"></i> 7.5 Spring容器中的Bean
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/dcd14c65/" rel="prev" title="7.5.2 容器中Bean的作用域">
+                  7.5.2 容器中Bean的作用域 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-5-1-Bean的基本定义和Bean别名"><span class="nav-text">7.5.1 Bean的基本定义和Bean别名</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#beans元素"><span class="nav-text">beans元素</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bean元素"><span class="nav-text">bean元素</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bean元素常用属性"><span class="nav-text">bean元素常用属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#通过name属性在定义Bean是给Bean指定别名"><span class="nav-text">通过name属性在定义Bean是给Bean指定别名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#id属性命名规范"><span class="nav-text">id属性命名规范</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要使用别名"><span class="nav-text">为什么要使用别名</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在其他地方为一个已经存在的Bean实例指定别名"><span class="nav-text">在其他地方为一个已经存在的Bean实例指定别名</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

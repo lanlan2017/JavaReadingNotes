@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="7.5.6 使用自动装配注入合作者Bean&amp;nbsp;Spring的自动装配&amp;nbsp;autowire属性值&amp;nbsp;7.5.6.1 byName规则&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;beans.xml&amp;nbsp;Chinese.java&amp;nbsp;7.5.6.2 byType规则&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;beans.xml&amp;nbsp;只有一个类型的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.5.6 使用自动装配注入合作者Bean">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/9eaa638/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="7.5.6 使用自动装配注入合作者Bean&amp;nbsp;Spring的自动装配&amp;nbsp;autowire属性值&amp;nbsp;7.5.6.1 byName规则&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;beans.xml&amp;nbsp;Chinese.java&amp;nbsp;7.5.6.2 byType规则&amp;nbsp;程序示例&amp;nbsp;项目结构&amp;nbsp;beans.xml&amp;nbsp;只有一个类型的">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-08-27T10:58:19.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/9eaa638/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>7.5.6 使用自动装配注入合作者Bean | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/9eaa638/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">7.5.6 使用自动装配注入合作者Bean<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/2%20%E8%BD%BB%E9%87%8F%E7%BA%A7Java%20EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98(%E7%AC%AC5%E7%89%88)/%E7%AC%AC7%E7%AB%A0%20Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/7.5%20Spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Bean/7.5.6%20%E4%BD%BF%E7%94%A8%E8%87%AA%E5%8A%A8%E8%A3%85%E9%85%8D%E6%B3%A8%E5%85%A5%E5%90%88%E4%BD%9C%E8%80%85Bean.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-27 10:58:19" itemprop="dateCreated datePublished" datetime="2019-08-27T10:58:19+00:00">2019-08-27</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">第7章 Spring的基本用法</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC7%E7%AB%A0-Spring%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95/7-5-Spring%E5%AE%B9%E5%99%A8%E4%B8%AD%E7%9A%84Bean/" itemprop="url" rel="index"><span itemprop="name">7.5 Spring容器中的Bean</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/9eaa638/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/9eaa638/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/9eaa638/#7-5-6-使用自动装配注入合作者Bean" class="header_1">7.5.6 使用自动装配注入合作者Bean</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#Spring的自动装配" class="header_2">Spring的自动装配</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#autowire属性值" class="header_2">autowire属性值</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#7-5-6-1-byName规则" class="header_1">7.5.6.1 byName规则</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#程序示例" class="header_2">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#项目结构" class="header_3">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#beans-xml" class="header_3">beans.xml</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#Chinese-java" class="header_3">Chinese.java</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#7-5-6-2-byType规则" class="header_1">7.5.6.2 byType规则</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#程序示例" class="header_2">程序示例</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#项目结构" class="header_3">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#beans-xml" class="header_3">beans.xml</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#只有一个类型的Bean对象的情况" class="header_3">只有一个类型的Bean对象的情况</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#有两个同类型的Bean对象的情况" class="header_3">有两个同类型的Bean对象的情况</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#同时指定自动装配和使用ref显示指定依赖时" class="header_2">同时指定自动装配和使用ref显示指定依赖时</a>&nbsp;<br><a href="/JavaReadingNotes/9eaa638/#将某些Bean排除在自动装配之外" class="header_2">将某些Bean排除在自动装配之外</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<!--SSTStart-->
+<h1 id="7-5-6-使用自动装配注入合作者Bean"><a href="#7-5-6-使用自动装配注入合作者Bean" class="headerlink" title="7.5.6 使用自动装配注入合作者Bean"></a>7.5.6 使用自动装配注入合作者Bean</h1><p><code>Spring</code>能自动装配<code>Bean</code>与<code>Bean</code>之间的依赖关系,即无须使用<code>ref</code>显式指定依赖<code>Bean</code>,而是由<code>Spring</code>容器检査<code>XML</code>配置文件内容,根据某种规则,为调用者<code>Bean</code>注入被依赖的<code>Bean</code>。</p>
+<h2 id="Spring的自动装配"><a href="#Spring的自动装配" class="headerlink" title="Spring的自动装配"></a>Spring的自动装配</h2><p><code>Spring</code>的自动装配<br>可通过<code>&lt;beans&gt;</code>元素的<code>default-autowire</code>属性指定,该属性对配置文件中所有的<code>Bean</code>起作用;<br>也可通过<code>&lt;bean.&gt;</code>元素的<code>autowire</code>属性指定,该属性只对该<code>Bean</code>起作用。</p>
+<p>从上面介绍不难发现:在同一个<code>Spring</code>容器中完全可以让某些<code>Bean</code>使用自动装配,而另一些<code>Bean</code>不使用自动装配。<br>自动装配可以减少配置文件的工作量,但降低了依赖关系的透明性和清晰性。</p>
+<h2 id="autowire属性值"><a href="#autowire属性值" class="headerlink" title="autowire属性值"></a>autowire属性值</h2><p><code>autowire</code>、 <code>default-autowire</code>属性可以接受如下值。</p>
+<table>
+<thead>
+<tr>
+<th align="left">属性值</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>no</code></td>
+<td align="left">不使用自动装配。<code>Bean</code>依赖必须通过<code>ref</code>元素定义。这是默认的配置,在较大的部署环境中<strong>不鼓励改变这个配置</strong>,显式配置合作者能够得到更清晰的依赖关系。</td>
+</tr>
+<tr>
+<td align="left"><code>byName</code></td>
+<td align="left">根据<code>setter</code>方法名进行自动装配。 <code>Spring</code>容器查找容器中的全部<code>Bean</code>,找出其<code>id</code>与<code>setter</code>方法名<strong>去掉<code>set</code>前缀,并小写首字母后</strong>的同名的<code>Bean</code>来完成注入。如果没有找到匹配的<code>Bean</code>实例,则<code>Spring</code>不会进行任何注入。</td>
+</tr>
+<tr>
+<td align="left"><code>byType</code></td>
+<td align="left">根据<code>setter</code>方法的<code>形参类型</code>来自动装配。 <code>Spring</code>容器查找容器中的全部<code>Bean</code>,如果正好有一个<code>Bean</code>的类型与<code>setter</code>方法的<code>形参类型匹配</code>,就自动注入这个<code>Bean</code>;如果找到多个这样的<code>Bean</code>,就抛出一个异常;如果没找到这样的<code>Bean</code>,则什么都不会发生, <code>setter</code>方法不会被调用。</td>
+</tr>
+<tr>
+<td align="left"><code>constructor</code></td>
+<td align="left">与<code>byType</code>类似,区别是用于<strong>自动匹配构造器的参数</strong>。如果容器不能恰好找到一个与构造器参数类型匹配的<code>Bean</code>,则会抛出一个异常。</td>
+</tr>
+<tr>
+<td align="left"><code>autodetect</code></td>
+<td align="left"><code>Spring</code>容器根据<code>Bean</code>内部结构,自行决定使用<code>constructor</code>还是使用<code>byType</code>策略。如果找到一个默认的构造函数,那么就会应用<code>byType</code>策略。</td>
+</tr>
+</tbody></table>
+<p>由此可见, <code>byName</code>策略是根据<code>setter</code>方法的方法名与<code>Bean</code>的<code>id</code>进行匹配;<code>byType</code>策略是根据<code>setter</code>方法的<code>参数类型</code>与<code>Bean</code>的类型进行匹配。</p>
+<h1 id="7-5-6-1-byName规则"><a href="#7-5-6-1-byName规则" class="headerlink" title="7.5.6.1 byName规则"></a>7.5.6.1 byName规则</h1><p><code>byName</code>规则是指<code>setter</code>方法的方法名与<code>Bean</code>的<code>id</code>进行匹配,假如<code>Bean A</code>的实现类包含<code>setB()</code>方法,而<code>Spring</code>的配置文件恰好包含<code>id</code>为<code>b</code>的<code>Bean</code>,则<code>Spring</code>容器会将<code>b</code>实例注入<code>Bean A</code>中。如果容器中没有名字匹配的<code>Bean</code>,则<code>Spring</code>不会做任何事情。</p>
+<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">byName</span></span></span><br><span class="line"><span class="function">└─<span class="title">src</span>\</span></span><br><span class="line"><span class="function">  ├─<span class="title">beans.xml</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">lee</span>\</span></span><br><span class="line"><span class="function">  │ └─<span class="title">SpringTest.java</span></span></span><br><span class="line"><span class="function">  └─<span class="title">org</span>\</span></span><br><span class="line"><span class="function">    └─<span class="title">crazyit</span>\</span></span><br><span class="line"><span class="function">      └─<span class="title">app</span>\</span></span><br><span class="line"><span class="function">        └─<span class="title">service</span>\</span></span><br><span class="line"><span class="function">          ├─<span class="title">Dog.java</span></span></span><br><span class="line"><span class="function">          ├─<span class="title">impl</span>\</span></span><br><span class="line"><span class="function">          │ ├─<span class="title">Chinese.java</span></span></span><br><span class="line"><span class="function">          │ └─<span class="title">GunDog.java</span></span></span><br><span class="line"><span class="function">          └─<span class="title">Person.java</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="beans-xml"><a href="#beans-xml" class="headerlink" title="beans.xml"></a>beans.xml</h3><p>看如下配置文件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定使用byName自动装配策略，Spring会根据setter方法的方法名与Bean的id进行匹配 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"chinese"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.Chinese"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autowire</span>=<span class="string">"byName"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"gunDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.GunDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"wangwang"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Chinese-java"><a href="#Chinese-java" class="headerlink" title="Chinese.java"></a>Chinese.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.app.service.impl;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.crazyit.app.service.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Chinese</span> <span class="keyword">implements</span> <span class="title">Person</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Dog dog;</span><br><span class="line">    <span class="comment">// dog的setter方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGunDog</span><span class="params">(Dog dog)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.dog = dog;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Dog <span class="title">getDog</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.dog;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"我是一个普通人,养了一条狗："</span></span><br><span class="line">            + getDog().run());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的配置文件指定了<code>byName</code>自动装配策略,而且<code>Chinese</code>类恰好有如下<code>setter</code>方法:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dog的setter方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setGunDog</span><span class="params">(Dog dog)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.dog = dog;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面<code>setter</code>方法的方法名为<code>setGunDog</code>, <code>Spring</code>容器就会寻找容器中<code>id</code>为<code>gunDog</code>的<code>Bean</code>,</p>
+<ul>
+<li>如果能找到这样的<code>Bean</code>,该<code>Bean</code>就会作为调用<code>setGunDog()</code>方法的参数;</li>
+<li>如果找不到这样的<code>Bean, Spring</code>就不调用<code>setGunDog()</code>方法</li>
+</ul>
+<h1 id="7-5-6-2-byType规则"><a href="#7-5-6-2-byType规则" class="headerlink" title="7.5.6.2 byType规则"></a>7.5.6.2 byType规则</h1><p><code>byType</code>规则是根据<code>setter</code>法的参数类型与<code>Bean</code>的类型进行匹配：</p>
+<ul>
+<li>假如<code>A</code>实例有<code>setB(B b)</code>方法,而<code>Spring</code>的配置文件中恰好有一个类型为<code>B</code>的<code>Bean</code>实例,则容器为<code>A</code>注入类型匹配的<code>Bean</code>实例;</li>
+<li>如果容器中没有类型为<code>B</code>的实例, 则<code>Spring</code>不会调用<code>setB()</code>方法;</li>
+<li>但如果容器中包含多于一个的<code>B</code>实例,则程序将会抛出异常。</li>
+</ul>
+<h2 id="程序示例-1"><a href="#程序示例-1" class="headerlink" title="程序示例"></a>程序示例</h2><h3 id="项目结构-1"><a href="#项目结构-1" class="headerlink" title="项目结构"></a>项目结构</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">byType</span>\<span class="title">src</span></span></span><br><span class="line"><span class="function">├─<span class="title">beans.xml</span></span></span><br><span class="line"><span class="function">├─<span class="title">lee</span>\</span></span><br><span class="line"><span class="function">│ └─<span class="title">SpringTest.java</span></span></span><br><span class="line"><span class="function">└─<span class="title">org</span>\</span></span><br><span class="line"><span class="function">  └─<span class="title">crazyit</span>\</span></span><br><span class="line"><span class="function">    └─<span class="title">app</span>\</span></span><br><span class="line"><span class="function">      └─<span class="title">service</span>\</span></span><br><span class="line"><span class="function">        ├─<span class="title">Dog.java</span></span></span><br><span class="line"><span class="function">        ├─<span class="title">impl</span>\</span></span><br><span class="line"><span class="function">        │ ├─<span class="title">Chinese.java</span></span></span><br><span class="line"><span class="function">        │ ├─<span class="title">GunDog.java</span></span></span><br><span class="line"><span class="function">        │ └─<span class="title">PetDog.java</span></span></span><br><span class="line"><span class="function">        └─<span class="title">Person.java</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="beans-xml-1"><a href="#beans-xml-1" class="headerlink" title="beans.xml"></a>beans.xml</h3><p>看如下配置文件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定使用byType自动装配策略，Spring会根据setter方法的参数类型与Bean的类型进行匹配 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"chinese"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.Chinese"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autowire</span>=<span class="string">"byType"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"gunDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.GunDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"wangwang"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的配置文件指定了<code>byType</code>自动装配策略,而且<code>Chinese</code>类恰好有如下<code>setter</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// dog的setter方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDog</span><span class="params">(Dog dog)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.dog = dog;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="只有一个类型的Bean对象的情况"><a href="#只有一个类型的Bean对象的情况" class="headerlink" title="只有一个类型的Bean对象的情况"></a>只有一个类型的Bean对象的情况</h3><p>上面<code>setter</code>法的形参类型是<code>Dog</code>,而<code>Spring</code>容器中的<code>org.crazyit.app.service.impl.GunDog</code>类实现了<code>Dog</code>接口,因此<code>Spring</code>会以该<code>Bean</code>为参数来调用<code>chinese</code>的<code>setDog</code>方法。</p>
+<h3 id="有两个同类型的Bean对象的情况"><a href="#有两个同类型的Bean对象的情况" class="headerlink" title="有两个同类型的Bean对象的情况"></a>有两个同类型的Bean对象的情况</h3><p>但如果在配置文件<code>beans.xml</code>中再配置一个<code>Bean</code>,如下所示:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定使用byType自动装配策略，Spring会根据setter方法的参数类型与Bean的类型进行匹配 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"chinese"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.Chinese"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autowire</span>=<span class="string">"byType"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"gunDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.GunDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"wangwang"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"petDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.PetDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"ohoh"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>此时, <code>Spring</code>将无法按<code>byType</code>策略进行自动装配,因为容器中有两个类型为<code>Dog</code>的<code>Bean</code>,<code>Spring</code>无法确定应为<code>chinese bean</code>注入哪个<code>Bean</code>,所以程序将抛出异常.</p>
+<h2 id="同时指定自动装配和使用ref显示指定依赖时"><a href="#同时指定自动装配和使用ref显示指定依赖时" class="headerlink" title="同时指定自动装配和使用ref显示指定依赖时"></a>同时指定自动装配和使用ref显示指定依赖时</h2><p>当一个<code>Bean</code>既使用自动装配依赖,又使用<code>ref</code>显式指定依赖时,则<strong>使用<code>ref</code>显式指定的依赖<code>覆盖</code>自动装配依赖</strong>。在如下配置文件中:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定使用byType自动装配策略，Spring会根据setter方法的参数类型与Bean的类型进行匹配 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"chinese"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.Chinese"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autowire</span>=<span class="string">"byType"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"dog"</span> <span class="attr">ref</span>=<span class="string">"petDog"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"gunDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.GunDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"wangwang"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"petDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.PetDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"ohoh"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>因为使用<code>ref</code>显式指定的依赖关系将覆盖自动装配的依赖关系,所以自动转配失效,程序不会抛出异常.</p>
+<p>对于大型的应用,不鼓励使用自动装配。虽然使用自动装配可减少配置文件的工作量,但大大降低了依赖关系的清晰性和透眀性。依赖关系的装配依赖于源文件的属性名或属性类型,导致<code>Bean</code>与<code>Bean</code>之间的耦合降低到代码层次,不利于高层次解耦</p>
+<h2 id="将某些Bean排除在自动装配之外"><a href="#将某些Bean排除在自动装配之外" class="headerlink" title="将某些Bean排除在自动装配之外"></a>将某些Bean排除在自动装配之外</h2><p>在某些情况下,程序希望将某些<code>Bean</code>排除在自动装配之外,不作为<code>Spring</code>自动装配策略的候选者此时可设置<code>autowire-candidate</code>属性,<strong>通过为<code>&lt;bean&gt;</code>元素设置<code>autowire-candidate=&quot;false&quot;</code>,即可将该<code>Bean</code>排除在自动装配之外,容器在查找自动装配<code>Bean</code>时将不考虑该<code>Bean</code></strong>:<br>除此之外,还可通过在<code>&lt;beans&gt;</code>元素中指定<code>defaul-autowire-candidates</code>属性将一批<code>Bean</code>排除在自动装配之外。 <code>default-autowire-candidates</code>属性的值允许使用<code>模式字符串</code>,例如指定<code>default-autowire-candidates=&quot;*abc&quot;</code>,则所有以<code>&quot;abc&quot;</code>结尾的<code>Bean</code>都将被排除在自动装配之外。不仅如此,该属性甚至可以指定多个模式字符串,这样所有匹配任一模式字符串的<code>Bean</code>都将被排除在自动装配之外。<br>例如,把上述配置文件改成:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version="1.0" encoding="GBK"?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">"http://www.w3.org/2001/XMLSchema-instance"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">"http://www.springframework.org/schema/beans"</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">"http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans.xsd"</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定使用byType自动装配策略，Spring会根据setter方法的参数类型与Bean的类型进行匹配 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"chinese"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.Chinese"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autowire</span>=<span class="string">"byType"</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"gunDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.GunDog"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"wangwang"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置petDog Bean，其实现类也实现了Dog接口 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"petDog"</span> <span class="attr">class</span>=<span class="string">"org.crazyit.app.service.impl.PetDog"</span></span></span><br><span class="line"><span class="tag">        <span class="attr">autowire-candidate</span>=<span class="string">"false"</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"name"</span> <span class="attr">value</span>=<span class="string">"ohoh"</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>这样<code>petDog</code>这个被排除在自动转配之外,则此时只有<code>gunDog</code>符合<code>byType</code>自动装配要求,程序依然可以正常运行.</p>
+<p>剩下的两种自动装配策略与<code>byName</code>、 <code>byType</code>大同小异,此处不再赘述。</p>
+<!--SSTStop-->
+
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/9eaa638/" title="7.5.6 使用自动装配注入合作者Bean">https://lanlan2017.github.io/JavaReadingNotes/9eaa638/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/7eeef051/" rel="next" title="7.5.5 配置合作者Bean">
+                  <i class="fa fa-chevron-left"></i> 7.5.5 配置合作者Bean
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/6156be3c/" rel="prev" title="7.5.7 注入嵌套Bean">
+                  7.5.7 注入嵌套Bean <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-5-6-使用自动装配注入合作者Bean"><span class="nav-text">7.5.6 使用自动装配注入合作者Bean</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring的自动装配"><span class="nav-text">Spring的自动装配</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#autowire属性值"><span class="nav-text">autowire属性值</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-5-6-1-byName规则"><span class="nav-text">7.5.6.1 byName规则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目结构"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beans-xml"><span class="nav-text">beans.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Chinese-java"><span class="nav-text">Chinese.java</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-5-6-2-byType规则"><span class="nav-text">7.5.6.2 byType规则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#程序示例-1"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#项目结构-1"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#beans-xml-1"><span class="nav-text">beans.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#只有一个类型的Bean对象的情况"><span class="nav-text">只有一个类型的Bean对象的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有两个同类型的Bean对象的情况"><span class="nav-text">有两个同类型的Bean对象的情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#同时指定自动装配和使用ref显示指定依赖时"><span class="nav-text">同时指定自动装配和使用ref显示指定依赖时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#将某些Bean排除在自动装配之外"><span class="nav-text">将某些Bean排除在自动装配之外</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="10.6 异常处理规则&amp;nbsp;10.6.1 不要过度使用异常&amp;nbsp;不要使用异常处理来代替正常的业务逻辑判断&amp;nbsp;不要使用异常处理来代替正常的程序流程控制&amp;nbsp;总结&amp;nbsp;10.6.2 不要使用过于庞大的try块&amp;nbsp;10.6.3 避免使用Catch All语句&amp;nbsp;10.6.4 不要忽略捕获到的异常&amp;nbsp; .header_1{margin-left: 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.6 异常处理规则">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/5e3cc87/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="10.6 异常处理规则&amp;nbsp;10.6.1 不要过度使用异常&amp;nbsp;不要使用异常处理来代替正常的业务逻辑判断&amp;nbsp;不要使用异常处理来代替正常的程序流程控制&amp;nbsp;总结&amp;nbsp;10.6.2 不要使用过于庞大的try块&amp;nbsp;10.6.3 避免使用Catch All语句&amp;nbsp;10.6.4 不要忽略捕获到的异常&amp;nbsp; .header_1{margin-left: 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-13T23:35:37.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:55.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/5e3cc87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>10.6 异常处理规则 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/5e3cc87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">10.6 异常处理规则<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC10%E7%AB%A0%20%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/10.6%20%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%A7%84%E5%88%99/10.6%20%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%A7%84%E5%88%99.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-13 23:35:37" itemprop="dateCreated datePublished" datetime="2019-07-13T23:35:37+00:00">2019-07-13</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:55" itemprop="dateModified" datetime="2020-02-07T01:34:55+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">第10章 异常处理</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/10-6-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E8%A7%84%E5%88%99/" itemprop="url" rel="index"><span itemprop="name">10.6 异常处理规则</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/5e3cc87/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/5e3cc87/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/5e3cc87/#10-6-异常处理规则" class="header_1">10.6 异常处理规则</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#10-6-1-不要过度使用异常" class="header_1">10.6.1 不要过度使用异常</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#不要使用异常处理来代替正常的业务逻辑判断" class="header_3">不要使用异常处理来代替正常的业务逻辑判断</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#不要使用异常处理来代替正常的程序流程控制" class="header_3">不要使用异常处理来代替正常的程序流程控制</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#总结" class="header_2">总结</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#10-6-2-不要使用过于庞大的try块" class="header_1">10.6.2 不要使用过于庞大的try块</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#10-6-3-避免使用Catch-All语句" class="header_1">10.6.3 避免使用Catch All语句</a>&nbsp;<br><a href="/JavaReadingNotes/5e3cc87/#10-6-4-不要忽略捕获到的异常" class="header_1">10.6.4 不要忽略捕获到的异常</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="10-6-异常处理规则"><a href="#10-6-异常处理规则" class="headerlink" title="10.6 异常处理规则"></a>10.6 异常处理规则</h1><p>前面介绍了使用异常处理的优势、便捷之处,本节将进一步从程序性能优化、结构优化的角度给出异常处理的一般规则。成功的异常处理应该实现如下4个目标</p>
+<ul>
+<li>使程序代码混乱最小化。</li>
+<li>捕获并保留诊断信息。</li>
+<li>通知合适的人员。</li>
+<li>采用合适的方式结束异常活动。</li>
+</ul>
+<p>下面介绍达到这种效果的基本准则。</p>
+<h1 id="10-6-1-不要过度使用异常"><a href="#10-6-1-不要过度使用异常" class="headerlink" title="10.6.1 不要过度使用异常"></a>10.6.1 不要过度使用异常</h1><p>不可否认,<code>Java</code>的异常机制确实方便,但滥用异常机制也会带来一些负面影响。过度使用异常主要有两个方面。</p>
+<ul>
+<li>把异常和普通错误混淆在一起,不再编写任何错误处理代码,而是以简单地抛岀异常来代替所有的错误处理。</li>
+<li>使用异常处理来代替流程控制</li>
+</ul>
+<p>熟悉了异常使用方法后,程序员可能不再愿意编写烦琐的错误处理代码,而是简单地抛出异常。实际上这样做是不对的,</p>
+<ul>
+<li>对于完全已知的错误,应该编写处理这种错误的代码,增加程序的健壮性;</li>
+<li>对于普通的错误,应该编写处理这种错误的代码,增加程序的健壮性。</li>
+<li><strong>只有对外部的、不能确定和预知的运行时错误才使用异常</strong>。</li>
+</ul>
+<h3 id="不要使用异常处理来代替正常的业务逻辑判断"><a href="#不要使用异常处理来代替正常的业务逻辑判断" class="headerlink" title="不要使用异常处理来代替正常的业务逻辑判断"></a>不要使用异常处理来代替正常的业务逻辑判断</h3><p>必须指出:异常处理机制的初衷是将不可预期异常的处理代码和正常的业务逻辑处理代码分离,因此<code>绝不要使用异常处理来代替正常的业务逻辑判断</code>。</p>
+<h3 id="不要使用异常处理来代替正常的程序流程控制"><a href="#不要使用异常处理来代替正常的程序流程控制" class="headerlink" title="不要使用异常处理来代替正常的程序流程控制"></a>不要使用异常处理来代替正常的程序流程控制</h3><p>另外,异常机制的效率比正常的流程控制效率差,所以<code>不要使用异常处理来代替正常的程序流程控制</code>。<br>例如,对于如下代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个字符串数组</span></span><br><span class="line">String[] arr =&#123;<span class="string">"Hello"</span>,<span class="string">"Java"</span>,<span class="string">"Spring"</span>&#125;;</span><br><span class="line"><span class="comment">// 使用异常处理来遍历arr数组的每个元素</span></span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">  <span class="keyword">while</span>(<span class="keyword">true</span>)&#123;</span><br><span class="line">    System.out.println(arr[i++]);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span>(ArrayIndexOutOfBoundsException ex)&#123;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行上面程序确实可以实现遍历<code>ar</code>数组元素的功能,但这种写法可读性较差,而且运行效率也不高。程序完全有能力避免产生<code>ArrayIndexOutOfBoundsException</code>异常,程序“故意”制造这种异常,然后使用<code>catch</code>块去捕获该异常,这是不应该的。将程序改为如下形式肯定要好得多</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//定义一个字符串数组</span></span><br><span class="line">String[] arr =&#123;<span class="string">"Hello"</span>,<span class="string">"Java"</span>,<span class="string">"Spring"</span>&#125;;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; arr.length; i++)</span><br><span class="line">&#123;</span><br><span class="line">    System.out.println(arr[i]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>异常只应该用于处理非正常的情况,<code>不要使用异常处理来代替正常的流程控制</code>。<br>对于一些完全可预知,而且处理方式清楚的错误,<code>程序应该提供相应的错误处理代码</code>,而不是将其笼统地称为异常。</p>
+<h1 id="10-6-2-不要使用过于庞大的try块"><a href="#10-6-2-不要使用过于庞大的try块" class="headerlink" title="10.6.2 不要使用过于庞大的try块"></a>10.6.2 不要使用过于庞大的try块</h1><p>很多初学异常机制的读者喜欢在<code>try</code>块里放置大量的代码,在一个<code>try</code>块里放置大量的代码看上去很简单”,但这种”简单”只是一种假象,只是在编写程序时看上去比较简单。但因为<code>try</code>块里的代码过于庞大,业务过于复杂,就会造成<code>try</code>块中出现异常的可能性大大增加,从而导致分析异常原因的难度也大大增加。<br>而且当<code>try</code>块过于庞大时,就难免在<code>try</code>块后紧跟大量的<code>catch</code>块才可以针对不同的异常提供不同的处理逻辑。同一个<code>try</code>块后紧跟大量的<code>catch</code>块则需要分析它们之间的逻辑关系,反而增加了编程复杂度。<br>正确的做法是,<strong>把大块的<code>try</code>块分割成多个可能出现异常的程序段落,并把它们放在单独的<code>try</code>块中,从而分别捕获并处理异常</strong>。</p>
+<h1 id="10-6-3-避免使用Catch-All语句"><a href="#10-6-3-避免使用Catch-All语句" class="headerlink" title="10.6.3 避免使用Catch All语句"></a>10.6.3 避免使用Catch All语句</h1><p>所谓<code>Catch All</code>语句指的是一种异常捕获模块,<code>它可以处理程序发生的所有可能异常</code>。例如,如下代码片段:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//可能引发 Checked异常的代码</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">catch</span> (Throwable t)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">//进行异常处理</span></span><br><span class="line">    t.printstackTrace();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不可否认,每个程序员都曾经用过这种异常处理方式;但在编写关键程序时就应避免使用这种异常处理方式。这种<code>catch All</code>异常处理方式有如下两点不足之处。</p>
+<ul>
+<li>所有的异常都采用相同的处理方式,这将导致无法对不同的异常分情况处理,如果要分情况处理,则需要在<code>catch</code>块中使用分支语句进行控制,这是得不偿失的做法。</li>
+<li>这种捕获方式可能将程序中的错误、<code>Runtime</code>异常等可能导致程序终止的情况全部捕获到,从而”压制”了异常。如果出现了一些”关键”异常,那么此异常也会被”静悄悄”地忽略。</li>
+</ul>
+<p>实际上,<code>Catch All</code>语句不过是一种通过避免错误处理而加快编程进度的机制,应尽量避免在实际应用中使用这种语句。</p>
+<h1 id="10-6-4-不要忽略捕获到的异常"><a href="#10-6-4-不要忽略捕获到的异常" class="headerlink" title="10.6.4 不要忽略捕获到的异常"></a>10.6.4 不要忽略捕获到的异常</h1><p>不要忽略异常!既然已捕获到异常,那<code>catch</code>块理应做些有用的事情——处理并修复这个错误。**<code>catch</code>块整个为空,或者仅仅打印出错信息都是不妥的**!<br>-<code>catch</code>块为空就是假装不知道甚至瞒天过海,这是最可怕的事情——程序出了错误,所有的人都看不到任何异常,但整个应用可能已经彻底坏了。</p>
+<ul>
+<li>仅在<code>catch</code>块里打印错误跟踪栈信息稍微好一点,但仅仅比空白多了几行异常信息。</li>
+</ul>
+<p>通常建议对异常采取适当措施,比如:</p>
+<ul>
+<li><code>处理异常</code>。<ul>
+<li>对异常进行合适的修复,然后绕过异常发生的地方继续执行;</li>
+<li>或者用别的数据进行计算,以代替期望的方法返回值;</li>
+<li>或者提示用户重新操作……</li>
+<li>总之,对于<code>Checked</code>异常,程序应该尽量修复。</li>
+</ul>
+</li>
+<li><code>重新抛出新异常</code>。把当前运行环境下能做的事情尽量做完,然后进行异常转译,把异常包装成当前层的异常,重新抛出给上层调用者。</li>
+<li><code>在合适的层处理异常</code>。如果当前层不清楚如何处理异常,就不要在当前层使用<code>catch</code>语句来捕获该异常,直接使用<code>throws</code>声明抛出该异常,让上层调用者来负责处理该异常。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/5e3cc87/" title="10.6 异常处理规则">https://lanlan2017.github.io/JavaReadingNotes/5e3cc87/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/cfdc28f0/" rel="next" title="10.5 Java的异常跟踪栈">
+                  <i class="fa fa-chevron-left"></i> 10.5 Java的异常跟踪栈
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/9684eb42/" rel="prev" title="10.7 本章小结">
+                  10.7 本章小结 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-6-异常处理规则"><span class="nav-text">10.6 异常处理规则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-6-1-不要过度使用异常"><span class="nav-text">10.6.1 不要过度使用异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#不要使用异常处理来代替正常的业务逻辑判断"><span class="nav-text">不要使用异常处理来代替正常的业务逻辑判断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不要使用异常处理来代替正常的程序流程控制"><span class="nav-text">不要使用异常处理来代替正常的程序流程控制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-6-2-不要使用过于庞大的try块"><span class="nav-text">10.6.2 不要使用过于庞大的try块</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-6-3-避免使用Catch-All语句"><span class="nav-text">10.6.3 避免使用Catch All语句</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-6-4-不要忽略捕获到的异常"><span class="nav-text">10.6.4 不要忽略捕获到的异常</span></a></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="12.12 使用FormattedTextField和JTextPanel创建格式文本&amp;nbsp;JEditorPane&amp;nbsp;JTextField&amp;nbsp;文本输入组件的model是Document接口&amp;nbsp;12.12.1 监听Document的变化&amp;nbsp;如何获取文本输入组件的Document对象&amp;nbsp;为Document添加监听器&amp;nbsp;DocumentListene">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12.12 使用FormattedTextField和JTextPanel创建格式文本 12.11 使用JTable和TableModel创建表格">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/f36b64c4/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="12.12 使用FormattedTextField和JTextPanel创建格式文本&amp;nbsp;JEditorPane&amp;nbsp;JTextField&amp;nbsp;文本输入组件的model是Document接口&amp;nbsp;12.12.1 监听Document的变化&amp;nbsp;如何获取文本输入组件的Document对象&amp;nbsp;为Document添加监听器&amp;nbsp;DocumentListene">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.2.1/1.png">
+<meta property="article:published_time" content="2020-02-26T06:06:26.000Z">
+<meta property="article:modified_time" content="2020-03-28T04:46:02.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.2.1/1.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/f36b64c4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>12.12 使用FormattedTextField和JTextPanel创建格式文本 12.11 使用JTable和TableModel创建表格 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/f36b64c4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">12.12 使用FormattedTextField和JTextPanel创建格式文本 12.11 使用JTable和TableModel创建表格<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC12%E7%AB%A0%20Swing%E7%BC%96%E7%A8%8B/12.12%20%E5%88%9B%E5%BB%BA%E6%A0%BC%E5%BC%8F%E6%96%87%E6%9C%AC/12.12%20%E4%BD%BF%E7%94%A8FormattedTextField%E5%92%8CJTextPanel%E5%88%9B%E5%BB%BA%E6%A0%BC%E5%BC%8F%E6%96%87%E6%9C%AC%2012.11%20%E4%BD%BF%E7%94%A8JTable%E5%92%8CTableModel%E5%88%9B%E5%BB%BA%E8%A1%A8%E6%A0%BC.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2020-02-26 06:06:26" itemprop="dateCreated datePublished" datetime="2020-02-26T06:06:26+00:00">2020-02-26</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-28 04:46:02" itemprop="dateModified" datetime="2020-03-28T04:46:02+00:00">2020-03-28</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC12%E7%AB%A0-Swing%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第12章 Swing编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC12%E7%AB%A0-Swing%E7%BC%96%E7%A8%8B/12-12-%E5%88%9B%E5%BB%BA%E6%A0%BC%E5%BC%8F%E6%96%87%E6%9C%AC/" itemprop="url" rel="index"><span itemprop="name">12.12 创建格式文本</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/f36b64c4/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/f36b64c4/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/f36b64c4/#12-12-使用FormattedTextField和JTextPanel创建格式文本" class="header_1">12.12 使用FormattedTextField和JTextPanel创建格式文本</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#JEditorPane" class="header_2">JEditorPane</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#JTextField" class="header_2">JTextField</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#文本输入组件的model是Document接口" class="header_2">文本输入组件的model是Document接口</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#12-12-1-监听Document的变化" class="header_1">12.12.1 监听Document的变化</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#如何获取文本输入组件的Document对象" class="header_2">如何获取文本输入组件的Document对象</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#为Document添加监听器" class="header_2">为Document添加监听器</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#DocumentListener接口方法" class="header_3">DocumentListener接口方法</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#撤销监听器" class="header_2">撤销监听器</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#UndoableEditListener" class="header_3">UndoableEditListener</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#程序-为文本域的Document添加监听器" class="header_2">程序 为文本域的Document添加监听器</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#代码分析" class="header_3">代码分析</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#添加可撤销操作监听器" class="header_4">添加可撤销操作监听器</a>&nbsp;<br><a href="/JavaReadingNotes/f36b64c4/#添加Ctrl-Z监听器" class="header_4">添加Ctrl+Z监听器</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="12-12-使用FormattedTextField和JTextPanel创建格式文本"><a href="#12-12-使用FormattedTextField和JTextPanel创建格式文本" class="headerlink" title="12.12 使用FormattedTextField和JTextPanel创建格式文本"></a>12.12 使用FormattedTextField和JTextPanel创建格式文本</h1><p><img src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.2.1/1.png" alt="这里有一张图片"><br><strong><code>Swing</code>使用<code>JtextComponent</code>作为所有文本输入组件的父类</strong>,从图12.1中可以看出:<br><code>Swing</code>为<code>JtextComponent</code>类提供了三个子类:<code>JTextArea</code>、<code>JTextField</code>和<code>JEditorPane</code>.</p>
+<h2 id="JEditorPane"><a href="#JEditorPane" class="headerlink" title="JEditorPane"></a>JEditorPane</h2><p>为<code>JEditorPane</code>提供了一个<code>JTextPane</code>子类,<strong><code>JEditorPane</code>和<code>JTextPane</code>是两个典型的格式文本编辑器</strong>,也是本节介绍的重点。<br><code>JTextArea</code>和<code>JTextField</code>是两个常见的文本组件,比较简单,本节不会再次介绍它们。</p>
+<h2 id="JTextField"><a href="#JTextField" class="headerlink" title="JTextField"></a>JTextField</h2><p><code>JTextField</code>派生了两个子类:<code>JPasswordField</code>和<code>JFormattedTextField</code>,它们代表<strong>密码输入框</strong>和<strong>格式化文本输入框</strong>。</p>
+<h2 id="文本输入组件的model是Document接口"><a href="#文本输入组件的model是Document接口" class="headerlink" title="文本输入组件的model是Document接口"></a>文本输入组件的model是Document接口</h2><p>与其他的<code>Swing</code>组件类似,所有的文本输入组件也遵循了<code>MVC</code>的设计模式,即<strong>每个文本输入组件都有对应的<code>model</code>来保存其状态数据</strong>;<br>与其他的<code>Swing</code>组件不同的是,文本输入组件的<code>model</code>接口不是<code>XxxModel</code>接口,而是<code>Document</code>接口。<br><code>Document</code>既包括有格式的文本,也包括无格式的文本。不同的文本输入组件对应的<code>Document</code>不同。</p>
+<h1 id="12-12-1-监听Document的变化"><a href="#12-12-1-监听Document的变化" class="headerlink" title="12.12.1 监听Document的变化"></a>12.12.1 监听Document的变化</h1><p>如果希望检测到任何文本输入组件里所输入内容的变化,则可以通过监听该组件对应的<code>Document</code>来实现。</p>
+<h2 id="如何获取文本输入组件的Document对象"><a href="#如何获取文本输入组件的Document对象" class="headerlink" title="如何获取文本输入组件的Document对象"></a>如何获取文本输入组件的Document对象</h2><p><code>JTextComponent</code>类里提供了一个<code>getDocument()</code>方法,该方法用于获取所有文本输入组件对应的<code>Document</code>对象。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>JTextComponent</code>类的方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Document getDocument()</code></td>
+<td align="left">Fetches the model associated with the editor.</td>
+</tr>
+</tbody></table>
+<h2 id="为Document添加监听器"><a href="#为Document添加监听器" class="headerlink" title="为Document添加监听器"></a>为Document添加监听器</h2><p><code>Document</code>提供了一个<code>addDocumentListener()</code>方法来为<code>Document</code>添加监听器,该监听器必须实现<code>DocumentListener</code>接口.</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>Document</code>接口的方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void addDocumentListener(DocumentListener listener)</code></td>
+<td align="left">Registers the given observer to begin receiving notifications when changes are made to the document.</td>
+</tr>
+</tbody></table>
+<h3 id="DocumentListener接口方法"><a href="#DocumentListener接口方法" class="headerlink" title="DocumentListener接口方法"></a>DocumentListener接口方法</h3><p><code>DocumentListener</code>接口里提供了如下三个方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void changedUpdate(DocumentEvent e)</code></td>
+<td align="left">当<code>Document</code>里的属性或属性集发生了变化时触发该方法。</td>
+</tr>
+<tr>
+<td align="left"><code>void insertUpdate(DocumentEvent e)</code></td>
+<td align="left">当向<code>Document</code>中插入文本时触发该方法。</td>
+</tr>
+<tr>
+<td align="left"><code>void removeUpdate(DocumentEvent e)</code></td>
+<td align="left">当从<code>Document</code>中删除文本时触发该方法。</td>
+</tr>
+</tbody></table>
+<p>对于上面的三个方法而言,如果仅需要检测文本的变化,则无须实现第一个方法。但<code>Swing</code>并没有为<code>DocumentListener</code>接口提供适配器,所以程序依然要为第一个方法提供空实现。</p>
+<h2 id="撤销监听器"><a href="#撤销监听器" class="headerlink" title="撤销监听器"></a>撤销监听器</h2><p>除此之外,还可以为文件输入组件添加一个撤销监听器,这样就<strong>允许用户撤销以前的修改</strong>。添加撤销监听器的方法是<code>addUndoableEditListener</code>:</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>Document</code>接口的方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void addUndoableEditListener(UndoableEditListener listener)</code></td>
+<td align="left">Registers the given observer to begin receiving notifications when undoable edits are made to the document.</td>
+</tr>
+</tbody></table>
+<h3 id="UndoableEditListener"><a href="#UndoableEditListener" class="headerlink" title="UndoableEditListener"></a>UndoableEditListener</h3><p>该方法需要接收一个<code>UndoableEditListener</code>监听器,该监听器里包含了<code>undoableEditHappened()</code>方法:</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>UndoableEditListener</code>接口的方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void undoableEditHappened(UndoableEditEvent e)</code></td>
+<td align="left">当文档里发生了可撤销的编辑操作时将会触发该方法</td>
+</tr>
+</tbody></table>
+<h2 id="程序-为文本域的Document添加监听器"><a href="#程序-为文本域的Document添加监听器" class="headerlink" title="程序 为文本域的Document添加监听器"></a>程序 为文本域的Document添加监听器</h2><p>下面程序示范了如何为一个普通文本域的<code>Document</code>添加监听器,当用户在目标文本域里输入、删除文本时,程序会显示出用户所做的修改。该文本域还支持撤销操作,当用户按“<code>Ctrl+Z</code>”键时,该文本域会撤销用户刚刚输入的内容。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.awt.event.*;</span><br><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"><span class="keyword">import</span> javax.swing.text.*;</span><br><span class="line"><span class="keyword">import</span> javax.swing.undo.*;</span><br><span class="line"><span class="keyword">import</span> javax.swing.event.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MonitorText</span> </span>&#123;</span><br><span class="line">    JFrame mainWin = <span class="keyword">new</span> JFrame(<span class="string">"监听Document对象"</span>);</span><br><span class="line">    JTextArea target = <span class="keyword">new</span> JTextArea(<span class="number">4</span>, <span class="number">35</span>);</span><br><span class="line">    JTextArea msg = <span class="keyword">new</span> JTextArea(<span class="number">5</span>, <span class="number">35</span>);</span><br><span class="line">    JLabel label = <span class="keyword">new</span> JLabel(<span class="string">"文本域的修改信息"</span>);</span><br><span class="line">    Document doc = target.getDocument();</span><br><span class="line">    <span class="comment">// 保存撤销操作的List对象</span></span><br><span class="line">    LinkedList&lt;UndoableEdit&gt; undoList = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    <span class="comment">// 最多允许撤销多少次</span></span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">int</span> UNDO_COUNT = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        msg.setEditable(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">// 添加DocumentListener</span></span><br><span class="line">        doc.addDocumentListener(<span class="keyword">new</span> DocumentListener() &#123;</span><br><span class="line">            <span class="comment">// 当Document的属性或属性集发生了改变时触发该方法</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">changedUpdate</span><span class="params">(DocumentEvent e)</span> </span>&#123;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 当向Document中插入文本时触发该方法</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">insertUpdate</span><span class="params">(DocumentEvent e)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> offset = e.getOffset();</span><br><span class="line">                <span class="keyword">int</span> len = e.getLength();</span><br><span class="line">                <span class="comment">// 取得插入事件的位置</span></span><br><span class="line">                msg.append(<span class="string">"插入文本的长度："</span> + len + <span class="string">"\n"</span>);</span><br><span class="line">                msg.append(<span class="string">"插入文本的起始位置："</span> + offset + <span class="string">"\n"</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    msg.append(<span class="string">"插入文本内容："</span> + doc.getText(offset, len) + <span class="string">"\n"</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (BadLocationException evt) &#123;</span><br><span class="line">                    evt.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 当从Document中删除文本时触发该方法</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">removeUpdate</span><span class="params">(DocumentEvent e)</span> </span>&#123;</span><br><span class="line">                <span class="keyword">int</span> offset = e.getOffset();</span><br><span class="line">                <span class="keyword">int</span> len = e.getLength();</span><br><span class="line">                <span class="comment">// 取得插入事件的位置</span></span><br><span class="line">                msg.append(<span class="string">"删除文本的长度："</span> + len + <span class="string">"\n"</span>);</span><br><span class="line">                msg.append(<span class="string">"删除文本的起始位置："</span> + offset + <span class="string">"\n"</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 添加可撤销操作的监听器</span></span><br><span class="line">        doc.addUndoableEditListener(e -&gt; &#123;</span><br><span class="line">            <span class="comment">// 每次发生可撤销操作都会触发该代码块 // ①</span></span><br><span class="line">            UndoableEdit edit = e.getEdit();</span><br><span class="line">            <span class="keyword">if</span> (edit.canUndo() &amp;&amp; undoList.size() &lt; UNDO_COUNT) &#123;</span><br><span class="line">                <span class="comment">// 将撤销操作装入List内</span></span><br><span class="line">                undoList.add(edit);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 已经达到了最大撤销次数</span></span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (edit.canUndo() &amp;&amp; undoList.size() &gt;= UNDO_COUNT) &#123;</span><br><span class="line">                <span class="comment">// 弹出第一个撤销操作</span></span><br><span class="line">                undoList.pop();</span><br><span class="line">                <span class="comment">// 将撤销操作装入List内</span></span><br><span class="line">                undoList.add(edit);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="comment">// 为Ctrl+Z添加监听器</span></span><br><span class="line">        target.addKeyListener(<span class="keyword">new</span> KeyAdapter() &#123;</span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyTyped</span><span class="params">(KeyEvent e)</span> <span class="comment">// ②</span></span></span><br><span class="line"><span class="function">            </span>&#123;</span><br><span class="line">                System.out.println(e.getKeyChar() + <span class="number">0</span>);</span><br><span class="line">                <span class="comment">// 如果按键是Ctrl + Z或Ctrl + z</span></span><br><span class="line">                <span class="keyword">if</span> (e.getKeyChar() == <span class="number">26</span>) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (undoList.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                        <span class="comment">// 移出最后一个可撤销操作，并取消该操作</span></span><br><span class="line">                        undoList.removeLast().undo();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        Box box = <span class="keyword">new</span> Box(BoxLayout.Y_AXIS);</span><br><span class="line">        box.add(<span class="keyword">new</span> JScrollPane(target));</span><br><span class="line">        JPanel panel = <span class="keyword">new</span> JPanel();</span><br><span class="line">        panel.add(label);</span><br><span class="line">        box.add(panel);</span><br><span class="line">        box.add(<span class="keyword">new</span> JScrollPane(msg));</span><br><span class="line">        mainWin.add(box);</span><br><span class="line">        mainWin.pack();</span><br><span class="line">        mainWin.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span><br><span class="line">        mainWin.setVisible(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> MonitorText().init();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>上面程序中的两段粗体字代码实现了<code>Document</code>中插入文本、删除文本的事件处理器,当用户向<code>Document</code>中插入文本、删除文本时,程序将会把这些修改信息添加到下面的一个文本域里</p>
+<h4 id="添加可撤销操作监听器"><a href="#添加可撤销操作监听器" class="headerlink" title="添加可撤销操作监听器"></a>添加可撤销操作监听器</h4><p>程序中①号代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加可撤销操作的监听器</span></span><br><span class="line">doc.addUndoableEditListener(e -&gt; &#123;</span><br><span class="line">    <span class="comment">// 每次发生可撤销操作都会触发该代码块 // ①</span></span><br><span class="line">    UndoableEdit edit = e.getEdit();</span><br><span class="line">    <span class="keyword">if</span> (edit.canUndo() &amp;&amp; undoList.size() &lt; UNDO_COUNT) &#123;</span><br><span class="line">        <span class="comment">// 将撤销操作装入List内</span></span><br><span class="line">        undoList.add(edit);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 已经达到了最大撤销次数</span></span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (edit.canUndo() &amp;&amp; undoList.size() &gt;= UNDO_COUNT) &#123;</span><br><span class="line">        <span class="comment">// 弹出第一个撤销操作</span></span><br><span class="line">        undoList.pop();</span><br><span class="line">        <span class="comment">// 将撤销操作装入List内</span></span><br><span class="line">        undoList.add(edit);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>是可撤销操作的事件处理器,当用户在该文本域内进行可撤销操作时,这段代码将会被触发,这段代码把用户刚刚进行的可撤销操作以<code>List</code>保存起来,以便在合适的时候撤销用户所做的修改。</p>
+<h4 id="添加Ctrl-Z监听器"><a href="#添加Ctrl-Z监听器" class="headerlink" title="添加Ctrl+Z监听器"></a>添加Ctrl+Z监听器</h4><p>程序中②号代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 为Ctrl+Z添加监听器</span></span><br><span class="line">target.addKeyListener(<span class="keyword">new</span> KeyAdapter() &#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyTyped</span><span class="params">(KeyEvent e)</span> <span class="comment">// ②</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(e.getKeyChar() + <span class="number">0</span>);</span><br><span class="line">        <span class="comment">// 如果按键是Ctrl + Z或Ctrl + z</span></span><br><span class="line">        <span class="keyword">if</span> (e.getKeyChar() == <span class="number">26</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span> (undoList.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 移出最后一个可撤销操作，并取消该操作</span></span><br><span class="line">                undoList.removeLast().undo();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>主要用于为“<code>Ctrl+Z</code>”按键添加按键监听器,当用户按下“<code>Ctrl+Z</code>”键时,程序从保存可撤销操作的<code>List</code>中取岀最后一个可撤销操作,并撤销该操作的修改。<br>运行上面程序,会看到如图12.58所示的运行结果。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/f36b64c4/" title="12.12 使用FormattedTextField和JTextPanel创建格式文本 12.11 使用JTable和TableModel创建表格">https://lanlan2017.github.io/JavaReadingNotes/f36b64c4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/58080c96/" rel="next" title="12.11.6 编辑单元格內容">
+                  <i class="fa fa-chevron-left"></i> 12.11.6 编辑单元格內容
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/59de7684/" rel="prev" title="12.12.2 使用JPasswordField">
+                  12.12.2 使用JPasswordField <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#12-12-使用FormattedTextField和JTextPanel创建格式文本"><span class="nav-text">12.12 使用FormattedTextField和JTextPanel创建格式文本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JEditorPane"><span class="nav-text">JEditorPane</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JTextField"><span class="nav-text">JTextField</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文本输入组件的model是Document接口"><span class="nav-text">文本输入组件的model是Document接口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12-12-1-监听Document的变化"><span class="nav-text">12.12.1 监听Document的变化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#如何获取文本输入组件的Document对象"><span class="nav-text">如何获取文本输入组件的Document对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为Document添加监听器"><span class="nav-text">为Document添加监听器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DocumentListener接口方法"><span class="nav-text">DocumentListener接口方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#撤销监听器"><span class="nav-text">撤销监听器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UndoableEditListener"><span class="nav-text">UndoableEditListener</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#程序-为文本域的Document添加监听器"><span class="nav-text">程序 为文本域的Document添加监听器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#代码分析"><span class="nav-text">代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#添加可撤销操作监听器"><span class="nav-text">添加可撤销操作监听器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加Ctrl-Z监听器"><span class="nav-text">添加Ctrl+Z监听器</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

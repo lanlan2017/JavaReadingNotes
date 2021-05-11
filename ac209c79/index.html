@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="13.6 Java7的RowSet1.1&amp;nbsp;13.6.1 Java 7新增的RowSetFactory与RowSet&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-le">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.6 Java7的RowSet1.1 13.6.1 Java 7新增的RowSetFactory与RowSet">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/ac209c79/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="13.6 Java7的RowSet1.1&amp;nbsp;13.6.1 Java 7新增的RowSetFactory与RowSet&amp;nbsp; .header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-le">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/13/5.png">
+<meta property="article:published_time" content="2019-07-05T14:01:11.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/13/5.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/ac209c79/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>13.6 Java7的RowSet1.1 13.6.1 Java 7新增的RowSetFactory与RowSet | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/ac209c79/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">13.6 Java7的RowSet1.1 13.6.1 Java 7新增的RowSetFactory与RowSet<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC13%E7%AB%A0%20MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13.6%20Java7%E7%9A%84RowSet1.1/13.6%20Java7%E7%9A%84RowSet1.1%2013.6.1%20Java%207%E6%96%B0%E5%A2%9E%E7%9A%84RowSetFactory%E4%B8%8ERowSet.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-05 14:01:11" itemprop="dateCreated datePublished" datetime="2019-07-05T14:01:11+00:00">2019-07-05</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第13章 MySQL数据库与JDBC编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13-6-Java7%E7%9A%84RowSet1-1/" itemprop="url" rel="index"><span itemprop="name">13.6 Java7的RowSet1.1</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/ac209c79/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/ac209c79/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/ac209c79/#13-6-Java7的RowSet1-1" class="header_1">13.6 Java7的RowSet1.1</a>&nbsp;<br><a href="/JavaReadingNotes/ac209c79/#13-6-1-Java-7新增的RowSetFactory与RowSet" class="header_2">13.6.1 Java 7新增的RowSetFactory与RowSet</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="13-6-Java7的RowSet1-1"><a href="#13-6-Java7的RowSet1-1" class="headerlink" title="13.6 Java7的RowSet1.1"></a>13.6 Java7的RowSet1.1</h1><p><code>RowSet</code>接口继承了<code>ResultSet</code>接口, <code>RowSet</code>接口下包含<code>JdbcRowSet</code>、 <code>CachedRowSet</code>、 <code>FilteredRowSet</code>、<code>JoinRowset</code>和<code>WebRowSet</code>常用子接口。除了<code>JdbcRowSet</code>需要保持与数据库的连接之外,其余4个子接口都是离线的<code>RowSet</code>,无须保持与数据库的连接。<br><strong>与<code>ResultSet</code>相比, <code>RowSet</code>默认是<code>可滚动</code>、<code>可更新</code>、<code>可序列化</code>的结果集,而且作为<code>JavaBean</code>使用,因此能方便地在网络上传输,用于同步两端的数据</strong>。对于离线<code>RowSet</code>而言,程序在创建<code>RowSet</code>时已把数据从底层数据库读取到了内存,因此可以充分利用计算机的内存,从而降低数据库服务器的负载,提高程序性能。<br>图13.22显示了<code>RowSet</code>规范的接口类图。<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/13/5.png" alt="这里有一张图片"><br><code>CachedRowSet</code>及其子接口都代表了离线<code>RowSet</code>,它们都不需要底层数据库连接。</p>
+<h2 id="13-6-1-Java-7新增的RowSetFactory与RowSet"><a href="#13-6-1-Java-7新增的RowSetFactory与RowSet" class="headerlink" title="13.6.1 Java 7新增的RowSetFactory与RowSet"></a>13.6.1 Java 7新增的RowSetFactory与RowSet</h2><p>在<code>Java 6.0</code>以前, <code>RowSet</code>及其5个子接口都已经存在了,但在实际编程中的应用一直并不广泛,这是因为<code>Java</code>公开<code>API</code>并没有为<code>RowSet</code>及其各子接口提供实现类,而且也没有提供公开的方法来创建<code>RowSet</code>及其各子接口的实例。<br>实际上,<code>Java6.0</code>已经在<code>com.sun.rowset</code>包下提供了<code>JdbcRowSetlmpl</code>、 <code>CachedRowSetlmpl</code>、<code>WebRowSetlmpl</code>、 <code>FilteredRowSetlmpl</code>和<code>JoinRowSetlmpl</code>五个实现类,它们代表了各种<code>RowSet</code>接口的实现类<br>以<code>JdbcRowSet</code>为例,在<code>Java 6.0</code>及以前的版本中,如果程序需要使用<code>JdbcRowSet</code>,则必须通过调用<code>JdbcRowSetlmpl</code>的构造器来创建<code>JdbcRowSet</code>实例, <code>JdbcRowSetlmpl</code>提供了如下常用构造器.</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>JdbcRowSetlmpl()</code></td>
+<td align="left">创建一个默认的<code>JdbcRowSetlmpl</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>JdbcRowSetImpl(Connection conn)</code></td>
+<td align="left">以给定的<code>Connection</code>对象作为数据库连接来创建<code>JdbcRowSetlmpl</code>对象。</td>
+</tr>
+<tr>
+<td align="left"><code>JdbcRowSetlmpl(ResultSet rs)</code></td>
+<td align="left">创建包装<code>ResultSet</code>对象的<code>JdbcRowSetlmpl</code>对象.</td>
+</tr>
+</tbody></table>
+<p>除此之外, <code>RowSet</code>接口中定义了如下常用方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>setUrl(String ur)</code></td>
+<td align="left">设置该 <code>RowSet</code>要访问的数据库的<code>URL</code></td>
+</tr>
+<tr>
+<td align="left"><code>setUsername(String name)</code></td>
+<td align="left">设置该<code>RowSet</code>要访问的数据库的用户名。</td>
+</tr>
+<tr>
+<td align="left"><code>setPassword(String password)</code></td>
+<td align="left">设置该<code>RowSet</code>要访问的数据库的密码。</td>
+</tr>
+<tr>
+<td align="left"><code>setCommand(String sql)</code></td>
+<td align="left">设置使用该<code>sql</code>语句的查询结果来装填该<code>RowSet</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>execute()</code></td>
+<td align="left">执行查询</td>
+</tr>
+<tr>
+<td align="left"><code>populate(ResultSet rs)</code></td>
+<td align="left">让该<code>RowSet</code>直接包装给定的 <code>ResultSet</code>对象.</td>
+</tr>
+<tr>
+<td align="left">通过<code>JdbcRowSet</code>的构造器和上面几个方法不难看出,为<code>JdbcRowSet</code>装填数据有如下两种方式。</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<ul>
+<li>1.创建<code>JdbcRowSetlmpl</code>时,直接传入<code>ResultSet</code>对象。</li>
+<li>2.使用<code>execute()</code>方法来执行<code>SQL</code>査询,用查询返回的数据来装填<code>RowSet</code>.</li>
+</ul>
+<p>对于第二种方式来说,如果创建<code>JdbcRowSetlmpl</code>时已经传入了<code>Connection</code>参数,则只要先调用<code>setCommand(String sql)</code>指定<code>SQL</code>查询语句,接下来就可调用<code>execute()</code>方法执行查询了。如果创建<code>JdbcRowSetlmpl</code>时没有传入<code>Connection</code>参数,则先要为<code>JdbcRowSet</code>设置数据库的<code>URL</code>、用户名、密码等连接信息<br>下面程序通过<code>JdbcRowSetlmpl</code>示范了使用<code>JdbcRowSet</code>的<code>可滚动</code>、<code>可修改</code>特性.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"><span class="keyword">import</span> javax.sql.rowset.*;</span><br><span class="line"><span class="keyword">import</span> com.sun.rowset.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JdbcRowSetTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String driver;</span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line">    <span class="keyword">private</span> String user;</span><br><span class="line">    <span class="keyword">private</span> String pass;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initParam</span><span class="params">(String paramFile)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 使用Properties类来加载属性文件</span></span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        props.load(<span class="keyword">new</span> FileInputStream(paramFile));</span><br><span class="line">        driver = props.getProperty(<span class="string">"driver"</span>);</span><br><span class="line">        url = props.getProperty(<span class="string">"url"</span>);</span><br><span class="line">        user = props.getProperty(<span class="string">"user"</span>);</span><br><span class="line">        pass = props.getProperty(<span class="string">"pass"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(String sql)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// .加载驱动</span></span><br><span class="line">        Class.forName(driver);</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 2.获取数据库连接</span></span><br><span class="line">                Connection conn = DriverManager.getConnection(url, user, pass);</span><br><span class="line">                <span class="comment">// 3.创建JdbcRowSetImpl对象</span></span><br><span class="line">                JdbcRowSet jdbcRs = <span class="keyword">new</span> JdbcRowSetImpl(conn)) <span class="comment">// ①</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 设置SQL查询语句</span></span><br><span class="line">            jdbcRs.setCommand(sql);</span><br><span class="line">            <span class="comment">// 执行查询</span></span><br><span class="line">            jdbcRs.execute();</span><br><span class="line">            <span class="comment">// 记录指针移动到最后一行</span></span><br><span class="line">            jdbcRs.afterLast();</span><br><span class="line">            <span class="comment">// 向前滚动结果集</span></span><br><span class="line">            <span class="keyword">while</span> (jdbcRs.previous())</span><br><span class="line">            &#123;</span><br><span class="line">                System.out.println(jdbcRs.getString(<span class="number">1</span>) + <span class="string">"\t"</span></span><br><span class="line">                        + jdbcRs.getString(<span class="number">2</span>) + <span class="string">"\t"</span> + jdbcRs.getString(<span class="number">3</span>));</span><br><span class="line">                <span class="keyword">if</span> (jdbcRs.getInt(<span class="string">"student_id"</span>) == <span class="number">3</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 修改指定记录行</span></span><br><span class="line">                    jdbcRs.updateString(<span class="string">"student_name"</span>, <span class="string">"孙悟空"</span>);</span><br><span class="line">                    <span class="comment">// 更新该行记录</span></span><br><span class="line">                    jdbcRs.updateRow();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        JdbcRowSetTest jt = <span class="keyword">new</span> JdbcRowSetTest();</span><br><span class="line">        jt.initParam(<span class="string">"mysql.ini"</span>);</span><br><span class="line">        jt.update(<span class="string">"select * from student_table"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中①号代码创建一个<code>JdbcRowSetlmpl</code>实例,这就是一个<code>JdbcRowSet</code>对象。接下来的代码则示范了<code>JdbcSet</code>的<code>可滚动</code>、<code>可修改</code>的特性。<br>编译该程序,编译器将会在①号代码处发出警告: <code>JdbcRowSetlmpl</code>是内部专用AP,可能会在未来发行版中删除。这就是直接使用<code>JdbcRowSetImpl</code>的代价.<br>需要说明的是,使用<code>JdbcRowSetlmpl</code>除了编译器会发出警告之外,还有如下坏处。</p>
+<ul>
+<li>程序直接与<code>JdbcRowSetlmpl</code>实现类耦合,不利于后期的升级、扩展。</li>
+<li><code>JdbcRowSetlmpl</code>实现类不是一个公开的<code>API</code>,未来可能被删除。</li>
+</ul>
+<p>正是因为上面两个原因,所以在<code>Java 6.0</code>时代, <code>RowSet</code>并未得到广泛应用。<code>Java 7</code>新增了<code>RowSetProvider</code>类和<code>Row SetFactory</code>接口,其中<code>RowSetProvider</code>负责创建<code>RowSetFactory</code>,而<code>RowSetFactory</code>则提供了如下方法来创建<code>RowSet</code>实例。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>CachedRowSet createCachedRowSet()</code></td>
+<td align="left">创建一个默认的<code>CachedRowSet</code></td>
+</tr>
+<tr>
+<td align="left"><code>FilteredRowSet createFilteredRowSet()</code></td>
+<td align="left">创建一个默认的<code>FilteredRowSet</code></td>
+</tr>
+<tr>
+<td align="left"><code>JdbcRowSet createJdbcRowSet()</code></td>
+<td align="left">创建一个默认的<code>JdbcRowSet</code></td>
+</tr>
+<tr>
+<td align="left"><code>JoinRowSet createJoinRowSet()</code></td>
+<td align="left">创建一个默认的<code>JoinRowSet</code></td>
+</tr>
+<tr>
+<td align="left"><code>WebRowSet createWebRowSet()</code></td>
+<td align="left">创建一个默认的<code>WebRowSet</code></td>
+</tr>
+</tbody></table>
+<p>通过使用<code>RowSetFactory</code>,就可以把应用程序与<code>RowSet</code>实现类分离开,避免直接使用<code>JdbcRowSetlmpl</code>等非公开的<code>API</code>,也更有利于后期的升级、扩展。<br>下面程序使用<code>RowSetFactory</code>来创建<code>JdbcRowSet</code>实例。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.sql.*;</span><br><span class="line"><span class="keyword">import</span> javax.sql.rowset.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RowSetFactoryTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String driver;</span><br><span class="line">    <span class="keyword">private</span> String url;</span><br><span class="line">    <span class="keyword">private</span> String user;</span><br><span class="line">    <span class="keyword">private</span> String pass;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initParam</span><span class="params">(String paramFile)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 使用Properties类来加载属性文件</span></span><br><span class="line">        Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">        props.load(<span class="keyword">new</span> FileInputStream(paramFile));</span><br><span class="line">        driver = props.getProperty(<span class="string">"driver"</span>);</span><br><span class="line">        url = props.getProperty(<span class="string">"url"</span>);</span><br><span class="line">        user = props.getProperty(<span class="string">"user"</span>);</span><br><span class="line">        pass = props.getProperty(<span class="string">"pass"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(String sql)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 1.加载驱动</span></span><br><span class="line">        Class.forName(driver);</span><br><span class="line">        <span class="comment">// 2.使用RowSetProvider创建RowSetFactory</span></span><br><span class="line">        RowSetFactory factory = RowSetProvider.newFactory();</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 3.使用RowSetFactory创建默认的JdbcRowSet实例</span></span><br><span class="line">                JdbcRowSet jdbcRowSet = factory.createJdbcRowSet())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 4.设置必要的连接信息</span></span><br><span class="line">            jdbcRowSet.setUrl(url);</span><br><span class="line">            jdbcRowSet.setUsername(user);</span><br><span class="line">            jdbcRowSet.setPassword(pass);</span><br><span class="line">            <span class="comment">// 设置SQL查询语句</span></span><br><span class="line">            jdbcRowSet.setCommand(sql);</span><br><span class="line">            <span class="comment">// 执行查询</span></span><br><span class="line">            jdbcRowSet.execute();</span><br><span class="line">            jdbcRowSet.afterLast();</span><br><span class="line">            <span class="comment">// 向前滚动结果集</span></span><br><span class="line">            <span class="keyword">while</span> (jdbcRowSet.previous())</span><br><span class="line">            &#123;</span><br><span class="line">                System.out.println(jdbcRowSet.getString(<span class="number">1</span>) + <span class="string">"\t"</span></span><br><span class="line">                        + jdbcRowSet.getString(<span class="number">2</span>) + <span class="string">"\t"</span> + jdbcRowSet.getString(<span class="number">3</span>));</span><br><span class="line">                <span class="keyword">if</span> (jdbcRowSet.getInt(<span class="string">"student_id"</span>) == <span class="number">3</span>)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="comment">// 修改指定记录行</span></span><br><span class="line">                    jdbcRowSet.updateString(<span class="string">"student_name"</span>, <span class="string">"孙悟空"</span>);</span><br><span class="line">                    jdbcRowSet.updateRow();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        RowSetFactoryTest jt = <span class="keyword">new</span> RowSetFactoryTest();</span><br><span class="line">        jt.initParam(<span class="string">"mysql.ini"</span>);</span><br><span class="line">        jt.update(<span class="string">"select * from student_table"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中使用了<code>RowSetFactory</code>来创建<code>JdbcRowSet</code>对象,这就避免了与<code>JabcRowSetlmpl</code>实现类耦合。由于通过这种方式创建的<code>JdbcRowSet</code>还没有传入<code>Connection</code>参数,因此程序还需调用<code>setUrl()</code>、 <code>setUsername()</code>、 <code>setPassword()</code>等方法来设置数据库连接信息编译、运行该程序,编译器不会发出任何警告,程序运行结果也一切正常。</p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/ac209c79/" title="13.6 Java7的RowSet1.1 13.6.1 Java 7新增的RowSetFactory与RowSet">https://lanlan2017.github.io/JavaReadingNotes/ac209c79/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/91cc195c/" rel="next" title="13.5.3 使用ResultsetMetaData分析结果集">
+                  <i class="fa fa-chevron-left"></i> 13.5.3 使用ResultsetMetaData分析结果集
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/e16aaec2/" rel="prev" title="13.6.2 离线RowSet">
+                  13.6.2 离线RowSet <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-6-Java7的RowSet1-1"><span class="nav-text">13.6 Java7的RowSet1.1</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-6-1-Java-7新增的RowSetFactory与RowSet"><span class="nav-text">13.6.1 Java 7新增的RowSetFactory与RowSet</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

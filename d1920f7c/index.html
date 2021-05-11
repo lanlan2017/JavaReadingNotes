@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="13.2.11 分组和组函数&amp;nbsp;实例&amp;nbsp;sum函数&amp;nbsp;统计某列的总和&amp;nbsp;每行都加上一个常数&amp;nbsp;不累加值相同的行&amp;nbsp;max函数&amp;nbsp;min函数&amp;nbsp;count方法&amp;nbsp;avg方法&amp;nbsp;分组的情况&amp;nbsp;根据某一列进行分组&amp;nbsp;根据多列分组&amp;nbsp;处理不在group by以及组函数中的列&amp;nbsp;having子句&amp;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.2.11 分组和组函数">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/d1920f7c/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="13.2.11 分组和组函数&amp;nbsp;实例&amp;nbsp;sum函数&amp;nbsp;统计某列的总和&amp;nbsp;每行都加上一个常数&amp;nbsp;不累加值相同的行&amp;nbsp;max函数&amp;nbsp;min函数&amp;nbsp;count方法&amp;nbsp;avg方法&amp;nbsp;分组的情况&amp;nbsp;根据某一列进行分组&amp;nbsp;根据多列分组&amp;nbsp;处理不在group by以及组函数中的列&amp;nbsp;having子句&amp;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/13/4.png">
+<meta property="article:published_time" content="2019-05-27T11:34:36.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/13/4.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/d1920f7c/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>13.2.11 分组和组函数 | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/d1920f7c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">13.2.11 分组和组函数<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/1%20%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89%20(%E7%AC%AC4%E7%89%88)/%E7%AC%AC13%E7%AB%A0%20MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13.2%20SQL%E8%AF%AD%E6%B3%95/13.2.11%20%E5%88%86%E7%BB%84%E5%92%8C%E7%BB%84%E5%87%BD%E6%95%B0.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-05-27 11:34:36" itemprop="dateCreated datePublished" datetime="2019-05-27T11:34:36+00:00">2019-05-27</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第13章 MySQL数据库与JDBC编程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13-2-SQL%E8%AF%AD%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">13.2 SQL语法</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/d1920f7c/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/d1920f7c/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/d1920f7c/#13-2-11-分组和组函数" class="header_1">13.2.11 分组和组函数</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#实例" class="header_2">实例</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#sum函数" class="header_3">sum函数</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#统计某列的总和" class="header_4">统计某列的总和</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#每行都加上一个常数" class="header_4">每行都加上一个常数</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#不累加值相同的行" class="header_4">不累加值相同的行</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#max函数" class="header_3">max函数</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#min函数" class="header_3">min函数</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#count方法" class="header_3">count方法</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#avg方法" class="header_3">avg方法</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#分组的情况" class="header_2">分组的情况</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#根据某一列进行分组" class="header_3">根据某一列进行分组</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#根据多列分组" class="header_3">根据多列分组</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#处理不在group-by以及组函数中的列" class="header_3">处理不在group by以及组函数中的列</a>&nbsp;<br><a href="/JavaReadingNotes/d1920f7c/#having子句" class="header_2">having子句</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="13-2-11-分组和组函数"><a href="#13-2-11-分组和组函数" class="headerlink" title="13.2.11 分组和组函数"></a>13.2.11 分组和组函数</h1><p><strong>组函数</strong>也就是前面提到的<strong>多行函数</strong>,<strong>组函数将一组记录作为整体计算,每组记录返回一个结果,而不是每条记录返回一个结果</strong>。常用的组函数有如下5个。</p>
+<ul>
+<li><code>avg([distinct|all]表达式)</code>:计算多行<code>表达式</code>的<strong>平均值</strong>,其中,<code>表达式</code>可以是变量、常量或数据列,但其数据类型必须是数值型。还可以在变量、列前使用<code>distinct</code>或<code>all</code>关键字,如果使用<code>distinct</code>,则表明不计算重复值;<code>all</code>用和不用的效果完全一样,表明需要计算重复值。</li>
+<li><code>count({*|[distinct|all]表达式})</code>:计算多行<code>表达式</code>的<strong>总条数</strong>,其中,<code>表达式</code>可以是变量、常量或数据列,其数据类型可以是任意类型;用星号(<code>*</code>)表示统计该表内的记录行数;<code>distinct</code>表示不计算重复值。</li>
+<li><code>max(表达式)</code>:计算多行<code>表达式</code>的<strong>最大值</strong>,其中<code>表达式</code>可以是变量、常量或数据列,其数据类型可以是任意类型。</li>
+<li><code>min(表达式)</code>:计算多行<code>表达式</code>的<strong>最小值</strong>,其中<code>表达式</code>可以是变量、常量或数据列,其数据类型可以是任意类型。</li>
+<li><code>sum([distinct|all]表达式)</code>:计算多行<code>表达式</code>的<strong>总和</strong>,其中,<code>表达式</code>可以是变量、常量或数据列,但其数据类型必须是数值型;<code>distinct</code>表示不计算重复值。</li>
+</ul>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><h3 id="sum函数"><a href="#sum函数" class="headerlink" title="sum函数"></a>sum函数</h3><h4 id="统计某列的总和"><a href="#统计某列的总和" class="headerlink" title="统计某列的总和"></a>统计某列的总和</h4><p>统计所有<code>student_id</code>的总和</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">sum</span>(student_id)</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>计算结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select sum(student_id)</span><br><span class="line">from student_table;</span><br><span class="line">+-----------------+</span><br><span class="line">| sum(student_id) |</span><br><span class="line">+-----------------+</span><br><span class="line">| <span class="number">28</span>              |</span><br><span class="line">+-----------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h4 id="每行都加上一个常数"><a href="#每行都加上一个常数" class="headerlink" title="每行都加上一个常数"></a>每行都加上一个常数</h4><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">sum</span>(<span class="number">20</span>)</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>计算结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select sum(<span class="number">20</span>)</span><br><span class="line">from student_table;</span><br><span class="line">+---------+</span><br><span class="line">| sum(<span class="number">20</span>) |</span><br><span class="line">+---------+</span><br><span class="line">| <span class="number">140</span>     |</span><br><span class="line">+---------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h4 id="不累加值相同的行"><a href="#不累加值相同的行" class="headerlink" title="不累加值相同的行"></a>不累加值相同的行</h4><p>因为<code>sum</code>里的<code>表达式</code>是常量34,所以每行的值都相同使用 <code>distinct</code>强制不计算重复值,所以下面计算结果为34</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">sum</span>(<span class="keyword">distinct</span> <span class="number">34</span>)</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>计算结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select sum(distinct <span class="number">34</span>)</span><br><span class="line">from student_table;</span><br><span class="line">+------------------+</span><br><span class="line">| sum(distinct <span class="number">34</span>) |</span><br><span class="line">+------------------+</span><br><span class="line">| <span class="number">34</span>               |</span><br><span class="line">+------------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h3 id="max函数"><a href="#max函数" class="headerlink" title="max函数"></a>max函数</h3><p>选出<code>student_table</code>表中<code>student_id</code>最大的值</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">max</span>(student_id)</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>计算结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select max(student_id)</span><br><span class="line">from student_table;</span><br><span class="line">+-----------------+</span><br><span class="line">| max(student_id) |</span><br><span class="line">+-----------------+</span><br><span class="line">|               <span class="number">7</span> |</span><br><span class="line">+-----------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h3 id="min函数"><a href="#min函数" class="headerlink" title="min函数"></a>min函数</h3><p>选出<code>teacher_table</code>表中<code>teacher_id</code>最小的值</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">min</span>(teacher_id)</span><br><span class="line"><span class="keyword">from</span> teacher_table;</span><br></pre></td></tr></table></figure>
+<p>计算结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select min(teacher_id)</span><br><span class="line">from teacher_table;</span><br><span class="line">+-----------------+</span><br><span class="line">| min(teacher_id) |</span><br><span class="line">+-----------------+</span><br><span class="line">|               <span class="number">1</span> |</span><br><span class="line">+-----------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h3 id="count方法"><a href="#count方法" class="headerlink" title="count方法"></a>count方法</h3><p>使用<code>count</code>统计记录行数时,<code>null</code>不会被计算在内</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(student_name)</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>统计结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select count(student_name)</span><br><span class="line">from student_table;</span><br><span class="line">+---------------------+</span><br><span class="line">| count(student_name) |</span><br><span class="line">+---------------------+</span><br><span class="line">|                   <span class="number">6</span> |</span><br><span class="line">+---------------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h3 id="avg方法"><a href="#avg方法" class="headerlink" title="avg方法"></a>avg方法</h3><p>对于可能出现<code>null</code>的列,可以使用<code>ifnull</code>函数来处理该列。<br>计算<code>java_teacher</code>列所有记录的平均值</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">avg</span>(<span class="keyword">ifnull</span>(java_teacher,<span class="number">0</span>))</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>计算结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select avg(ifnull(java_teacher,<span class="number">0</span>))</span><br><span class="line">from student_table;</span><br><span class="line">+-----------------------------+</span><br><span class="line">| avg(ifnull(java_teacher,<span class="number">0</span>)) |</span><br><span class="line">+-----------------------------+</span><br><span class="line">| <span class="number">1</span>.<span class="number">7143</span>                      |</span><br><span class="line">+-----------------------------+</span><br><span class="line"><span class="number">1</span> row <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<p>值得指出的是,<code>distinct</code>和<code>*</code>不能同时使用,如下<code>SQL</code>语句有错误。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> <span class="keyword">count</span>(<span class="keyword">distinct</span> *)</span><br><span class="line"><span class="keyword">from</span> student_table;</span><br></pre></td></tr></table></figure>
+<p>错误:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select count(distinct *)</span><br><span class="line">from student_table;</span><br><span class="line"><span class="number">1064</span> - You have an error <span class="keyword">in</span> your SQL syntax; check the manual that corresponds to your MySQL server version <span class="keyword">for</span> the right syntax to use near '*)</span><br><span class="line">from student_table' <span class="built_in">at</span> line <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<h2 id="分组的情况"><a href="#分组的情况" class="headerlink" title="分组的情况"></a>分组的情况</h2><p>在默认情况下,组函数会把所有记录当成一组,为了对记录进行显式分组,可以在<code>select</code>语句后使用<code>group by</code>子句,<code>group by</code>子句后通常跟一个或多个列名,表明查询结果根据一列或多列进行分组——<strong>当一列或多列组合的值完全相同时,系统会把这些记录当成一组</strong>。如下<code>SQL</code>语句所示:</p>
+<h3 id="根据某一列进行分组"><a href="#根据某一列进行分组" class="headerlink" title="根据某一列进行分组"></a>根据某一列进行分组</h3><p><code>count(*)</code>将会对每组得到一个结果:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> java_teacher,<span class="keyword">count</span>(*)</span><br><span class="line"><span class="keyword">from</span> student_table</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> java_teacher;</span><br></pre></td></tr></table></figure>
+<p>查询结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select java_teacher,count(*)</span><br><span class="line">from student_table</span><br><span class="line">group by java_teacher;</span><br><span class="line">+--------------+----------+</span><br><span class="line">| java_teacher | count(*) |</span><br><span class="line">+--------------+----------+</span><br><span class="line">|            <span class="number">1</span> |        <span class="number">3</span> |</span><br><span class="line">|            <span class="number">2</span> |        <span class="number">3</span> |</span><br><span class="line">|            <span class="number">3</span> |        <span class="number">1</span> |</span><br><span class="line">+--------------+----------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h3 id="根据多列分组"><a href="#根据多列分组" class="headerlink" title="根据多列分组"></a>根据多列分组</h3><p>如果对多列进行分组,则<strong>要求多列的值完全相同才会被当成一组</strong>。如下<code>SQL</code>语句所示:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> student_name,java_teacher,<span class="keyword">count</span>(*)</span><br><span class="line"><span class="keyword">from</span> student_table</span><br><span class="line"><span class="comment"># 要求java_teacher,student_name这两列的值都相同的记录作为一组</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> java_teacher,student_name;</span><br></pre></td></tr></table></figure>
+<p>查询结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select student_name,java_teacher,count(*)</span><br><span class="line">from student_table</span><br><span class="line"># 要求java_teacher,student_name这两列的值都相同的记录作为一组</span><br><span class="line">group by java_teacher,student_name;</span><br><span class="line">+--------------+--------------+----------+</span><br><span class="line">| student_name | java_teacher | count(*) |</span><br><span class="line">+--------------+--------------+----------+</span><br><span class="line">| 张三         |            <span class="number">1</span> |        <span class="number">2</span> |</span><br><span class="line">| 李四         |            <span class="number">1</span> |        <span class="number">1</span> |</span><br><span class="line">| NULL         |            <span class="number">2</span> |        <span class="number">1</span> |</span><br><span class="line">| _王五        |            <span class="number">2</span> |        <span class="number">1</span> |</span><br><span class="line">| 王五         |            <span class="number">2</span> |        <span class="number">1</span> |</span><br><span class="line">| 赵六         |            <span class="number">3</span> |        <span class="number">1</span> |</span><br><span class="line">+--------------+--------------+----------+</span><br><span class="line"><span class="number">6</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h3 id="处理不在group-by以及组函数中的列"><a href="#处理不在group-by以及组函数中的列" class="headerlink" title="处理不在group by以及组函数中的列"></a>处理不在group by以及组函数中的列</h3><p>对于很多数据库而言,分组计算时有严格的规则——如果查询列表中使用了组函数,或者<code>select</code>语句中使用了<code>group by</code>分组子句,则要求出现在<code>select</code>列表中的字段,要么使用组函数包起来,要么必须出现在<code>group by</code>子句中。这条规则很容易理解,因为一旦使用了组函数或使用了<code>group by</code>子句,都将导致<strong>多条记录只有一条输出</strong>,系统无法确定输出多条记录中的哪一条记录。<br>对于<code>MySQL</code>来说,并没有上面的规则要求,如果某个数据列既没有出现在<code>group by</code>之后,也没有使用组函数包起来,则<code>MySQL</code>会输出该列的第一条记录的值。图13.15显示了<code>MySQL</code>的处理结果。<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/fangkuangJavaJiangYi3/13/4.png" alt="这里有一张图片"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># student_name这列没有出现在group by子句中,</span></span><br><span class="line"><span class="comment"># 也没有出现在分组函数count之中,</span></span><br><span class="line"><span class="comment"># MySQL将显示遇到的第一条记录时student_name的值。</span></span><br><span class="line"><span class="keyword">select</span> student_name,java_teacher,<span class="keyword">count</span>(java_teacher)</span><br><span class="line"><span class="keyword">from</span> student_table</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> java_teacher;</span><br></pre></td></tr></table></figure>
+<p>运行结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; # student_name这列没有出现在group by子句中,</span><br><span class="line"># 也没有出现在分组函数count之中,</span><br><span class="line"># MySQL将显示遇到的第一条记录时student_name的值。</span><br><span class="line">select student_name,java_teacher,count(java_teacher)</span><br><span class="line">from student_table</span><br><span class="line">group by java_teacher;</span><br><span class="line">+--------------+--------------+---------------------+</span><br><span class="line">| student_name | java_teacher | count(java_teacher) |</span><br><span class="line">+--------------+--------------+---------------------+</span><br><span class="line">| 张三         |            <span class="number">1</span> |                   <span class="number">3</span> |</span><br><span class="line">| 王五         |            <span class="number">2</span> |                   <span class="number">3</span> |</span><br><span class="line">| 赵六         |            <span class="number">3</span> |                   <span class="number">1</span> |</span><br><span class="line">+--------------+--------------+---------------------+</span><br><span class="line"><span class="number">3</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+<h2 id="having子句"><a href="#having子句" class="headerlink" title="having子句"></a>having子句</h2><p>如果需要<strong>对分组进行过滤</strong>,则应该使用<code>having</code>子句,<code>having</code>子句后面也是一个条件表达式,只有满足该条件表达式的分组才会被选出来。<code>having</code>子句和<code>where</code>子句非常容易混淆,它们都有过滤功能,但它们有如下区别。</p>
+<ul>
+<li>不能在<code>where</code>子句中过滤组,<code>where</code>子句仅用于过滤行。过滤组必须使用<code>having</code>子句。</li>
+<li>不能在<code>where</code>子句中使用组函数,<code>having</code>子句才可使用组函数。</li>
+</ul>
+<p>如下<code>SQL</code>语句所示:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> java_teacher,<span class="keyword">count</span>(*)</span><br><span class="line"><span class="keyword">from</span> student_table</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> java_teacher</span><br><span class="line"><span class="keyword">having</span> <span class="keyword">count</span>(*)&gt;<span class="number">2</span>;</span><br></pre></td></tr></table></figure>
+<p>查询结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select *</span><br><span class="line">from student_table;</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">| student_id | student_name | java_teacher |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line">|          <span class="number">1</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">2</span> | 张三         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">3</span> | 李四         |            <span class="number">1</span> |</span><br><span class="line">|          <span class="number">4</span> | 王五         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">5</span> | _王五        |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">6</span> | NULL         |            <span class="number">2</span> |</span><br><span class="line">|          <span class="number">7</span> | 赵六         |            <span class="number">3</span> |</span><br><span class="line">+------------+--------------+--------------+</span><br><span class="line"><span class="number">7</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br><span class="line">mysql&gt; select java_teacher,count(*)</span><br><span class="line">from student_table</span><br><span class="line">group by java_teacher</span><br><span class="line">having count(*)&gt;<span class="number">2</span>;</span><br><span class="line">+--------------+----------+</span><br><span class="line">| java_teacher | count(*) |</span><br><span class="line">+--------------+----------+</span><br><span class="line">|            <span class="number">1</span> |        <span class="number">3</span> |</span><br><span class="line">|            <span class="number">2</span> |        <span class="number">3</span> |</span><br><span class="line">+--------------+----------+</span><br><span class="line"><span class="number">2</span> rows <span class="keyword">in</span> <span class="built_in">set</span></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/d1920f7c/" title="13.2.11 分组和组函数">https://lanlan2017.github.io/JavaReadingNotes/d1920f7c/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/1dace4b4/" rel="next" title="13.2.10 数据库函数">
+                  <i class="fa fa-chevron-left"></i> 13.2.10 数据库函数
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/910b9810/" rel="prev" title="13.2.12 多表连接查询 1. SQL92的连接查询">
+                  13.2.12 多表连接查询 1. SQL92的连接查询 <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-2-11-分组和组函数"><span class="nav-text">13.2.11 分组和组函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例"><span class="nav-text">实例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sum函数"><span class="nav-text">sum函数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#统计某列的总和"><span class="nav-text">统计某列的总和</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#每行都加上一个常数"><span class="nav-text">每行都加上一个常数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#不累加值相同的行"><span class="nav-text">不累加值相同的行</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#max函数"><span class="nav-text">max函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#min函数"><span class="nav-text">min函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#count方法"><span class="nav-text">count方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#avg方法"><span class="nav-text">avg方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分组的情况"><span class="nav-text">分组的情况</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#根据某一列进行分组"><span class="nav-text">根据某一列进行分组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#根据多列分组"><span class="nav-text">根据多列分组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理不在group-by以及组函数中的列"><span class="nav-text">处理不在group by以及组函数中的列</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#having子句"><span class="nav-text">having子句</span></a></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>

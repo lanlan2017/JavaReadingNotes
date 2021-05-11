@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png?v=7.4.1">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png?v=7.4.1">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg?v=7.4.1" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css?v=7.4.1">
+
+
+<link rel="stylesheet" href="/JavaReadingNotes/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/JavaReadingNotes/',
+    scheme: 'Gemini',
+    version: '7.4.1',
+    exturl: false,
+    sidebar: {"position":"right","display":"hide","offset":12,"onmobile":false},
+    copycode: {"enable":true,"show_result":true,"style":"flat"},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":true},
+    bookmark: {"enable":true,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: 'search.xml',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    },
+    sidebarPadding: 40
+  };
+</script>
+
+  <meta name="description" content="9.3示例1：日志Filter&amp;nbsp;实例简介&amp;nbsp;LoggingFilter类&amp;nbsp;成员变量&amp;nbsp;WebFilter注解&amp;nbsp;init方法&amp;nbsp;获取初始化参数&amp;nbsp;工作目录&amp;nbsp;destroy方法&amp;nbsp;doFilter方法&amp;nbsp;test.jsp&amp;nbsp;运行效果&amp;nbsp;启动项目&amp;nbsp;访问JSP页面&amp;nbsp;查看日志文件&amp;nb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.3示例1：日志Filter">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/46fe32a/index.html">
+<meta property="og:site_name" content="蓝蓝博客">
+<meta property="og:description" content="9.3示例1：日志Filter&amp;nbsp;实例简介&amp;nbsp;LoggingFilter类&amp;nbsp;成员变量&amp;nbsp;WebFilter注解&amp;nbsp;init方法&amp;nbsp;获取初始化参数&amp;nbsp;工作目录&amp;nbsp;destroy方法&amp;nbsp;doFilter方法&amp;nbsp;test.jsp&amp;nbsp;运行效果&amp;nbsp;启动项目&amp;nbsp;访问JSP页面&amp;nbsp;查看日志文件&amp;nb">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/1.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/2.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/3.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/4.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/5.png">
+<meta property="article:published_time" content="2019-04-15T19:04:39.000Z">
+<meta property="article:modified_time" content="2020-02-07T01:34:55.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/1.png">
+  <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/46fe32a/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true,
+    isPage: false,
+    isArchive: false
+  };
+</script>
+
+  <title>9.3示例1：日志Filter | 蓝蓝博客</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/JavaReadingNotes/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">蓝蓝博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+      
+      
+      
+        
+        <li class="menu-item menu-item-home">
+      
+    
+
+    <a href="/JavaReadingNotes/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-dir">
+      
+    
+
+    <a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-fw fa-sitemap"></i>目录</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-categories">
+      
+    
+
+    <a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-archives">
+      
+    
+
+    <a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+      
+      
+      
+        
+        <li class="menu-item menu-item-links">
+      
+    
+
+    <a href="/JavaReadingNotes/links/" rel="section"><i class="fa fa-fw fa-link"></i>链接</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger">
+        
+          <i class="fa fa-search fa-fw"></i>搜索</a>
+      </li>
+    
+  </ul>
+
+</nav>
+  <div class="site-search">
+    <div class="popup search-popup">
+    <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocorrect="off" autocapitalize="none"
+           placeholder="搜索..." spellcheck="false"
+           type="text" id="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result"></div>
+
+</div>
+<div class="search-pop-overlay"></div>
+
+  </div>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/lanlan2017" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+            
+
+          <div id="content" class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/JavaReadingNotes/46fe32a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">9.3示例1：日志Filter<a href="https://github.com/lanlan2017/JavaReadingNotes/tree/master/source/_posts/3%20Serlet%20JSP%E5%92%8CSpring%20MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86%20Servlets%E5%92%8CJSP/%E7%AC%AC9%E7%AB%A0%20Filters/9.3%E7%A4%BA%E4%BE%8B1%EF%BC%9A%E6%97%A5%E5%BF%97Filter.md" class="post-edit-link" title="编辑" rel="noopener" target="_blank"><i class="fa fa-pencil"></i></a>
+
+          
+        </h2>
+
+        <div class="post-meta">
+          <!-- 置顶插件添加 开始 -->
+          
+          <!-- 置顶插件添加 结束 -->
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-15 19:04:39" itemprop="dateCreated datePublished" datetime="2019-04-15T19:04:39+00:00">2019-04-15</time>
+            </span>
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-02-07 01:34:55" itemprop="dateModified" datetime="2020-02-07T01:34:55+00:00">2020-02-07</time>
+              </span>
+            
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/" itemprop="url" rel="index"><span itemprop="name">3 Serlet JSP和Spring MVC初学指南</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-Servlets%E5%92%8CJSP/" itemprop="url" rel="index"><span itemprop="name">第一部分 Servlets和JSP</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/JavaReadingNotes/categories/3-Serlet-JSP%E5%92%8CSpring-MVC%E5%88%9D%E5%AD%A6%E6%8C%87%E5%8D%97/%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-Servlets%E5%92%8CJSP/%E7%AC%AC9%E7%AB%A0-Filters/" itemprop="url" rel="index"><span itemprop="name">第9章 Filters</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="fa fa-comment-o"></i>
+      </span>
+        
+      
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/JavaReadingNotes/46fe32a/#comments" itemprop="discussionUrl"><span class="post-comments-count valine-comment-count" data-xid="/JavaReadingNotes/46fe32a/" itemprop="commentCount"></span></a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <div id='my_toc'><a href="/JavaReadingNotes/46fe32a/#9-3示例1：日志Filter" class="header_1">9.3示例1：日志Filter</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#实例简介" class="header_2">实例简介</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#LoggingFilter类" class="header_2">LoggingFilter类</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#成员变量" class="header_3">成员变量</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#WebFilter注解" class="header_3">WebFilter注解</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#init方法" class="header_3">init方法</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#获取初始化参数" class="header_4">获取初始化参数</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#工作目录" class="header_4">工作目录</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#destroy方法" class="header_3">destroy方法</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#doFilter方法" class="header_3">doFilter方法</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#test-jsp" class="header_2">test.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#运行效果" class="header_2">运行效果</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#启动项目" class="header_3">启动项目</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#访问JSP页面" class="header_3">访问JSP页面</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#查看日志文件" class="header_3">查看日志文件</a>&nbsp;<br><a href="/JavaReadingNotes/46fe32a/#doFilter的执行次数和JSP页面的访问次数的关系" class="header_3">doFilter的执行次数和JSP页面的访问次数的关系</a>&nbsp;<br></div>
+<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
+<a id="more"></a>
+<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
+
+<!--end-->
+<h1 id="9-3示例1：日志Filter"><a href="#9-3示例1：日志Filter" class="headerlink" title="9.3示例1：日志Filter"></a>9.3示例1：日志Filter</h1><h2 id="实例简介"><a href="#实例简介" class="headerlink" title="实例简介"></a>实例简介</h2><p>作为第1个例子，将做一个简单的<code>Filter</code>：</p>
+<ul>
+<li><strong>在<code>app09a</code>的应用中把<code>Request</code>请求的<code>URL</code>记录到日志文本文件中</strong>。</li>
+<li>日志文本文件名通过<code>Filter</code>的初始化参数来配置。<ul>
+<li>此外，日志的每条记录都会有一个前缀，该前缀也由<code>Filter</code>初始化参数来定义。</li>
+</ul>
+</li>
+</ul>
+<p>通过日志文件，可以获得许多有用的信息，例如在应用中哪些资源访问最频繁；<code>Web</code>站点在一天中的哪个时间段访问量最多。</p>
+<p>这个<code>Filter</code>的类名叫<code>LoggingFilter</code>，一般情况下，<code>Filter</code>的类名都以<code>*Filter</code>结尾。</p>
+<h2 id="LoggingFilter类"><a href="#LoggingFilter类" class="headerlink" title="LoggingFilter类"></a>LoggingFilter类</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> filter;</span><br><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileNotFoundException;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.PrintWriter;</span><br><span class="line"><span class="keyword">import</span> java.text.DateFormat;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.Filter;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.FilterChain;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.FilterConfig;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletException;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletResponse;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebFilter;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.annotation.WebInitParam;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="meta">@WebFilter</span>(</span><br><span class="line">    filterName = <span class="string">"LoggingFilter"</span>,</span><br><span class="line">    urlPatterns =&#123;<span class="string">"/*"</span>&#125;,</span><br><span class="line">    initParams = &#123;</span><br><span class="line">        <span class="meta">@WebInitParam</span>(</span><br><span class="line">            name = <span class="string">"logFileName"</span>,</span><br><span class="line">            value = <span class="string">"log.txt"</span></span><br><span class="line">        ),</span><br><span class="line">        <span class="meta">@WebInitParam</span>(</span><br><span class="line">            name = <span class="string">"prefix"</span>,</span><br><span class="line">            value = <span class="string">"URI: "</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoggingFilter</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span></span></span><br><span class="line"><span class="class">        <span class="title">Filter</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> PrintWriter logger;</span><br><span class="line">    <span class="keyword">private</span> String prefix;</span><br><span class="line">    <span class="keyword">static</span> DateFormat format=</span><br><span class="line">        DateFormat.getDateTimeInstance(</span><br><span class="line">            DateFormat.LONG,DateFormat.LONG);</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">(FilterConfig filterConfig)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> ServletException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">//获取初始化参数</span></span><br><span class="line">        prefix = filterConfig.getInitParameter(<span class="string">"prefix"</span>);</span><br><span class="line">        <span class="comment">//获取初始化参数</span></span><br><span class="line">        String logFileName =</span><br><span class="line">            filterConfig.getInitParameter(<span class="string">"logFileName"</span>);</span><br><span class="line">        String appPath = </span><br><span class="line">            filterConfig.getServletContext().getRealPath(<span class="string">"/"</span>);</span><br><span class="line">        <span class="comment">// without path info in logFileName, the log file will be</span></span><br><span class="line">        <span class="comment">// created in $TOMCAT_HOME/bin</span></span><br><span class="line">        System.out.println(</span><br><span class="line">                <span class="string">"LoggingFilter的init()方法被执行"</span></span><br><span class="line">                + <span class="string">"---&gt;logFileName:"</span></span><br><span class="line">                + logFileName);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            File file=<span class="keyword">new</span> File(appPath, logFileName);</span><br><span class="line">            logger = <span class="keyword">new</span> PrintWriter(<span class="keyword">new</span> File(appPath, </span><br><span class="line">                    logFileName));</span><br><span class="line">            System.out.println(<span class="string">"日志文件绝对路径:"</span>+</span><br><span class="line">                    file.getAbsolutePath());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">destroy</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(</span><br><span class="line">            <span class="string">"LoggingFilter的destroy()方法被执行"</span>);</span><br><span class="line">        <span class="keyword">if</span>(logger != <span class="keyword">null</span>) &#123;</span><br><span class="line">            logger.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">doFilter</span><span class="params">(ServletRequest request,</span></span></span><br><span class="line"><span class="function"><span class="params">            ServletResponse response,FilterChain filterChain)</span></span></span><br><span class="line"><span class="function">            <span class="keyword">throws</span> IOException,ServletException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(</span><br><span class="line">            <span class="string">"LoggingFilter的doFilter()方法被执行"</span>);</span><br><span class="line">        HttpServletRequest httpServletRequest =</span><br><span class="line">            (HttpServletRequest) request;</span><br><span class="line">        logger.println(</span><br><span class="line">            format.format(<span class="keyword">new</span> Date()) + <span class="string">" "</span> </span><br><span class="line">            +prefix + httpServletRequest.getRequestURI());</span><br><span class="line">        logger.flush();</span><br><span class="line">        filterChain.doFilter(request, response);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面来仔细分析一下该<code>Filter</code>类。</p>
+<h3 id="成员变量"><a href="#成员变量" class="headerlink" title="成员变量"></a>成员变量</h3><p>首先，该<code>Filter</code>的类实现了<code>Filter</code>的接口并声明两个成员变量：<code>PrintWriter</code>类型的<code>logger</code>和<code>String</code>类型的<code>prefix</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> PrintWriter logger;</span><br><span class="line"><span class="keyword">private</span> String prefix:</span><br></pre></td></tr></table></figure>
+<p>其中<code>PrintWriter</code>用于记录日志到文本文件，<code>prefix</code>的字符串用于每条日志的前缀。</p>
+<h3 id="WebFilter注解"><a href="#WebFilter注解" class="headerlink" title="WebFilter注解"></a>WebFilter注解</h3><p><code>Filter</code>的类使用了<code>@WebFilter</code>的<code>Annotation</code>，将两个参数（<code>logFilteName</code>、<code>prefix</code>）传入到该<code>Filter</code>中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@WebFilter</span>(</span><br><span class="line">    filterName = <span class="string">"LoggingFilter"</span>,</span><br><span class="line">    urlPatterns =&#123;<span class="string">"/ *"</span>&#125;,</span><br><span class="line">    initParams = &#123;</span><br><span class="line">        <span class="meta">@WebInitParam</span>(</span><br><span class="line">            name = <span class="string">"logFileName"</span>,</span><br><span class="line">            value = <span class="string">"log.txt"</span></span><br><span class="line">        ),</span><br><span class="line">        <span class="meta">@WebInitParam</span>(</span><br><span class="line">            name = <span class="string">"prefix"</span>,</span><br><span class="line">            value = <span class="string">"URI: "</span></span><br><span class="line">        )</span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="init方法"><a href="#init方法" class="headerlink" title="init方法"></a>init方法</h3><h4 id="获取初始化参数"><a href="#获取初始化参数" class="headerlink" title="获取初始化参数"></a>获取初始化参数</h4><p>在<code>Filter</code>的<code>init</code>方法中，通过形式参数<code>FilterConfig</code>对象的<code>getInitParameter</code>方法来获取<code>prefix</code>和<code>getFileName</code>的初始化参数。其中把<code>prefix</code>参数中赋给了类变量<code>prefix</code>，<code>logFileName</code>则用于创建一个<code>PrintWriter</code>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">prefix = filterConfig.getInitParameter(<span class="string">"prefix"</span>);</span><br><span class="line">String logFileName = filterConfig</span><br><span class="line">        .getInitParameter(<span class="string">"logFileName"</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="工作目录"><a href="#工作目录" class="headerlink" title="工作目录"></a>工作目录</h4><p>如果<code>Servlet/JSP</code>应用是通过<code>Servlet/JSP</code>容器启动的，那么当前应用的工作目录是当前<code>JDK</code>所在的目录。<br>如果是在<code>Tomcat</code>中，该目录是<code>Tomcat</code>的安装目录。<br>在应用中创建日志文件，可以通过<code>ServletContext.getRealPath</code>来获取工作目录，结合应用工作目录以及初始化参数中的<code>logFilterNmae</code>，就可以得到日志文件的绝对路径：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">String appPath = </span><br><span class="line">        filterConfig.getServletContext().getRealPath(<span class="string">"/"</span>);</span><br><span class="line"><span class="comment">// without path info in logFileName, the log file will be</span></span><br><span class="line"><span class="comment">// created in $TOMCAT_HOME/bin</span></span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">   logger = <span class="keyword">new</span> PrintWriter(<span class="keyword">new</span> File(appPath,</span><br><span class="line">             logFileName));</span><br><span class="line">&#125; <span class="keyword">catch</span> (FileNotFoundException e) &#123;</span><br><span class="line">   e.printStackTrace();</span><br><span class="line">   <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(e.getMessage());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当<code>Filter</code>的<code>init</code>方法被执行时，日志文件就会创建出来。如果在应用的工作目录中该文件已经存在，那么该日志文件的内容将会被覆盖。</p>
+<h3 id="destroy方法"><a href="#destroy方法" class="headerlink" title="destroy方法"></a>destroy方法</h3><p>当应用关闭时，<code>PrintWriter</code>需要被关闭。因此在<code>Filter</code>的<code>destroy</code>方法中，需要：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (logger != <span class="keyword">null</span>) &#123;</span><br><span class="line">   logger.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="doFilter方法"><a href="#doFilter方法" class="headerlink" title="doFilter方法"></a>doFilter方法</h3><p><code>Filter</code>的<code>doFilter</code>实现中记录着所有从<code>ServletRequest</code>到<code>HttpServletRequest</code>的<code>Request</code>，并调用了它的<code>getRequestURI</code>方法，该方法的返回值将记录通过<code>PrintWriter</code>的<code>println</code>方法记录下来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">HttpServletRequest httpServletRequest = </span><br><span class="line">       (HttpServletRequest) request;</span><br><span class="line">logger.println(<span class="keyword">new</span> Date() + <span class="string">" "</span> + prefix</span><br><span class="line">       + httpServletRequest.getRequestURI());</span><br></pre></td></tr></table></figure>
+<p>每条记录都有一个时间戳以及前缀，这样可以很方便地标识每条记录。接下来 <code>Filter</code>的<code>doFilter</code>实现调用<code>PrintWriter</code>的<code>flush</code>方法以及<code>FilterChain.doFilter</code>，以唤起资源的调用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">logger.flush();</span><br><span class="line">filterChain.doFilter(request, response);</span><br></pre></td></tr></table></figure>
+<p>如果使用<code>Tomcat</code>，<code>Filter</code>的初始化并不会等到第一个<code>Request</code>请求时才触发进行。这点可以在控制台中打印出来的<code>logFileName</code>参数值中可以看到。</p>
+<h2 id="test-jsp"><a href="#test-jsp" class="headerlink" title="test.jsp"></a>test.jsp</h2><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">"java"</span> contentType=<span class="string">"text/html; charset=UTF-8"</span></span><br><span class="line">    pageEncoding=<span class="string">"UTF-8"</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset=<span class="string">"UTF-8"</span>&gt;</span><br><span class="line">&lt;title&gt;测试&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h2&gt;测试&lt;/h2&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h2 id="运行效果"><a href="#运行效果" class="headerlink" title="运行效果"></a>运行效果</h2><h3 id="启动项目"><a href="#启动项目" class="headerlink" title="启动项目"></a>启动项目</h3><p>启动<code>app09a</code>项目,可以看到控制台部分输出如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/1.png" alt="这里有一张图片"><br>从控制台的输出我们可以知道:</p>
+<ul>
+<li>日志文件的绝对路径为:<code>E:\apache-tomcat-8.5.35\webapps\app09a\log.txt</code>.</li>
+<li>在项目启动阶段<code>Filter</code>初始化就开始了。</li>
+</ul>
+<h3 id="访问JSP页面"><a href="#访问JSP页面" class="headerlink" title="访问JSP页面"></a>访问JSP页面</h3><p>然后通过<code>URL</code>调用<code>test.jsp</code>页面<br><a href="http://localhost:8080/app09a/test.jsp" target="_blank" rel="noopener">http://localhost:8080/app09a/test.jsp</a><br>此时,容器会调用<code>doFilter</code>方法,该方法控制台输出如下:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/2.png" alt="这里有一张图片"></p>
+<h3 id="查看日志文件"><a href="#查看日志文件" class="headerlink" title="查看日志文件"></a>查看日志文件</h3><p>这时候可以打开日志文件:<code>E:\apache-tomcat-8.5.35\webapps\app09a\log.txt</code>查看日志输出,如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/3.png" alt="这里有一张图片"></p>
+<h3 id="doFilter的执行次数和JSP页面的访问次数的关系"><a href="#doFilter的执行次数和JSP页面的访问次数的关系" class="headerlink" title="doFilter的执行次数和JSP页面的访问次数的关系"></a>doFilter的执行次数和JSP页面的访问次数的关系</h3><p>在该过滤器中,我们设置的过滤规则为:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">urlPatterns =&#123;<span class="string">"/*"</span>&#125;</span><br></pre></td></tr></table></figure>
+<p>这表示过滤所有的<code>JSP</code>页面,所以每访问一次JSP页面,过滤器就会执行一次.<br>再刷新两次<code>test.jsp</code>页面,则<code>doFilter</code>方法也会再执行两次,日志文件中也会多出两条记录,如下图所示:<br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/4.png" alt="这里有一张图片"><br><img src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/ServlerJSPAndSpring%20MVCChuXueZhiNan/Chapter9/5.png" alt="这里有一张图片"></p>
+
+    </div>
+
+    
+    
+    
+        
+      
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>蓝蓝</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://lanlan2017.github.io/JavaReadingNotes/46fe32a/" title="9.3示例1：日志Filter">https://lanlan2017.github.io/JavaReadingNotes/46fe32a/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！<br><strong><mark>如果图片无法显示</mark></strong>: <a href='https://lanlan2017.github.io/blog/9a6c2fdf/'>https://lanlan2017.github.io/blog/9a6c2fdf/</a></li>
+</ul>
+</div>
+
+      
+
+      <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-next post-nav-item">
+              
+                <a href="/JavaReadingNotes/b6d1cd49/" rel="next" title="9.2 Filter配置">
+                  <i class="fa fa-chevron-left"></i> 9.2 Filter配置
+                </a>
+              
+            </div>
+
+            <span class="post-nav-divider"></span>
+
+            <div class="post-nav-prev post-nav-item">
+              
+                <a href="/JavaReadingNotes/55b7af31/" rel="prev" title="9.4 示例2：图像文件保护Filter">
+                  9.4 示例2：图像文件保护Filter <i class="fa fa-chevron-right"></i>
+                </a>
+              
+            </div>
+          </div>
+        
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    
+    <div class="comments" id="comments"></div>
+  
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+        
+        
+        
+        
+      
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-3示例1：日志Filter"><span class="nav-text">9.3示例1：日志Filter</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#实例简介"><span class="nav-text">实例简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LoggingFilter类"><span class="nav-text">LoggingFilter类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#成员变量"><span class="nav-text">成员变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WebFilter注解"><span class="nav-text">WebFilter注解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init方法"><span class="nav-text">init方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#获取初始化参数"><span class="nav-text">获取初始化参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#工作目录"><span class="nav-text">工作目录</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#destroy方法"><span class="nav-text">destroy方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#doFilter方法"><span class="nav-text">doFilter方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#test-jsp"><span class="nav-text">test.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运行效果"><span class="nav-text">运行效果</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动项目"><span class="nav-text">启动项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问JSP页面"><span class="nav-text">访问JSP页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看日志文件"><span class="nav-text">查看日志文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#doFilter的执行次数和JSP页面的访问次数的关系"><span class="nav-text">doFilter的执行次数和JSP页面的访问次数的关系</span></a></li></ol></li></ol></li></ol></div>
+        
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image"
+      src="/JavaReadingNotes/images/avatar.jpg"
+      alt="蓝蓝">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/JavaReadingNotes/archives/%20%7C%7C%20archive">
+        
+          <span class="site-state-item-count">1222</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/JavaReadingNotes/categories/%20%7C%7C%20th">
+          
+        
+        <span class="site-state-item-count">438</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/lanlan2017" title="GitHub &amp;rarr; https:&#x2F;&#x2F;github.com&#x2F;lanlan2017" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+    
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    
+  
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/JavaReadingNotes/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2021</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1</div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.4.1</div>
+
+        
+
+
+
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/JavaReadingNotes/lib/anime.min.js?v=3.1.0"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  <script src="/JavaReadingNotes/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+<script src="/JavaReadingNotes/js/utils.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/motion.js?v=7.4.1.js"></script>
+
+
+<script src="/JavaReadingNotes/js/schemes/pisces.js?v=7.4.1.js"></script>
+
+
+
+<script src="/JavaReadingNotes/js/next-boot.js?v=7.4.1.js"></script>
+
+<script src="/JavaReadingNotes/js/bookmark.js?v=7.4.1.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+<script src="/JavaReadingNotes/js/local-search.js?v=7.4.1.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+
+<script>
+NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(item => {
+    return GUEST.includes(item);
+  });
+  new Valine({
+    el: '#comments',
+    verify: false,
+    notify: false,
+    appId: 'KVtEjXUX9wDimI183iDfg6tK-MdYXbMMI',
+    appKey: 'mvmFgKF86C8Pi79KfVeFgzys',
+    placeholder: '输入你的评论',
+    avatar: 'mm',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: false,
+    lang: '' || 'zh-cn',
+    path: location.pathname,
+    recordIP: false,
+    serverURLs: ''
+  });
+}, window.Valine);
+</script>
+
+</body>
+</html>
