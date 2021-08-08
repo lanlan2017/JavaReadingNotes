@@ -7,14 +7,8 @@ date: 2019-04-25 14:56:06
 updated: 2020-02-07 01:34:54
 abbrlink: 8b8be5cf
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/8b8be5cf/#前言-2-HTTP" class="header_1">前言-2-HTTP</a>&nbsp;<br><a href="/JavaReadingNotes/8b8be5cf/#HTTP" class="header_2">HTTP</a>&nbsp;<br><a href="/JavaReadingNotes/8b8be5cf/#HTTP请求" class="header_3">HTTP请求</a>&nbsp;<br><a href="/JavaReadingNotes/8b8be5cf/#-HTTP-响应" class="header_3">`HTTP`响应</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-# 前言-2-HTTP #
-## HTTP ##
+# 前言-2-HTTP
+## HTTP
 **`HTTP`协议使得`Web`服务器与浏览器之间可以通过互联网或内网进行数据交互**。万维网联盟（W3C）， 作为一个制定标准的国际社区，负责和维护`HTTP`协议。`HTTP`第一个版本是`HTTP0.9`，之后是`HTTP 1.0`，当前最新版本是`HTTP 1.1`。`HTTP 1.1`版本的`RFC`编号是2616，下载地址为[http://www.w3.org/Protocols/HTTP/1.1/rfc2616.pdf](http://www.w3.org/Protocols/HTTP/1.1/rfc2616.pdf)。按计划，`HTTP`的下一个版本是`HTTP/2`。
 
 `Web`服务器7×24小时不间断运行，并等待`HTTP`客户端（通常是`Web`浏览器）来连接并请求资源。通常， 由客户端发起一个连接，服务端不会主动连接客户端。
@@ -54,7 +48,7 @@ http://localhost:8080
 
 在资源名之后可以有一个或多个查询语句或者路径参数。查询语句是一个`Key/Value`组，多个查询语句间用“`&`”分隔。路径参数类似于查询语句，但只有 `value`部分，多个`value`部分用“`/`”符号分隔。
 
-### HTTP请求 ###
+### HTTP请求
 一个`HTTP`请求包含三部分内容： 
 - 方法-`URI-`协议/版本 
 - 请求头信息 
@@ -88,7 +82,7 @@ POST /examples/default.jsp HTTP/1.1
 lastName=Blanks&firstName=Mike
 ```
 在正常的`HTTP`请求中，请求正文的内容不止如此。
-### `HTTP`响应  ###
+### `HTTP`响应 
 同`HTTP`请求一样，`HTTP`响应包含三部分： 
 - 协议—状态码—描述 
 - 响应头信息 

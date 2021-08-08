@@ -7,13 +7,7 @@ date: 2019-04-25 14:51:26
 updated: 2020-02-07 01:34:54
 abbrlink: 17e72ee2
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/17e72ee2/#前言-1Servlet/JSP应用架构" class="header_2">前言 1Servlet/JSP应用架构</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-## 前言 1Servlet/JSP应用架构 ##
+# 前言 1Servlet/JSP应用架构
 `Servlet`是一个`Java`程序，一个`Servlet`应用有一个或多个`Servlet`程序。`JSP`页面会被转换和编译成`Servlet`程序。
 `Servlet`应用无法独立运行，必须运行在`Servlet`容器中。`Servlet`容器将用户的请求传递给`Servlet`应用，并将`Servlet`应用生成的结果返回给用户。由于大部分`Servlet`应用都包含多个 `JSP`页面，因此更准确地说是“`Servlet/JSP`应用”。
 `Web`用户通过`Web`浏览器例如`IE`、`Mozilla Firefox `或者谷歌`Chrome`来访问`Servlet`应用。通常，`Web`浏览器又叫`Web`客户端。
