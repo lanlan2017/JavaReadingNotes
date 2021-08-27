@@ -17,7 +17,7 @@ abbrlink: 408525dd
 # 第11章 MyBatis的注解配置 概述
 ## 本章要点
 - `MyBatis`注解插入、修改、删除和査询操作.
-- `MyBatis`注解一对对多和多对多操作.
+- `MyBatis`注解一对一，一对多和多对多操作.
 - `MyBatis`注解动态`SQL`.
 - `MyBatis`注解调用存储过程.
 - `MyBatis`注解使用二级缓存.
