@@ -505,3 +505,30 @@ date: 2019-12-17 04:08:18
 ## [第7章 面向对象进阶](/JavaReadingNotes/categories/7-Java经典编程300例/第7章-面向对象进阶)
 
 # [8 Java开发实例大全(基础卷)](/JavaReadingNotes/categories/8-Java开发实例大全-基础卷)
+
+# [9 深入理解Java虛拟机：JVM高级特性与最佳实践(第3版)](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版)
+
+## [前言](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/前言)
+
+## [第一部分 走近Java](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第一部分-走近Java)
+- [第1章 走近Java](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第一部分-走近Java/第1章-走近Java)
+    - [1.4 Java虚拟机家族](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第一部分-走近Java/第1章-走近Java/1-4-Java虚拟机家族)
+    - [1.5 展望Java技术的未来](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第一部分-走近Java/第1章-走近Java/1-5-展望Java技术的未来)
+    - [1.6 实战：自己编译JDK](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第一部分-走近Java/第1章-走近Java/1-6-实战：自己编译JDK)
+
+## [第二部分 自动内存管理](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理)
+- [第2章 Java内存区域与内存溢出异常](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第2章-Java内存区域与内存溢出异常)
+    - [2.1 概述](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第2章-Java内存区域与内存溢出异常/2-1-概述)
+    - [2.2 运行时数据区域](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第2章-Java内存区域与内存溢出异常/2-2-运行时数据区域)
+    - [2.3 HotSpot虚拟机对象探秘](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第2章-Java内存区域与内存溢出异常/2-3-HotSpot虚拟机对象探秘)
+    - [2.4 实战：OutOfMemoryError异常](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第2章-Java内存区域与内存溢出异常/2-4-实战：OutOfMemoryError异常)
+    - [2.5 本章小结](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第2章-Java内存区域与内存溢出异常/2-5-本章小结)
+- [第3章 垃圾收集器与内存分配策略](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略)
+    - [3.1 概述](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-1-概述)
+    - [3.2 对象已死？](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-2-对象已死？)
+    - [3.3 垃圾收集算法](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-3-垃圾收集算法)
+    - [3.4 HotSpot的算法细节实现](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-4-HotSpot的算法细节实现)
+    - [3.5 经典垃圾收集器](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-5-经典垃圾收集器)
+    - [3.6 低延迟垃圾收集器](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-6-低延迟垃圾收集器)
+    - [3.7 选择合适的垃圾收集器](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-7-选择合适的垃圾收集器)
+    - [3.8 实战：内存分配与回收策略](/JavaReadingNotes/categories/9-深入理解Java虛拟机：JVM高级特性与最佳实践-第3版/第二部分-自动内存管理/第3章-垃圾收集器与内存分配策略/3-8-实战：内存分配与回收策略)
