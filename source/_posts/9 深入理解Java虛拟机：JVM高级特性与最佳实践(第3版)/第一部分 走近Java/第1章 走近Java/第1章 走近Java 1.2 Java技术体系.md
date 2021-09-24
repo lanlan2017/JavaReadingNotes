@@ -1,12 +1,12 @@
 ---
-title: 1.2 Java技术体系
+title: 第1章 走近Java 1.2 Java技术体系
 categories: 
   - 9 深入理解Java虛拟机：JVM高级特性与最佳实践(第3版)
   - 第一部分 走近Java
   - 第1章 走近Java
 abbrlink: 3ba11da8
 date: 2021-09-14 10:03:06
-updated: 2021-09-14 10:27:46
+updated: 2021-09-15 21:02:09
 ---
 # 1.2 Java技术体系
 从广义上讲，Kotlin、Clojure、JRuby、Groovy等运行于Java虚拟机上的编程语言及其相关的程序 都属于Java技术体系中的一员。如果仅从传统意义上来看，JCP官方[^1]所定义的Java技术体系包括了以 下几个组成部分：
