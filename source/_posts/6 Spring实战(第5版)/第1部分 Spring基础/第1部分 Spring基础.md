@@ -1,8 +1,9 @@
 ---
 title: 第1部分 Spring基础
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 第1部分 Spring基础
+abbrlink: c5e590c2
 date: 2021-10-03 19:30:53
 updated: 2021-10-03 20:28:30
 ---

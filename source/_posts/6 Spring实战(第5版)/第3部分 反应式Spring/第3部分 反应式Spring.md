@@ -1,8 +1,9 @@
 ---
 title: 第3部分 反应式Spring
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 第3部分 反应式Spring
+abbrlink: 59fccfcb
 date: 2021-10-16 22:47:23
 updated: 2021-10-16 22:47:23
 ---

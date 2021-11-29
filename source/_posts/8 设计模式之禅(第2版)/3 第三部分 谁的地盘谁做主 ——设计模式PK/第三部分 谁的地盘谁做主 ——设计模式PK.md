@@ -1,6 +1,6 @@
 ---
 title: 第三部分 谁的地盘谁做主 ——设计模式PK
-categories: 
+categories:
   - 8 设计模式之禅(第2版)
   - 3 第三部分 谁的地盘谁做主 ——设计模式PK
 abbrlink: 6ad03aa1

@@ -1,8 +1,9 @@
 ---
 title: A.1 使用Spring Tool Suite初始化项目
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
+abbrlink: '5793e489'
 date: 2021-10-22 17:14:12
 updated: 2021-10-22 21:41:42
 ---
@@ -20,7 +21,7 @@ updated: 2021-10-22 21:41:42
 
 <center>图A.2 定义基本的项目信息</center>
 
-这个页面的第一个输入域要求我们指定Spring Initializr服务的位置。如果你运行或使用自定义的Initializr实例，那么可以在这里指定Initializr服务的基础URL；否则，使用默认的http://start.spring.io就可以了。
+这个页面的第一个输入域要求我们指定Spring Initializr服务的位置。如果你运行或使用自定义的Initializr实例，那么可以在这里指定Initializr服务的基础URL；否则，使用默认 http://start.spring.io 就可以了。
 
 在定义完项目的基本信息之后，点击Next按钮，会看到项目的依赖页（见图A.3）。
 

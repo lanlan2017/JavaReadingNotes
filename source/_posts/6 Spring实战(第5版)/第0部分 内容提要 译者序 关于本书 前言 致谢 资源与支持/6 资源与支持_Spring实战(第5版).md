@@ -1,8 +1,9 @@
 ---
 title: 6 资源与支持_Spring实战(第5版)
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 第0部分 内容提要 译者序 关于本书 前言 致谢 资源与支持
+abbrlink: b4021da9
 date: 2021-10-03 20:00:20
 updated: 2021-10-03 20:28:30
 ---

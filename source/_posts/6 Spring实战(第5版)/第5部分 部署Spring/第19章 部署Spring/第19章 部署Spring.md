@@ -1,9 +1,10 @@
 ---
 title: 第19章 部署Spring
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 第5部分 部署Spring
   - 第19章 部署Spring
+abbrlink: c6d995d4
 date: 2021-10-22 16:30:52
 updated: 2021-10-22 21:41:42
 ---

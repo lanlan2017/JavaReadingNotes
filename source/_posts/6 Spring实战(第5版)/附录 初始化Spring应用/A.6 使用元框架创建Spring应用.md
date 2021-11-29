@@ -1,8 +1,9 @@
 ---
 title: A.6 使用元框架创建Spring应用
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
+abbrlink: 1e4e2094
 date: 2021-10-22 17:34:53
 updated: 2021-10-22 21:41:42
 ---

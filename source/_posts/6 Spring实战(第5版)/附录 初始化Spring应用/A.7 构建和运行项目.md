@@ -1,8 +1,9 @@
 ---
 title: A.7 构建和运行项目
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
+abbrlink: eb68ec1b
 date: 2021-10-22 17:35:24
 updated: 2021-10-22 21:41:42
 ---

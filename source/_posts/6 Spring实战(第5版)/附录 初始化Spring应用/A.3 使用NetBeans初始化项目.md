@@ -1,8 +1,9 @@
 ---
 title: A.3 使用NetBeans初始化项目
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
+abbrlink: afcc5293
 date: 2021-10-22 17:20:45
 updated: 2021-10-22 21:41:42
 ---

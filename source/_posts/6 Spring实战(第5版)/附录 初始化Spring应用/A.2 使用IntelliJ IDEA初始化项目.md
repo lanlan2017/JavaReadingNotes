@@ -1,8 +1,9 @@
 ---
 title: A.2 使用IntelliJ IDEA初始化项目
-categories: 
+categories:
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
+abbrlink: faac6e04
 date: 2021-10-22 17:17:29
 updated: 2021-10-22 21:41:42
 ---
