@@ -668,3 +668,45 @@ date: 2019-12-17 04:08:18
 - [第38章 新模式](/JavaReadingNotes/categories/8-设计模式之禅-第2版/5-第五部分-扩展篇/第38章-新模式)
 
 ## [6 附录 23种设计模式彩图](/JavaReadingNotes/categories/8-设计模式之禅-第2版/6-附录-23种设计模式彩图)
+
+# [9 Java编程的逻辑](/JavaReadingNotes/categories/9-Java编程的逻辑)
+
+## [0第零部分](/JavaReadingNotes/categories/9-Java编程的逻辑/0第零部分)
+
+## [1第一部分 编程基础与二进制](/JavaReadingNotes/categories/9-Java编程的逻辑/1第一部分-编程基础与二进制)
+- [第1章 编程基础](/JavaReadingNotes/categories/9-Java编程的逻辑/1第一部分-编程基础与二进制/第1章-编程基础)
+- [第2章 理解数据背后的二进制](/JavaReadingNotes/categories/9-Java编程的逻辑/1第一部分-编程基础与二进制/第2章-理解数据背后的二进制)
+
+## [2第二部分 面向对象](/JavaReadingNotes/categories/9-Java编程的逻辑/2第二部分-面向对象)
+- [第3章 类的基础](/JavaReadingNotes/categories/9-Java编程的逻辑/2第二部分-面向对象/第3章-类的基础)
+- [第4章 类的继承](/JavaReadingNotes/categories/9-Java编程的逻辑/2第二部分-面向对象/第4章-类的继承)
+- [第5章 类的扩展](/JavaReadingNotes/categories/9-Java编程的逻辑/2第二部分-面向对象/第5章-类的扩展)
+- [第6章 异常](/JavaReadingNotes/categories/9-Java编程的逻辑/2第二部分-面向对象/第6章-异常)
+- [第7章 常用基础类](/JavaReadingNotes/categories/9-Java编程的逻辑/2第二部分-面向对象/第7章-常用基础类)
+
+## [3第三部分 泛型与容器](/JavaReadingNotes/categories/9-Java编程的逻辑/3第三部分-泛型与容器)
+- [第8章 泛型](/JavaReadingNotes/categories/9-Java编程的逻辑/3第三部分-泛型与容器/第8章-泛型)
+- [第9章 列表和队列](/JavaReadingNotes/categories/9-Java编程的逻辑/3第三部分-泛型与容器/第9章-列表和队列)
+- [第10章 Map和Set](/JavaReadingNotes/categories/9-Java编程的逻辑/3第三部分-泛型与容器/第10章-Map和Set)
+- [第11章 堆与优先级队列](/JavaReadingNotes/categories/9-Java编程的逻辑/3第三部分-泛型与容器/第11章-堆与优先级队列)
+- [第12章 通用容器类和总结](/JavaReadingNotes/categories/9-Java编程的逻辑/3第三部分-泛型与容器/第12章-通用容器类和总结)
+
+## [4第四部分 文件](/JavaReadingNotes/categories/9-Java编程的逻辑/4第四部分-文件)
+- [第13章 文件基本技术](/JavaReadingNotes/categories/9-Java编程的逻辑/4第四部分-文件/第13章-文件基本技术)
+- [第14章 文件高级技术](/JavaReadingNotes/categories/9-Java编程的逻辑/4第四部分-文件/第14章-文件高级技术)
+
+## [5第五部分 并发](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发)
+- [第15章 并发基础知识](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发/第15章-并发基础知识)
+- [第16章 并发包的基石](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发/第16章-并发包的基石)
+- [第17章 并发容器](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发/第17章-并发容器)
+- [第18章 异步任务执行服务](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发/第18章-异步任务执行服务)
+- [第19章 同步和协作工具类](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发/第19章-同步和协作工具类)
+- [第20章 并发总结](/JavaReadingNotes/categories/9-Java编程的逻辑/5第五部分-并发/第20章-并发总结)
+
+## [6第六部分 动态与函数式编程](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程)
+- [第21章 反射](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程/第21章-反射)
+- [第22章 注解](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程/第22章-注解)
+- [第23章 动态代理](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程/第23章-动态代理)
+- [第24章 类加载机制](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程/第24章-类加载机制)
+- [第25章 正则表达式](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程/第25章-正则表达式)
+- [第26章 函数式编程](/JavaReadingNotes/categories/9-Java编程的逻辑/6第六部分-动态与函数式编程/第26章-函数式编程)
