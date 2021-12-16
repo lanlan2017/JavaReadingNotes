@@ -10,7 +10,7 @@ updated: 2021-10-22 21:41:42
 ---
 # 第19章 部署Spring
 
-<div style="border-style:solid;"><strong>本章内容：</strong><ul><li>将Spring应用构建为WAR或JAR文件</li><li>推送Spring应用至Cloud Foundry</li><li>使用Docker容器化Spring应用</li></ul></div>
+<div style="border:1px solid;"><strong>本章内容：</strong><ul><li>将Spring应用构建为WAR或JAR文件</li><li>推送Spring应用至Cloud Foundry</li><li>使用Docker容器化Spring应用</li></ul></div>
 
 想一下你最喜欢的动作片。现在我们想象一下，你要去电影院看那部电影，在高速追逐、爆炸和战斗中体验一场激动人心的视听之旅，但是电影最终却在好人打倒坏人之前戛然而止。电影院的灯一亮，所有人都被带出影院，我们没有看到电影里的冲突是如何解决的。虽然开头很精彩，但是重要的是影片的高潮部分。没有它，那就是为了行动而行动。
 
