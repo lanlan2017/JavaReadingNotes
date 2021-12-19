@@ -8,13 +8,6 @@ date: 2019-08-16 14:46:14
 updated: 2020-04-07 03:59:34
 abbrlink: db6869c6
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/db6869c6/#第2章-Spring-MVC简介" class="header_1">第2章 Spring MVC简介</a>&nbsp;<br><a href="/JavaReadingNotes/db6869c6/#本章要点" class="header_2">本章要点</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 第2章 Spring MVC简介 #
 ## 本章要点 ##
 - `Model1`和 `Model2`
@@ -26,4 +19,4 @@ abbrlink: db6869c6
 - 基于注解的控制器
 - `Spring MVC`的工作流程
 
-<!--SSTStop-->
+

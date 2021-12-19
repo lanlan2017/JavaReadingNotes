@@ -8,13 +8,6 @@ date: 2019-07-29 16:59:00
 updated: 2020-02-07 01:34:57
 abbrlink: a1a8d717
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/a1a8d717/#第7章-Bootstrap内置组件" class="header_1">第7章 Bootstrap内置组件</a>&nbsp;<br><a href="/JavaReadingNotes/a1a8d717/#本章要点" class="header_2">本章要点</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 第7章 Bootstrap内置组件 #
 ## 本章要点 ##
 - `Bootstrap`的按钮组件
@@ -48,4 +41,4 @@ abbrlink: a1a8d717
 `Bootstrap`是一个优秀的`CSS`前端框架,它除了提供大量全局可用的`CSS`样式之外,还提供大量的`UI`组件,这些`UI`组件都是`Web`页面开发中最常用的组件,如`按钮`、`下拉菜单`、`按钮组`、`输入框组`、`导航`、`导航条`、`分页导航`、`标签`、`进度条`等。
 使用`Bootstrap` 提供的这些`UI`组件很简单,通常只要为传统的`HTML` 元素添加少量`Bootstrap`的`CSS`样式即可,这样系统就可生成优雅、美观的`UI`界面。因此在`Web`页面开发中使用这些`UI`组件不仅事半功倍,而且还使界面更加专业、美观。
 
-<!--SSTStop-->
+

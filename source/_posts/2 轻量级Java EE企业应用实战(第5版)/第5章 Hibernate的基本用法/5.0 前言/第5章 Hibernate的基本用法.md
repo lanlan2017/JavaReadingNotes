@@ -8,13 +8,6 @@ date: 2019-08-09 22:56:57
 updated: 2020-02-07 01:34:57
 abbrlink: ecadf082
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/ecadf082/#第5章-Hibernate的基本用法" class="header_1">第5章 Hibernate的基本用法</a>&nbsp;<br><a href="/JavaReadingNotes/ecadf082/#本章要点" class="header_2">本章要点</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 第5章 Hibernate的基本用法 #
 ## 本章要点 ##
 - `ORM`的基本知识
@@ -38,5 +31,5 @@ abbrlink: ecadf082
 目前的主流数据库依然是`关系数据库`,而`Java`语言则是`面向对象的编程语言`,当把二者结合在起使用时相当麻烦,而`Hibernate`则减少了这个问题的困扰,它完成对象模型和基于`SQL`的关系模型的映射关系,使得应用开发者可以完全采用面向对象的方式来开发应用程序。
 `Hibernate`较之另一个持久层框架`MyBatis, Hibernate`更具有面向对象的特征;受`Hibernate`的影响,`Java EE5`规范抛弃了传统的`Entity EJB`,改为使用`JPA`作为持久层解决方案。而`JPA`实体完全可以当成`Hibernate PO(Persistent Object`,持久化对象)使用,由此可见`Hibernate`的影响深远。 `Hibernate`倡导低侵入式的设计,完全采用**普通的`Java`对象**(`POJO)`编程,**不要求PO继承`Hibernate`的某个超类或实现`Hibernate`的某个接口**。
 `Hibernate`充当了面向对象的程序设计语言和关系数据库之间的桥梁,** `Hibernate`允许程序开发者采用面向对象的方式来操作关系数据库**。因为有了`Hibernate`的支持,使得`Java EE`应用的`OOA`(面向对象分析)、`OOD`(面向对象设计)和`OOP`(面向对象编程)三个过程一脉相承,成为一个整体。
-<!--SSTStop-->
+
 

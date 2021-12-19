@@ -8,13 +8,6 @@ date: 2019-08-20 20:47:02
 updated: 2020-05-10 01:49:51
 abbrlink: 6ba634ae
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/6ba634ae/#示例-自定义HttpMessageConverter-接收JSON格式的数据" class="header_1">示例 自定义HttpMessageConverter 接收JSON格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/6ba634ae/#下载Fastjson" class="header_2">下载Fastjson</a>&nbsp;<br><a href="/JavaReadingNotes/6ba634ae/#项目示例" class="header_1">项目示例</a>&nbsp;<br><a href="/JavaReadingNotes/6ba634ae/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/6ba634ae/#BookController-java" class="header_2">BookController.java</a>&nbsp;<br><a href="/JavaReadingNotes/6ba634ae/#springmvc-config-xml" class="header_2">springmvc-config.xml</a>&nbsp;<br><a href="/JavaReadingNotes/6ba634ae/#测试" class="header_2">测试</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 示例 自定义HttpMessageConverter 接收JSON格式的数据
 `Spring`默认使用`Jackson`处理`JSON`数据。在实际开发中,开发者也可以选择使用其他开源框架处理`JSON`数据。那么,如果使用其他的开源框架处理`JSON`数据,该如何配置`HttpMessageConverter`呢?接下来,我们就使用在业界非常受欢迎的`Fastjson`来接收`JSON`数据。
 ## 下载Fastjson

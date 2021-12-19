@@ -8,13 +8,6 @@ date: 2019-08-19 13:23:24
 updated: 2020-04-26 04:16:26
 abbrlink: 8ad4e730
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/8ad4e730/#示例-PathVariable注解和-MatrixVariable注解的使用" class="header_1">示例 @PathVariable注解和@MatrixVariable注解的使用</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#index-jsp" class="header_2">index.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#VariableController-java" class="header_2">VariableController.java</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#springmvc-config-xml" class="header_2">springmvc-config.xml</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#测试" class="header_2">测试</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#测试-PathVariable注解" class="header_3">测试@PathVariable注解</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#测试-MatrixVariable注解" class="header_3">测试@MatrixVariable注解</a>&nbsp;<br><a href="/JavaReadingNotes/8ad4e730/#多条件组合查询" class="header_4">多条件组合查询</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 示例 @PathVariable注解和@MatrixVariable注解的使用
 新建一个项目`VariableTest`,加入所需的`jar`文件:
 ## 项目结构
@@ -240,4 +233,4 @@ http://localhost:8080/VariableTest/
 - 参数`brand`的值`"apple,acer"`被传递到方法的`brand`集合变量,
 - 参数`low`的值`"2000"`被传递到方法的`low`变量参数
 - 参数`height`的值`"10000"`被传递到方法的`height`变量,最后输出在浏览器上
-<!--SSTStop-->
+

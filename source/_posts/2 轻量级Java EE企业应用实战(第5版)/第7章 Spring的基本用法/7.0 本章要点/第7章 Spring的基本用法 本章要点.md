@@ -8,13 +8,6 @@ date: 2019-08-24 12:07:43
 updated: 2020-02-07 01:34:57
 abbrlink: eb51ab14
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/eb51ab14/#第7章-Spring的基本用法" class="header_1">第7章 Spring的基本用法</a>&nbsp;<br><a href="/JavaReadingNotes/eb51ab14/#本章要点" class="header_2">本章要点</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 第7章 Spring的基本用法 #
 ## 本章要点 ##
 - `Spring`的起源和背景
@@ -33,5 +26,5 @@ abbrlink: eb51ab14
 - 几种特殊的依赖注入
 - `Spring`的简化配置
 - `SpEL`的功能和用法
-<!--SSTStop-->
+
 

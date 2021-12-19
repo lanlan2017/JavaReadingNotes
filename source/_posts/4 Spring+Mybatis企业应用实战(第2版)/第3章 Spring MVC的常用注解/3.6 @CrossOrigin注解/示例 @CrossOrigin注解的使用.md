@@ -8,13 +8,6 @@ date: 2019-08-19 16:49:35
 updated: 2020-04-26 04:24:46
 abbrlink: 559cdc31
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/559cdc31/#示例-CrossOrigin注解的使用" class="header_1">示例 @CrossOrigin注解的使用</a>&nbsp;<br><a href="/JavaReadingNotes/559cdc31/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/559cdc31/#CrossOriginController-java" class="header_2">CrossOriginController.java</a>&nbsp;<br><a href="/JavaReadingNotes/559cdc31/#welcome-jsp" class="header_2">welcome.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/559cdc31/#部署测试" class="header_2">部署测试</a>&nbsp;<br><a href="/JavaReadingNotes/559cdc31/#总结" class="header_2">总结</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 示例 @CrossOrigin注解的使用
 接下来测试跨域发送请求,再新建一个项目`CrossOriginTest`,加入所需的`jar`文件.
 ## 项目结构
@@ -122,4 +115,4 @@ http://localhost:8080/VariableTest/
 
 ## 总结
 `@CrossOrigin`注解可以接收从另一个`Web`应用发来的跨域请求。
-<!--SSTStop-->
+

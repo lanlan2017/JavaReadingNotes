@@ -8,13 +8,7 @@ date: 2019-07-06 12:58:24
 updated: 2020-03-07 02:06:05
 abbrlink: 7956ffc8
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/7956ffc8/#第8章-Java集合-本章要点" class="header_1">第8章 Java集合 本章要点</a>&nbsp;<br><a href="/JavaReadingNotes/7956ffc8/#java集合用途" class="header_2">java集合用途</a>&nbsp;<br><a href="/JavaReadingNotes/7956ffc8/#java集合分类" class="header_2">java集合分类</a>&nbsp;<br><a href="/JavaReadingNotes/7956ffc8/#java集合中来存放对象的引用" class="header_2">java集合中来存放对象的引用</a>&nbsp;<br><a href="/JavaReadingNotes/7956ffc8/#Java5对集合的增强" class="header_2">Java5对集合的增强</a>&nbsp;<br><a href="/JavaReadingNotes/7956ffc8/#本章重点" class="header_2">本章重点</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
 
-<!--end-->
-<!--SSTStart-->
 
 # 第8章 Java集合 本章要点 #
 - 集合的概念和作用
@@ -64,4 +58,4 @@ abbrlink: 7956ffc8
 ## 本章重点 ##
 本章将详细介绍`Java`的4种集合体系的常规功能,深入介绍各集合实现类所提供的独特功能,深入分析各实现类的实现机制,以及用法上的细微差别,并给出**不同应用场景选择哪种集合实现类**的建议。
 
-<!--SSTStop-->
+

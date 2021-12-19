@@ -8,13 +8,6 @@ date: 2019-08-20 21:55:02
 updated: 2020-05-10 02:21:31
 abbrlink: 830b4262
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/830b4262/#示例-自定义HttpMessageConverter返回JSON格式的数据" class="header_1">示例 自定义HttpMessageConverter返回JSON格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/830b4262/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/830b4262/#index-jsp" class="header_2">index.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/830b4262/#BookController-java" class="header_2">BookController.java</a>&nbsp;<br><a href="/JavaReadingNotes/830b4262/#springmvc-config-xml" class="header_2">springmvc-config.xml</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 示例 自定义HttpMessageConverter返回JSON格式的数据
 接下来,使用`Fastjson`来返回`JSON`数据。
 创建一个`Fastjson2Test`项目,在`WebContent`目录下创建一个`js`目录,加入`jQuery`和`json2`的`js`文件,在`WEB-INF/lib`目录中加入`Fastjson`的`jar`文件。

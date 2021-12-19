@@ -8,13 +8,6 @@ date: 2019-08-16 22:39:26
 updated: 2020-04-20 05:04:06
 abbrlink: 3447f8a3
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/3447f8a3/#示例1-基于Controller接口的控制器" class="header_1">示例1:基于Controller接口的控制器</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#1-增加Spring的支持" class="header_2">1.增加Spring的支持</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#复制Spring的jar包到项目lib目录" class="header_3">复制Spring的jar包到项目lib目录</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#复制commons-logging的jar包到项目lib目录" class="header_3">复制commons-logging的jar包到项目lib目录</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#复制后的libs目录文件列表" class="header_3">复制后的libs目录文件列表</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#2-配置前端控制器DispatcherServlet" class="header_2">2. 配置前端控制器DispatcherServlet</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#eclipse生成web-xml" class="header_3">eclipse生成web.xml</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#web-xml中配置前段控制器" class="header_3">web.xml中配置前段控制器</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#3-配置Spring-MVC的Controller" class="header_2">3 配置Spring MVC的Controller</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#4-Controller类的实现" class="header_2">4. Controller类的实现</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#5-View页面" class="header_2">5. View页面</a>&nbsp;<br><a href="/JavaReadingNotes/3447f8a3/#6-测试应用" class="header_2">6.测试应用</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 示例1:基于Controller接口的控制器
 ## 1.增加Spring的支持
 首先,使用`Eclipse`新建一个`Dynamic Web Pro ject`,也就是新建一个动态`Web`项目,命名为`SpringMVCTest`。
@@ -257,4 +250,4 @@ http://localhost:8080/SpringMVCTest/hello
 浏览器上将会显示`Hello World!`这个字符串,这表示`Spring MVC`访问成功。
 
 提示:使用`MVC`框架就应该严格遵守`MVC`思想。`MVC`框架不赞成浏览器直接访问`Web`应用的视图页面,用户的所有请求都只应向控制器发送,由控制器调用模型组件、视图组件向用户呈现数据.
-<!--SSTStop-->
+

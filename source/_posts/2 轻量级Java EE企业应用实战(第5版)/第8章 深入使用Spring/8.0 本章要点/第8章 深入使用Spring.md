@@ -8,13 +8,6 @@ date: 2019-08-31 09:55:21
 updated: 2020-02-07 01:34:58
 abbrlink: 4676c7d7
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/4676c7d7/#第8章-深入使用Spring" class="header_1">第8章 深入使用Spring</a>&nbsp;<br><a href="/JavaReadingNotes/4676c7d7/#本章要点" class="header_2">本章要点</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 第8章 深入使用Spring #
 ## 本章要点 ##
 - 利用`后处理器`扩展`Spring`容器
@@ -40,5 +33,5 @@ abbrlink: 4676c7d7
 `Spring`的声明式事务管理正是通过`AOP`来实现的。当然,如果仅仅想使用`Spring`的声明式事务管理,其实完全无须掌握`AOP`,但如果希望开发出结构更优雅的应用,例如集中处理应用的权限控制、系统日志等需求,则应该使用`AOP`来处理。
 除此之外,本章还将详细介绍`Spring`与`Hibernate/JPA`和`Struts2`框架的整合。
 
-<!--SSTStop-->
+
 

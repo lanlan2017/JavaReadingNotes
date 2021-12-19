@@ -7,12 +7,6 @@ date: 2019-05-29 17:31:30
 updated: 2020-02-07 01:34:57
 abbrlink: a5bcd8d
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/a5bcd8d/#同步" class="header_1">同步</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#异步" class="header_1">异步</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#Ajax应用的工作过程" class="header_1">Ajax应用的工作过程</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#JavaScript-使用Ajax过程" class="header_1">JavaScript 使用Ajax过程</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#使用XMLHttpRequest对象发送请求步骤" class="header_1">使用XMLHttpRequest对象发送请求步骤</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#传统Web应用发送请求形式" class="header_1">传统Web应用发送请求形式</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#获取服务器响应生成的文本" class="header_1">获取服务器响应生成的文本</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#获取服务器响应的状态码" class="header_1">获取服务器响应的状态码</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#传统Web编程和Ajax编程的区别" class="header_1">传统Web编程和Ajax编程的区别</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#1-客户端发送请求的方式不同" class="header_2">1.客户端发送请求的方式不同</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#2-服务器生成的响应不同" class="header_2">2.服务器生成的响应不同</a>&nbsp;<br><a href="/JavaReadingNotes/a5bcd8d/#3-客户端加载响应的方式不同" class="header_2">3.客户端加载响应的方式不同</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
 # 同步 #
 每次用户发送请求,向服务器请求获得新数据时,**浏览器都会完全丢弃当前页面,而等待重新加载新的页面。而在服务器完全响应之前,用户浏览器将一片空白,用户的动作必须中断**。
 # 异步 #

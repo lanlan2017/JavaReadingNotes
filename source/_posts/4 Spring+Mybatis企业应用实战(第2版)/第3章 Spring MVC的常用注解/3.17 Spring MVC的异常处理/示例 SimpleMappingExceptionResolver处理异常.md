@@ -8,12 +8,6 @@ date: 2019-08-21 12:21:58
 updated: 2020-05-10 03:02:34
 abbrlink: 463618c5
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/463618c5/#示例-SimpleMappingExceptionResolver处理异常" class="header_1">示例 SimpleMappingExceptionResolver处理异常</a>&nbsp;<br><a href="/JavaReadingNotes/463618c5/#index-jsp" class="header_2">index.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/463618c5/#TestController-java" class="header_2">TestController.java</a>&nbsp;<br><a href="/JavaReadingNotes/463618c5/#error-jsp" class="header_2">error.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/463618c5/#sqlerror-jsp" class="header_2">sqlerror.jsp</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
 # 示例 SimpleMappingExceptionResolver处理异常
 新建一个项目`SimpleMappingExceptionResolverTest`,加入所需的`jar`文件,示例代码如下:
 ## index.jsp
@@ -136,7 +130,7 @@ http://localhost:8080/SimpleMappingExceptionResolverTest/
 
 </beans>
 ```
-<!--replace:ex=E X-->
+
 重点是异常处理的配置。 `SimpleMappingExceptionResolver`是`Spring`提供的处理异常的类,所有抛岀的异常都会被该类捕获。
 - `p:defaultErrorView="error"`属性表示所有没有指定的异常都跳转到异常处理页面`error`。
 - `p:exceptionAttribute="ex"`属性表示在异常处理页面中可以访问的异常对象变量名是`ex`。
@@ -144,7 +138,7 @@ http://localhost:8080/SimpleMappingExceptionResolverTest/
     - `key`是异常类名或者包名加类名,
     - `value`是异常处理页面。
 
-<!--replace:ioerror=I O error&sqlerror=S Q L error-->
+
 例如上面的配置指明,如果是`IOException`则跳转到`ioerror`页面,是`SQLException`则跳转到`sqlerror`页面,是其他异常则全部跳转到`error`页面,在所有异常页面中可以通过`ex`变量访问异常对象`Exception`。
 ## error.jsp
 ```jsp

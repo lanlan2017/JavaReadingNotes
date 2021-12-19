@@ -8,13 +8,6 @@ date: 2019-08-20 18:45:02
 updated: 2020-05-09 05:44:03
 abbrlink: 78f2a207
 ---
-<div id='my_toc'><a href="/JavaReadingNotes/78f2a207/#示例-RequestBody接收JSON格式的数据" class="header_1">示例 @RequestBody接收JSON格式的数据</a>&nbsp;<br><a href="/JavaReadingNotes/78f2a207/#项目结构" class="header_2">项目结构</a>&nbsp;<br><a href="/JavaReadingNotes/78f2a207/#index-jsp" class="header_2">index.jsp</a>&nbsp;<br><a href="/JavaReadingNotes/78f2a207/#BookController-java" class="header_2">BookController.java</a>&nbsp;<br><a href="/JavaReadingNotes/78f2a207/#Book-java" class="header_2">Book.java</a>&nbsp;<br><a href="/JavaReadingNotes/78f2a207/#测试" class="header_2">测试</a>&nbsp;<br><a href="/JavaReadingNotes/78f2a207/#个人总结" class="header_2">个人总结</a>&nbsp;<br></div>
-<style>.header_1{margin-left: 1em;}.header_2{margin-left: 2em;}.header_3{margin-left: 3em;}.header_4{margin-left: 4em;}.header_5{margin-left: 5em;}.header_6{margin-left: 6em;}</style>
-<!--more-->
-<script>if (navigator.platform.search('arm')==-1){document.getElementById('my_toc').style.display = 'none';}var e,p = document.getElementsByTagName('p');while (p.length>0) {e = p[0];e.parentElement.removeChild(e);}</script>
-
-<!--end-->
-<!--SSTStart-->
 # 示例 @RequestBody接收JSON格式的数据
 创建一个`RequestBodyTest`项目,在`WebContent`目录下创建一个`js`目录,加入`jQuery`和`json2`的`js`文件,在`WEB-INF/lib`目录中加入`Jackson`的`jar`文件。
 ## 项目结构
