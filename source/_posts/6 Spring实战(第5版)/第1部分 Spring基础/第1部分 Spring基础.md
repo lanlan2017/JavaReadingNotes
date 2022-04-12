@@ -1,6 +1,6 @@
 ---
 title: 第1部分 Spring基础
-categories:
+categories: 
   - 6 Spring实战(第5版)
   - 第1部分 Spring基础
 abbrlink: c5e590c2

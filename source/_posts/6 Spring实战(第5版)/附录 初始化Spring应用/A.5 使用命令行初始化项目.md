@@ -1,11 +1,19 @@
 ---
 title: A.5 使用命令行初始化项目
+<<<<<<< HEAD
 categories:
+=======
+categories: 
+>>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
 abbrlink: e2edb360
 date: 2021-10-22 17:33:08
+<<<<<<< HEAD
 updated: 2021-10-22 21:41:42
+=======
+updated: 2022-04-03 01:21:18
+>>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # A.5 使用命令行初始化项目
 Spring Initializr的IDE和基于浏览器的用户界面可能是初始化项目的常见方式。它们都是Initializr应用程序提供的REST服务的客户端。在某些特殊情况下（例如，在脚本化场景中），我们可能会发现直接从命令行使用Initializr服务也很有用。
@@ -36,7 +44,11 @@ A.5.1 curl和Initializr API
 
 <center>表A.1 Initializr API支持的请求参数</center>
 
+<<<<<<< HEAD
 ![epub_29101559_157](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022212716.jpeg)
+=======
+![epub_29101559_157](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022212716.jpeg)
+>>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 
 我们可以通过发送请求至基础Initializr URL获取参数列表和可用依赖项的列表：
 
@@ -83,7 +95,11 @@ Spring Boot CLI安装完成之后，我们就可以使用它来生成项目了�
 
 <center>表A.2 spring init命令支持的所有请求参数</center>
 
+<<<<<<< HEAD
 ![epub_29101559_158](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022212941.jpeg)
+=======
+![epub_29101559_158](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022212941.jpeg)
+>>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 
 通过使用--list参数，我们可以列出参数的列表以及可用依赖：
 

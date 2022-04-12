@@ -1,11 +1,19 @@
 ---
 title: A.7 构建和运行项目
+<<<<<<< HEAD
 categories:
+=======
+categories: 
+>>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
   - 6 Spring实战(第5版)
   - 附录 初始化Spring应用
 abbrlink: eb68ec1b
 date: 2021-10-22 17:35:24
+<<<<<<< HEAD
 updated: 2021-10-22 21:41:42
+=======
+updated: 2022-04-03 01:21:18
+>>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # A.7 构建和运行项目
 不管你采用什么方式初始化项目，都可以在命令行中使用java -jar命令来运行应用：
