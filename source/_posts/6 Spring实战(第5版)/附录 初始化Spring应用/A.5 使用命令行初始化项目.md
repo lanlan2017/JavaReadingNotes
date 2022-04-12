@@ -36,7 +36,7 @@ A.5.1 curl和Initializr API
 
 <center>表A.1 Initializr API支持的请求参数</center>
 
-![epub_29101559_157](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022212716.jpeg)
+![epub_29101559_157](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022212716.jpeg)
 
 我们可以通过发送请求至基础Initializr URL获取参数列表和可用依赖项的列表：
 
@@ -83,7 +83,7 @@ Spring Boot CLI安装完成之后，我们就可以使用它来生成项目了�
 
 <center>表A.2 spring init命令支持的所有请求参数</center>
 
-![epub_29101559_158](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022212941.jpeg)
+![epub_29101559_158](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022212941.jpeg)
 
 通过使用--list参数，我们可以列出参数的列表以及可用依赖：
 

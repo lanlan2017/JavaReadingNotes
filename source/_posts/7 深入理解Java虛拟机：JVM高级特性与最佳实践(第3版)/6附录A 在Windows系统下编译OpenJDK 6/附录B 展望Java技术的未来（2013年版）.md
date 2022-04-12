@@ -24,22 +24,22 @@ updated: 2021-11-28 15:46:50
 
 除了催生大量的新语言外，许多已经有很长历史的程序语言也出现了基于Java虚拟机实现的版本，这样混合编程对许多以前使用其他语言的“老”程序员也具备相当大的吸引力，软件企业投入了大量资本的现有代码资产也能被很好地保护起来。表B-1中列举了常见语言的Java虚拟机实现版本。
 
-![image-20211127132505768](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127132506.png)
+![image-20211127132505768](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127132506.png)
 
 <center>图B-1 可以运行在JVM之上的语言[^3]</center>
 
 <center>表B-1 常见语言的JVM实现版本</center>
 
-![image-20211127132541842](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127132542.png)
+![image-20211127132541842](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127132542.png)
 
-![image-20211127132550959](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127132551.png)
+![image-20211127132550959](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127132551.png)
 
 对这些运行于Java虚拟机之上、Java之外的语言，来自系统级的、底层的支持正在迅速增强，以JSR-292为核心的一系列项目和功能改进（如Da Vinci Machine项目、Nashorn引擎、InovkeDynamic指令、java.lang.invoke包等），推动Java虚拟机从“Java语言的虚拟机”向“多语言虚拟机”的方向发展。
 
 ## B.3 多核并行
 如今，CPU硬件的发展方向已经从高频率转变为多核心，随着多核时代的来临，软件开发越来越关注并行编程的领域。早在JDK 1.5之中就已经引入java.util.concurrent包，实现了一个粗粒度的并发框架。而JDK 1.7中加入的java.util.concurrent.forkjoin包则是对这个框架的一次重要扩充。Fork/Join模式是处理并行编程的一个经典方法，如图B-2所示。虽然不能解决所有的问题，但是在它的适用范围之内， 能够轻松地利用多个CPU核心提供的计算资源来协作完成一个复杂的计算任务。通过利用Fork/Join模式，我们能够更加顺畅地过渡到多核时代。
 
-![image-20211127132623789](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127132623.png)
+![image-20211127132623789](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127132623.png)
 
 <center>图B-2 Fork/Join模式示意图[^4]</center>
 

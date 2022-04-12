@@ -12,7 +12,7 @@ updated: 2021-10-22 21:41:42
 
 首先，在Web浏览器中访问 https://start.spring.io 。我们将会看到简单版本的Spring Initializr Web用户界面，如图A.15所示。
 
-![image-20211022214010291](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022214010.png)
+![image-20211022214010291](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022214010.png)
 
 <center>图A.15 简单版本的Spring Initializr Web界面</center>
 
@@ -20,13 +20,13 @@ updated: 2021-10-22 21:41:42
 
 我们还可以通过在Search for Dependencies文本框中输入搜索条件来指明依赖。例如，如图A.16所示，我们可以输入“web”来搜索带有“web”关键字的依赖。
 
-![image-20211022214019020](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022214019.png)
+![image-20211022214019020](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022214019.png)
 
 <center>图A.16 搜索依赖</center>
 
 当看到自己想要的依赖时，在键盘上按Return键来选中它，它就会添加到选中依赖的列表中。在图A.17中，Selected Dependencies文本下面显示已经选中了Web、Thymeleaf、DevTools和Lombok依赖。
 
-![image-20211022214029301](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022214029.png)
+![image-20211022214029301](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022214029.png)
 
 <center>图A.17 选择依赖</center>
 
@@ -36,7 +36,7 @@ updated: 2021-10-22 21:41:42
 
 如果你希望更细粒度地控制项目创建的过程，可以点击Generate Project下的Switch to the full version链接，这样用户界面会展现更多的输入域和所有可用依赖的复选框列表。图A.18显示了Web界面完整版本的一部分。
 
-![image-20211022214042949](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211022214043.png)
+![image-20211022214042949](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022214043.png)
 
 <center>图A.18 完整版本的Initializr用户界面（部分）</center>
 

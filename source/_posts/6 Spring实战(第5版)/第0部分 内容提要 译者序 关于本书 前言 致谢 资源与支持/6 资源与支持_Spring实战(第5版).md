@@ -15,7 +15,7 @@ updated: 2021-10-03 20:28:30
 - 本书源代码；
 - 书中彩图文件。
 
-要获得以上配套资源，请在异步社区本书页面中点击![image-20211003192418824](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211003192419.png)，跳转到下载界面，按提示进行操作即可。注意：为保证购书读者的权益，该操作会给出相关提示，要求输入提取码进行验证。
+要获得以上配套资源，请在异步社区本书页面中点击![image-20211003192418824](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211003192419.png)，跳转到下载界面，按提示进行操作即可。注意：为保证购书读者的权益，该操作会给出相关提示，要求输入提取码进行验证。
 
 如果您是教师，希望获得教学配套资源，请在社区本书页面中直接联系本书的责任编辑。
 
@@ -24,7 +24,7 @@ updated: 2021-10-03 20:28:30
 
 当您发现错误时，请登录异步社区，按书名搜索，进入本书页面，点击“提交勘误”，输入勘误信息，点击“提交”按钮即可。本书的作者和编辑会对您提交的勘误进行审核，确认并接受后，您将获赠异步社区的100积分。积分可用于在异步社区兑换优惠券、样书或奖品。
 
-![image-20211003192607753](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211003192607.png)
+![image-20211003192607753](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211003192607.png)
 
 ## 与我们联系
 我们的联系邮箱是contact@epubit.com.cn。
@@ -42,8 +42,8 @@ updated: 2021-10-03 20:28:30
 
 “异步图书”是由异步社区编辑团队策划出版的精品IT专业图书的品牌，依托于人民邮电出版社近30年的计算机图书出版积累和专业编辑团队，相关图书在封面上印有异步图书的LOGO。异步图书的出版领域包括软件开发、大数据、AI、测试、前端、网络技术等。
 
-![image-20211003192809100](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211003192809.png)
+![image-20211003192809100](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211003192809.png)
 <center>异步社区</center>
 
-![image-20211003192853222](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211003192853.png)
+![image-20211003192853222](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211003192853.png)
 <center>微信服务号</center>

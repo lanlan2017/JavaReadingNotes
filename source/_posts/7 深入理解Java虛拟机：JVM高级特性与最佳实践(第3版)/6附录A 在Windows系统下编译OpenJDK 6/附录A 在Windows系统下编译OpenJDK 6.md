@@ -29,9 +29,9 @@ CYGWIN安装时的定制包选择界面如图A-1所示。
 
 <center>表A-1 需要手工选择安装的CYGWIN工具</center>
 
-![image-20211127130828423](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127130829.png)
+![image-20211127130828423](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130829.png)
 
-![image-20211127130853102](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127130853.png)
+![image-20211127130853102](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130853.png)
 
 <center>图A-1 CYGWIN安装界面</center>
 
@@ -51,7 +51,7 @@ java –jar jdk-7-ea-plug-b121-windows-i586-09_dec_2010.jar
 ```
 运行后将会显示图A-2所示的协议，点击“ACCEPT”接受协议，然后把Plug安装到指定目录即可。 安装完毕后建立一个环境变量ALT_BINARY_PLUGS_PATH，变量值为此JDK Plug的安装路径，后面编译程序时需要用到它。
 
-![image-20211127131106318](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127131106.png)
+![image-20211127131106318](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127131106.png)
 
 <center>图A-2 JDK Plug安装协议</center>
 
