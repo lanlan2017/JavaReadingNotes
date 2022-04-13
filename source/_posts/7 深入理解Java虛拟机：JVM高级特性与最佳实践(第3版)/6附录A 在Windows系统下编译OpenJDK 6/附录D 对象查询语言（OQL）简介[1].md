@@ -5,11 +5,7 @@ categories:
   - 6附录A 在Windows系统下编译OpenJDK 6
 abbrlink: 830a477d
 date: 2021-11-28 12:14:52
-<<<<<<< HEAD
 updated: 2021-11-28 21:19:05
-=======
-updated: 2022-04-03 01:21:18
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # 附录D 对象查询语言（OQL）简介
 [^1]
@@ -159,11 +155,7 @@ SELECT * FROM java.lang.String s
 ```
 使用@符号，OQL可以访问底层Java对象的内存属性。下表列出了一些常用的Java属性。
 
-<<<<<<< HEAD
 ![image-20211127203831071](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127203831.png)
-=======
-![image-20211127203831071](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127203831.png)
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 
 ### 3.调用OQLJava方法
 格式为：
@@ -172,11 +164,7 @@ SELECT * FROM java.lang.String s
 ```
 加“()”会将MAT解释为一个OQLJava方法调用。这个方法的调用是通过反射执行的。常见的OQL Java方法如下：
 
-<<<<<<< HEAD
 ![image-20211127203928619](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127203928.png)
-=======
-![image-20211127203928619](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127203928.png)
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 
 ### 4.OQL的内建函数
 格式为：
@@ -184,7 +172,6 @@ SELECT * FROM java.lang.String s
 <function>(<parameter>)
 ```
 
-<<<<<<< HEAD
 ![image-20211127204007219](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127204007.png)
 
 ### D.5 OQL语言的BNF范式
@@ -192,14 +179,5 @@ SELECT * FROM java.lang.String s
 ![image-20211127204029605](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127204029.png)
 
 ![image-20211127204041963](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127204042.png)
-=======
-![image-20211127204007219](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127204007.png)
-
-### D.5 OQL语言的BNF范式
-
-![image-20211127204029605](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127204029.png)
-
-![image-20211127204041963](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20211127204042.png)
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 
 [^1]: 本文翻译自Eclipse Memory Analyzer Tool（MAT，Eclipse出品的内存分析工具）的OQL帮助文档。

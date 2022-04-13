@@ -1,19 +1,11 @@
 ---
 title: 1Java编程的逻辑 版权信息
-<<<<<<< HEAD
 categories:
-=======
-categories: 
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
   - 9 Java编程的逻辑
   - 0第零部分
 abbrlink: 2dfb27d3
 date: 2021-12-01 19:33:20
-<<<<<<< HEAD
 updated: 2021-12-07 12:07:07
-=======
-updated: 2022-04-03 01:21:19
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # Java编程的逻辑 版权信息
 - 书名：Java编程的逻辑作者：

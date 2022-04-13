@@ -1,20 +1,12 @@
 ---
 title: 第19章 部署Spring
-<<<<<<< HEAD
-categories:
-=======
 categories: 
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
   - 6 Spring实战(第5版)
   - 第5部分 部署Spring
   - 第19章 部署Spring
 abbrlink: c6d995d4
 date: 2021-10-22 16:30:52
-<<<<<<< HEAD
 updated: 2021-10-22 21:41:42
-=======
-updated: 2022-04-03 01:21:18
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # 第19章 部署Spring
 

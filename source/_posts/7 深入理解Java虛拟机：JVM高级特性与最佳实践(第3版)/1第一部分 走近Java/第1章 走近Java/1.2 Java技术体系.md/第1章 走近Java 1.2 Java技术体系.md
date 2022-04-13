@@ -7,11 +7,7 @@ categories:
   - 1.2 Java技术体系.md
 abbrlink: 3ba11da8
 date: 2021-09-14 10:03:06
-<<<<<<< HEAD
 updated: 2021-11-28 12:11:57
-=======
-updated: 2022-04-03 01:21:18
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # 1.2 Java技术体系
 从广义上讲，Kotlin、Clojure、JRuby、Groovy等运行于Java虚拟机上的编程语言及其相关的程序 都属于Java技术体系中的一员。如果仅从传统意义上来看，JCP官方[^1]所定义的Java技术体系包括了以 下几个组成部分：
@@ -23,11 +19,7 @@ updated: 2022-04-03 01:21:18
 
 我们可以把Java程序设计语言、Java虚拟机、Java类库这三部分统称为JDK（Java Development Kit），JDK是用于支持Java程序开发的最小环境，本书中为行文方便，在不产生歧义的地方常以JDK 来代指整个Java技术体系[^2]。可以把Java类库API中的Java SE API子集[^3]和Java虚拟机这两部分统称为 JRE（Java Runtime Environment），JRE是支持Java程序运行的标准环境。图1-2展示了Java技术体系所 包括的内容，以及JDK和JRE所涵盖的范围。
 
-<<<<<<< HEAD
 ![image-20210914101623411](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210914101630.png)
-=======
-![image-20210914101623411](https://gitee.com/XiaoLan223/images/raw/master/Blog/Sum/20210914101630.png)
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 
 以上是根据Java各个组成部分的功能来进行划分，如果按照技术所服务的领域来划分，或者按照 技术关注的重点业务来划分的话，那Java技术体系可以分为以下四条主要的产品线：
 - Java Card：支持Java小程序（Applets）运行在小内存设备（如智能卡）上的平台。

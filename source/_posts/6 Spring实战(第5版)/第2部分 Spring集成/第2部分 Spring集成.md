@@ -1,19 +1,11 @@
 ---
 title: 第2部分 Spring集成
-<<<<<<< HEAD
-categories:
-=======
 categories: 
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
   - 6 Spring实战(第5版)
   - 第2部分 Spring集成
 abbrlink: ac01912
 date: 2021-10-14 21:17:15
-<<<<<<< HEAD
 updated: 2021-10-14 21:17:15
-=======
-updated: 2022-04-03 01:21:18
->>>>>>> 4ed4de8f07c69857a05fa9fda8014b55c4291ca0
 ---
 # 第2部分 Spring集成
 第2部分的章节将会涵盖Spring应用与其他应用集成的话题。
