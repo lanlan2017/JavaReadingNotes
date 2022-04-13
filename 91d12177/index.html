@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="2.3 字符的编码与乱码本节讨论与语言无关的字符和文本的编码以及乱码。我们在处理文件、浏览网页、编写程序时，时不时会碰到乱码的情况。乱码几乎总是令人心烦，让人困惑，通过阅读本节，相信你就可以自信从容地面对乱码，进而恢复乱码了。 编码和乱码听起来比较复杂，但其实并不复杂，请耐心阅读，让我们逐步来探讨。我们先介绍各种编码，然后介绍编码转换，分析乱码出现的原因，最后介绍如何从乱码中恢复。编码有两大类：一">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.3 字符的编码与乱码">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/91d12177/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="2.3 字符的编码与乱码本节讨论与语言无关的字符和文本的编码以及乱码。我们在处理文件、浏览网页、编写程序时，时不时会碰到乱码的情况。乱码几乎总是令人心烦，让人困惑，通过阅读本节，相信你就可以自信从容地面对乱码，进而恢复乱码了。 编码和乱码听起来比较复杂，但其实并不复杂，请耐心阅读，让我们逐步来探讨。我们先介绍各种编码，然后介绍编码转换，分析乱码出现的原因，最后介绍如何从乱码中恢复。编码有两大类：一">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144602.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144653.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144707.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144724.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208145753.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150056.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150313.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150849.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150903.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150917.jpeg">
+<meta property="article:published_time" content="2021-12-04T12:14:03.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:07.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144602.jpeg">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/91d12177/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/91d12177/","path":"/91d12177/","title":"2.3 字符的编码与乱码"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2.3 字符的编码与乱码 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-3-%E5%AD%97%E7%AC%A6%E7%9A%84%E7%BC%96%E7%A0%81%E4%B8%8E%E4%B9%B1%E7%A0%81"><span class="nav-text">2.3 字符的编码与乱码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-1-%E5%B8%B8%E8%A7%81%E9%9D%9EUnicode%E7%BC%96%E7%A0%81"><span class="nav-text">2.3.1 常见非Unicode编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ASCII"><span class="nav-text">1. ASCII</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ISO-8859-1"><span class="nav-text">2. ISO 8859-1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Windows-1252"><span class="nav-text">3. Windows-1252</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-GB2312"><span class="nav-text">4. GB2312</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-GBK"><span class="nav-text">5. GBK</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-GB18030"><span class="nav-text">6. GB18030</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Big5"><span class="nav-text">7. Big5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%EF%BC%8E%E7%BC%96%E7%A0%81%E6%B1%87%E6%80%BB"><span class="nav-text">8．编码汇总</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-2-Unicode%E7%BC%96%E7%A0%81"><span class="nav-text">2.3.2 Unicode编码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-UTF-32"><span class="nav-text">1. UTF-32</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-UTF-16"><span class="nav-text">2. UTF-16</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-UTF-8"><span class="nav-text">3. UTF-8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Unicode%E7%BC%96%E7%A0%81%E5%B0%8F%E7%BB%93"><span class="nav-text">4. Unicode编码小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-3-%E7%BC%96%E7%A0%81%E8%BD%AC%E6%8D%A2"><span class="nav-text">2.3.3 编码转换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-4-%E4%B9%B1%E7%A0%81%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-text">2.3.4 乱码的原因</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E8%A7%A3%E6%9E%90%E9%94%99%E8%AF%AF"><span class="nav-text">1．解析错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E9%94%99%E8%AF%AF%E7%9A%84%E8%A7%A3%E6%9E%90%E5%92%8C%E7%BC%96%E7%A0%81%E8%BD%AC%E6%8D%A2"><span class="nav-text">2．错误的解析和编码转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-5-%E4%BB%8E%E4%B9%B1%E7%A0%81%E4%B8%AD%E6%81%A2%E5%A4%8D"><span class="nav-text">2.3.5 从乱码中恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E4%BD%BF%E7%94%A8UltraEdit"><span class="nav-text">1．使用UltraEdit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E4%BD%BF%E7%94%A8Java"><span class="nav-text">2．使用Java</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/91d12177/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2.3 字符的编码与乱码
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-04 20:14:03" itemprop="dateCreated datePublished" datetime="2021-12-04T20:14:03+08:00">2021-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:07" itemprop="dateModified" datetime="2021-12-07T12:07:07+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/1%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">1第一部分 编程基础与二进制</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/1%E7%AC%AC%E4%B8%80%E9%83%A8%E5%88%86-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80%E4%B8%8E%E4%BA%8C%E8%BF%9B%E5%88%B6/%E7%AC%AC2%E7%AB%A0-%E7%90%86%E8%A7%A3%E6%95%B0%E6%8D%AE%E8%83%8C%E5%90%8E%E7%9A%84%E4%BA%8C%E8%BF%9B%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">第2章 理解数据背后的二进制</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/91d12177/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/91d12177/" data-xid="/JavaReadingNotes/91d12177/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="2-3-字符的编码与乱码"><a href="#2-3-字符的编码与乱码" class="headerlink" title="2.3 字符的编码与乱码"></a>2.3 字符的编码与乱码</h1><p>本节讨论与语言无关的字符和文本的编码以及乱码。我们在处理文件、浏览网页、编写程序时，时不时会碰到乱码的情况。乱码几乎总是令人心烦，让人困惑，通过阅读本节，相信你就可以自信从容地面对乱码，进而恢复乱码了。</p>
+<p>编码和乱码听起来比较复杂，但其实并不复杂，请耐心阅读，让我们逐步来探讨。我们先介绍各种编码，然后介绍编码转换，分析乱码出现的原因，最后介绍如何从乱码中恢复。编码有两大类：一类是非Unicode编码；另一类是Unicode编码。我们先介绍非Unicode编码。</p>
+<h2 id="2-3-1-常见非Unicode编码"><a href="#2-3-1-常见非Unicode编码" class="headerlink" title="2.3.1 常见非Unicode编码"></a>2.3.1 常见非Unicode编码</h2><p>下面我们看一些主要的非Unicode编码，包括ASCII、ISO 8859-1、Windows-1252、GB2312、GBK、GB18030和Big5。</p>
+<h3 id="1-ASCII"><a href="#1-ASCII" class="headerlink" title="1. ASCII"></a>1. ASCII</h3><p>世界上虽然有各种各样的字符，但计算机发明之初没有考虑那么多，基本上只考虑了美国的需求。美国大概只需要128个字符，所以就规定了128个字符的二进制表示方法。这个方法是一个标准，称为ASCII编码，全称是American StandardCode for InformationInterchange，即美国信息互换标准代码。</p>
+<p>128个字符用7位刚好可以表示，计算机存储的最小单位是byte，即8位，ASCII码中最高位设置为0，用剩下的7位表示字符。这7位可以看作数字0～127, ASCII码规定了从0～127的每个数字代表什么含义。</p>
+<p>我们先来看数字32～126的含义，如图2-1所示，除了中文之外，我们平常用的字符基本都涵盖了，键盘上的字符大部分也都涵盖了。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144602.jpeg" alt="epub_923038_22"></p>
+<center>图2-1 ASCII编码：可打印字符</center>
+
+<p>图2-1 ASCII编码：可打印字符数字32～126表示的字符都是可打印字符，0～31和127表示一些不可以打印的字符，这些字符一般用于控制目的，这些字符中大部分都是不常用的，表2-4列出了其中相对常用的字符。</p>
+<center>表2-4 ASCII编码：常用不可打印字符</center>
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144653.jpeg" alt="epub_923038_23"><br>ASCII码对美国是够用了，但对其他国家而言却是不够的，于是，各个国家的各种计算机厂商就发明了各种各种的编码方式以表示自己国家的字符，为了保持与ASCII码的兼容性，一般都是将最高位设置为1。也就是说，当最高位为0时，表示ASCII码，当为1时就是各个国家自己的字符。在这些扩展的编码中，在西欧国家中流行的是ISO 8859-1和Windows-1252，在中国是GB2312、GBK、GB18030和Big5，我们逐个介绍这些编码。</p>
+<h3 id="2-ISO-8859-1"><a href="#2-ISO-8859-1" class="headerlink" title="2. ISO 8859-1"></a>2. ISO 8859-1</h3><p>ISO 8859-1又称Latin-1，它也是使用一个字节表示一个字符，其中0～127与ASCII一样，128～255规定了不同的含义。在128～255中，128～159表示一些控制字符，这些字符也不常用，就不介绍了。160～255表示一些西欧字符，如图2-2所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144707.jpeg" alt="epub_923038_24"></p>
+<center>图2-2 ISO 8859-1</center>
+
+<h3 id="3-Windows-1252"><a href="#3-Windows-1252" class="headerlink" title="3. Windows-1252"></a>3. Windows-1252</h3><p>ISO 8859-1虽然号称是标准，用于西欧国家，但它连欧元（€）这个符号都没有，因为欧元比较晚，而标准比较早。实际中使用更为广泛的是Windows-1252编码，这个编码与ISO 8859-1基本是一样的，区别只在于数字128～159。Windows-1252使用其中的一些数字表示可打印字符，这些数字表示的含义如图2-3所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208144724.jpeg"></p>
+<center>图2-3 Windows-1252编码：区别于ISO8859-1的部分</center>
+
+<p>这个编码中加入了欧元符号以及一些其他常用的字符。基本上可以认为，ISO8859-1已被Windows-1252取代，在很多应用程序中，即使文件声明它采用的是ISO 8859-1编码，解析的时候依然被当作Windows-1252编码。</p>
+<p>HTML5甚至明确规定，如果文件声明的是ISO 8859-1编码，它应该被看作Win-dows-1252编码。为什么要这样呢？因为大部分人搞不清楚ISO 8859-1和Windows-1252的区别，当他说ISO 8859-1的时候，其实他指的是Windows-1252，所以标准干脆就这么强制规定了。</p>
+<h3 id="4-GB2312"><a href="#4-GB2312" class="headerlink" title="4. GB2312"></a>4. GB2312</h3><p>美国和西欧字符用一个字节就够了，但中文显然是不够的。中文第一个标准是GB2312。GB2312标准主要针对的是简体中文常见字符，包括约7000个汉字和一些罕用词和繁体字。</p>
+<p>GB2312固定使用两个字节表示汉字，在这两个字节中，最高位都是1，如果是0，就认为是ASCII字符。在这两个字节中，其中高位字节范围是0xA1～0xF7，低位字节范围是0xA1～0xFE。</p>
+<p>比如，“老马”的GB2312编码（十六进制表示）如表2-5所示。</p>
+<center>表2-5 GB2312编码示例</center>
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208145753.jpeg" alt="epub_923038_26"></p>
+<h3 id="5-GBK"><a href="#5-GBK" class="headerlink" title="5. GBK"></a>5. GBK</h3><p>GBK建立在GB2312的基础上，向下兼容GB2312，也就是说，GB2312编码的字符和二进制表示，在GBK编码里是完全一样的。GBK增加了14 000多个汉字，共计约21 000个汉字，其中包括繁体字。</p>
+<p>GBK同样使用固定的两个字节表示，其中高位字节范围是0x81～0xFE，低位字节范围是0x40～0x7E和0x80～0xFE。</p>
+<p>需要注意的是，低位字节是从0x40（也就是64）开始的，也就是说，低位字节的最高位可能为0。那怎么知道它是汉字的一部分，还是一个ASCII字符呢？其实很简单，因为汉字是用固定两个字节表示的，在解析二进制流的时候，如果第一个字节的最高位为1，那么就将下一个字节读进来一起解析为一个汉字，而不用考虑它的最高位，解析完后，跳到第三个字节继续解析。</p>
+<h3 id="6-GB18030"><a href="#6-GB18030" class="headerlink" title="6. GB18030"></a>6. GB18030</h3><p>GB18030向下兼容GBK，增加了55 000多个字符，共76 000多个字符，包括了很多少数民族字符，以及中日韩统一字符。</p>
+<p>用两个字节已经表示不了GB18030中的所有字符，GB18030使用变长编码，有的字符是两个字节，有的是四个字节。在两字节编码中，字节表示范围与GBK一样。在四字节编码中，第一个字节的值为0x81～0xFE，第二个字节的值为0x30～0x39，第三个字节的值为0x81～0xFE，第四个字节的值为0x30～0x39。</p>
+<p>解析二进制时，如何知道是两个字节还是4个字节表示一个字符呢？看第二个字节的范围，如果是0x30～0x39就是4个字节表示，因为两个字节编码中第二个字节都比这个大。</p>
+<h3 id="7-Big5"><a href="#7-Big5" class="headerlink" title="7. Big5"></a>7. Big5</h3><p>Big5是针对繁体中文的，广泛用于我国台湾地区和我国香港特别行政区等地。Big5包括13 000多个繁体字，和GB2312类似，一个字符同样固定使用两个字节表示。在这两个字节中，高位字节范围是0x81～0xFE，低位字节范围是0x40～0x7E和0xA1～0xFE。</p>
+<h3 id="8．编码汇总"><a href="#8．编码汇总" class="headerlink" title="8．编码汇总"></a>8．编码汇总</h3><p>我们简单汇总一下前面的内容。</p>
+<p>ASCII码是基础，使用一个字节表示，最高位设为0，其他7位表示128个字符。其他编码都是兼容ASCII的，最高位使用1来进行区分。</p>
+<p>西欧主要使用Windows-1252，使用一个字节，增加了额外128个字符。</p>
+<p>我国内地的三个主要编码GB2312、GBK、GB18030有时间先后关系，表示的字符数越来越多，且后面的兼容前面的，GB2312和GBK都是用两个字节表示，而GB18030则使用两个或四个字节表示。</p>
+<p>我国香港特别行政区和我国台湾地区的主要编码是Big5。</p>
+<p>如果文本里的字符都是ASCII码字符，那么采用以上所说的任一编码方式都是一样的。</p>
+<p>但如果有高位为1的字符，除了GB2312、GBK、GB18030外，其他编码都是不兼容的。比如，Windows-1252和中文的各种编码是不兼容的，即使Big5和GB18030都能表示繁体字，其表示方式也是不一样的，而这就会出现所谓的乱码，具体我们稍后介绍。</p>
+<h2 id="2-3-2-Unicode编码"><a href="#2-3-2-Unicode编码" class="headerlink" title="2.3.2 Unicode编码"></a>2.3.2 Unicode编码</h2><p>以上我们介绍了中文和西欧的字符与编码，但世界上还有很多其他国家的字符，每个国家的各种计算机厂商都对自己常用的字符进行编码，在编码的时候基本忽略了其他国家的字符和编码，甚至忽略了同一国家的其他计算机厂商，这样造成的结果就是，出现了太多的编码，且互相不兼容。</p>
+<p>世界上所有的字符能不能统一编码呢？可以，这就是Unicode。</p>
+<p>Unicode 做了一件事，就是给世界上所有字符都分配了一个唯一的数字编号，这个编号范围从0x000000～0x10FFFF，包括110多万。但大部分常用字符都在0x0000～0xFFFF之间，即65 536个数字之内。每个字符都有一个Unicode编号，这个编号一般写成十六进制，在前面加U+。大部分中文的编号范围为U+4E00～U+9FFF，例如，“马”的Unicode是U+9A6C。</p>
+<p>简单理解，Unicode主要做了这么一件事，就是给所有字符分配了唯一数字编号。它并没有规定这个编号怎么对应到二进制表示，这是与上面介绍的其他编码不同的，其他编码都既规定了能表示哪些字符，又规定了每个字符对应的二进制是什么，而Unicode本身只规定了每个字符的数字编号是多少。</p>
+<p>那编号怎么对应到二进制表示呢？有多种方案，主要有UTF-32、UTF-16和UTF-8。</p>
+<h3 id="1-UTF-32"><a href="#1-UTF-32" class="headerlink" title="1. UTF-32"></a>1. UTF-32</h3><p>这个最简单，就是字符编号的整数二进制形式，4个字节。</p>
+<p>但有个细节，就是字节的排列顺序，如果第一个字节是整数二进制中的最高位，最后一个字节是整数二进制中的最低位，那这种字节序就叫“大端”（Big Endian,BE），否则，就叫“小端”（Little Endian, LE）。对应的编码方式分别是UTF-32BE和UTF-32LE。</p>
+<p>可以看出，每个字符都用4个字节表示，非常浪费空间，实际采用的也比较少。</p>
+<h3 id="2-UTF-16"><a href="#2-UTF-16" class="headerlink" title="2. UTF-16"></a>2. UTF-16</h3><p>UTF-16使用变长字节表示：</p>
+<p>1）对于编号在U+0000～U+FFFF的字符（常用字符集），直接用两个字节表示。需要说明的是，U+D800～U+DBFF的编号其实是没有定义的。</p>
+<p>2）字符值在U+10000～U+10FFFF的字符（也叫做增补字符集），需要用4个字节表示。前两个字节叫高代理项，范围是U+D800～U+DBFF；后两个字节叫低代理项，范围是U+DC00～U+DFFF。数字编号和这个二进制表示之间有一个转换算法，本书就不介绍了。</p>
+<p>区分是两个字节还是4个字节表示一个字符就看前两个字节的编号范围，如果是U+D800～U+DBFF，就是4个字节，否则就是两个字节。</p>
+<p>UTF-16也有和UTF-32一样的字节序问题，如果高位存放在前面就叫大端（BE），编码就叫UTF-16BE，否则就叫小端，编码就叫UTF-16LE。</p>
+<p>UTF-16常用于系统内部编码，UTF-16比UTF-32节省了很多空间，但是任何一个字符都至少需要两个字节表示，对于美国和西欧国家而言，还是很浪费的。</p>
+<h3 id="3-UTF-8"><a href="#3-UTF-8" class="headerlink" title="3. UTF-8"></a>3. UTF-8</h3><p>UTF-8使用变长字节表示，每个字符使用的字节个数与其Unicode编号的大小有关，编号小的使用的字节就少，编号大的使用的字节就多，使用的字节个数为1～4不等。</p>
+<p>具体来说，各个Unicode编号范围对应的二进制格式如表2-6所示。</p>
+<center>表2-6 UTF-8编码的编号范围与对应的二进制格式</center>
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150056.jpeg" alt="epub_923038_27"><br>表2-6中的x表示可以用的二进制位，而每个字节开头的1或0是固定的。</p>
+<p>小于128的，编码与ASCII码一样，最高位为0。其他编号的第一个字节有特殊含义，最高位有几个连续的1就表示用几个字节表示，而其他字节都以10开头。</p>
+<p>对于一个Unicode编号，具体怎么编码呢？首先将其看作整数，转化为二进制形式（去掉高位的0），然后将二进制位从右向左依次填入对应的二进制格式x中，填完后，如果对应的二进制格式还有没填的x，则设为0。</p>
+<p>我们来看个例子，“马”的Unicode编号是0x9A6C，整数编号是39 532，其对应的UTF-8二进制格式是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1110xxxx 10xxxxxx 10xxxxxx</span><br></pre></td></tr></table></figure>
+
+<p>整数编号39 532的二进制格式是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1001 101001 101100</span><br></pre></td></tr></table></figure>
+
+<p>将这个二进制位从右到左依次填入二进制格式中，结果就是其UTF-8编码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">11101001 10101001 10101100</span><br></pre></td></tr></table></figure>
+
+<p>十六进制表示为0xE9A9AC。</p>
+<p>和UTF-32/UTF-16不同，UTF-8是兼容ASCII的，对大部分中文而言，一个中文字符需要用三个字节表示。</p>
+<h3 id="4-Unicode编码小结"><a href="#4-Unicode编码小结" class="headerlink" title="4. Unicode编码小结"></a>4. Unicode编码小结</h3><p>Unicode给世界上所有字符都规定了一个统一的编号，编号范围达到110多万，但大部分字符都在65 536以内。Unicode本身没有规定怎么把这个编号对应到二进制形式。</p>
+<p>UTF-32/UTF-16/UTF-8都在做一件事，就是把Unicode编号对应到二进制形式，其对应方法不同而已。UTF-32使用4个字节，UTF-16大部分是两个字节，少部分是4个字节，它们都不兼容ASCII编码，都有字节顺序的问题。UTF-8使用1～4个字节表示，兼容ASCII编码，英文字符使用1个字节，中文字符大多用3个字节。</p>
+<h2 id="2-3-3-编码转换"><a href="#2-3-3-编码转换" class="headerlink" title="2.3.3 编码转换"></a>2.3.3 编码转换</h2><p>有了Unicode之后，每一个字符就有了多种不兼容的编码方式，比如说“马”这个字符，它的各种编码方式对应的十六进制如表2-7所示。</p>
+<center>表2-7 字符“马”多种编码方式</center>
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150313.jpeg" alt="epub_923038_28"><br>这几种格式之间可以借助Unicode编号进行编码转换。可以认为：每种编码都有一个映射表，存储其特有的字符编码和Unicode编号之间的对应关系，这个映射表是一个简化的说法，实际上可能是一个映射或转换方法。</p>
+<p>编码转换的具体过程可以是：一个字符从A编码转到B编码，先找到字符的A编码格式，通过A的映射表找到其Unicode编号，然后通过Unicode编号再查B的映射表，找到字符的B编码格式。</p>
+<p>举例来说，“马”从GB18030转到UTF-8，先查GB18030-&gt;Unicode编号表，得到其编号是9A 6C，然后查Uncode编号-&gt;UTF-8表，得到其UTF-8编码：E9 A9AC。</p>
+<p>编码转换改变了字符的二进制内容，但并没有改变字符看上去的样子。</p>
+<h2 id="2-3-4-乱码的原因"><a href="#2-3-4-乱码的原因" class="headerlink" title="2.3.4 乱码的原因"></a>2.3.4 乱码的原因</h2><p>理解了编码，我们来看乱码。乱码有两种常见原因：一种比较简单，就是简单的解析错误；另外一种比较复杂，在错误解析的基础上进行了编码转换。我们分别介绍。</p>
+<h3 id="1．解析错误"><a href="#1．解析错误" class="headerlink" title="1．解析错误"></a>1．解析错误</h3><p>看个简单的例子。一个法国人采用Windows-1252编码写了个文件，发送给了一个中国人，中国人使用GB18030来解析这个字符，看到的可能就是乱码。比如，法国人发送的是Pékin, Windows-1252的二进制（采用十六进制）是50 E9 6B 696E，第二个字节E9对应é，其他都是ASCII码，中国人收到的也是这个二进制，但是他把它看成了GB18030编码，GB18030中E9 6B对应的是字符“閗”，于是他看到的就是“P閗in”，这看来就是一个乱码。</p>
+<p>反之也是一样的，一个GB18030编码的文件如果被看作Windows-1252也是乱码。</p>
+<p>这种情况下，之所以看起来是乱码，是因为看待或者说解析数据的方式错了。只要使用正确的编码方式进行解读就可以纠正了。很多文件编辑器，如EditPlus、NotePad++、UltraEdit都有切换查看编码方式的功能，浏览器也都有切换查看编码方式的功能，如Fire-fox，在菜单“查看”→“文字编码”中即可找到该功能。</p>
+<p>切换查看编码的方式并没有改变数据的二进制本身，而只是改变了解析数据的方式，从而改变了数据看起来的样子，这与前面提到的编码转换正好相反。很多时候，做这样一个编码查看方式的切换就可以解决乱码的问题，但有的时候这样是不够的。</p>
+<h3 id="2．错误的解析和编码转换"><a href="#2．错误的解析和编码转换" class="headerlink" title="2．错误的解析和编码转换"></a>2．错误的解析和编码转换</h3><p>如果怎么改变查看方式都不对，那很有可能就不仅仅是解析二进制的方式不对，而是文本在错误解析的基础上还进行了编码转换。我们举个例子来说明：</p>
+<p>1）两个字“老马”，本来的编码格式是GB18030，编码（十六进制）是C0 CF C2ED。<br>2）这个二进制形式被错误当成了Windows-1252编码，解读成了字符“ÀÏÂí”。<br>3）随后这个字符进行了编码转换，转换成了UTF-8编码，形式还是“ÀÏÂí”，但二进制变成了C3 80 C3 8F C3 82 C3 AD，每个字符两个字节。<br>4）这个时候再按照GB18030解析，字符就变成了乱码形式“脌脧脗铆”，而且这时无论怎么切换查看编码的方式，这个二进制看起来都是乱码。</p>
+<p>这种情况是乱码产生的主要原因。</p>
+<p>这种情况其实很常见，计算机程序为了便于统一处理，经常会将所有编码转换为一种方式，比如UTF-8，在转换的时候，需要知道原来的编码是什么，但可能会搞错，而一旦搞错并进行了转换，就会出现这种乱码。这种情况下，无论怎么切换查看编码方式都是不行的，如表2-8所示。</p>
+<center>表2-8 用不同编码方式查看错误转换后的二进制</center>
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150849.jpeg" alt="epub_923038_29"><br>虽然有这么多形式，但我们看到的乱码形式很可能是“ÀÏÂí”，因为在例子中UTF-8是编码转换的目标编码格式，既然转换为了UTF-8，一般也是要按UTF-8查看。</p>
+<p>那有没有办法恢复呢？如果有，怎么恢复呢？</p>
+<h2 id="2-3-5-从乱码中恢复"><a href="#2-3-5-从乱码中恢复" class="headerlink" title="2.3.5 从乱码中恢复"></a>2.3.5 从乱码中恢复</h2><p>“乱”主要是因为发生了一次错误的编码转换，所谓恢复，是指要恢复两个关键信息：一个是原来的二进制编码方式A；另一个是错误解读的编码方式B。</p>
+<p>恢复的基本思路是尝试进行逆向操作，假定按一种编码转换方式B获取乱码的二进制格式，然后再假定一种编码解读方式A解读这个二进制，查看其看上去的形式，这要尝试多种编码，如果能找到看着正常的字符形式，应该就可以恢复。</p>
+<p>这听上去可能比较抽象，我们举个例子来说明，假定乱码形式是“ÀÏÂí”，尝试多种B和A来看字符形式。我们先使用编辑器，以UltraEdit为例，然后使用Java编程来看。</p>
+<h3 id="1．使用UltraEdit"><a href="#1．使用UltraEdit" class="headerlink" title="1．使用UltraEdit"></a>1．使用UltraEdit</h3><p>UltraEdit支持编码转换和切换查看编码方式，也支持文件的二进制显示和编辑，所以我们以UltraEdit为例，其他一些编辑器可能也有类似功能。</p>
+<p>新建一个UTF-8编码的文件，复制“ÀÏÂí”到文件中。使用编码转换，转换到Win-dows-1252编码，执行“文件”→“转换到”→“西欧”→WIN-1252命令。</p>
+<p>转换完后，打开十六进制编辑，查看其二进制形式，如图2-4所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150903.jpeg" alt="epub_923038_30"></p>
+<center>图2-4 使用UltraEdit查看二进制</center>
+
+<p>可以看出，其形式还是“ÀÏÂí”，但二进制格式变成了 C0 CF C2 ED。这个过程相当于假设B是Windows-1252。这个时候，再按照多种编码格式查看这个二进制，在UltraEdit中，关闭十六进制编辑，切换查看编码方式为GB18030，执行“视图”→“查看方式（文件编码）”→“东亚语言”→GB18030命令，切换完后，同样的二进制神奇地变为了正确的字符形式“老马”，打开十六进制编辑器，可以看出二进制还是C0 CF C2 ED，这个GB18030相当于假设A是GB18030。</p>
+<p>这个例子我们碰巧第一次就猜对了。实际中，可能要做多次尝试，过程是类似的，先进行编码转换（使用B编码），然后使用不同编码方式查看（使用A编码），如果能找到看上去对的形式，就恢复了。表2-9列出了主要的B编码格式、对应的二进制，以及按A编码解读的各种形式。</p>
+<center>表2-9 尝试不同编码方式进行恢复</center>
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211208150917.jpeg" alt="epub_923038_31"><br>可以看出，第一行是正确的，也就是说原来的编码其实是A即GB18030，但被错误解读成了B即Windows-1252了。</p>
+<h3 id="2．使用Java"><a href="#2．使用Java" class="headerlink" title="2．使用Java"></a>2．使用Java</h3><p>下面我们来看如何使用Java恢复乱码。关于使用Java我们还有很多知识没有介绍，为了完整性起见，本节一并列出相关代码，初学者不明白的可以暂时略过。Java中处理字符串的类有String, String中有我们需要的两个重要方法。<br>1）public byte[] getBytes(String charsetName)，这个方法可以获取一个字符串的给定编码格式的二进制形式。<br>2）public String(byte bytes[], String charsetName)，这个构造方法以给定的二进制数组bytes按照编码格式charsetName解读为一个字符串。</p>
+<p>将A看作GB18030，将B看作Windows-1252，进行恢复的Java代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String str = <span class="string">&quot;ÀÏÂí&quot;</span>;</span><br><span class="line">String newStr = <span class="keyword">new</span> String(str.getBytes(<span class="string">&quot;windows-1252&quot;</span>), <span class="string">&quot;GB18030&quot;</span>);</span><br><span class="line">System.out.println(newStr);</span><br></pre></td></tr></table></figure>
+
+<p>先按照B编码（Windows-1252）获取字符串的二进制，然后按A编码（GB18030）解读这个二进制，得到一个新的字符串，然后输出这个字符串的形式，输出为“老马”。</p>
+<p>同样，一次碰巧就对了，实际中，我们可以写一个循环，测试不同的A/B编码中的结果形式，如代码清单2-1所示。</p>
+<center>代码清单2-1 恢复乱码的方法</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">recover</span><span class="params">(String str)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> UnsupportedEncodingException</span>&#123;</span><br><span class="line">    String[] charsets = <span class="keyword">new</span> String[]&#123;</span><br><span class="line">            <span class="string">&quot;windows-1252&quot;</span>, <span class="string">&quot;GB18030&quot;</span>, <span class="string">&quot;Big5&quot;</span>, <span class="string">&quot;UTF-8&quot;</span>&#125;;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;charsets.length; i++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;charsets.length; j++)&#123;</span><br><span class="line">            <span class="keyword">if</span>(i! =j)&#123;</span><br><span class="line">                String s = <span class="keyword">new</span> String(str.getBytes(charsets[i]), charsets[j]);</span><br><span class="line">                System.out.println(<span class="string">&quot;---- 原来编码(A)假设是： &quot;</span></span><br><span class="line">                    +charsets[j]+<span class="string">&quot;, 被错误解读为了(B): &quot;</span>+charsets[i]);</span><br><span class="line">                System.out.println(s);</span><br><span class="line">                System.out.println();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上代码使用不同的编码格式进行测试，如果输出有正确的，那么就可以恢复。</p>
+<p>可以看出，恢复的尝试需要进行很多次，上面例子尝试了常见编码GB18030、Windows 1252、Big5、UTF-8共12种组合。这4种编码是常见编码，在大部分实际应用中应该够了。如果有其他编码，可以增加一些尝试。</p>
+<p>不是所有的乱码形式都是可以恢复的，如果形式中有很多不能识别的字符（如？），则很难恢复。另外，如果乱码是由于进行了多次解析和转换错误造成的，也很难恢复。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/91d12177/" title="2.3 字符的编码与乱码">https://lanlan2017.github.io/JavaReadingNotes/91d12177/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/21b11bb9/" rel="prev" title="2.2 小数的二进制表示">
+                  <i class="fa fa-chevron-left"></i> 2.2 小数的二进制表示
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/8c1780e5/" rel="next" title="2.4 char的真正含义">
+                  2.4 char的真正含义 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/91d12177/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/91d12177/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

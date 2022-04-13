@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="13.4 文件和目录操作文件和目录操作最终是与操作系统和文件系统相关的，不同系统的实现是不一样的，但Java中的java.io.File类提供了统一的接口，底层会通过本地方法调用操作系统和文件系统的具体实现，本节，我们就来介绍File类。File类中的操作大概可以分为三类：文件元数据、文件操作、目录操作，在介绍这些操作之前，我们先来看下File的构造方法。 13.4.1 构造方法File既可以表示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.4 文件和目录操作">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/eafc5858/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="13.4 文件和目录操作文件和目录操作最终是与操作系统和文件系统相关的，不同系统的实现是不一样的，但Java中的java.io.File类提供了统一的接口，底层会通过本地方法调用操作系统和文件系统的具体实现，本节，我们就来介绍File类。File类中的操作大概可以分为三类：文件元数据、文件操作、目录操作，在介绍这些操作之前，我们先来看下File的构造方法。 13.4.1 构造方法File既可以表示">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-05T12:59:27.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:09.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/eafc5858/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/eafc5858/","path":"/eafc5858/","title":"13.4 文件和目录操作"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>13.4 文件和目录操作 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-4-%E6%96%87%E4%BB%B6%E5%92%8C%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="nav-text">13.4 文件和目录操作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-1-%E6%9E%84%E9%80%A0%E6%96%B9%E6%B3%95"><span class="nav-text">13.4.1 构造方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-2-%E6%96%87%E4%BB%B6%E5%85%83%E6%95%B0%E6%8D%AE"><span class="nav-text">13.4.2 文件元数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-3-%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-text">13.4.3 文件操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-4-4-%E7%9B%AE%E5%BD%95%E6%93%8D%E4%BD%9C"><span class="nav-text">13.4.4 目录操作</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/eafc5858/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          13.4 文件和目录操作
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-05 20:59:27" itemprop="dateCreated datePublished" datetime="2021-12-05T20:59:27+08:00">2021-12-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:09" itemprop="dateModified" datetime="2021-12-07T12:07:09+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">4第四部分 文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/%E7%AC%AC13%E7%AB%A0-%E6%96%87%E4%BB%B6%E5%9F%BA%E6%9C%AC%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">第13章 文件基本技术</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/eafc5858/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/eafc5858/" data-xid="/JavaReadingNotes/eafc5858/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="13-4-文件和目录操作"><a href="#13-4-文件和目录操作" class="headerlink" title="13.4 文件和目录操作"></a>13.4 文件和目录操作</h1><p>文件和目录操作最终是与操作系统和文件系统相关的，不同系统的实现是不一样的，但Java中的java.io.File类提供了统一的接口，底层会通过本地方法调用操作系统和文件系统的具体实现，本节，我们就来介绍File类。File类中的操作大概可以分为三类：文件元数据、文件操作、目录操作，在介绍这些操作之前，我们先来看下File的构造方法。</p>
+<h2 id="13-4-1-构造方法"><a href="#13-4-1-构造方法" class="headerlink" title="13.4.1 构造方法"></a>13.4.1 构造方法</h2><p>File既可以表示文件，也可以表示目录，它的主要构造方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//pathname表示完整路径，该路径可以是相对路径，也可以是绝对路径</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">File</span><span class="params">(String pathname)</span></span></span><br><span class="line"><span class="function"><span class="comment">//parent表示父目录，child表示孩子</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">File</span><span class="params">(String parent, String child)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">File</span><span class="params">(File parent, String child)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>File中的路径可以是已经存在的，也可以是不存在的。通过new新建一个File对象，不会实际创建一个文件，只是创建一个表示文件或目录的对象，new之后，File对象中的路径是不可变的。</p>
+<h2 id="13-4-2-文件元数据"><a href="#13-4-2-文件元数据" class="headerlink" title="13.4.2 文件元数据"></a>13.4.2 文件元数据</h2><p>文件元数据主要包括文件名和路径、文件基本信息以及一些安全和权限相关的信息。文件名和路径相关的主要方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//pathname表示完整路径，该路径可以是相对路径，也可以是绝对路径</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">File</span><span class="params">(String pathname)</span></span></span><br><span class="line"><span class="function"><span class="comment">//parent表示父目录，child表示孩子</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">File</span><span class="params">(String parent, String child)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">File</span><span class="params">(File parent, String child)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> <span class="comment">//返回文件或目录名称，不含路径名</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isAbsolute</span><span class="params">()</span> <span class="comment">//判断File中的路径是否是绝对路径</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getPath</span><span class="params">()</span> <span class="comment">//返回构造File对象时的完整路径名，包括路径和文件名称</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getAbsolutePath</span><span class="params">()</span> <span class="comment">//返回完整的绝对路径名</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回标准的完整路径名，它会去掉路径中的冗余名称如&quot;.&quot;, &quot;..&quot;，跟踪软链接(Unix系统概念)等</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getCanonicalPath</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">getParent</span><span class="params">()</span> <span class="comment">//返回父目录路径</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> File <span class="title">getParentFile</span><span class="params">()</span> <span class="comment">//返回父目录的File对象</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回一个新的File对象，新的File对象使用getAbsolutePath()的返回值作为参数构造</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> File <span class="title">getAbsoluteFile</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="comment">//返回一个新的File对象，新的File对象使用getCanonicalPath()的返回值作为参数构造</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> File <span class="title">getCanonicalFile</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>这些方法比较直观，我们就不解释了。File类中有4个静态变量，表示路径分隔符，它</p>
+<p>们是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String separator</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">char</span> separatorChar</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> String pathSeparator</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">char</span> pathSeparatorChar</span><br></pre></td></tr></table></figure>
+
+<p>separator和separatorChar表示文件路径分隔符，在Windows系统中，一般为’&#39;,Linux系统中一般为’/‘。pathSeparator和pathSeparatorChar表示多个文件路径中的分隔符，比如，环境变量PATH中的分隔符，Java类路径变量classpath中的分隔符，在执行命令时，操作系统会从PATH指定的目录中寻找命令，Java运行时加载class文件时，会从classpath指定的路径中寻找类文件。在Windows系统中，这个分隔符一般为’; ‘，在Linux系统中，这个分隔符一般为’:’。</p>
+<p>除了文件名和路径，File对象还有如下方法，以获取文件或目录的基本信息：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">exists</span><span class="params">()</span> <span class="comment">//文件或目录是否存在</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isDirectory</span><span class="params">()</span> <span class="comment">//是否为目录</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isFile</span><span class="params">()</span> <span class="comment">//是否为文件</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">length</span><span class="params">()</span> <span class="comment">//文件长度，字节数，对目录没有意义</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">lastModified</span><span class="params">()</span> <span class="comment">//最后修改时间，从纪元时开始的毫秒数</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setLastModified</span><span class="params">(<span class="keyword">long</span> time)</span> <span class="comment">//设置最后修改时间，返回是否修改成功</span></span></span><br></pre></td></tr></table></figure>
+
+<p>需要说明的是，File对象没有返回创建时间的方法，因为创建时间不是一个公共概念， Linux/Unix就没有创建时间的概念。</p>
+<p>File类中与安全和权限相关的主要方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isHidden</span><span class="params">()</span> <span class="comment">//是否为隐藏文件</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canExecute</span><span class="params">()</span> <span class="comment">//是否可执行</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canRead</span><span class="params">()</span> <span class="comment">//是否可读</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">canWrite</span><span class="params">()</span> <span class="comment">//是否可写</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setReadOnly</span><span class="params">()</span> <span class="comment">//设置文件为只读文件</span></span></span><br><span class="line"><span class="function"><span class="comment">//修改文件读权限</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setReadable</span><span class="params">(<span class="keyword">boolean</span> readable, <span class="keyword">boolean</span> ownerOnly)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setReadable</span><span class="params">(<span class="keyword">boolean</span> readable)</span></span></span><br><span class="line"><span class="function"><span class="comment">//修改文件写权限</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setWritable</span><span class="params">(<span class="keyword">boolean</span> writable, <span class="keyword">boolean</span> ownerOnly)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setWritable</span><span class="params">(<span class="keyword">boolean</span> writable)</span></span></span><br><span class="line"><span class="function"><span class="comment">//修改文件可执行权限</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setExecutable</span><span class="params">(<span class="keyword">boolean</span> executable, <span class="keyword">boolean</span> ownerOnly)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">setExecutable</span><span class="params">(<span class="keyword">boolean</span> executable)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在修改方法中，如果修改成功，返回true，否则返回false。在设置权限方法中，owner-Only为true表示只针对owner，为false表示针对所有用户，没有指定ownerOnly的方法中，ownerOnly相当于是true。</p>
+<h2 id="13-4-3-文件操作"><a href="#13-4-3-文件操作" class="headerlink" title="13.4.3 文件操作"></a>13.4.3 文件操作</h2><p>文件操作主要有创建、删除、重命名。</p>
+<p>新建一个File对象不会实际创建文件，但如下方法可以：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">createNewFile</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>创建成功返回true，否则返回false，新创建的文件内容为空。如果文件已存在，不会创建。</p>
+<p>File对象还有两个静态方法，可以创建临时文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> File <span class="title">createTempFile</span><span class="params">(String prefix, String suffix)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> File <span class="title">createTempFile</span><span class="params">(String prefix, String suffix,</span></span></span><br><span class="line"><span class="params"><span class="function">    File directory)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>临时文件的完整路径名是系统指定的、唯一的，但可以通过参数指定前缀（prefix）、后缀（suffix）和目录（directory）。prefix是必需的，且至少要三个字符；suffix如果为null，则默认为．tmp; directory如果不指定或指定为null，则使用系统默认目录。</p>
+<p>File类的删除方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">delete</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deleteOnExit</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>delete删除文件或目录，删除成功返回true，否则返回false。如果File是目录且不为空，则delete不会成功，返回false，换句话说，要删除目录，先要删除目录下的所有子目录和文件。deleteOnExit将File对象加入到待删列表，在Java虚拟机正常退出的时候进行实际删除。</p>
+<p>File类的重命名方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">renameTo</span><span class="params">(File dest)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>参数dest代表重命名后的文件，重命名能否成功与系统有关，返回值代表是否成功。</p>
+<h2 id="13-4-4-目录操作"><a href="#13-4-4-目录操作" class="headerlink" title="13.4.4 目录操作"></a>13.4.4 目录操作</h2><p>当File对象代表目录时，可以执行目录相关的操作，如创建、遍历。有两个方法用于创建目录：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">mkdir</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">mkdirs</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>它们都是创建目录，创建成功返回true，失败返回false。需要注意的是，如果目录已存在，返回值是false。这两个方法的区别在于：如果某一个中间父目录不存在，则mkdir会失败，返回false，而mkdirs则会创建必需的中间父目录。</p>
+<p>有如下方法访问一个目录下的子目录和文件：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> String[] list()</span><br><span class="line"><span class="keyword">public</span> String[] list(FilenameFilter filter)</span><br><span class="line"><span class="keyword">public</span> File[] listFiles()</span><br><span class="line"><span class="keyword">public</span> File[] listFiles(FileFilter filter)</span><br><span class="line"><span class="keyword">public</span> File[] listFiles(FilenameFilter filter)</span><br></pre></td></tr></table></figure>
+
+<p>它们返回的都是直接子目录或文件，不会返回子目录下的文件。list返回的是文件名数组，而listFiles返回的是File对象数组。FilenameFilter和FileFilter都是接口，用于过滤， FileFilter的定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FileFilter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File pathname)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>FilenameFilter的定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FilenameFilter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File dir, String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在遍历子目录和文件时，针对每个文件，会调用FilenameFilter或FileFilter的accept方法，只有accept方法返回true时，才将该子目录或文件包含到返回结果中。Filename-Filter和FileFilter的区别在于：FileFilter的accept方法参数只有一个File对象，而File-nameFilter的accept方法参数有两个，dir表示父目录，name表示子目录或文件名。我们来看个例子，列出当前目录下的所有扩展名为．txt的文件，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">File f = <span class="keyword">new</span> File(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">File[] files = f.listFiles(<span class="keyword">new</span> FilenameFilter()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File dir, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(name.endsWith(<span class="string">&quot;.txt&quot;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>我们创建了个FilenameFilter的匿名内部类对象并传递给了listFiles。</p>
+<p>使用遍历方法，可以方便地进行递归遍历，完成一些更为高级的功能。比如，计算一个目录下的所有文件的大小（包括子目录），代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">sizeOfDirectory</span><span class="params">(<span class="keyword">final</span> File directory)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> size = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span>(directory.isFile()) &#123;</span><br><span class="line">        <span class="keyword">return</span> directory.length();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">for</span>(File file : directory.listFiles()) &#123;</span><br><span class="line">            <span class="keyword">if</span>(file.isFile()) &#123;</span><br><span class="line">                size += file.length();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                size += sizeOfDirectory(file);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> size;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再如，在一个目录下，查找所有给定文件名的文件，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Collection&lt;File&gt; <span class="title">findFile</span><span class="params">(<span class="keyword">final</span> File directory,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">final</span> String fileName)</span> </span>&#123;</span><br><span class="line">    List&lt;File&gt; files = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span>(File f : directory.listFiles()) &#123;</span><br><span class="line">        <span class="keyword">if</span>(f.isFile() &amp;&amp; f.getName().equals(fileName)) &#123;</span><br><span class="line">            files.add(f);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(f.isDirectory()) &#123;</span><br><span class="line">            files.addAll(findFile(f, fileName));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> files;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>前面介绍了File类的delete方法，我们提到，如果要删除目录而目录不为空，需要先清空目录，利用遍历方法，我们可以写一个删除非空目录的方法，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">deleteRecursively</span><span class="params">(<span class="keyword">final</span> File file)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(file.isFile()) &#123;</span><br><span class="line">        <span class="keyword">if</span>(! file.delete()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">&quot;Failed to delete &quot;</span></span><br><span class="line">                    + file.getCanonicalPath());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span>(file.isDirectory()) &#123;</span><br><span class="line">        <span class="keyword">for</span>(File child : file.listFiles()) &#123;</span><br><span class="line">            deleteRecursively(child);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(! file.delete()) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IOException(<span class="string">&quot;Failed to delete &quot;</span></span><br><span class="line">                    + file.getCanonicalPath());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整的代码在github上，地址为<a target="_blank" rel="noopener" href="https://github.com/swiftma/program-logic%EF%BC%8C%E4%BD%8D%E4%BA%8E%E5%8C%85shuo">https://github.com/swiftma/program-logic，位于包shuo</a>. laoma.file.c59下。至此，关于File类就介绍完了，File类封装了操作系统和文件系统的差异，提供了统一的文件和目录API。</p>
+<p>关于文件处理的基本技术，包括文件的基本概念、二进制文件与字节流、文本文件与字符流，以及文件和目录操作，至此，我们就介绍完了。下一章，我们来看文件处理相关的一些高级技术。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/eafc5858/" title="13.4 文件和目录操作">https://lanlan2017.github.io/JavaReadingNotes/eafc5858/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/4d7c2b19/" rel="prev" title="13.3 文本文件和字符流">
+                  <i class="fa fa-chevron-left"></i> 13.3 文本文件和字符流
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/7844025/" rel="next" title="14.0 第14章 文件高级技术 14.1 常见文件类型处理">
+                  14.0 第14章 文件高级技术 14.1 常见文件类型处理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/eafc5858/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/eafc5858/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

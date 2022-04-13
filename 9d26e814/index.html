@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="6.4 数据校验 6.4.2 JSR 303校验JSR 303是Java为Bean数据合法性校验所提供的一个标准规范,叫作Bean Validation。2009年12月Java EE6发布**,Bean Validation作为一个重要特性被包含其中,用于对JavaBean中的字段值进行验证。官方参考实现是Hibernate Validation。Bean Validation为 JavaBea">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.4.2 JSR 303校验">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/9d26e814/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="6.4 数据校验 6.4.2 JSR 303校验JSR 303是Java为Bean数据合法性校验所提供的一个标准规范,叫作Bean Validation。2009年12月Java EE6发布**,Bean Validation作为一个重要特性被包含其中,用于对JavaBean中的字段值进行验证。官方参考实现是Hibernate Validation。Bean Validation为 JavaBea">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/24.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/25.png">
+<meta property="article:published_time" content="2019-06-01T14:00:58.000Z">
+<meta property="article:modified_time" content="2020-06-03T21:36:46.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/24.png">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/9d26e814/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/9d26e814/","path":"/9d26e814/","title":"6.4.2 JSR 303校验"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>6.4.2 JSR 303校验 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#6-4-%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C-6-4-2-JSR-303%E6%A0%A1%E9%AA%8C"><span class="nav-text">6.4 数据校验 6.4.2 JSR 303校验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BDJSR-303"><span class="nav-text">下载JSR 303</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSR-303%E6%B3%A8%E8%A7%A3"><span class="nav-text">JSR 303注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hibernate-Validator%E6%89%A9%E5%B1%95%E6%B3%A8%E8%A7%A3"><span class="nav-text">Hibernate Validator扩展注解</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-%E6%B5%8B%E8%AF%95JSR-303%E6%A0%A1%E9%AA%8C"><span class="nav-text">示例 测试JSR 303校验</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#registerForm-jsp"><span class="nav-text">registerForm.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#User-java"><span class="nav-text">User.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UserController-java"><span class="nav-text">UserController.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#success-jsp"><span class="nav-text">success.jsp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BD%E9%99%85%E5%8C%96%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA%E4%BF%A1%E6%81%AF"><span class="nav-text">国际化错误提示信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E6%B6%88%E6%81%AF%E4%BB%A3%E7%A0%81"><span class="nav-text">错误消息代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#message-en-US-properties"><span class="nav-text">message_en_US.properties</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#message-zh-CN-properties"><span class="nav-text">message_zh_CN.properties</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#springmvc-config-xml"><span class="nav-text">springmvc-config.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%B1%E5%A1%AB%E8%A1%A8%E5%8D%95"><span class="nav-text">乱填表单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E6%8F%90%E7%A4%BA"><span class="nav-text">错误提示</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/9d26e814/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          6.4.2 JSR 303校验
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-01 22:00:58" itemprop="dateCreated datePublished" datetime="2019-06-01T22:00:58+08:00">2019-06-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-06-04 05:36:46" itemprop="dateModified" datetime="2020-06-04T05:36:46+08:00">2020-06-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC6%E7%AB%A0-SpringMVC%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%92%8C%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">第6章 SpringMVC的数据转换 格式化和数据校验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC6%E7%AB%A0-SpringMVC%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%92%8C%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/6-4-%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">6.4 数据校验</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/9d26e814/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/9d26e814/" data-xid="/JavaReadingNotes/9d26e814/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="6-4-数据校验-6-4-2-JSR-303校验"><a href="#6-4-数据校验-6-4-2-JSR-303校验" class="headerlink" title="6.4 数据校验 6.4.2 JSR 303校验"></a>6.4 数据校验 6.4.2 JSR 303校验</h1><p><code>JSR 303</code>是<code>Java</code>为<code>Bean</code>数据合法性校验所提供的一个标准规范,叫作<code>Bean Validation</code>。2009年12月<code>Java EE6</code>发布**,<code>Bean Validation</code><strong>作为一个重要特性被包含其中,<strong>用于对<code>JavaBean</code>中的字段值进行验证</strong>。官方参考实现是<code>Hibernate Validation</code>。<br><code>Bean Validation</code>为 <code>JavaBean</code>验证定义了相应的元数据类型和<code>API</code>。在应用程序中通过在<code>Bean</code>属性上标注类似于<code>@NotNull</code>、<code>@Max</code>等标准的注解指定校验规则,并通过标注的验证接口对<code>Bean</code>进行验证。<code>Bean Validation</code>是一个运行时的数据验证框架,在验证之后验证的错误信息会被马上返回。<br>可以通过<a target="_blank" rel="noopener" href="http://jcp.org/en/jsr/detail?id=303">http://jcp.org/en/jsr/detail?id=303</a>了解<code>JSR 303</code>的详细内容。<br><code>JSR 303</code>是一个规范,它的</strong>核心接口是<code>Javax.validation.Validator</code>**,该接口根据目标对象类中所标注的校验注解进行数据校验,并得到校验结果。</p>
+<h2 id="下载JSR-303"><a href="#下载JSR-303" class="headerlink" title="下载JSR 303"></a>下载JSR 303</h2><p><code>JSR 303</code>目前有两个实现第一个实现是 <code>Hibernate Validator</code>,可以从以下网站下载:<br><a target="_blank" rel="noopener" href="https://sourceforge.net/projects/hibernate/files/hibernate-validator/">https://sourceforge.net/projects/hibernate/files/hibernate-validator/</a><br>第二个实现是<code>Apache bval</code>,可以从以下网站下载：<br><a target="_blank" rel="noopener" href="http://bval.apache.org/downloads.html">http://bval.apache.org/downloads.html</a></p>
+<h2 id="JSR-303注解"><a href="#JSR-303注解" class="headerlink" title="JSR 303注解"></a>JSR 303注解</h2><p><code>JSR 303</code>中定义了一套可标注在成员变量、属性方法上的校验注解</p>
+<table>
+<thead>
+<tr>
+<th align="left">注解</th>
+<th align="left">功能</th>
+<th align="left">范例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>@Null</code></td>
+<td align="left">验证对象是否为<code>null</code></td>
+<td align="left"><code>@Null<br>String desc;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@NotNull</code></td>
+<td align="left">验证对象是否不为<code>null</code>,无法检查长度为0的字符串,<strong>用于验证基本数据类型</strong></td>
+<td align="left"><code>@NotNull<br>String name;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@NotBlank</code></td>
+<td align="left">检查约束字符串是不是null,被Trim的长度是否大于0,<strong>只作用于字符串,且会去掉前后空格</strong></td>
+<td align="left"><code>@NotBlank<br>String name;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@AssertTrue</code></td>
+<td align="left">验证<code>Boolean</code>对象是否为<code>true</code></td>
+<td align="left"><code>@AssertTrue<br>String isEmpty;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@AssertFalse</code></td>
+<td align="left">验证<code>Boolean</code>对象是否为<code>false</code></td>
+<td align="left"><code>@AssertTrue<br>String isEmpty;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Max(value)</code></td>
+<td align="left">验证<code>Number</code>和<code>String</code>对象是否<strong>小于或者等于</strong>指定的值</td>
+<td align="left"><code>@Max(0)<br>int age;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Min(value)</code></td>
+<td align="left">验证<code>Number</code>和<code>String</code>对象是否<strong>大于或者等于</strong>指定的值</td>
+<td align="left"><code>@Min(160)<br>int age;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@DecimalMax(value)</code></td>
+<td align="left">被标注的值必须<strong>不大于约束中指定的最大值</strong>.。这个约束的参数是一个通过<code>BigDecimal</code>定义的最大值的字符串表示,小数存在精度</td>
+<td align="left"><code>@DecimalMax(1.1)<br>BigDecimal price;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@DecimalMin(value)</code></td>
+<td align="left">被标注的值必须<strong>不小于约束中指定的最小值</strong>.。这个约束的参数是一个通过<code>BigDecimal</code>定义的最小值的字符串表小数存在精度</td>
+<td align="left"><code>@DecimalMax(0.5)<br>BigDecimal price;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Digits(integer,fraction)</code></td>
+<td align="left">验证字符串<strong>是否是符合指定格式的数字</strong>,<code>Integer</code>指定整数精度,<code>fraction</code>指定小数精度</td>
+<td align="left"><code>@Digits(integer=5, fraction=2)<br>BigDecimal price</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Size(min,max)</code></td>
+<td align="left">验证对象(<code>Array</code>、<code>Collection</code>、<code>Map</code>、<code>String)</code>长度是否在给定的范围之内</td>
+<td align="left"><code>@Size(min=15, max=60)<br>int age;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Email</code></td>
+<td align="left">验证<strong>是否是合法的邮件地址</strong></td>
+<td align="left"><code>@Email<br>String email;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Past</code></td>
+<td align="left">验证<code>Date</code>和<code>Calendar</code>对象<strong>是否在当前时间之前</strong></td>
+<td align="left"><code>@Past<br>Date birthDate;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Future</code></td>
+<td align="left">验证<code>Date</code>和<code>Calendar</code>对象是否在当前时间之后</td>
+<td align="left"><code>@FutureDate<br>shippingDate;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Pattern</code></td>
+<td align="left">验证<code>String</code>对象<strong>是否符合正则表达式的规则</strong></td>
+<td align="left"><code>Pattern(regexp="[1][3,8][3,6,9][0-9]&#123;8&#125;")<br>String phone;</code></td>
+</tr>
+</tbody></table>
+<h2 id="Hibernate-Validator扩展注解"><a href="#Hibernate-Validator扩展注解" class="headerlink" title="Hibernate Validator扩展注解"></a>Hibernate Validator扩展注解</h2><p><code>Hibernate Validator</code>是<code>JSR 303</code>的一个参考实现,除了支持所有标准的校验注解之外,它还扩展了如下表所示的注解.</p>
+<table>
+<thead>
+<tr>
+<th align="left">注解</th>
+<th align="left">功能</th>
+<th align="left">实例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>@URL</code></td>
+<td align="left">验证是否是合法的<code>URL</code></td>
+<td align="left"><code>@URL<br>String url;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@CreditCardNumber</code></td>
+<td align="left">验证是否是合法的信用卡号码</td>
+<td align="left"><code>@CreditCardNumber<br>String creditCard;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Length(min,max)</code></td>
+<td align="left">验证字符串的长度必须在指定的范围内</td>
+<td align="left"><code>@Length(min=6, max=8)<br>String password;</code></td>
+</tr>
+<tr>
+<td align="left"><code>@NotEmpty</code></td>
+<td align="left">检查元素是否为<code>Null</code>或者 <code>Empty</code>。用于<code>Array</code>,<code>Collection</code>,<code>Map</code>,<code>String</code></td>
+<td align="left"><code>@NotEmpty<br>String name</code></td>
+</tr>
+<tr>
+<td align="left"><code>@Range(min</code>,<code>max</code>,<code>message)</code></td>
+<td align="left">验证属性值必须在合适的范围内</td>
+<td align="left"><code>@Range(min=18, max=60, message="学生的年龄必须在18岁到60岁之间")<br>int age;</code></td>
+</tr>
+</tbody></table>
+<h1 id="示例-测试JSR-303校验"><a href="#示例-测试JSR-303校验" class="headerlink" title="示例 测试JSR 303校验"></a>示例 测试JSR 303校验</h1><h2 id="registerForm-jsp"><a href="#registerForm-jsp" class="headerlink" title="registerForm.jsp"></a>registerForm.jsp</h2><figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;%<span class="meta">@taglib</span> prefix=<span class="string">&quot;form&quot;</span> uri=<span class="string">&quot;http://www.springframework.org/tags/form&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;测试JSR <span class="number">303</span>&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;注册页面&lt;/h3&gt;</span><br><span class="line">    &lt;!-- 绑定到模型中的user对象 --&gt;</span><br><span class="line">    &lt;form:form modelAttribute=<span class="string">&quot;user&quot;</span> method=<span class="string">&quot;post&quot;</span> action=<span class="string">&quot;login&quot;</span>&gt;</span><br><span class="line">        &lt;table&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;登录名:&lt;/td&gt;</span><br><span class="line">                &lt;!-- 绑定到模型中user对象的loginname属性 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;loginname&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;!-- 当user对象的loginname验证失败时显示 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;loginname&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;密码:&lt;/td&gt;</span><br><span class="line">                &lt;!-- 绑定到模型中user对象的password属性 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;password&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;password&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;用户名:&lt;/td&gt;</span><br><span class="line">                &lt;!-- 绑定到模型中user对象的username属性 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;username&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;!-- 当user对象的username验证失败时显示 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;username&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;年龄:&lt;/td&gt;</span><br><span class="line">                &lt;!-- 绑定到模型中user对象的age属性 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;age&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;age&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;邮箱:&lt;/td&gt;</span><br><span class="line">                &lt;!-- 绑定到模型中user对象的email属性 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;email&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;!-- 当user对象的email验证失败时显示 --&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;email&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;生日:&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;birthday&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;birthday&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;电话:&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:input path=<span class="string">&quot;phone&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;form:errors path=<span class="string">&quot;phone&quot;</span> cssStyle=<span class="string">&quot;color:red&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;提交&quot;</span> /&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">        &lt;/table&gt;</span><br><span class="line">    &lt;/form:form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p><code>registerForm.jsp</code>是一个注册页面,用于提交用户注册信息,注册信息包括用户名、密码、邮箱、电话等。之后将在后台使用<code>JSR 303</code>进行验证。</p>
+<h2 id="User-java"><a href="#User-java" class="headerlink" title="User.java"></a>User.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="meta">@NotBlank</span></span><br><span class="line">    <span class="keyword">private</span> String loginname;</span><br><span class="line">    <span class="meta">@NotBlank</span></span><br><span class="line">    <span class="meta">@Length(min = 6,max = 8)</span></span><br><span class="line">    <span class="keyword">private</span> String password;</span><br><span class="line">    <span class="meta">@NotBlank</span></span><br><span class="line">    <span class="keyword">private</span> String username;</span><br><span class="line">    <span class="meta">@Range(min = 15,max = 60)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> age;</span><br><span class="line">    <span class="meta">@Email</span></span><br><span class="line">    <span class="keyword">private</span> String email;</span><br><span class="line">    <span class="meta">@DateTimeFormat(pattern = &quot;yyyy-MM-dd&quot;)</span></span><br><span class="line">    <span class="meta">@Past</span></span><br><span class="line">    <span class="keyword">private</span> Date birthday;</span><br><span class="line">    <span class="meta">@Pattern(regexp = &quot;[1][3,8][3,6,9][0-9]&#123;8&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> String phone;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;User [loginname=&quot;</span> + loginname + <span class="string">&quot;, password=&quot;</span> + password + <span class="string">&quot;, email=&quot;</span> + email</span><br><span class="line">                + <span class="string">&quot;, username=&quot;</span> + username + <span class="string">&quot;, birthDate=&quot;</span> + birthday + <span class="string">&quot;, phone=&quot;</span> + phone + <span class="string">&quot;]&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>User</code>类使用了<code>Hibernate Validator</code>的注解对前台提交的数据进行验证。</p>
+<h2 id="UserController-java"><a href="#UserController-java" class="headerlink" title="UserController.java"></a>UserController.java</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/registerForm&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">registerForm</span><span class="params">(Model model)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 创建一个user对象给表单绑定</span></span><br><span class="line">        User user = <span class="keyword">new</span> User();</span><br><span class="line">        <span class="comment">// 把user对象设置到模型中</span></span><br><span class="line">        model.addAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">        <span class="comment">// 跳转到注册页面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;registerForm&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 数据校验使用@Valid，后面跟着Errors对象保存校验信息</span></span><br><span class="line">    <span class="meta">@PostMapping(value = &quot;/login&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">login</span><span class="params">(<span class="meta">@Valid</span> <span class="meta">@ModelAttribute</span> User user, Errors errors, Model model)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(user);</span><br><span class="line">        <span class="keyword">if</span> (errors.hasErrors())</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="string">&quot;registerForm&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        model.addAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>UserController</code>中的<code>login</code>方法使用<code>@Valid</code>注解对提交的数据进行校验,后面跟着<code>Errors</code>对象保存校验信息。如果<code>errors</code>中有错误信息,则返回<code>registerForm</code>页面,验证通过则跳转到<code>success</code>页面.</p>
+<h2 id="success-jsp"><a href="#success-jsp" class="headerlink" title="success.jsp"></a>success.jsp</h2><figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;%@ taglib uri=<span class="string">&quot;http://java.sun.com/jsp/jstl/fmt&quot;</span> prefix=<span class="string">&quot;fmt&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;测试JSR <span class="number">303</span>&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;测试JSR <span class="number">303</span>&lt;/h3&gt;</span><br><span class="line">    &lt;br&gt;登录名：$&#123;requestScope.user.loginname &#125;</span><br><span class="line">    &lt;br&gt; 密码：$&#123;requestScope.user.password &#125;</span><br><span class="line">    &lt;br&gt; 用户名：$&#123;requestScope.user.username &#125;</span><br><span class="line">    &lt;br&gt; 年龄：$&#123;requestScope.user.age &#125;</span><br><span class="line">    &lt;br&gt; 邮箱：$&#123;requestScope.user.email &#125;</span><br><span class="line">    &lt;br&gt; 生日：</span><br><span class="line">    &lt;fmt:formatDate value=<span class="string">&quot;$&#123;requestScope.user.birthday&#125;&quot;</span> pattern=<span class="string">&quot;yyyy年MM月dd日&quot;</span> /&gt;</span><br><span class="line">    &lt;br&gt; 电话：$&#123;requestScope.user.phone &#125;</span><br><span class="line">    &lt;br&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>由于<code>&lt;mvc:annotation-driven/&gt;</code>会默认装配好一个<code>LocalValidatorFactoryBean</code>,因此<code>springmvc-config.xml</code>配置文件中只是基本配置,不需要增加其他的配置。</p>
+<h2 id="国际化错误提示信息"><a href="#国际化错误提示信息" class="headerlink" title="国际化错误提示信息"></a>国际化错误提示信息</h2><p>而在实际项目中,我们希望错误信息更加人性化、更具可读性,同时还希望显示国际化的错误信息。接下来我们就为项目加入国际化的错误信息。<br><code>Spring MVC</code>支持国际化显示数据校验的错误信息。每个属性在<code>数据绑定</code>和<code>数据校验</code>发生错误时,都会生成一个对应的<code>FieldError</code>对象,<code>FieldError</code>对象实现了<code>org.springframework.context.MessageSourceResolvable</code>接口,顾名思义<code>MessageSourceResolvable</code>是可用国际化资源进行解析的对象<code>MessageSourceResolvable</code>接口有如下3个方法:</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Object[] getArguments()</code></td>
+<td align="left">返回一组参数对象。</td>
+</tr>
+<tr>
+<td align="left"><code>String[] getCodes()</code></td>
+<td align="left">返回一组消息代码,每一个代码对应一个属性资源,可以使用<code>getArguments()</code>返回的参数对资源属性值进行参数替换。</td>
+</tr>
+<tr>
+<td align="left"><code>String getDefaultEessage()</code></td>
+<td align="left">默认的消息,如果没有装配相应的国际化资源那么显示的所有错误信息都是默认的.</td>
+</tr>
+</tbody></table>
+<h3 id="错误消息代码"><a href="#错误消息代码" class="headerlink" title="错误消息代码"></a>错误消息代码</h3><p>当一个属性校验失败后,校验框架会为该属性生成<code>4个</code>消息代码,这些代码以校验注解类名为前缀,结合类名、属性名以及属性类型名生成多个对应的消息代码。<br>例如之前的<code>User</code>类的<code>loginname</code>属性上标注了一个<code>@NotBlank</code>注解,当该属性的值不满足<code>@NotBlank</code>所定义的限制规则时,就会产生以下4种错误代码:</p>
+<table>
+<thead>
+<tr>
+<th align="left">错误代码</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>NotBlank.user.loginname</code></td>
+<td align="left">根据类名、属性名产生的错误代码。</td>
+</tr>
+<tr>
+<td align="left"><code>NotBlank.loginname</code></td>
+<td align="left">根据属性名产生的错误代码。</td>
+</tr>
+<tr>
+<td align="left"><code>NotBlank.java.lang.String</code></td>
+<td align="left">根据属性类型产生的错误代码</td>
+</tr>
+<tr>
+<td align="left"><code>NotBlank</code></td>
+<td align="left">根据验证注解名产生的错误代码。</td>
+</tr>
+<tr>
+<td align="left">当使用 <code>Spring MVC</code>标签显示错误信息时, <code>Spring MVC</code>会查看<code>Web</code>上下文是否装配了对应的国际化消息,如果没有,则显示默认的错误消息,否则使用国际化消息对错误代码进行显示。</td>
+<td align="left"></td>
+</tr>
+</tbody></table>
+<p>知道<code>错误对象的错误码是对应国际化消息的键名称</code>后,接下来就非常简单了,定义两个国际化资源文件,在<strong>国际化资源文件中为错误代码定义相应的本地化消息内容</strong>。</p>
+<h2 id="message-en-US-properties"><a href="#message-en-US-properties" class="headerlink" title="message_en_US.properties"></a>message_en_US.properties</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">NotBlank.user.loginname= Loginname is not null</span><br><span class="line">NotBlank.user.password= Password is not null</span><br><span class="line">Length.user.password=Password length must be between 6 and 8</span><br><span class="line">NotBlank.user.username= Username is not null</span><br><span class="line">Range.user.age=Age must be between the ages of 15 to 60</span><br><span class="line">Email.user.email=Must be a legitimate email address</span><br><span class="line">Past.user.birthday=Birthday must be a date in the past</span><br><span class="line">Pattern.user.phone=Invalid phone number</span><br></pre></td></tr></table></figure>
+<h2 id="message-zh-CN-properties"><a href="#message-zh-CN-properties" class="headerlink" title="message_zh_CN.properties"></a>message_zh_CN.properties</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">NotBlank.user.loginname=登录名不能为空</span><br><span class="line">NotBlank.user.password=密码不能为空</span><br><span class="line">Length.user.password=密码长度必须在<span class="number">6</span>位到<span class="number">8</span>位之间</span><br><span class="line">NotBlank.user.username=用户名不能为空</span><br><span class="line">Range.user.age=年龄必须在<span class="number">15</span>到<span class="number">60</span>岁之间</span><br><span class="line">Email.user.email=必须是合法的邮箱地址</span><br><span class="line">Past.user.birthday=生日必须是一个过去的日期</span><br><span class="line">Pattern.user.phone=无效的手机号码</span><br></pre></td></tr></table></figure>
+<p>接下来还需要在<code>springmvc-config.xml</code>配置文件中增加国际化的配置,如下所示:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 国际化配置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">&quot;messageSource&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;org.springframework.context.support.ResourceBundleMessageSource&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 国际化资源文件名 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span></span></span><br><span class="line"><span class="tag">        <span class="attr">name</span>=<span class="string">&quot;basenames&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">value</span>=<span class="string">&quot;message&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="springmvc-config-xml"><a href="#springmvc-config-xml" class="headerlink" title="springmvc-config.xml"></a>springmvc-config.xml</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:context</span>=<span class="string">&quot;http://www.springframework.org/schema/context&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:mvc</span>=<span class="string">&quot;http://www.springframework.org/schema/mvc&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns:p</span>=<span class="string">&quot;http://www.springframework.org/schema/p&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/mvc</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/beans/spring-beans.xsd</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/context</span></span></span><br><span class="line"><span class="string"><span class="tag">        http://www.springframework.org/schema/context/spring-context-4.3.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- spring可以自动去扫描base-pack下面的包或者子包下面的java文件，</span></span><br><span class="line"><span class="comment">        如果扫描到有Spring的相关注解的类，则把这些类注册为Spring的bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">context:component-scan</span> <span class="attr">base-package</span>=<span class="string">&quot;org.fkit&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 默认装配方案 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:annotation-driven</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 静态资源处理 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mvc:default-servlet-handler</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 视图解析器 p:prefix属性表示前缀 p:suffix 表示后缀 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">&quot;viewResolver&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">class</span>=<span class="string">&quot;org.springframework.web.servlet.view.InternalResourceViewResolver&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">p:prefix</span>=<span class="string">&quot;/WEB-INF/content/&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">p:suffix</span>=<span class="string">&quot;.jsp&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 国际化配置 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">&quot;messageSource&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">class</span>=<span class="string">&quot;org.springframework.context.support.ResourceBundleMessageSource&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 国际化资源文件名 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span></span></span><br><span class="line"><span class="tag">            <span class="attr">name</span>=<span class="string">&quot;basenames&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">value</span>=<span class="string">&quot;message&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><h3 id="乱填表单"><a href="#乱填表单" class="headerlink" title="乱填表单"></a>乱填表单</h3><p><img data-src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/24.png" alt="这里有一张图片"></p>
+<h3 id="错误提示"><a href="#错误提示" class="headerlink" title="错误提示"></a>错误提示</h3><p><img data-src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/25.png" alt="这里有一张图片"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/9d26e814/" title="6.4.2 JSR 303校验">https://lanlan2017.github.io/JavaReadingNotes/9d26e814/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/6e2018b3/" rel="prev" title="6.4.1 Spring的Validation校验框架">
+                  <i class="fa fa-chevron-left"></i> 6.4.1 Spring的Validation校验框架
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/bf7b9c27/" rel="next" title="6.5 本章小结">
+                  6.5 本章小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/9d26e814/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/9d26e814/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

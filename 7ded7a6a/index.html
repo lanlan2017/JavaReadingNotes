@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="18.4 使用反射生成并操作对象Class对象可以获得该类里的  方法(由Method对象表示)、 构造器(由Constructor对象表示)、 成员变量(由Field对象表示),  这三个类都位于java.lang.reflect包下,并实现了java.lang.reflect.Member接口。  程序可以通过Method对象来执行对应的方法, 可以通过Constructor对象来调用对应的构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="18.4 使用反射生成并操作对象 18.4.1创建对象">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="18.4 使用反射生成并操作对象Class对象可以获得该类里的  方法(由Method对象表示)、 构造器(由Constructor对象表示)、 成员变量(由Field对象表示),  这三个类都位于java.lang.reflect包下,并实现了java.lang.reflect.Member接口。  程序可以通过Method对象来执行对应的方法, 可以通过Constructor对象来调用对应的构">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-16T02:15:06.000Z">
+<meta property="article:modified_time" content="2020-02-28T02:04:49.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/","path":"/7ded7a6a/","title":"18.4 使用反射生成并操作对象 18.4.1创建对象"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>18.4 使用反射生成并操作对象 18.4.1创建对象 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#18-4-%E4%BD%BF%E7%94%A8%E5%8F%8D%E5%B0%84%E7%94%9F%E6%88%90%E5%B9%B6%E6%93%8D%E4%BD%9C%E5%AF%B9%E8%B1%A1"><span class="nav-text">18.4 使用反射生成并操作对象</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#18-4-1-%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-text">18.4.1 创建对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%8F%8D%E5%B0%84%E7%94%9F%E6%88%90%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%B8%A4%E7%A7%8D%E6%96%B9%E5%BC%8F"><span class="nav-text">通过反射生成对象的两种方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Class%E5%AF%B9%E8%B1%A1%E7%9A%84newInstance%E6%96%B9%E6%B3%95"><span class="nav-text">使用Class对象的newInstance方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B-%E7%AE%80%E5%8D%95%E5%AF%B9%E8%B1%A1%E6%B1%A0"><span class="nav-text">实例 简单对象池</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ObjectPoolFactory-java"><span class="nav-text">ObjectPoolFactory.java</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#obj-txt"><span class="nav-text">obj.txt</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%B1%9E%E6%80%A7%E6%96%87%E4%BB%B6%E9%85%8D%E7%BD%AE%E5%AF%B9%E8%B1%A1%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-text">通过属性文件配置对象的应用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8Constructor%E5%AF%B9%E8%B1%A1%E6%9D%A5%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-text">利用Constructor对象来创建对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="nav-text">实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E8%AF%A6%E8%A7%A3"><span class="nav-text">代码详解</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-text">小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          18.4 使用反射生成并操作对象 18.4.1创建对象
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-16 10:15:06" itemprop="dateCreated datePublished" datetime="2019-06-16T10:15:06+08:00">2019-06-16</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-02-28 10:04:49" itemprop="dateModified" datetime="2020-02-28T10:04:49+08:00">2020-02-28</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC18%E7%AB%A0-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%B8%8E%E5%8F%8D%E5%B0%84/" itemprop="url" rel="index"><span itemprop="name">第18章 类加载机制与反射</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC18%E7%AB%A0-%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%B8%8E%E5%8F%8D%E5%B0%84/18-4-%E4%BD%BF%E7%94%A8%E5%8F%8D%E5%B0%84%E7%94%9F%E6%88%90%E5%B9%B6%E6%93%8D%E4%BD%9C%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">18.4 使用反射生成并操作对象</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/7ded7a6a/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/7ded7a6a/" data-xid="/JavaReadingNotes/7ded7a6a/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="18-4-使用反射生成并操作对象"><a href="#18-4-使用反射生成并操作对象" class="headerlink" title="18.4 使用反射生成并操作对象"></a>18.4 使用反射生成并操作对象</h1><p><code>Class</code>对象可以获得该类里的</p>
+<ul>
+<li>方法(由<code>Method</code>对象表示)、</li>
+<li>构造器(由<code>Constructor</code>对象表示)、</li>
+<li>成员变量(由<code>Field</code>对象表示),</li>
+</ul>
+<p>这三个类都位于<code>java.lang.reflect</code>包下,并实现了<code>java.lang.reflect.Member</code>接口。</p>
+<ul>
+<li>程序可以通过<code>Method</code>对象来执行对应的方法,</li>
+<li>可以通过<code>Constructor</code>对象来调用对应的构造器创建实例,</li>
+<li>可以通过<code>Field</code>对象直接访问并修改对象的成员变量值</li>
+</ul>
+<h1 id="18-4-1-创建对象"><a href="#18-4-1-创建对象" class="headerlink" title="18.4.1 创建对象"></a>18.4.1 创建对象</h1><h2 id="通过反射生成对象的两种方式"><a href="#通过反射生成对象的两种方式" class="headerlink" title="通过反射生成对象的两种方式"></a>通过反射生成对象的两种方式</h2><p>通过反射来生成对象有如下两种方式。</p>
+<ul>
+<li>使用<code>Class</code>对象的<code>newInstance()</code>方法来创建该<code>Class</code>对象对应类的实例,这种方式要求该<code>Class</code>对象的<strong>对应类有默认构造器</strong>,而<strong>执行<code>newInstance()</code>方法时实际上是<code>利用默认构造器来创建该类的实例</code></strong>.</li>
+<li>先使用<code>Class</code>对象获取指定的<code>Constructor</code>对象,再调用<code>Constructor</code>对象的<code>newInstance()</code>方法来创建该<code>Class</code>对象对应类的实例。通过这种方式<code>可以选择使用指定的构造器来创建实例</code>。</li>
+</ul>
+<h2 id="使用Class对象的newInstance方法"><a href="#使用Class对象的newInstance方法" class="headerlink" title="使用Class对象的newInstance方法"></a>使用Class对象的newInstance方法</h2><p>通过第一种方式来创建对象是比较常见的情形,因为在很多<code>Java EE</code>框架中都需要根据配置文件信息来创建<code>Java</code>对象,从配置文件读取的只是某个类的字符串类名,程序需要根据该字符串来创建对应的实例,就必须使用反射。</p>
+<h3 id="实例-简单对象池"><a href="#实例-简单对象池" class="headerlink" title="实例 简单对象池"></a>实例 简单对象池</h3><p>下面程序就实现了一个简单的对象池,该对象池会根据配置文件读取<code>key-value</code>对,然后创建这些对象,并将这些对象放入一个<code>HashMap</code>中。</p>
+<h4 id="ObjectPoolFactory-java"><a href="#ObjectPoolFactory-java" class="headerlink" title="ObjectPoolFactory.java"></a>ObjectPoolFactory.java</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectPoolFactory</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 定义一个对象池,key是对象名，value是实际对象</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String ,Object&gt; objectPool = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line">    <span class="comment">// 定义一个创建对象的方法，</span></span><br><span class="line">    <span class="comment">// 该方法只要传入一个字符串类名，程序可以根据该类名生成Java对象</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Object <span class="title">createObject</span><span class="params">(String clazzName)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InstantiationException</span></span><br><span class="line"><span class="function">        , IllegalAccessException , ClassNotFoundException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 根据字符串来获取对应的Class对象</span></span><br><span class="line">        Class&lt;?&gt; clazz = Class.forName(clazzName);</span><br><span class="line">        <span class="comment">// 使用clazz对应类的默认构造器创建实例</span></span><br><span class="line">        <span class="keyword">return</span> clazz.newInstance();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 该方法根据指定文件来初始化对象池，</span></span><br><span class="line">    <span class="comment">// 它会根据配置文件来创建对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">initPool</span><span class="params">(String fileName)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> InstantiationException</span></span><br><span class="line"><span class="function">        , IllegalAccessException ,ClassNotFoundException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">try</span>(</span><br><span class="line">            FileInputStream fis = <span class="keyword">new</span> FileInputStream(fileName))</span><br><span class="line">        &#123;</span><br><span class="line">            Properties props = <span class="keyword">new</span> Properties();</span><br><span class="line">            props.load(fis);</span><br><span class="line">            <span class="keyword">for</span> (String name : props.stringPropertyNames())</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 每取出一对key-value对，就根据value创建一个对象</span></span><br><span class="line">                <span class="comment">// 调用createObject()创建对象，并将对象添加到对象池中</span></span><br><span class="line">                objectPool.put(name ,</span><br><span class="line">                    createObject(props.getProperty(name)));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (IOException ex)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;读取&quot;</span> + fileName + <span class="string">&quot;异常&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getObject</span><span class="params">(String name)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 从objectPool中取出指定name对应的对象。</span></span><br><span class="line">        <span class="keyword">return</span> objectPool.get(name);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        ObjectPoolFactory pf = <span class="keyword">new</span> ObjectPoolFactory();</span><br><span class="line">        <span class="comment">//读取文件,初始化对象池</span></span><br><span class="line">        pf.initPool(<span class="string">&quot;obj.txt&quot;</span>);</span><br><span class="line">        System.out.println(pf.getObject(<span class="string">&quot;a&quot;</span>));      <span class="comment">// ①</span></span><br><span class="line">        System.out.println(pf.getObject(<span class="string">&quot;b&quot;</span>));      <span class="comment">// ②</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中<code>createObject()</code>方法里的代码就是根据字符串来创建<code>Java</code>对象的关键代码,程序调用<code>Class</code>对象的<code>newInstance()</code>方法即可创建一个<code>Java</code>对象。程序中的<code>initPool()</code>方法会读取属性文件,对属性文件中每个<code>key-value</code>对创建一个<code>Java</code>对象,其中<code>value</code>是该<code>Java</code>对象的实现类,而<code>key</code>是该<code>Java</code>对象放入对象池中的名字。为该程序提供如下属性配置文件<code>obj.txt</code>.</p>
+<h4 id="obj-txt"><a href="#obj-txt" class="headerlink" title="obj.txt"></a>obj.txt</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a=java.util.Date</span><br><span class="line">b=javax.swing.JFrame</span><br></pre></td></tr></table></figure>
+<p>编译、运行上面的<code>ObjectPoolFactory</code>程序,</p>
+<ul>
+<li>执行到<code>main</code>方法中的①号代码处,将看到输出系统当前时间——这表明对象池中已经有了一个名为a的对象,该对象是一个<code>java.util.Date</code>对象。</li>
+<li>执行到②号代码处,将看到输出一个<code>JFrame</code>对象。</li>
+</ul>
+<p>运行效果如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Sun Jun <span class="number">16</span> <span class="number">10</span>:<span class="number">00</span>:<span class="number">06</span> CST <span class="number">2019</span></span><br><span class="line">javax.swing.JFrame[frame0,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>x0,invalid,hidden,layout=java.awt.BorderLayout,<span class="built_in">title</span>=,resizable,normal,defaultCloseOperation=HIDE_ON_CLOSE,rootPane=javax.swing.JRootPane[,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>x0,invalid,layout=javax.swing.JRootPane$RootLayout,alignmentX=<span class="number">0</span>.<span class="number">0</span>,alignmentY=<span class="number">0</span>.<span class="number">0</span>,border=,flags=<span class="number">16777673</span>,maximumSize=,minimumSize=,preferredSize=],rootPaneCheckingEnabled=true]</span><br></pre></td></tr></table></figure>
+<h3 id="通过属性文件配置对象的应用"><a href="#通过属性文件配置对象的应用" class="headerlink" title="通过属性文件配置对象的应用"></a>通过属性文件配置对象的应用</h3><p><strong>这种使用配置文件来配置对象,然后由程序根据配置文件来创建对象的方式非常有用</strong>,大名鼎鼎的<code>Spring</code>框架就采用这种方式大大简化了<code>Java EE</code>应用的开发。当然,<code>Spring</code>采用的是<code>XML</code>配置文件—毕竟属性文件能配置的信息太有限了,而<code>XML</code>配置文件能配置的信息就丰富多了.</p>
+<h2 id="利用Constructor对象来创建对象"><a href="#利用Constructor对象来创建对象" class="headerlink" title="利用Constructor对象来创建对象"></a>利用Constructor对象来创建对象</h2><p>如果不想利用默认构造器来创建<code>Java</code>对象,而想<strong>利用指定的构造器来创建<code>Java</code>对象,则需要利用<code>Constructor</code>对象,每个<code>Constructor</code>对应一个构造器</strong>。为了利用指定的构造器来创建<code>Java</code>对象,需要如下三个步骤。</p>
+<ol>
+<li>获取该类的<code>Class</code>对象</li>
+<li>利用<code>Class</code>对象的<code>getConstructor()</code>方法来获取指定的构造器</li>
+<li>调用<code>Constructor</code>的<code>newInstance()</code>方法来创建<code>Java</code>对象。</li>
+</ol>
+<h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>下面程序利用反射来创建一个<code>JFrame</code>对象,而且使用指定的构造器.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.lang.reflect.*;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CreateJFrame</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">        <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 1.获取JFrame对应的Class对象</span></span><br><span class="line">        Class&lt;?&gt; jframeClazz = Class.forName(<span class="string">&quot;javax.swing.JFrame&quot;</span>);</span><br><span class="line">        <span class="comment">// 2.获取JFrame中带一个字符串参数的构造器</span></span><br><span class="line">        Constructor ctor = jframeClazz.getConstructor(String.class);</span><br><span class="line">        <span class="comment">// 3.调用Constructor的newInstance方法创建对象</span></span><br><span class="line">        Object obj = ctor.newInstance(<span class="string">&quot;测试窗口&quot;</span>);</span><br><span class="line">        <span class="comment">// 输出JFrame对象</span></span><br><span class="line">        System.out.println(obj);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>运行结果:</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javax.swing.JFrame[frame0,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>x0,invalid,hidden,layout=java.awt.BorderLayout,<span class="built_in">title</span>=测试窗口,resizable,normal,defaultCloseOperation=HIDE_ON_CLOSE,rootPane=javax.swing.JRootPane[,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>x0,invalid,layout=javax.swing.JRootPane$RootLayout,alignmentX=<span class="number">0</span>.<span class="number">0</span>,alignmentY=<span class="number">0</span>.<span class="number">0</span>,border=,flags=<span class="number">16777673</span>,maximumSize=,minimumSize=,preferredSize=],rootPaneCheckingEnabled=true]</span><br></pre></td></tr></table></figure>
+<h3 id="代码详解"><a href="#代码详解" class="headerlink" title="代码详解"></a>代码详解</h3><p>上面程序中第二行代码(这里说的第二行是指main方法中第二个可执行代码,不包括注释):<code>Constructor ctor = jframeClazz.getConstructor(String.class);</code>用于获取<code>JFrame</code>类的指定构造器,前面已经提到:如果要唯一地确定某类中的构造器,只要指定构造器的形参列表即可。<strong>在获取构造器时传入了一个<code>String</code>类型,就表示获取只有一个字符串参数的构造器</strong>。<br>程序中第三行可执行代码使用指定构造器的<code>newInstance()</code>方法来创建一个<code>Java</code>对象,当调用<code>Constructor</code>对象的<code>newInstance()</code>方法时通常需要传入参数,因为调用<code>Constructor</code>的<code>newInstance()</code>方法实际上等于调用它对应的构造器,传给<code>newInstance()</code>方法的参数将作为对应构造器的参数.</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>对于上面的<code>CreateFrame.java</code>中已知<code>java.swing.JFrame</code>类的情形,通常没有必要使用反射来创建该对象,因为通过反射创建对象时性能要稍低一些。实际上,<strong>只有当程序需要动态创建某个类的对象时才会考虑使用反射</strong>,通常在开发通用性比较广的框架、基础平台时可能会大量使用反射。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/" title="18.4 使用反射生成并操作对象 18.4.1创建对象">https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/180ffbb8/" rel="prev" title="18.1 类的加载 连接和初始化">
+                  <i class="fa fa-chevron-left"></i> 18.1 类的加载 连接和初始化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/b7c0f28/" rel="next" title="18.4 使用反射生成并操作对象 18.4.2 调用方法">
+                  18.4 使用反射生成并操作对象 18.4.2 调用方法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/7ded7a6a/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/7ded7a6a/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

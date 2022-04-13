@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="8.5 Spring的缓存机制Spring 3.1新增了一种全新的缓存机制,这种缓存机制与Spring容器无缝地整合在一起,可以对容器中的任意Bean或Bean的方法增加缓存。 Spring的缓存机制非常灵活,它可以对容器中的仼意Bean或Bean的任意方法进行缓存,因此这种缓存机制可以在Java EE应用的任何层次上进行缓存。与Hibernate SessionFactory级别的二级缓存相比,">
+<meta property="og:type" content="article">
+<meta property="og:title" content="8.5 Spring的缓存机制 8.5.1 启用Spring缓存">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/f455f648/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="8.5 Spring的缓存机制Spring 3.1新增了一种全新的缓存机制,这种缓存机制与Spring容器无缝地整合在一起,可以对容器中的任意Bean或Bean的方法增加缓存。 Spring的缓存机制非常灵活,它可以对容器中的仼意Bean或Bean的任意方法进行缓存,因此这种缓存机制可以在Java EE应用的任何层次上进行缓存。与Hibernate SessionFactory级别的二级缓存相比,">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-08T06:42:45.000Z">
+<meta property="article:modified_time" content="2020-02-06T17:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/f455f648/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/f455f648/","path":"/f455f648/","title":"8.5 Spring的缓存机制 8.5.1 启用Spring缓存"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>8.5 Spring的缓存机制 8.5.1 启用Spring缓存 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#8-5-Spring%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6"><span class="nav-text">8.5 Spring的缓存机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-5-1-%E5%90%AF%E7%94%A8Spring%E7%BC%93%E5%AD%98"><span class="nav-text">8.5.1 启用Spring缓存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-Spring%E5%86%85%E7%BD%AE%E7%BC%93%E5%AD%98%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-text">1. Spring内置缓存实现的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%A4%BA%E4%BE%8B"><span class="nav-text">项目示例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-EhCache%E7%BC%93%E5%AD%98%E5%AE%9E%E7%8E%B0%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-text">2. EhCache缓存实现的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%85%A5EhCache%E9%9C%80%E8%A6%81%E7%9A%84jar%E5%8C%85"><span class="nav-text">引入EhCache需要的jar包</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/f455f648/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          8.5 Spring的缓存机制 8.5.1 启用Spring缓存
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-08 14:42:45" itemprop="dateCreated datePublished" datetime="2019-09-08T14:42:45+08:00">2019-09-08</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+08:00">2020-02-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/" itemprop="url" rel="index"><span itemprop="name">第8章 深入使用Spring</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC8%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8Spring/8-5-Spring%E7%9A%84%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">8.5 Spring的缓存机制</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/f455f648/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/f455f648/" data-xid="/JavaReadingNotes/f455f648/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="8-5-Spring的缓存机制"><a href="#8-5-Spring的缓存机制" class="headerlink" title="8.5 Spring的缓存机制"></a>8.5 Spring的缓存机制</h1><p><code>Spring 3.1</code>新增了一种全新的缓存机制,这种缓存机制与<code>Spring</code>容器无缝地整合在一起,可以对容器中的任意<code>Bean</code>或<code>Bean</code>的方法增加缓存。 <code>Spring</code>的缓存机制非常灵活,它可以对容器中的仼意<code>Bean</code>或<code>Bean</code>的任意方法进行缓存,因此这种缓存机制可以在<code>Java EE</code>应用的任何层次上进行缓存。<br>与<code>Hibernate SessionFactory</code>级别的二级缓存相比, <strong><code>Spring</code>缓存的级别更高, <code>Spring</code>缓存可以在控制器组件或业务逻辑组件级别上进行缓存</strong>,这样应用完全无须重复调用底层的<code>DAO</code>(数据访问对象,通常基于<code>Hibernate</code>等技术实现)组件的方法<br><code>Spring</code>缓存同样不是一种具体的缓存实现方案,它底层同样需要依赖<code>EhCache</code>、 <code>Guava</code>等具体的缓存工具。但这也正是<code>Spring</code>缓存机制的优势,应用程序只要面向<code>Spring</code>缓存<code>API</code>编程,应用底层的缓存实现可以在不同的缓存实现之间自由切换,应用程序无须任何改变,只要对配置文件略作修改即可。</p>
+<h1 id="8-5-1-启用Spring缓存"><a href="#8-5-1-启用Spring缓存" class="headerlink" title="8.5.1 启用Spring缓存"></a>8.5.1 启用Spring缓存</h1><p><code>Spring</code>配置文件专门为缓存提供了一个<code>cache:</code>命名空间,为了启用<code>Spring</code>缓存,需要在配置文件中导入<code>cache:</code>命名空间。导入<code>cache:</code>命名空间与前面介绍的导入<code>util:</code>、 <code>context:</code>命名空间的方式完全一样。<br>导入<code>cache:</code>命名空间之后,启用<code>Spring</code>缓存还要两步。</p>
+<ol>
+<li>在<code>Spring</code>配置文件中添加<code>&lt;cache:annotation-driven cache-manager=&quot;缓存管理器ID&quot;&gt;</code>,该元素指定<code>Spring</code>根据注解来启用<code>Bean级别</code>或<code>方法级别</code>的缓存.</li>
+<li>针对不同的缓存实现配置对应的缓存管理器。</li>
+</ol>
+<p>对于上面两步,其中第1步非常简单,使用<code>&lt;cache:annotation-driven&gt;</code>元素时可通过<code>cache-manager</code>属性显式指定容器中缓存管理器的<code>id</code>;该属性的默认值为<code>cacheManager</code>,也就是说,如果将容器中缓存管理器的<code>id</code>设为<code>cacheManager</code>,则可省略<code>&lt;cache:annotation-driven&gt;</code>元素中的<code>cache-manager</code>属性。<br>第2步则略微有点麻烦,由于<code>Spring</code>底层可使用大部分主流的<code>Java</code>缓存工具,而不同的缓存工具所需的配置也不同,因此略微有点麻烦。下面以<code>Spring</code>内置的缓存实现和<code>EhCache</code>为例来介绍<code>Spring</code>缓存的配置.</p>
+<h1 id="1-Spring内置缓存实现的配置"><a href="#1-Spring内置缓存实现的配置" class="headerlink" title="1. Spring内置缓存实现的配置"></a>1. Spring内置缓存实现的配置</h1><p>需要说明的是,** <code>Spring</code>内置的缓存实现只是一种内存中的缓存,并非真正的缓存实现**,因此通常只能用于简单的测试环境,<strong>不建议在实际项目中使用<code>Spring</code>内置的缓存实现</strong>。<br><code>Spring</code>内置的缓存实现使用<code>SimpleCacheManager</code>作为缓存管理器,使用<code>SimpleCacheManager</code>配置缓存非常简单,直接在<code>Spring</code>容器中配置该<code>Bean</code>,然后通过<code>&lt;property&gt;</code>元素驱动该缓存管理器执行<code>setCaches()</code>方法来设置缓存区即可。<br><code>SimpleCacheManager</code>是一种内存中的缓存区,底层直接使用了<code>JDK</code>的<code>ConcurrentMap</code>来实现缓存,<code>SimpleCacheManager</code>使用了<code>ConcurrentMapCacheFactoryBean</code>作为缓存区,每个<code>ConcurrentMapCacheFactoryBean</code>配置一个缓存区。</p>
+<h2 id="项目示例"><a href="#项目示例" class="headerlink" title="项目示例"></a>项目示例</h2><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">SimpleCache</span></span></span><br><span class="line"><span class="function">└─<span class="title">src</span>\</span></span><br><span class="line"><span class="function">  ├─<span class="title">beans.xml</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">lee</span>\</span></span><br><span class="line"><span class="function">  │ └─<span class="title">SpringTest.java</span></span></span><br><span class="line"><span class="function">  └─<span class="title">org</span>\</span></span><br><span class="line"><span class="function">    └─<span class="title">crazyit</span>\</span></span><br><span class="line"><span class="function">      └─<span class="title">app</span>\</span></span><br><span class="line"><span class="function">        ├─<span class="title">domain</span>\</span></span><br><span class="line"><span class="function">        │ └─<span class="title">User.java</span></span></span><br><span class="line"><span class="function">        └─<span class="title">service</span>\</span></span><br><span class="line"><span class="function">          ├─<span class="title">impl</span>\</span></span><br><span class="line"><span class="function">          │ └─<span class="title">UserServiceImpl.java</span></span></span><br><span class="line"><span class="function">          └─<span class="title">UserService.java</span></span></span><br></pre></td></tr></table></figure>
+<p>例如,如下代码即可配置<code>Spring</code>内置缓存的缓存管理器。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 配置Spring内置的缓存管理器 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;cacheManager&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;org.springframework.cache.support.SimpleCacheManager&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置缓存区 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;caches&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">set</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 下面列出多个缓存区，p:name用于为缓存区指定名字 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">                <span class="attr">class</span>=<span class="string">&quot;org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">p:name</span>=<span class="string">&quot;default&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">                <span class="attr">class</span>=<span class="string">&quot;org.springframework.cache.concurrent.ConcurrentMapCacheFactoryBean&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">p:name</span>=<span class="string">&quot;users&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">set</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面配置文件使用<code>SimpleCacheManager</code>配置了<code>Spring</code>内置的缓存管理器,并为该缓存管理器配置了两个缓存区:<code>default</code>和<code>users</code>,这些缓存区的名字很重要,因为后面使用注解驱动缓存时需要根据缓存区的名字来将缓存数据放入指定缓存区内。<br>在实际应用中,开发者可以根据自己的需要,配置更多的缓存区,一般来说,应用有多少个组件需要缓存,程序就应该配置多少个缓存区。<br>从上面的配置文件可以看出,由于<code>Spring</code>内置提供的缓存实现本身就是基于<code>JDK</code>的<code>ConcurrentMap</code>来实现的,所有数据都直接缓存在内存中,因此配置起来非常简单。但<code>Spring</code>内置的缓存一般只能作为测试使用,在实际项目中不推荐使用这种缓存</p>
+<h1 id="2-EhCache缓存实现的配置"><a href="#2-EhCache缓存实现的配置" class="headerlink" title="2. EhCache缓存实现的配置"></a>2. EhCache缓存实现的配置</h1><h2 id="引入EhCache需要的jar包"><a href="#引入EhCache需要的jar包" class="headerlink" title="引入EhCache需要的jar包"></a>引入EhCache需要的jar包</h2><p>在配置<code>EhCache</code>缓存实现之前,首先需要将<code>EhCache</code>缓存的<code>JAR</code>包添加到项目的类加载路径中,此处可直接将前文介绍<code>Hibernate</code>二级缓存时使用的<code>EhCache</code>的<code>JAR</code>包复制过来使用即可。<br>只要将<code>Hibernate</code>解压路径下<code>lib/loptional/lehcache/</code>路径下的<code>ehcache2.10.3jar</code>和<code>slf4japi-1.7.7jar</code>复制到项目类加载路径下即可。其中<code>ehcache-2.10.3jar</code>是<code>EhCache</code>的核<code>JAR</code>包,而<code>slf4j-api-1.7.7jar</code>则是该缓存工具所使用的日志工具.<br>为了使用<code>EhCache</code>,同样需要在应用的类加载路径下添加一个<code>ehcache.xm</code>配置文件。例如,使用如下<code>ehcache.xml</code>文件:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;gbk&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">ehcache</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">diskStore</span> <span class="attr">path</span>=<span class="string">&quot;java.io.tmpdir&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置默认的缓存区 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">defaultCache</span></span></span><br><span class="line"><span class="tag">        <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;10000&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;120&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;120&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">maxElementsOnDisk</span>=<span class="string">&quot;10000000&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">diskExpiryThreadIntervalSeconds</span>=<span class="string">&quot;120&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">memoryStoreEvictionPolicy</span>=<span class="string">&quot;LRU&quot;</span>/&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置名为users的缓存区 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;users&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">maxElementsInMemory</span>=<span class="string">&quot;10000&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">eternal</span>=<span class="string">&quot;false&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">overflowToDisk</span>=<span class="string">&quot;true&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToIdleSeconds</span>=<span class="string">&quot;300&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">timeToLiveSeconds</span>=<span class="string">&quot;600&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">ehcache</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面的配置文件同样配置了两个缓存区,其中:</p>
+<ul>
+<li>第一个是用于配置匿名的、默认的缓存区,</li>
+<li>第二个才是配置了名为<code>users</code>的缓存区。如果需要,读者完全可以将<code>&lt;cache&gt;</code>元素复制多个,用于配置多个有名字的缓存区。这些缓存区的名字同样很重要,后面使用注解驱动缓存时需要根据缓存区的名字来将缓存数据放入指定缓存区内。</li>
+</ul>
+<p><strong>提示:</strong><br><code>ehcache.xml</code>文件中的<code>&lt;defaultCache&gt;</code>元素和<code>&lt;cache&gt;</code>元素所能接受的属性,在前文介绍<code>Hibernate</code>二级缓存时已经有详细说明,此处不再赘述。<br><code>Spring</code>使用<code>EhCacheCacheManager</code>作为<code>EhCache</code>缓存实现的缓存管理器,因此只要该对象配置在<code>Spring</code>容器中,它就可作为缓存管理器使用,但<code>EhCacheCacheManager</code>底层需要依赖一个<code>net.sf.ehcache.CacheManager</code>作为实际的缓存管理器。<br>为了将<code>net.sf.ehcache.CacheManager</code>纳入<code>Spring</code>容器的管理之下, <code>Spring</code>提供了<code>EhCacheManagerFactoryBean</code>工厂<code>Bean</code>,该工厂<code>Bean</code>实现了<code>FactoryBean&lt;CacheManager&gt;</code>接口。当程序把<code>EhCacheManagerFactoryBean</code>部署在<code>Spring</code>容器中,并通过<code>Spring</code>容器请求获取该工厂<code>Bean</code>时,实际返回的是它的产品—也就是<code>CacheManager</code>对象。<br>因此,为了在<code>Spring</code>配置文件中配置基于<code>EhCache</code>的缓存管理器,只要<strong>在<code>Spring</code>配置文件中</strong>增加如下两段配置即可。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 配置EhCache的CacheManager 通过configLocation指定ehcache.xml文件的位置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;ehCacheManager&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;org.springframework.cache.ehcache.EhCacheManagerFactoryBean&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">p:configLocation</span>=<span class="string">&quot;classpath:ehcache.xml&quot;</span> <span class="attr">p:shared</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 配置基于EhCache的缓存管理器 并将EhCache的CacheManager注入该缓存管理器Bean --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;cacheManager&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;org.springframework.cache.ehcache.EhCacheCacheManager&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">p:cacheManager-ref</span>=<span class="string">&quot;ehCacheManager&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面配置文件中配置的</p>
+<ul>
+<li>第一个<code>Bean</code>是一个工厂<code>Bean</code>,它用于配置<code>EhCache</code>的<code>CacheManager</code>;</li>
+<li>第二个<code>Bean</code>才是为<code>Spring</code>缓存配置的基于<code>EhCache</code>的缓存管理器,该缓存管理器需要依赖于<code>CacheManager</code>,因此程序将第一个<code>Bean</code>注入到第二个<code>Bean</code>中。</li>
+</ul>
+<p>配置好上面任意一种缓存管理器之后,接下来就可使用注解来驱动<code>Spring</code>将缓存数据存入指定缓存区了</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/f455f648/" title="8.5 Spring的缓存机制 8.5.1 启用Spring缓存">https://lanlan2017.github.io/JavaReadingNotes/f455f648/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/b277b25b/" rel="prev" title="8.4.6 基于XML配置文件的管理方式 3. 配置切入点">
+                  <i class="fa fa-chevron-left"></i> 8.4.6 基于XML配置文件的管理方式 3. 配置切入点
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/513c6a7a/" rel="next" title="8.5.2 使用@Cacheable执行缓存">
+                  8.5.2 使用@Cacheable执行缓存 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/f455f648/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/f455f648/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

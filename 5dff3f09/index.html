@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="26.3 函数式数据处理：强大方便的收集器对于collect方法，前面只是演示了其最基本的应用，它还有很多强大的功能，比如，可以分组统计汇总，实现类似数据库查询语言SQL中的group by功能。具体都有哪些功能？有什么用？如何使用？基本原理是什么？让我们逐步进行探讨，先来进一步理解collect方法。 26.3.1 理解collect在上节中，过滤得到90分以上的学生列表，代码是这样的： 12L">
+<meta property="og:type" content="article">
+<meta property="og:title" content="26.3 函数式数据处理：强大方便的收集器">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="26.3 函数式数据处理：强大方便的收集器对于collect方法，前面只是演示了其最基本的应用，它还有很多强大的功能，比如，可以分组统计汇总，实现类似数据库查询语言SQL中的group by功能。具体都有哪些功能？有什么用？如何使用？基本原理是什么？让我们逐步进行探讨，先来进一步理解collect方法。 26.3.1 理解collect在上节中，过滤得到90分以上的学生列表，代码是这样的： 12L">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-08T04:34:35.000Z">
+<meta property="article:modified_time" content="2021-12-08T04:34:35.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/","path":"/5dff3f09/","title":"26.3 函数式数据处理：强大方便的收集器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>26.3 函数式数据处理：强大方便的收集器 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#26-3-%E5%87%BD%E6%95%B0%E5%BC%8F%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%EF%BC%9A%E5%BC%BA%E5%A4%A7%E6%96%B9%E4%BE%BF%E7%9A%84%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-text">26.3 函数式数据处理：强大方便的收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#26-3-1-%E7%90%86%E8%A7%A3collect"><span class="nav-text">26.3.1 理解collect</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-3-2-%E5%AE%B9%E5%99%A8%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-text">26.3.2 容器收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-toSet"><span class="nav-text">1. toSet</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-toCollection"><span class="nav-text">2. toCollection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-toMap"><span class="nav-text">3. toMap</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-3-3-%E5%AD%97%E7%AC%A6%E4%B8%B2%E6%94%B6%E9%9B%86%E5%99%A8"><span class="nav-text">26.3.3 字符串收集器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-3-4-%E5%88%86%E7%BB%84"><span class="nav-text">26.3.4 分组</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-text">1．基本用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">2．基本原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%8E%E5%88%86%E7%BB%84%E8%AE%A1%E6%95%B0%E3%80%81%E6%89%BE%E6%9C%80%E5%A4%A7-%E6%9C%80%E5%B0%8F%E5%85%83%E7%B4%A0"><span class="nav-text">3．分组计数、找最大&#x2F;最小元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%BC%8E%E5%88%86%E7%BB%84%E6%95%B0%E5%80%BC%E7%BB%9F%E8%AE%A1"><span class="nav-text">4．分组数值统计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%EF%BC%8E%E5%88%86%E7%BB%84%E5%86%85%E7%9A%84map"><span class="nav-text">5．分组内的map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%EF%BC%8E%E5%88%86%E7%BB%84%E7%BB%93%E6%9E%9C%E5%A4%84%E7%90%86%EF%BC%88filter-sort-skip-limit%EF%BC%89"><span class="nav-text">6．分组结果处理（filter&#x2F;sort&#x2F;skip&#x2F;limit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%EF%BC%8E%E5%88%86%E5%8C%BA"><span class="nav-text">7．分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%EF%BC%8E%E5%A4%9A%E7%BA%A7%E5%88%86%E7%BB%84"><span class="nav-text">8．多级分组</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          26.3 函数式数据处理：强大方便的收集器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-08 12:34:35" itemprop="dateCreated datePublished" datetime="2021-12-08T12:34:35+08:00">2021-12-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/6%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86-%E5%8A%A8%E6%80%81%E4%B8%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">6第六部分 动态与函数式编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/6%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86-%E5%8A%A8%E6%80%81%E4%B8%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/%E7%AC%AC26%E7%AB%A0-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第26章 函数式编程</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/5dff3f09/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/5dff3f09/" data-xid="/JavaReadingNotes/5dff3f09/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>16k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>15 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="26-3-函数式数据处理：强大方便的收集器"><a href="#26-3-函数式数据处理：强大方便的收集器" class="headerlink" title="26.3 函数式数据处理：强大方便的收集器"></a>26.3 函数式数据处理：强大方便的收集器</h1><p>对于collect方法，前面只是演示了其最基本的应用，它还有很多强大的功能，比如，可以分组统计汇总，实现类似数据库查询语言SQL中的group by功能。具体都有哪些功能？有什么用？如何使用？基本原理是什么？让我们逐步进行探讨，先来进一步理解collect方法。</p>
+<h2 id="26-3-1-理解collect"><a href="#26-3-1-理解collect" class="headerlink" title="26.3.1 理解collect"></a>26.3.1 理解collect</h2><p>在上节中，过滤得到90分以上的学生列表，代码是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; above90List = students.stream().filter(t-&gt;t.getScore()&gt;<span class="number">90</span>)</span><br><span class="line">        .collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
+
+<p>最后的collect调用看上去很神奇，它到底是怎么把Stream转换为<code>List&lt;Student&gt;</code>的呢？先看下collect方法的定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;R, A&gt; <span class="function">R <span class="title">collect</span><span class="params">(Collector&lt;? <span class="keyword">super</span> T, A, R&gt; collector)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>它接受一个收集器collector作为参数，类型是Collector，这是一个接口，它的定义基本上是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Collector</span>&lt;<span class="title">T</span>, <span class="title">A</span>, <span class="title">R</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">Supplier&lt;A&gt; <span class="title">supplier</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">BiConsumer&lt;A, T&gt; <span class="title">accumulator</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">BinaryOperator&lt;A&gt; <span class="title">combiner</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Function&lt;A, R&gt; <span class="title">finisher</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">Set&lt;Characteristics&gt; <span class="title">characteristics</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在顺序流中，collect方法与这些接口方法的交互大概是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//首先调用工厂方法supplier创建一个存放处理状态的容器container，类型为A</span></span><br><span class="line">A container = collector.supplier().get();</span><br><span class="line"><span class="comment">//对流中的每一个元素t，调用累加器accumulator，参数为累计状态container和当前元素t</span></span><br><span class="line"><span class="keyword">for</span>(T t : data)</span><br><span class="line">    collector.accumulator().accept(container, t);</span><br><span class="line"><span class="comment">//最后调用finisher对累计状态container进行可能的调整，类型转换(A转换为R)，返回结果</span></span><br><span class="line"><span class="keyword">return</span> collector.finisher().apply(container);</span><br></pre></td></tr></table></figure>
+
+<p>combiner只在并行流中有用，用于合并部分结果。characteristics用于标示收集器的特征，Collector接口的调用者可以利用这些特征进行一些优化。Characteristics是一个枚举，有三个值：CONCURRENT、UNORDERED和IDENTITY_FINISH，它们的含义我们后面通过例子简要说明，目前可以忽略。</p>
+<p>Collectors.toList()具体是什么呢？看下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt;</span><br><span class="line">Collector&lt;T, ? , List&lt;T&gt;&gt; toList() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;&gt;((Supplier&lt;List&lt;T&gt;&gt;) ArrayList::<span class="keyword">new</span>, List::add,</span><br><span class="line">                              (left, right) -&gt;&#123; left.addAll(right); <span class="keyword">return</span> left; &#125;,</span><br><span class="line">                              CH_ID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它的实现类是CollectorImpl，这是Collectors内部的一个私有类，实现很简单，主要就是定义了两个构造方法，接受函数式参数并赋值给内部变量。对toList来说：<br>1）supplier的实现是ArrayList::new，也就是创建一个ArrayList作为容器。<br>2）accumulator的实现是List::add，也就是将碰到的每一个元素加到列表中。<br>3）第三个参数是combiner，表示合并结果。<br>4）第四个参数CH_ID是一个静态变量，只有一个特征IDENTITY_FINISH，表示finisher没有什么事情可以做，就是把累计状态container直接返回。</p>
+<p>也就是说，collect(Collectors.toList())背后的伪代码如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">List&lt;T&gt; container = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span>(T t : data)</span><br><span class="line">    container.add(t);</span><br><span class="line"><span class="keyword">return</span> container;</span><br></pre></td></tr></table></figure>
+
+<h2 id="26-3-2-容器收集器"><a href="#26-3-2-容器收集器" class="headerlink" title="26.3.2 容器收集器"></a>26.3.2 容器收集器</h2><p>与toList类似的容器收集器还有toSet、toCollection、toMap等，我们来进行介绍。</p>
+<h3 id="1-toSet"><a href="#1-toSet" class="headerlink" title="1. toSet"></a>1. toSet</h3><p>toSet的使用与toList类似，只是它可以排重，就不举例了。toList背后的容器是ArrayList, toSet背后的容器是HashSet，其代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt;</span><br><span class="line">Collector&lt;T, ? , Set&lt;T&gt;&gt; toSet() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;&gt;((Supplier&lt;Set&lt;T&gt;&gt;) HashSet::<span class="keyword">new</span>, Set::add,</span><br><span class="line">                              (left, right) -&gt; &#123; left.addAll(right); <span class="keyword">return</span> left; &#125;,</span><br><span class="line">                              CH_UNORDERED_ID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>CH_UNORDERED_ID是一个静态变量，它的特征有两个：一个是IDENTITY_FINISH，表示返回结果即为Supplier创建的HashSet；另一个是UNORDERED，表示收集器不会保留顺序，这也容易理解，因为背后容器是HashSet。</p>
+<h3 id="2-toCollection"><a href="#2-toCollection" class="headerlink" title="2. toCollection"></a>2. toCollection</h3><p>toCollection是一个通用的容器收集器，可以用于任何Collection接口的实现类，它接受一个工厂方法Supplier作为参数，具体代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, C extends Collection&lt;T&gt;&gt;</span><br><span class="line">Collector&lt;T, ? , C&gt; toCollection(Supplier&lt;C&gt; collectionFactory) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;&gt;(collectionFactory, Collection&lt;T&gt;::add,</span><br><span class="line">                                (r1, r2) -&gt; &#123; r1.addAll(r2); <span class="keyword">return</span> r1; &#125;,</span><br><span class="line">                                CH_ID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如，如果希望排重但又希望保留出现的顺序，可以使用LinkedHashSet,Collector可以这么创建：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Collectors.toCollection(LinkedHashSet::<span class="keyword">new</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-toMap"><a href="#3-toMap" class="headerlink" title="3. toMap"></a>3. toMap</h3><p>toMap将元素流转换为一个Map，我们知道，Map有键和值两部分，toMap至少需要两个函数参数，一个将元素转换为键，另一个将元素转换为值，其基本定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U&gt; Collector&lt;T, ? , Map&lt;K, U&gt;&gt; toMap(</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper)</span><br></pre></td></tr></table></figure>
+
+<p>返回结果为<code>Map&lt;K,U&gt;</code>, keyMapper将元素转换为键，valueMapper将元素转换为值。比如，将学生流转换为学生名称和分数的Map，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Double&gt; nameScoreMap = students.stream().collect(</span><br><span class="line">        Collectors.toMap(Student::getName, Student::getScore));</span><br></pre></td></tr></table></figure>
+
+<p>这里，<code>Student::getName</code>是keyMapper, <code>Student::getScore</code>是valueMapper。</p>
+<p>实践中，经常需要将一个对象列表按主键转换为一个Map，以便以后按照主键进行快速查找，比如，假定Student的主键是id，希望转换学生流为学生id和学生对象的Map，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Student&gt; byIdMap = students.stream().collect(</span><br><span class="line">        Collectors.toMap(Student::getId, t -&gt; t));</span><br></pre></td></tr></table></figure>
+
+<p><code>t-&gt;t</code>是valueMapper，表示值就是元素本身。这个函数用得比较多，接口Function定义了一个静态函数identity表示它。也就是说，上面的代码可以替换为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Student&gt; byIdMap = students.stream().collect(</span><br><span class="line">        Collectors.toMap(Student::getId, Function.identity()));</span><br></pre></td></tr></table></figure>
+
+<p>上面的toMap假定元素的键不能重复，如果有重复的，会抛出异常，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; strLenMap = Stream.of(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;abc&quot;</span>).collect(</span><br><span class="line">        Collectors.toMap(Function.identity(), t-&gt;t.length()));</span><br></pre></td></tr></table></figure>
+
+<p>希望得到字符串与其长度的Map，但由于包含重复字符串”abc”，程序会抛出异常。这种情况下，我们希望的是程序忽略后面重复出现的元素，这时，可以使用另一个toMap函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U&gt; Collector&lt;T, ? , Map&lt;K, U&gt;&gt; toMap(</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">    BinaryOperator&lt;U&gt; mergeFunction)</span><br></pre></td></tr></table></figure>
+
+<p>相比前面的toMap，它接受一个额外的参数mergeFunction，它用于处理冲突，在收集一个新元素时，如果新元素的键已经存在了，系统会将新元素的值与键对应的旧值一起传递给mergeFunction得到一个值，然后用这个值给键赋值。</p>
+<p>对于前面字符串长度的例子，新值与旧值其实是一样的，我们可以用任意一个值，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; strLenMap = Stream.of(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;abc&quot;</span>).collect(</span><br><span class="line">        Collectors.toMap(Function.identity(),</span><br><span class="line">                t-&gt;t.length(), (oldValue, value)-&gt;value));</span><br></pre></td></tr></table></figure>
+
+<p>有时，我们可能希望合并新值与旧值，比如一个联系人列表，对于相同的联系人，我们希望合并电话号码，mergeFunction可以定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">BinaryOperator&lt;String&gt; mergeFunction = (oldPhone, phone)-&gt;oldPhone+<span class="string">&quot;, &quot;</span>+phone;</span><br></pre></td></tr></table></figure>
+
+<p>toMap还有一个更为通用的形式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, U, M extends Map&lt;K, U&gt;&gt; Collector&lt;T, ? , M&gt; toMap(</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; keyMapper,</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; valueMapper,</span><br><span class="line">    BinaryOperator&lt;U&gt; mergeFunction, Supplier&lt;M&gt; mapSupplier)</span><br></pre></td></tr></table></figure>
+
+<p>相比前面的toMap，多了一个mapSupplier，它是Map的工厂方法，对于前面的两个toMap，其mapSupplier其实是HashMap::new。我们知道，HashMap是没有任何顺序的，如果希望保持元素出现的顺序，可以替换为LinkedHashMap，如果希望收集的结果排序，可以使用TreeMap。</p>
+<p>toMap主要用于顺序流，对于并发流，Collectors有专门的名为toConcurrentMap的收集器，它内部使用ConcurrentHashMap，用法类似，具体我们就不讨论了。</p>
+<h2 id="26-3-3-字符串收集器"><a href="#26-3-3-字符串收集器" class="headerlink" title="26.3.3 字符串收集器"></a>26.3.3 字符串收集器</h2><p>除了将元素流收集到容器中，另一个常见的操作是收集为一个字符串。比如，获取所有的学生名称，用逗号连接起来，传统上代码看上去像这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line"><span class="keyword">for</span>(Student t : students)&#123;</span><br><span class="line">    <span class="keyword">if</span>(sb.length()&gt;<span class="number">0</span>)&#123;</span><br><span class="line">        sb.append(<span class="string">&quot;, &quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    sb.append(t.getName());</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> sb.toString();</span><br></pre></td></tr></table></figure>
+
+<p>针对这种常见的需求，Collectors提供了joining收集器，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Collector&lt;CharSequence, ? , String&gt; joining()</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Collector&lt;CharSequence, ? , String&gt; joining(</span><br><span class="line">    CharSequence delimiter, CharSequence prefix, CharSequence suffix)</span><br></pre></td></tr></table></figure>
+
+<p>第一个就是简单地把元素连接起来，第二个支持一个分隔符，还可以给整个结果字符串加前缀和后缀，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String result = Stream.of(<span class="string">&quot;abc&quot;</span>, <span class="string">&quot;老马&quot;</span>, <span class="string">&quot;hello&quot;</span>)</span><br><span class="line">        .collect(Collectors.joining(<span class="string">&quot;, &quot;</span>, <span class="string">&quot;[&quot;</span>, <span class="string">&quot;]&quot;</span>));</span><br><span class="line">System.out.println(result);</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[abc，老马，hello]</span><br></pre></td></tr></table></figure>
+
+<p>joining的内部也利用了StringBuilder。比如，第一个joining函数的代码为：</p>
+<p>[插图]</p>
+<p>supplier是<code>StringBuilder::new</code>, accumulator是<code>StringBuilder::append</code>, finisher是<code>StringBuilder::toString</code>, CH_NOID表示特征集为空。</p>
+<h2 id="26-3-4-分组"><a href="#26-3-4-分组" class="headerlink" title="26.3.4 分组"></a>26.3.4 分组</h2><p>分组类似于数据库查询语言SQL中的group by语句，它将元素流中的每个元素分到一个组，可以针对分组再进行处理和收集。分组的功能比较强大，我们逐步来说明。</p>
+<p>为便于举例，我们先修改下学生类Student，增加一个字段grade表示年级：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Collector&lt;CharSequence, ? , String&gt; joining() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;CharSequence, StringBuilder, String&gt;(</span><br><span class="line">            StringBuilder::<span class="keyword">new</span>, StringBuilder::append,</span><br><span class="line">            (r1, r2) -&gt; &#123; r1.append(r2); <span class="keyword">return</span> r1; &#125;,</span><br><span class="line">            StringBuilder::toString, CH_NOID);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>示例学生列表students改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Student</span><span class="params">(String name, String grade, <span class="keyword">double</span> score)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.name = name;</span><br><span class="line">    <span class="keyword">this</span>.grade = grade;</span><br><span class="line">    <span class="keyword">this</span>.score = score;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1．基本用法"><a href="#1．基本用法" class="headerlink" title="1．基本用法"></a>1．基本用法</h3><p>最基本的分组收集器为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> List&lt;Student&gt; students = Arrays.asList(<span class="keyword">new</span> Student[] &#123;</span><br><span class="line">        <span class="keyword">new</span> Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="string">&quot;1&quot;</span>, <span class="number">91d</span>), <span class="keyword">new</span> Student(<span class="string">&quot;lisi&quot;</span>, <span class="string">&quot;2&quot;</span>, <span class="number">89d</span>),</span><br><span class="line">        <span class="keyword">new</span> Student(<span class="string">&quot;wangwu&quot;</span>, <span class="string">&quot;1&quot;</span>, <span class="number">50d</span>), <span class="keyword">new</span> Student(<span class="string">&quot;zhaoliu&quot;</span>, <span class="string">&quot;2&quot;</span>, <span class="number">78d</span>),</span><br><span class="line">        <span class="keyword">new</span> Student(<span class="string">&quot;sunqi&quot;</span>, <span class="string">&quot;1&quot;</span>, <span class="number">59d</span>)&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>参数是一个类型为Function的分组器classifier，它将类型为T的元素转换为类型为K的一个值，这个值表示分组值，所有分组值一样的元素会被归为同一个组，放到一个列表中，所以返回值类型是<code>Map&lt;K, List&lt;T&gt;&gt;</code>。比如，将学生流按照年级进行分组，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ? , Map&lt;K, List&lt;T&gt;&gt;&gt;</span><br><span class="line">    groupingBy(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier)</span><br></pre></td></tr></table></figure>
+
+<p>学生会分为两组：第一组键为”1”，分组学生包括”zhangsan””wangwu”和”sunqi”；第二组键为”2”，分组学生包括”lisi” “zhaoliu”。这段代码基本等同于如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; groups = students.stream()</span><br><span class="line">        .collect(Collectors.groupingBy(Student::getGrade));</span><br></pre></td></tr></table></figure>
+
+<p>显然，使用groupingBy要简洁清晰得多，但它到底是怎么实现的呢？</p>
+<h3 id="2．基本原理"><a href="#2．基本原理" class="headerlink" title="2．基本原理"></a>2．基本原理</h3><p>groupingBy的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; groups = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"><span class="keyword">for</span>(Student t : students) &#123;</span><br><span class="line">    String key = t.getGrade();</span><br><span class="line">    List&lt;Student&gt; container = groups.get(key);</span><br><span class="line">    <span class="keyword">if</span>(container == <span class="keyword">null</span>) &#123;</span><br><span class="line">        container = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        groups.put(key, container);</span><br><span class="line">    &#125;</span><br><span class="line">    container.add(t);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它调用了第二个groupingBy方法，传递了toList收集器，其代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K&gt; Collector&lt;T, ? , Map&lt;K, List&lt;T&gt;&gt;&gt;</span><br><span class="line">groupingBy(Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier) &#123;</span><br><span class="line">    <span class="keyword">return</span> groupingBy(classifier, toList());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法接受一个下游收集器downstream作为参数，然后传递给下面更通用的函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, K, A, D&gt; Collector&lt;T, ? , Map&lt;K, D&gt;&gt; groupingBy(</span><br><span class="line">        Function&lt;? <span class="keyword">super</span> T, ? extends K&gt; classifier,</span><br><span class="line">        Collector&lt;? <span class="keyword">super</span> T, A, D&gt; downstream) &#123;</span><br><span class="line">    <span class="keyword">return</span> groupingBy(classifier, HashMap::<span class="keyword">new</span>, downstream);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>classifier还是分组器，mapFactory是返回Map的工厂方法，默认是HashMap::new, downstream表示下游收集器，<strong>下游收集器负责收集同一个分组内元素的结果</strong>。</p>
+<p>对最通用的groupingBy函数返回的收集器，其收集元素的基本过程和伪代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//先创建一个存放结果的Map</span></span><br><span class="line">Map map = mapFactory.get();</span><br><span class="line"><span class="keyword">for</span>(T t : data) &#123;</span><br><span class="line">    <span class="comment">//对每一个元素，先分组</span></span><br><span class="line">    K key = classifier.apply(t);</span><br><span class="line">    <span class="comment">//找存放分组结果的容器，如果没有，让下游收集器创建，并放到Map中</span></span><br><span class="line">    A container = map.get(key);</span><br><span class="line">    <span class="keyword">if</span>(container == <span class="keyword">null</span>) &#123;</span><br><span class="line">        container = downstream.supplier().get();</span><br><span class="line">        map.put(key, container);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//将元素交给下游收集器(即分组收集器)收集</span></span><br><span class="line">    downstream.accumulator().accept(container, t);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//调用分组收集器的finisher方法，转换结果</span></span><br><span class="line"><span class="keyword">for</span>(Map.Entry entry : map.entrySet()) &#123;</span><br><span class="line">    entry.setValue(downstream.finisher().apply(entry.getValue()));</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> map;</span><br></pre></td></tr></table></figure>
+
+<p>在最基本的groupingBy函数中，下游收集器是toList，但下游收集器还可以是其他收集器，甚至是groupingBy，以构成多级分组。下面我们来看更多的示例。</p>
+<h3 id="3．分组计数、找最大-最小元素"><a href="#3．分组计数、找最大-最小元素" class="headerlink" title="3．分组计数、找最大/最小元素"></a>3．分组计数、找最大/最小元素</h3><p>将元素按一定标准分为多组，然后计算每组的个数，按一定标准找最大或最小元素，这是一个常见的需求。Collectors提供了一些对应的收集器，一般用作下游收集器，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//计数</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , Long&gt; counting()</span><br><span class="line"><span class="comment">//计算最大值</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , Optional&lt;T&gt;&gt; maxBy(</span><br><span class="line">    Comparator&lt;? <span class="keyword">super</span> T&gt; comparator)</span><br><span class="line"><span class="comment">//计算最小值</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , Optional&lt;T&gt;&gt; minBy(</span><br><span class="line">    Comparator&lt;? <span class="keyword">super</span> T&gt; comparator)</span><br></pre></td></tr></table></figure>
+
+<p>还有更为通用的名为reducing的归约收集器，我们就不介绍了。下面看一些例子。</p>
+<p>为了便于使用Collectors中的方法，我们将其中的方法静态导入，即加入如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.stream.Collectors.＊;</span><br></pre></td></tr></table></figure>
+
+<p>统计每个年级的学生个数，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Long&gt; gradeCountMap = students.stream().collect(</span><br><span class="line">        groupingBy(Student::getGrade, counting()));</span><br></pre></td></tr></table></figure>
+
+<p>统计一个单词流中每个单词的个数，按出现顺序排序，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Long&gt; wordCountMap =</span><br><span class="line">        Stream.of(<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;abc&quot;</span>, <span class="string">&quot;hello&quot;</span>).collect(</span><br><span class="line">            groupingBy(Function.identity(), LinkedHashMap::<span class="keyword">new</span>, counting()));</span><br></pre></td></tr></table></figure>
+
+<p>获取每个年级分数最高的一个学生，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Optional&lt;Student&gt;&gt; topStudentMap = students.stream().collect(</span><br><span class="line">        groupingBy(Student::getGrade,</span><br><span class="line">                maxBy(Comparator.comparing(Student::getScore))));</span><br></pre></td></tr></table></figure>
+
+<p>需要说明的是，这个分组收集结果是<code>Optional&lt;Student&gt;</code>，而不是Student，这是因为maxBy处理的流可能是空流，但对我们的例子，这是不可能的。为了直接得到Student，可以使用Collectors的另一个收集器collectingAndThen，在得到<code>Optional&lt;Student&gt;</code>后调用Optional的get方法，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Student&gt; topStudentMap = students.stream().collect(</span><br><span class="line">        groupingBy(Student::getGrade, collectingAndThen(</span><br><span class="line">            maxBy(Comparator.comparing(Student::getScore)), Optional::get)));</span><br></pre></td></tr></table></figure>
+
+<p>关于collectingAndThen，我们稍后再进一步讨论。</p>
+<h3 id="4．分组数值统计"><a href="#4．分组数值统计" class="headerlink" title="4．分组数值统计"></a>4．分组数值统计</h3><p>除了基本的分组计数，还经常需要进行一些分组数值统计，比如求学生分数的和、平均分、最高分、最低分等、针对int、long和double类型，Collectors提供了专门的收集器，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//求平均值，int和long也有类似方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , Double&gt;</span><br><span class="line">    averagingDouble(ToDoubleFunction&lt;? <span class="keyword">super</span> T&gt; mapper)</span><br><span class="line"><span class="comment">//求和，long和double也有类似方法</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , Integer&gt;</span><br><span class="line">    summingInt(ToIntFunction&lt;? <span class="keyword">super</span> T&gt; mapper)</span><br><span class="line"><span class="comment">//求多种汇总信息，int和double也有类似方法</span></span><br><span class="line"><span class="comment">//LongSummaryStatistics包括个数、最大值、最小值、和、平均值等多种信息</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , LongSummaryStatistics&gt;</span><br><span class="line">    summarizingLong(ToLongFunction&lt;? <span class="keyword">super</span> T&gt; mapper)</span><br></pre></td></tr></table></figure>
+
+<p>比如，按年级统计学生分数信息，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, DoubleSummaryStatistics&gt; gradeScoreStat =</span><br><span class="line">    students.stream().collect(groupingBy(Student::getGrade,</span><br><span class="line">                    summarizingDouble(Student::getScore)));</span><br></pre></td></tr></table></figure>
+
+<h3 id="5．分组内的map"><a href="#5．分组内的map" class="headerlink" title="5．分组内的map"></a>5．分组内的map</h3><p>对于每个分组内的元素，我们感兴趣的可能不是元素本身，而是它的某部分信息。在Stream API中，Stream有map方法，可以将元素进行转换，Collectors也为分组元素提供了函数mapping，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, U, A, R&gt;</span><br><span class="line">Collector&lt;T, ? , R&gt; mapping(Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; mapper,</span><br><span class="line">    Collector&lt;? <span class="keyword">super</span> U, A, R&gt; downstream)</span><br></pre></td></tr></table></figure>
+
+<p>交给下游收集器downstream的不再是元素本身，而是应用转换函数mapper之后的结果。比如，对学生按年级分组，得到学生名称列表，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;String&gt;&gt; gradeNameMap =</span><br><span class="line">        students.stream().collect(groupingBy(Student::getGrade,</span><br><span class="line">                          mapping(Student::getName, toList())));</span><br><span class="line">System.out.println(gradeNameMap);</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;1=[zhangsan, wangwu, sunqi], 2=[lisi, zhaoliu]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Stream有flatMap方法。Java 9为Collectors增加了分组内的flatMap方法flatMapping，它与mapping的关系如同Stream中flatMap和map的关系，这里就不举例了，其定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, U, A, R&gt; Collector&lt;T, ? , R&gt; flatMapping(</span><br><span class="line">    Function&lt;? <span class="keyword">super</span> T, ? extends Stream&lt;? extends U&gt;&gt; mapper,</span><br><span class="line">    Collector&lt;? <span class="keyword">super</span> U, A, R&gt; downstream)</span><br></pre></td></tr></table></figure>
+
+<h3 id="6．分组结果处理（filter-sort-skip-limit）"><a href="#6．分组结果处理（filter-sort-skip-limit）" class="headerlink" title="6．分组结果处理（filter/sort/skip/limit）"></a>6．分组结果处理（filter/sort/skip/limit）</h3><p>对分组后的元素，我们可以计数，找最大/最小元素，计算一些数值特征，还可以转换（map）后再收集，那可不可以像Stream API一样，排序（sort）、过滤（filter）、限制返回元素（skip/limit）呢？Collector没有专门的收集器，但有一个通用的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span>&lt;T, A, R, RR&gt; Collector&lt;T, A, RR&gt; <span class="title">collectingAndThen</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">    Collector&lt;T, A, R&gt; downstream, Function&lt;R, RR&gt; finisher)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法接受一个下游收集器downstream和一个finisher，返回一个收集器，它的主要代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> CollectorImpl&lt;&gt;(downstream.supplier(),</span><br><span class="line">    downstream.accumulator(), downstream.combiner(),</span><br><span class="line">    downstream.finisher().andThen(finisher), characteristics);</span><br></pre></td></tr></table></figure>
+
+<p>也就是说，它在下游收集器的结果上又调用了finisher。利用这个finisher，我们可以实现多种功能，下面看一些例子。收集完再排序，可以定义如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , List&lt;T&gt;&gt; collectingAndSort(</span><br><span class="line">      Collector&lt;T, ? , List&lt;T&gt;&gt; downstream, Comparator&lt;? <span class="keyword">super</span> T&gt; comparator) &#123;</span><br><span class="line">    <span class="keyword">return</span> Collectors.collectingAndThen(downstream, (r) -&gt; &#123;</span><br><span class="line">        r.sort(comparator);</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将学生按年级分组，分组内的学生按照分数由高到低进行排序，利用这个方法，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; gradeStudentMap = students.stream()</span><br><span class="line">    .collect(groupingBy(Student::getGrade, collectingAndSort(toList(),</span><br><span class="line">              Comparator.comparing(Student::getScore).reversed())));</span><br></pre></td></tr></table></figure>
+
+<p>针对这个需求，也可以先对流进行排序，然后再分组。</p>
+<p>收集完再过滤，可以定义如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , List&lt;T&gt;&gt; collectingAndFilter(</span><br><span class="line">        Collector&lt;T, ? , List&lt;T&gt;&gt; downstream, Predicate&lt;T&gt; predicate) &#123;</span><br><span class="line">    <span class="keyword">return</span> Collectors.collectingAndThen(downstream, (r) -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> r.stream().filter(predicate).collect(Collectors.toList());</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将学生按年级分组，分组后，每个分组只保留不及格的学生（低于60分），利用这个方法，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; gradeStudentMap = students.stream()</span><br><span class="line">    .collect(groupingBy(Student::getGrade,</span><br><span class="line">        collectingAndFilter(toList(), t-&gt;t.getScore()&lt;<span class="number">60</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>Java 9中，Collectors增加了一个新方法filtering，可以实现相同的功能，定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, A, R&gt; Collector&lt;T, ? , R&gt; filtering(</span><br><span class="line">    Predicate&lt;? <span class="keyword">super</span> T&gt; predicate, Collector&lt;? <span class="keyword">super</span> T, A, R&gt; downstream)</span><br></pre></td></tr></table></figure>
+
+<p>用法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; gradeStudentMap = students.stream()</span><br><span class="line">    .collect(groupingBy(Student::getGrade,</span><br><span class="line">        filtering(t-&gt;t.getScore()&lt;<span class="number">60</span>, toList()));</span><br></pre></td></tr></table></figure>
+
+<p>你可能会认为，实现这种效果也可以先对整个流进行过滤，然后再分组，比如这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; gradeStudentMap = students.stream()</span><br><span class="line">        .filter(t-&gt;t.getScore()&lt;<span class="number">60</span>)</span><br><span class="line">        .collect(groupingBy(Student::getGrade, toList()));</span><br></pre></td></tr></table></figure>
+
+<p>需要说明的是，这两种方式的结果可能是不一样的，如果是先过滤，那些没有任何元素的分组就不会出现在结果中，而如果是先分组，即使该组内的元素都被过滤了，组也会出现在最终结果中，只是分组结果为一个空的集合。</p>
+<p>收集完，只返回特定区间的结果，可以定义如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , List&lt;T&gt;&gt; collectingAndSkipLimit(</span><br><span class="line">        Collector&lt;T, ? , List&lt;T&gt;&gt; downstream, <span class="keyword">long</span> skip, <span class="keyword">long</span> limit) &#123;</span><br><span class="line">    <span class="keyword">return</span> Collectors.collectingAndThen(downstream, (r) -&gt; &#123;</span><br><span class="line">        <span class="keyword">return</span> r.stream().skip(skip).limit(limit)</span><br><span class="line">                          .collect(Collectors.toList());</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比如，将学生按年级分组，分组后，每个分组只保留前两名的学生，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, List&lt;Student&gt;&gt; gradeStudentMap = students.stream()</span><br><span class="line">        .sorted(Comparator.comparing(Student::getScore).reversed())</span><br><span class="line">        .collect(groupingBy(Student::getGrade,</span><br><span class="line">                    collectingAndSkipLimit(toList(), <span class="number">0</span>, <span class="number">2</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>这次，我们先对学生流进行了排序，然后再进行了分组。</p>
+<p>mapping和collectingAndThen都接受一个下游收集器，mapping在把元素交给下游收集器之前先进行转换，而collectingAndThen对下游收集器的结果进行转换，组合利用它们，可以构造更为灵活强大的收集器。</p>
+<h3 id="7．分区"><a href="#7．分区" class="headerlink" title="7．分区"></a>7．分区</h3><p>分组的一个特殊情况是分区，就是将流按true/false分为两个组，Collectors有专门的分区函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Collector&lt;T, ? , Map&lt;Boolean, List&lt;T&gt;&gt;&gt;</span><br><span class="line">    partitioningBy(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, D, A&gt; Collector&lt;T, ? , Map&lt;Boolean, D&gt;&gt;</span><br><span class="line">    partitioningBy(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate,</span><br><span class="line">    Collector&lt;? <span class="keyword">super</span> T, A, D&gt; downstream)</span><br></pre></td></tr></table></figure>
+
+<p>第一个函数的下游收集器为toList()，第二个函数可以指定一个下游收集器。比如，将学生按照是否及格（大于等于60分）分为两组，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Boolean, List&lt;Student&gt;&gt; byPass = students.stream().collect(</span><br><span class="line">    partitioningBy(t-&gt;t.getScore()&gt;=<span class="number">60</span>));</span><br></pre></td></tr></table></figure>
+
+<p>按是否及格分组后，计算每个分组的平均分，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Boolean, Double&gt; avgScoreMap = students.stream().collect(</span><br><span class="line">    partitioningBy(t-&gt;t.getScore()&gt;=<span class="number">60</span>, averagingDouble(Student::getScore)));</span><br></pre></td></tr></table></figure>
+
+<h3 id="8．多级分组"><a href="#8．多级分组" class="headerlink" title="8．多级分组"></a>8．多级分组</h3><p>groupingBy和partitioningBy都可以接受一个下游收集器，对同一个分组或分区内的元素进行进一步收集，而下游收集器又可以是分组或分区，以构建多级分组。比如，按年级对学生分组，分组后，再按照是否及格对学生进行分区，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Map&lt;Boolean, List&lt;Student&gt;&gt;&gt; multiGroup = students.stream()</span><br><span class="line">    .collect(groupingBy(Student::getGrade,</span><br><span class="line">                        partitioningBy(t-&gt;t.getScore()&gt;=<span class="number">60</span>)));</span><br></pre></td></tr></table></figure>
+
+<p>至此，关于函数式数据处理Stream API就介绍完了，<strong>Stream API提供了集合数据处理的常用函数，利用它们，可以简洁地实现大部分常见需求，大大减少代码，提高可读性</strong>。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/" title="26.3 函数式数据处理：强大方便的收集器">https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/8a357756/" rel="prev" title="26.4 组合式异步编程">
+                  <i class="fa fa-chevron-left"></i> 26.4 组合式异步编程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/b34b5819/" rel="next" title="26.2 函数式数据处理：基本用法">
+                  26.2 函数式数据处理：基本用法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/5dff3f09/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/5dff3f09/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

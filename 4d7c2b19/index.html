@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="13.3 文本文件和字符流上节介绍了如何以字节流的方式处理文件，对于文本文件，字节流没有编码的概念，不能按行处理，使用不太方便，更适合的是使用字符流，本节就来介绍字符流。 我们首先简要介绍文本文件的基本概念、与二进制文件的区别、编码，以及字符流和字节流的区别，然后介绍Java中的主要字符流，它们有：1）Reader&#x2F;Writer：字符流的基类，它们是抽象类；2）InputStreamReader&#x2F;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.3 文本文件和字符流">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="13.3 文本文件和字符流上节介绍了如何以字节流的方式处理文件，对于文本文件，字节流没有编码的概念，不能按行处理，使用不太方便，更适合的是使用字符流，本节就来介绍字符流。 我们首先简要介绍文本文件的基本概念、与二进制文件的区别、编码，以及字符流和字节流的区别，然后介绍Java中的主要字符流，它们有：1）Reader&#x2F;Writer：字符流的基类，它们是抽象类；2）InputStreamReader&#x2F;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214605.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214649.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214846.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214903.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214916.jpeg">
+<meta property="article:published_time" content="2021-12-05T12:56:41.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:09.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214605.jpeg">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/","path":"/4d7c2b19/","title":"13.3 文本文件和字符流"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>13.3 文本文件和字符流 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-3-%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6%E5%92%8C%E5%AD%97%E7%AC%A6%E6%B5%81"><span class="nav-text">13.3 文本文件和字符流</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">13.3.1 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E6%96%87%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-text">1．文本文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E7%BC%96%E7%A0%81"><span class="nav-text">2．编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%8E%E5%AD%97%E7%AC%A6%E6%B5%81"><span class="nav-text">3．字符流</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-2-Reader-Writer"><span class="nav-text">13.3.2 Reader&#x2F;Writer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-3-InputStreamReader-OutputStreamWriter"><span class="nav-text">13.3.3 InputStreamReader&#x2F;OutputStreamWriter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-OutputStreamWriter"><span class="nav-text">1. OutputStreamWriter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-InputStreamReader"><span class="nav-text">2. InputStreamReader</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-4-FileReader-FileWriter"><span class="nav-text">13.3.4 FileReader&#x2F;FileWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-5-CharArrayReader-CharArrayWriter"><span class="nav-text">13.3.5 CharArrayReader&#x2F;CharArrayWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-6-StringReader-StringWriter"><span class="nav-text">13.3.6 StringReader&#x2F;StringWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-7-BufferedReader-BufferedWriter"><span class="nav-text">13.3.7 BufferedReader&#x2F;BufferedWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-8-PrintWriter"><span class="nav-text">13.3.8 PrintWriter</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-9-Scanner"><span class="nav-text">13.3.9 Scanner</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-10-%E6%A0%87%E5%87%86%E6%B5%81"><span class="nav-text">13.3.10 标准流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-11-%E5%AE%9E%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-text">13.3.11 实用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#13-3-12-%E5%B0%8F%E7%BB%93"><span class="nav-text">13.3.12 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          13.3 文本文件和字符流
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-05 20:56:41" itemprop="dateCreated datePublished" datetime="2021-12-05T20:56:41+08:00">2021-12-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:09" itemprop="dateModified" datetime="2021-12-07T12:07:09+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">4第四部分 文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/%E7%AC%AC13%E7%AB%A0-%E6%96%87%E4%BB%B6%E5%9F%BA%E6%9C%AC%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">第13章 文件基本技术</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/4d7c2b19/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/4d7c2b19/" data-xid="/JavaReadingNotes/4d7c2b19/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="13-3-文本文件和字符流"><a href="#13-3-文本文件和字符流" class="headerlink" title="13.3 文本文件和字符流"></a>13.3 文本文件和字符流</h1><p>上节介绍了如何以字节流的方式处理文件，对于文本文件，字节流没有编码的概念，不能按行处理，使用不太方便，更适合的是使用字符流，本节就来介绍字符流。</p>
+<p>我们首先简要介绍文本文件的基本概念、与二进制文件的区别、编码，以及字符流和字节流的区别，然后介绍Java中的主要字符流，它们有：<br>1）Reader/Writer：字符流的基类，它们是抽象类；<br>2）InputStreamReader/OutputStreamWriter：适配器类，将字节流转换为字符流；<br>3）FileReader/FileWriter：输入源和输出目标是文件的字符流；<br>4）CharArrayReader/CharArrayWriter：输入源和输出目标是char数组的字符流；<br>5）StringReader/StringWriter：输入源和输出目标是String的字符流；<br>6）BufferedReader/BufferedWriter：装饰类，对输入/输出流提供缓冲，以及按行读写功能；<br>7）PrintWriter：装饰类，可将基本类型和对象转换为其字符串形式输出的类。</p>
+<p>除了这些类，Java中还有一个类Scanner，类似于一个Reader，但不是Reader的子类，可以读取基本类型的字符串形式，类似于PrintWriter的逆操作。理解了字节流和字符流后，我们介绍Java中的标准输入输出和错误流。最后，我们总结一些简单的实用方法。</p>
+<h2 id="13-3-1-基本概念"><a href="#13-3-1-基本概念" class="headerlink" title="13.3.1 基本概念"></a>13.3.1 基本概念</h2><p>我们先来看一些基本概念，包括文本文件、编码和字符流。</p>
+<h3 id="1．文本文件"><a href="#1．文本文件" class="headerlink" title="1．文本文件"></a>1．文本文件</h3><p>上节提到，<strong>处理文件要有二进制思维</strong>。从二进制角度，我们通过一个简单的例子解释下文本文件与二进制文件的区别。比如，要存储整数123，使用二进制形式保存到文件test. dat，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DataOutputStream output = <span class="keyword">new</span> DataOutputStream(</span><br><span class="line">    <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;test.dat&quot;</span>));</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    output.writeInt(<span class="number">123</span>);</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    output.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用UltraEdit打开该文件，显示的却是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br></pre></td></tr></table></figure>
+
+<p>打开十六进制编辑器，显示如图13-3所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214605.jpeg" alt="epub_923038_115"></p>
+<center>图13-3 整数123的二进制存储</center>
+
+<p>在文件中存储的实际有4个字节，最低位字节7B对应的十进制数是123，也就是说，对int类型，二进制文件保存的直接就是int的二进制形式。这个二进制形式，如果当成字符来解释，显示成什么字符则与编码有关，如果当成UTF-32BE编码，解释成的就是一个字符，即{。</p>
+<p>如果使用文本文件保存整数123，则代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">OutputStream output = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;test.txt&quot;</span>);</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    String data = Integer.toString(<span class="number">123</span>);</span><br><span class="line">    output.write(data.getBytes(<span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    output.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码将整数123转换为字符串，然后将它的UTF-8编码输出到了文件中，使用Ultra-Edit打开该文件，显示的就是期望的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123</span><br></pre></td></tr></table></figure>
+
+<p>打开十六进制编辑器，显示如图13-4所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214649.jpeg" alt="epub_923038_116"></p>
+<center>图13-4 整数123的文本存储</center>
+
+<p>文件中实际存储的有三个字节：31、32、33，对应的十进制数分别是49、50、51，分别对应字符’1’、’2’、’3’的ASCII编码。</p>
+<h3 id="2．编码"><a href="#2．编码" class="headerlink" title="2．编码"></a>2．编码</h3><p>在文本文件中，编码非常重要，同一个字符，不同编码方式对应的二进制形式可能是不一样的。我们看个例子，对同样的文本：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hello, <span class="number">123</span>, 老马</span><br></pre></td></tr></table></figure>
+
+<p>1）UTF-8编码，十六进制如图13-5所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214846.jpeg" alt="epub_923038_117"></p>
+<center>图13-5 示例文本的UTF-8编码</center>
+
+<p>英文和数字字符每个占一个字节，而每个中文占三个字节。</p>
+<p>2）GB18030编码，十六进制如图13-6所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214903.jpeg" alt="epub_923038_118"></p>
+<center>图13-6 示例文本的GB18030编码</center>
+
+<p>英文和数字字符与UTF-8编码是一样的，但中文不一样，每个中文占两个字节。</p>
+<p>3）UTF-16BE编码，十六进制为如图13-7所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209214916.jpeg" alt="epub_923038_119"></p>
+<center>图13-7 示例文本的UTF-16BE编码</center>
+
+<p>无论是英文还是中文字符，每个字符都占两个字节。UTF-16BE也是Java内存中对字符的编码方式。</p>
+<h3 id="3．字符流"><a href="#3．字符流" class="headerlink" title="3．字符流"></a>3．字符流</h3><p>字节流是按字节读取的，而<strong>字符流则是按char读取</strong>的，一个char在文件中保存的是几个字节与编码有关，但字符流封装了这种细节，我们操作的对象就是char。</p>
+<p>需要说明的是，<strong>一个char不完全等同于一个字符</strong>，对于绝大部分字符，一个字符就是一个char，但我们之前介绍过，对于增补字符集中的字符，需要两个char表示，对于这种字符，Java中的字符流是按char而不是一个完整字符处理的。</p>
+<p>理解了文本文件、编码和字符流的概念，我们再来看Java中的相关类，从基类开始。</p>
+<h2 id="13-3-2-Reader-Writer"><a href="#13-3-2-Reader-Writer" class="headerlink" title="13.3.2 Reader/Writer"></a>13.3.2 Reader/Writer</h2><p>Reader与字节流的InputStream类似，也是抽象类，部分主要方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">read</span><span class="params">(<span class="keyword">char</span> cbuf[])</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">skip</span><span class="params">(<span class="keyword">long</span> n)</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">ready</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>方法的名称和含义与InputStream中的对应方法基本类似，但Reader中处理的单位是char，比如read读取的是一个char，取值范围为0～65 535。Reader没有available方法，对应的方法是ready()。</p>
+<p>Writer与字节流的OutputStream类似，也是抽象类，部分主要方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> c)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">char</span> cbuf[])</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(String str)</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">close</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br><span class="line"><span class="function"><span class="keyword">abstract</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">flush</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>;</span><br></pre></td></tr></table></figure>
+
+<p>含义与OutputStream的对应方法基本类似，但Writer处理的单位是char, Writer还接受String类型，我们知道，String的内部就是char数组，处理时，会调用String的getChar方法先获取char数组。</p>
+<h2 id="13-3-3-InputStreamReader-OutputStreamWriter"><a href="#13-3-3-InputStreamReader-OutputStreamWriter" class="headerlink" title="13.3.3 InputStreamReader/OutputStreamWriter"></a>13.3.3 InputStreamReader/OutputStreamWriter</h2><p>InputStreamReader和OutputStreamWriter是适配器类，能将InputStream/OutputStream转换为Reader/Writer。</p>
+<h3 id="1-OutputStreamWriter"><a href="#1-OutputStreamWriter" class="headerlink" title="1. OutputStreamWriter"></a>1. OutputStreamWriter</h3><p>OutputStreamWriter的主要构造方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">OutputStreamWriter</span><span class="params">(OutputStream out)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">OutputStreamWriter</span><span class="params">(OutputStream out, String charsetName)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>一个重要的参数是编码类型，可以通过名字charsetName或Charset对象传入，如果没有传入，则为系统默认编码，默认编码可以通过Charset.defaultCharset()得到。Output-StreamWriter内部有一个类型为StreamEncoder的编码器，能将char转换为对应编码的字节。</p>
+<p>我们看一段简单的代码，将字符串”hello, 123，老马”写到文件hello.txt中，编码格式为GB2312：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Writer writer = <span class="keyword">new</span> OutputStreamWriter(</span><br><span class="line">        <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;hello.txt&quot;</span>), <span class="string">&quot;GB2312&quot;</span>);</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    String str = <span class="string">&quot;hello, 123, 老马&quot;</span>;</span><br><span class="line">    writer.write(str);</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    writer.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建一个FileOutputStream，然后将其包在一个OutputStreamWriter中，就可以直接以字符串写入了。</p>
+<h3 id="2-InputStreamReader"><a href="#2-InputStreamReader" class="headerlink" title="2. InputStreamReader"></a>2. InputStreamReader</h3><p>InputStreamReader的主要构造方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">InputStreamReader</span><span class="params">(InputStream in)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">InputStreamReader</span><span class="params">(InputStream in, String charsetName)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>与OutputStreamWriter一样，一个重要的参数是编码类型。InputStreamReader内部有一个类型为StreamDecoder的解码器，能将字节根据编码转换为char。</p>
+<p>我们看一段简单的代码，将上面写入的文件读进来：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Reader reader = <span class="keyword">new</span> InputStreamReader(</span><br><span class="line">        <span class="keyword">new</span> FileInputStream(<span class="string">&quot;hello.txt&quot;</span>), <span class="string">&quot;GB2312&quot;</span>);</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] cbuf = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> charsRead = reader.read(cbuf);</span><br><span class="line">    System.out.println(<span class="keyword">new</span> String(cbuf, <span class="number">0</span>, charsRead));</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    reader.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码假定一次read调用就读到了所有内容，且假定长度不超过1024。为了确保读到所有内容，可以借助待会介绍的CharArrayWriter或StringWriter。</p>
+<h2 id="13-3-4-FileReader-FileWriter"><a href="#13-3-4-FileReader-FileWriter" class="headerlink" title="13.3.4 FileReader/FileWriter"></a>13.3.4 FileReader/FileWriter</h2><p>FileReader/FileWriter的输入和目的是文件。FileReader是InputStreamReader的子类，它的主要构造方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileReader</span><span class="params">(File file)</span> <span class="keyword">throws</span> FileNotFoundException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileReader</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> FileNotFoundException</span></span><br></pre></td></tr></table></figure>
+
+<p>FileWriter是OutputStreamWriter的子类，它的主要构造方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileWriter</span><span class="params">(File file)</span> <span class="keyword">throws</span> IOException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">FileWriter</span><span class="params">(String fileName, <span class="keyword">boolean</span> append)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>append参数指定是追加还是覆盖，如果没传，则为覆盖。</p>
+<p>需要注意的是，<strong>FileReader/FileWriter不能指定编码类型，只能使用默认编码，如果需要指定编码类型，可以使用InputStreamReader/OutputStreamWriter</strong>。</p>
+<h2 id="13-3-5-CharArrayReader-CharArrayWriter"><a href="#13-3-5-CharArrayReader-CharArrayWriter" class="headerlink" title="13.3.5 CharArrayReader/CharArrayWriter"></a>13.3.5 CharArrayReader/CharArrayWriter</h2><p>CharArrayWriter与ByteArrayOutputStream类似，它的输出目标是char数组，这个数组的长度可以根据数据内容动态扩展。</p>
+<p>CharArrayWriter有如下方法，可以方便地将数据转换为char数组或字符串：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">char</span>[] toCharArray()</span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>使用CharArrayWriter，我们可以改进上面的读文件代码，确保将所有文件内容读入：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Reader reader = <span class="keyword">new</span> InputStreamReader(</span><br><span class="line">        <span class="keyword">new</span> FileInputStream(<span class="string">&quot;hello.txt&quot;</span>), <span class="string">&quot;GB2312&quot;</span>);</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    CharArrayWriter writer = <span class="keyword">new</span> CharArrayWriter();</span><br><span class="line">    <span class="keyword">char</span>[] cbuf = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">1024</span>];</span><br><span class="line">    <span class="keyword">int</span> charsRead = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>((charsRead=reader.read(cbuf))! =-<span class="number">1</span>)&#123;</span><br><span class="line">        writer.write(cbuf, <span class="number">0</span>, charsRead);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(writer.toString());</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    reader.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>读入的数据先写入CharArrayWriter中，读完后，再调用其toString()方法获取完整数据。</p>
+<p>CharArrayReader与上节介绍的ByteArrayInputStream类似，它将char数组包装为一个Reader，是一种适配器模式，它的构造方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CharArrayReader</span><span class="params">(<span class="keyword">char</span> buf[])</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">CharArrayReader</span><span class="params">(<span class="keyword">char</span> buf[], <span class="keyword">int</span> offset, <span class="keyword">int</span> length)</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="13-3-6-StringReader-StringWriter"><a href="#13-3-6-StringReader-StringWriter" class="headerlink" title="13.3.6 StringReader/StringWriter"></a>13.3.6 StringReader/StringWriter</h2><p>StringReader/StringWriter与CharArrayReader/CharArrayWriter类似，只是输入源为String，输出目标为StringBuffer，而且，String/StringBuffer内部是由char数组组成的，所以它们本质上是一样的，具体我们就不赘述了。之所以要将char数组和String与Reader/Writer进行转换，也是为了能够方便地参与Reader/Writer构成的协作体系，复用代码。</p>
+<h2 id="13-3-7-BufferedReader-BufferedWriter"><a href="#13-3-7-BufferedReader-BufferedWriter" class="headerlink" title="13.3.7 BufferedReader/BufferedWriter"></a>13.3.7 BufferedReader/BufferedWriter</h2><p>BufferedReader/BufferedWriter是装饰类，提供缓冲，以及按行读写功能。Buffered-Writer的构造方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedWriter</span><span class="params">(Writer out)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedWriter</span><span class="params">(Writer out, <span class="keyword">int</span> sz)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>参数sz是缓冲大小，如果没有提供，默认为8192。它有如下方法，可以输出平台特定的换行符：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">newLine</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>BufferedReader的构造方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedReader</span><span class="params">(Reader in)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BufferedReader</span><span class="params">(Reader in, <span class="keyword">int</span> sz)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>参数sz是缓冲大小，如果没有提供，默认为8192。它有如下方法，可以读入一行：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">readLine</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>字符’\r’或’\n’或’\r\n’被视为换行符，readLine返回一行内容，但不会包含换行符，当读到流结尾时，返回null。</p>
+<p><strong>FileReader/FileWriter是没有缓冲的，也不能按行读写，所以，一般应该在它们的外面包上对应的缓冲类</strong>。我们来看个例子，还是学生列表，这次我们使用可读的文本进行保存，一行保存一条学生信息，学生字段之间用逗号分隔，保存的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeStudents</span><span class="params">(List&lt;Student&gt; students)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    BufferedWriter writer = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        writer = <span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> FileWriter(<span class="string">&quot;students.txt&quot;</span>));</span><br><span class="line">        <span class="keyword">for</span>(Student s : students)&#123;</span><br><span class="line">            writer.write(s.getName()+<span class="string">&quot;, &quot;</span>+s.getAge()+<span class="string">&quot;, &quot;</span>+s.getScore());</span><br><span class="line">            writer.newLine();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(writer! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            writer.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>保存后的文件内容显示为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">张三，18,80.9</span><br><span class="line">李四，17,67.5</span><br></pre></td></tr></table></figure>
+
+<p>从文件中读取的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Student&gt; <span class="title">readStudents</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    BufferedReader reader = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        reader = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">                <span class="keyword">new</span> FileReader(<span class="string">&quot;students.txt&quot;</span>));</span><br><span class="line">        List&lt;Student&gt; students = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        String line = reader.readLine();</span><br><span class="line">        <span class="keyword">while</span>(line! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            String[] fields = line.split(<span class="string">&quot;, &quot;</span>);</span><br><span class="line">            Student s = <span class="keyword">new</span> Student();</span><br><span class="line">            s.setName(fields[<span class="number">0</span>]);</span><br><span class="line">            s.setAge(Integer.parseInt(fields[<span class="number">1</span>]));</span><br><span class="line">            s.setScore(Double.parseDouble(fields[<span class="number">2</span>]));</span><br><span class="line">            students.add(s);</span><br><span class="line">            line = reader.readLine();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> students;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(reader! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            reader.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用readLine读入每一行，然后使用String的方法分隔字段，再调用Integer和Double的方法将字符串转换为int和double。这种对每一行的解析可以使用类Scanner进行简化，待会我们介绍。</p>
+<h2 id="13-3-8-PrintWriter"><a href="#13-3-8-PrintWriter" class="headerlink" title="13.3.8 PrintWriter"></a>13.3.8 PrintWriter</h2><p>PrintWriter有很多重载的print方法，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">(Object obj)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>它会将这些参数转换为其字符串形式，即调用String.valueOf()，然后再调用write。它也有很多重载形式的println方法，println除了调用对应的print，还会输出一个换行符。除此之外，PrintWriter还有格式化输出方法，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> PrintWriter <span class="title">printf</span><span class="params">(String format, Object ... args)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>format表示格式化形式，比如，保留小数点后两位，格式可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PrintWriter writer = …</span><br><span class="line">writer.format(<span class="string">&quot;%.2f&quot;</span>, <span class="number">123.456f</span>);</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">123.45</span><br></pre></td></tr></table></figure>
+
+<p>更多格式化的内容可以参看API文档，本节就不赘述了。</p>
+<p>PrintWriter的方便之处在于，它有很多构造方法，可以接受文件路径名、文件对象、OutputStream、Writer等，对于文件路径名和File对象，还可以接受编码类型作为参数，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PrintWriter</span><span class="params">(File file)</span> <span class="keyword">throws</span> FileNotFoundException</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PrintWriter</span><span class="params">(String fileName, String csn)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PrintWriter</span><span class="params">(OutputStream out, <span class="keyword">boolean</span> autoFlush)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PrintWriter</span><span class="params">(Writer out)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>参数csn表示编码类型，对于以文件对象和文件名为参数的构造方法，PrintWriter内部会构造一个BufferedWriter，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PrintWriter</span><span class="params">(String fileName)</span> <span class="keyword">throws</span> FileNotFoundException </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(<span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> OutputStreamWriter(</span><br><span class="line">        <span class="keyword">new</span> FileOutputStream(fileName))), <span class="keyword">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于以OutputSream为参数的构造方法，PrintWriter也会构造一个BufferedWriter，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">PrintWriter</span><span class="params">(OutputStream out, <span class="keyword">boolean</span> autoFlush)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(<span class="keyword">new</span> BufferedWriter(<span class="keyword">new</span> OutputStreamWriter(out)), autoFlush);</span><br><span class="line">    …</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于以Writer为参数的构造方法，PrintWriter就不会包装BufferedWriter了。</p>
+<p>构造方法中的autoFlush参数表示同步缓冲区的时机，如果为true，则在调用println、printf或format方法的时候，同步缓冲区，如果没有传，则不会自动同步，需要根据情况调用flush方法。</p>
+<p>可以看出，PrintWriter是一个非常方便的类，可以直接指定文件名作为参数，可以指定编码类型，可以自动缓冲，可以自动将多种类型转换为字符串，在输出到文件时，可以优先选择该类。</p>
+<p>上面的保存学生列表代码，使用PrintWriter，可以写为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeStudents</span><span class="params">(List&lt;Student&gt; students)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    PrintWriter writer = <span class="keyword">new</span> PrintWriter(<span class="string">&quot;students.txt&quot;</span>);</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">for</span>(Student s : students)&#123;</span><br><span class="line">            writer.println(s.getName()+<span class="string">&quot;, &quot;</span>+s.getAge()+<span class="string">&quot;, &quot;</span>+s.getScore());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        writer.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>PrintWriter有一个非常相似的类PrintStream，除了不能接受Writer作为构造方法外， PrintStream的其他构造方法与PrintWriter一样。PrintStream也有几乎一样的重载的print和println方法，只是自动同步缓冲区的时机略有不同，在PrintStream中，只要碰到一个换行字符’\n’，就会自动同步缓冲区。PrintStream与PrintWriter的另一个区别是，虽然它们都有如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">write</span><span class="params">(<span class="keyword">int</span> b)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>但含义是不一样的，PrintStream只使用最低的8位，输出一个字节，而PrintWriter是使用最低的两位，输出一个char。</p>
+<h2 id="13-3-9-Scanner"><a href="#13-3-9-Scanner" class="headerlink" title="13.3.9 Scanner"></a>13.3.9 Scanner</h2><p>Scanner是一个单独的类，它是一个简单的文本扫描器，能够分析基本类型和字符串，它需要一个分隔符来将不同数据区分开来，默认是使用空白符，可以通过useDelimiter()方法进行指定。Scanner有很多形式的next()方法，可以读取下一个基本类型或行，如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">nextFloat</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">nextInt</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">nextLine</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>Scanner也有很多构造方法，可以接受File对象、InputStream、Reader作为参数，它也可以将字符串作为参数，这时，它会创建一个StringReader。比如，以前面的解析学生记录为例，使用Scanner，代码可以改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Student&gt; <span class="title">readStudents</span><span class="params">()</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    BufferedReader reader = <span class="keyword">new</span> BufferedReader(</span><br><span class="line">            <span class="keyword">new</span> FileReader(<span class="string">&quot;students.txt&quot;</span>));</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        List&lt;Student&gt; students = <span class="keyword">new</span> ArrayList&lt;Student&gt;();</span><br><span class="line">        String line = reader.readLine();</span><br><span class="line">        <span class="keyword">while</span>(line! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            Student s = <span class="keyword">new</span> Student();</span><br><span class="line">            Scanner scanner = <span class="keyword">new</span> Scanner(line).useDelimiter(<span class="string">&quot;, &quot;</span>);</span><br><span class="line">            s.setName(scanner.next());</span><br><span class="line">            s.setAge(scanner.nextInt());</span><br><span class="line">            s.setScore(scanner.nextDouble());</span><br><span class="line">            students.add(s);</span><br><span class="line">            line = reader.readLine();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> students;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        reader.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="13-3-10-标准流"><a href="#13-3-10-标准流" class="headerlink" title="13.3.10 标准流"></a>13.3.10 标准流</h2><p>我们之前一直在使用System.out向屏幕上输出，它是一个PrintStream对象，输出目标就是所谓的“标准”输出，经常是屏幕。除了System.out, Java中还有两个标准流：System. in和System.err。</p>
+<p>System.in表示标准输入，它是一个InputStream对象，输入源经常是键盘。比如，从键盘接受一个整数并输出，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Scanner in = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line"><span class="keyword">int</span> num = in.nextInt();</span><br><span class="line">System.out.println(num);</span><br></pre></td></tr></table></figure>
+
+<p>System.err表示标准错误流，一般异常和错误信息输出到这个流，它也是一个Print-Stream对象，输出目标默认与System.out一样，一般也是屏幕。</p>
+<p>标准流的一个重要特点是，它们可以<strong>重定向</strong>，比如可以重定向到文件，从文件中接受输入，输出也写到文件中。在Java中，可以使用System类的setIn、setOut、setErr进行重定向，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">System.setIn(<span class="keyword">new</span> ByteArrayInputStream(<span class="string">&quot;hello&quot;</span>.getBytes(<span class="string">&quot;UTF-8&quot;</span>)));</span><br><span class="line">System.setOut(<span class="keyword">new</span> PrintStream(<span class="string">&quot;out.txt&quot;</span>));</span><br><span class="line">System.setErr(<span class="keyword">new</span> PrintStream(<span class="string">&quot;err.txt&quot;</span>));</span><br><span class="line"><span class="keyword">try</span>&#123;</span><br><span class="line">    Scanner in = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">    System.out.println(in.nextLine());</span><br><span class="line">    System.out.println(in.nextLine());</span><br><span class="line">&#125;<span class="keyword">catch</span>(Exception e)&#123;</span><br><span class="line">    System.err.println(e.getMessage());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>标准输入重定向到了一个ByteArrayInputStream，标准输出和错误重定向到了文件，所以第一次调用in.nextLine就会读取到”hello”，输出文件out.txt中也包含该字符串，第二次调用in.nextLine会触发异常，异常消息会写到错误流中，即文件err.txt中会包含异常消息，为”No line found”。</p>
+<p>在实际开发中，经常需要重定向标准流。比如，在一些自动化程序中，经常需要重定向标准输入流，以从文件中接受参数，自动执行，避免人手工输入。在后台运行的程序中，一般都需要重定向标准输出和错误流到日志文件，以记录和分析运行的状态和问题。</p>
+<p>在Linux系统中，<strong>标准输入输出流也是一种重要的协作机制</strong>。很多命令都很小，只完成单一功能，实际完成一项工作经常需要组合使用多条命令，它们协作的模式就是通过标准输入输出流，每个命令都可以从标准输入接受参数，处理结果写到标准输出，这个标准输出可以连接到下一个命令作为标准输入，构成管道式的处理链条。比如，查找一个日志文件access.log中127.0.0.1出现的行数，可以使用命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat access.log | grep 127.0.0.1 | wc -l</span><br></pre></td></tr></table></figure>
+
+<p>有三个程序cat、grep、wc, |是管道符号，它将cat的标准输出重定向为了grep的标准输入，而grep的标准输出又成了wc的标准输入。</p>
+<h2 id="13-3-11-实用方法"><a href="#13-3-11-实用方法" class="headerlink" title="13.3.11 实用方法"></a>13.3.11 实用方法</h2><p>可以看出，字符流也包含了很多的类，虽然很灵活，但对于一些简单的需求，却需要写很多代码，实际开发中，经常需要将一些常用功能进行封装，提供更为简单的接口。下面我们提供一些实用方法，以供参考，代码比较简单，就不解释了。</p>
+<p>复制Reader到Writer，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">copy</span><span class="params">(<span class="keyword">final</span> Reader input,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">final</span> Writer output)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] buf = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">4096</span>];</span><br><span class="line">    <span class="keyword">int</span> charsRead = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span>((charsRead = input.read(buf)) ! = -<span class="number">1</span>) &#123;</span><br><span class="line">        output.write(buf, <span class="number">0</span>, charsRead);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将文件全部内容读入到一个字符串，参数为文件名和编码类型，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">readFileToString</span><span class="params">(<span class="keyword">final</span> String fileName,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">final</span> String encoding)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    BufferedReader reader = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(</span><br><span class="line">                <span class="keyword">new</span> FileInputStream(fileName), encoding));</span><br><span class="line">        StringWriter writer = <span class="keyword">new</span> StringWriter();</span><br><span class="line">        copy(reader, writer);</span><br><span class="line">        <span class="keyword">return</span> writer.toString();</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(reader! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            reader.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法利用了StringWriter，并调用了上面的复制方法。</p>
+<p>将字符串写到文件，参数为文件名、字符串内容和编码类型，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeStringToFile</span><span class="params">(<span class="keyword">final</span> String fileName,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">final</span> String data, <span class="keyword">final</span> String encoding)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    Writer writer = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        writer = <span class="keyword">new</span> OutputStreamWriter(</span><br><span class="line">                    <span class="keyword">new</span> FileOutputStream(fileName), encoding);</span><br><span class="line">        writer.write(data);</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(writer! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            writer.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>按行将多行数据写到文件，参数为文件名、编码类型、行的集合，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeLines</span><span class="params">(<span class="keyword">final</span> String fileName, <span class="keyword">final</span> String encoding,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">final</span> Collection&lt;? &gt; lines)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    PrintWriter writer = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        writer = <span class="keyword">new</span> PrintWriter(fileName, encoding);</span><br><span class="line">        <span class="keyword">for</span>(Object line : lines)&#123;</span><br><span class="line">            writer.println(line);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(writer! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            writer.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>按行将文件内容读到一个列表中，参数为文件名、编码类型，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;String&gt; <span class="title">readLines</span><span class="params">(<span class="keyword">final</span> String fileName,</span></span></span><br><span class="line"><span class="params"><span class="function">        <span class="keyword">final</span> String encoding)</span> <span class="keyword">throws</span> IOException</span>&#123;</span><br><span class="line">    BufferedReader reader = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        reader = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(</span><br><span class="line">                <span class="keyword">new</span> FileInputStream(fileName), encoding));</span><br><span class="line">        List&lt;String&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        String line = reader.readLine();</span><br><span class="line">        <span class="keyword">while</span>(line! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            list.add(line);</span><br><span class="line">            line = reader.readLine();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(reader! =<span class="keyword">null</span>)&#123;</span><br><span class="line">            reader.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="13-3-12-小结"><a href="#13-3-12-小结" class="headerlink" title="13.3.12 小结"></a>13.3.12 小结</h2><p>本节介绍了如何在Java中以字符流的方式读写文本文件，我们强调了二进制思维、文本文本与二进制文件的区别、编码，以及字符流与字节流的不同，介绍了个各种字符流、Scanner以及标准流，最后总结了一些实用方法。完整的代码在github上，地址为<a target="_blank" rel="noopener" href="https://github.com/swiftma/program-logic">https://github.com/swiftma/program-logic</a> ，位于包shuo.laoma.file.c58下。</p>
+<p>写文件时，可以优先考虑PrintWriter，因为它使用方便，支持自动缓冲、指定编码类型、类型转换等。读文件时，如果需要指定编码类型，需要使用InputStreamReader；如果不需要指定编码类型，可使用FileReader，但都应该考虑在外面包上缓冲类Buffered-Reader。</p>
+<p>通过前面两个小节，我们应该可以从容地读写文件内容了，但文件和目录本身的操作，如查看元数据信息、文件重命名、遍历文件、查找文件、新建目录等，又该如何进行呢？让我们下节介绍。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/" title="13.3 文本文件和字符流">https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/a0f4cea/" rel="prev" title="13.2 二进制文件和字节流">
+                  <i class="fa fa-chevron-left"></i> 13.2 二进制文件和字节流
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/eafc5858/" rel="next" title="13.4 文件和目录操作">
+                  13.4 文件和目录操作 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/4d7c2b19/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/4d7c2b19/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

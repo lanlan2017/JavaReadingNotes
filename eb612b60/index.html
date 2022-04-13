@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="7.6 随机本节，我们来讨论随机，随机是计算机程序中一个非常常见的需求，比如：  各种游戏中有大量的随机，比如扑克游戏中的洗牌。 微信抢红包，抢的红包金额是随机的。 北京购车摇号，谁能摇到是随机的。 给用户生成随机密码。  我们首先来介绍Java对随机的支持，同时介绍其实现原理，然后针对一些实际场景，包括洗牌、抢红包、摇号、随机高强度密码、带权重的随机选择等，讨论如何应用随机。先来看如何使用最基本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.6 随机">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/eb612b60/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="7.6 随机本节，我们来讨论随机，随机是计算机程序中一个非常常见的需求，比如：  各种游戏中有大量的随机，比如扑克游戏中的洗牌。 微信抢红包，抢的红包金额是随机的。 北京购车摇号，谁能摇到是随机的。 给用户生成随机密码。  我们首先来介绍Java对随机的支持，同时介绍其实现原理，然后针对一些实际场景，包括洗牌、抢红包、摇号、随机高强度密码、带权重的随机选择等，讨论如何应用随机。先来看如何使用最基本">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209110957.jpeg">
+<meta property="article:published_time" content="2021-12-04T12:14:01.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:08.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209110957.jpeg">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/eb612b60/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/eb612b60/","path":"/eb612b60/","title":"7.6 随机"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>7.6 随机 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-6-%E9%9A%8F%E6%9C%BA"><span class="nav-text">7.6 随机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-1-Math-random"><span class="nav-text">7.6.1 Math.random</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-2-Random"><span class="nav-text">7.6.2 Random</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-3-%E9%9A%8F%E6%9C%BA%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">7.6.3 随机的基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-4-%E9%9A%8F%E6%9C%BA%E5%AF%86%E7%A0%81"><span class="nav-text">7.6.4 随机密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-5-%E6%B4%97%E7%89%8C"><span class="nav-text">7.6.5 洗牌</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-6-%E5%B8%A6%E6%9D%83%E9%87%8D%E7%9A%84%E9%9A%8F%E6%9C%BA%E9%80%89%E6%8B%A9"><span class="nav-text">7.6.6 带权重的随机选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-7-%E6%8A%A2%E7%BA%A2%E5%8C%85%E7%AE%97%E6%B3%95"><span class="nav-text">7.6.7 抢红包算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-8-%E5%8C%97%E4%BA%AC%E8%B4%AD%E8%BD%A6%E6%91%87%E5%8F%B7%E7%AE%97%E6%B3%95"><span class="nav-text">7.6.8 北京购车摇号算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-6-9-%E5%B0%8F%E7%BB%93"><span class="nav-text">7.6.9 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/eb612b60/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          7.6 随机
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-04 20:14:01" itemprop="dateCreated datePublished" datetime="2021-12-04T20:14:01+08:00">2021-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:08" itemprop="dateModified" datetime="2021-12-07T12:07:08+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/2%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">2第二部分 面向对象</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/2%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/%E7%AC%AC7%E7%AB%A0-%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">第7章 常用基础类</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/eb612b60/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/eb612b60/" data-xid="/JavaReadingNotes/eb612b60/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="7-6-随机"><a href="#7-6-随机" class="headerlink" title="7.6 随机"></a>7.6 随机</h1><p>本节，我们来讨论随机，随机是计算机程序中一个非常常见的需求，比如：</p>
+<ul>
+<li>各种游戏中有大量的随机，比如扑克游戏中的洗牌。</li>
+<li>微信抢红包，抢的红包金额是随机的。</li>
+<li>北京购车摇号，谁能摇到是随机的。</li>
+<li>给用户生成随机密码。</li>
+</ul>
+<p>我们首先来介绍Java对随机的支持，同时介绍其实现原理，然后针对一些实际场景，包括洗牌、抢红包、摇号、随机高强度密码、带权重的随机选择等，讨论如何应用随机。先来看如何使用最基本的随机。</p>
+<h2 id="7-6-1-Math-random"><a href="#7-6-1-Math-random" class="headerlink" title="7.6.1 Math.random"></a>7.6.1 Math.random</h2><p>Java中，对随机最基本的支持是Math类中的静态方法random()，它生成一个0～1的随机数，类型为double，包括0但不包括1。比如，随机生成并输出3个数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">3</span>; i++)&#123;</span><br><span class="line">    System.out.println(Math.random());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>笔者的计算机中的一次运行，输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0.4784896133823269</span><br><span class="line">0.03012515628333423</span><br><span class="line">0.7921024363953197</span><br></pre></td></tr></table></figure>
+
+<p>每次运行，输出都不一样。Math.random()是如何实现的呢？我们来看相关代码（Java<br>7）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> Random randomNumberGenerator;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">synchronized</span> Random <span class="title">initRNG</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Random rnd = randomNumberGenerator;</span><br><span class="line">    <span class="keyword">return</span> (rnd == <span class="keyword">null</span>) ? (randomNumberGenerator = <span class="keyword">new</span> Random()) : rnd;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">double</span> <span class="title">random</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Random rnd = randomNumberGenerator;</span><br><span class="line">    <span class="keyword">if</span> (rnd == <span class="keyword">null</span>) rnd = initRNG();</span><br><span class="line">    <span class="keyword">return</span> rnd.nextDouble();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>内部它使用了一个Random类型的静态变量randomNumberGenerator，调用random()就是调用该变量的nextDouble()方法，这个Random变量只有在第一次使用的时候才创建。</p>
+<p>下面我们来看这个Random类，它位于包java.util下。</p>
+<h2 id="7-6-2-Random"><a href="#7-6-2-Random" class="headerlink" title="7.6.2 Random"></a>7.6.2 Random</h2><p>Random类提供了更为丰富的随机方法，它的方法不是静态方法，使用Random，先要创建一个Random实例，看个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">System.out.println(rnd.nextInt());</span><br><span class="line">System.out.println(rnd.nextInt(<span class="number">100</span>));</span><br></pre></td></tr></table></figure>
+
+<p>笔者计算机中的一次运行，输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-1516612608</span><br><span class="line">23</span><br></pre></td></tr></table></figure>
+
+<p>nextInt()产生一个随机的int，可能为正数，也可能为负数，nextInt(100)产生一个随机int，范围是0～100，包括0不包括100。除了nextInt，还有一些别的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">nextLong</span><span class="params">()</span> <span class="comment">//随机生成一个long</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">nextBoolean</span><span class="params">()</span> <span class="comment">//随机生成一个boolean</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">nextBytes</span><span class="params">(<span class="keyword">byte</span>[] bytes)</span> <span class="comment">//产生随机字节， 字节个数就是bytes的长度</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">nextFloat</span><span class="params">()</span> <span class="comment">//随机浮点数，从0到1，包括0不包括1</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">nextDouble</span><span class="params">()</span> <span class="comment">//随机浮点数，从0到1，包括0不包括1</span></span></span><br></pre></td></tr></table></figure>
+
+<p>除了默认构造方法，Random类还有一个构造方法，可以接受一个long类型的种子参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Random</span><span class="params">(<span class="keyword">long</span> seed)</span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>种子决定了随机产生的序列，种子相同，产生的随机数序列就是相同的</strong>。看个例子：</p>
+<p>Random rnd = new Random(20160824);</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">5</span>; i++)&#123;</span><br><span class="line">    System.out.print(rnd.nextInt(<span class="number">100</span>)+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>种子为20160824，产生5个0～100的随机数，输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">69 13 13 94 50</span><br></pre></td></tr></table></figure>
+
+<p>这个程序无论执行多少遍，在哪执行，输出结果都是相同的。</p>
+<p>除了在构造方法中指定种子，Random类还有一个setter实例方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">synchronized</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSeed</span><span class="params">(<span class="keyword">long</span> seed)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>其效果与在构造方法中指定种子是一样的。</p>
+<p>为什么要指定种子呢？指定种子还是真正的随机吗？<strong>指定种子是为了实现可重复的随机</strong>。比如用于模拟测试程序中，模拟要求随机，但测试要求可重复。在北京购车摇号程序中，种子也是指定的，后面我们还会介绍。种子到底扮演了什么角色呢？随机到底是如何产生的呢？让我们看下随机的基本原理。</p>
+<h2 id="7-6-3-随机的基本原理"><a href="#7-6-3-随机的基本原理" class="headerlink" title="7.6.3 随机的基本原理"></a>7.6.3 随机的基本原理</h2><p>Random产生的随机数不是真正的随机数，相反，它产生的随机数一般称为<strong>伪随机数</strong>。真正的随机数比较难以产生，计算机程序中的随机数一般都是伪随机数。</p>
+<p>伪随机数都是基于一个种子数的，然后每需要一个随机数，都是对当前种子进行一些数学运算，得到一个数，基于这个数得到需要的随机数和新的种子。</p>
+<p>数学运算是固定的，所以种子确定后，产生的随机数序列就是确定的，确定的数字序列当然不是真正的随机数，但种子不同，序列就不同，每个序列中数字的分布也都是比较随机和均匀的，所以称之为伪随机数。</p>
+<p>Random的默认构造方法中没有传递种子，它会自动生成一个种子，这个种子数是一个真正的随机数，如下所示（Java<br>7）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicLong seedUniquifier</span><br><span class="line">    = <span class="keyword">new</span> AtomicLong(<span class="number">8682522807148012L</span>);</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Random</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(seedUniquifier() ^ System.nanoTime());</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">long</span> <span class="title">seedUniquifier</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(; ; ) &#123;</span><br><span class="line">        <span class="keyword">long</span> current = seedUniquifier.get();</span><br><span class="line">    <span class="keyword">long</span> next = current ＊ <span class="number">181783497276652981L</span>;</span><br><span class="line">    <span class="keyword">if</span>(seedUniquifier.compareAndSet(current, next))</span><br><span class="line">        <span class="keyword">return</span> next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>种子是seedUniquifier()与System.nanoTime()按位异或的结果，System.nanoTime()返回一个更高精度（纳秒）的当前时间，seedUniquifier()里面的代码涉及一些多线程相关的知识，我们后续章节再介绍，简单地说，就是返回当前seedUniquifier（current变量）与一个常数181783497276652981L相乘的结果（next变量），然后，设置seedUniquifier的值为next，使用循环和compareAndSet都是为了确保在多线程的环境下不会有两次调用返回相同的值，保证随机性。</p>
+<p>有了种子数之后，其他数是怎么生成的呢？我们来看一些代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">nextInt</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> next(<span class="number">32</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">nextLong</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ((<span class="keyword">long</span>)(next(<span class="number">32</span>)) &lt;&lt; <span class="number">32</span>) + next(<span class="number">32</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">float</span> <span class="title">nextFloat</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> next(<span class="number">24</span>) / ((<span class="keyword">float</span>)(<span class="number">1</span> &lt;&lt; <span class="number">24</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">nextBoolean</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> next(<span class="number">1</span>) ! = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它们都调用了next(int bits)，生成指定位数的随机数，我们来看下它的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> multiplier = <span class="number">0x5DEECE66DL</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> addend = <span class="number">0xBL</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> mask = (<span class="number">1L</span> &lt;&lt; <span class="number">48</span>) - <span class="number">1</span>;</span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">int</span> <span class="title">next</span><span class="params">(<span class="keyword">int</span> bits)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> oldseed, nextseed;</span><br><span class="line">    AtomicLong seed = <span class="keyword">this</span>.seed;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        oldseed = seed.get();</span><br><span class="line">        nextseed = (oldseed ＊ multiplier + addend) &amp; mask;</span><br><span class="line">    &#125; <span class="keyword">while</span> (! seed.compareAndSet(oldseed, nextseed));</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">int</span>)(nextseed &gt;&gt;&gt; (<span class="number">48</span> - bits));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单地说，就是使用了如下公式：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nextseed = (oldseed ＊ multiplier + addend) &amp; mask;</span><br></pre></td></tr></table></figure>
+
+<p>旧的种子（oldseed）乘以一个数（multiplier），加上一个数addend，然后取低48位作为结果（mask相与）。</p>
+<p>为什么采用这个方法？这个方法为什么可以产生随机数？这个方法的名称叫线性同余随机数生成器（linear congruential pseudorandom number generator），描述在《计算机程序设计艺术》一书中。随机的理论是一个比较复杂的话题，超出了本书的范畴，我们就不讨论了。</p>
+<p>我们需要知道的基本原理是：随机数基于一个种子，种子固定，随机数序列就固定，默认构造方法中，种子是一个真正的随机数。</p>
+<p>理解了随机的基本概念和原理，我们来看一些应用场景，包括随机密码、洗牌、带权重的随机选择、微信抢红包算法，以及北京购车摇号算法。</p>
+<h2 id="7-6-4-随机密码"><a href="#7-6-4-随机密码" class="headerlink" title="7.6.4 随机密码"></a>7.6.4 随机密码</h2><p>在给用户生成账号时，经常需要给用户生成一个默认随机密码，然后通过邮件或短信发给用户，作为初次登录使用。我们假定密码是6位数字，代码很简单，如代码清单7-4所示。</p>
+<center>代码清单7-4 生成随机密码：6位数字</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">randomPassword</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] chars = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">6</span>];</span><br><span class="line">    Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">6</span>; i++)&#123;</span><br><span class="line">        chars[i] = (<span class="keyword">char</span>)(<span class="string">&#x27;0&#x27;</span>+rnd.nextInt(<span class="number">10</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(chars);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码很简单，就不解释了。如果要求是8位密码，字符可能由大写字母、小写字母、数字和特殊符号组成，如代码清单7-5所示。</p>
+<center>代码清单7-5 生成随机密码：简单8位</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String SPECIAL_CHARS = <span class="string">&quot;! @#$%^&amp;＊_=+-/&quot;</span>;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">nextChar</span><span class="params">(Random rnd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span>(rnd.nextInt(<span class="number">4</span>))&#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">char</span>)(<span class="string">&#x27;a&#x27;</span>+rnd.nextInt(<span class="number">26</span>));</span><br><span class="line">    <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">        <span class="keyword">return</span> (<span class="keyword">char</span>)(<span class="string">&#x27;A&#x27;</span>+rnd.nextInt(<span class="number">26</span>));</span><br><span class="line">    <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">        <span class="keyword">return</span>     (<span class="keyword">char</span>)(<span class="string">&#x27;0&#x27;</span>+rnd.nextInt(<span class="number">10</span>));</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">return</span> SPECIAL_CHARS.charAt(rnd.nextInt(SPECIAL_CHARS.length()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">randomPassword</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] chars = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">8</span>];</span><br><span class="line">    Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">8</span>; i++)&#123;</span><br><span class="line">        chars[i] = nextChar(rnd);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(chars);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码，对每个字符，先随机选类型，然后在给定类型中随机选字符。在笔者的计算机中，一次的随机运行结果是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">8Ctp2S4H</span><br></pre></td></tr></table></figure>
+
+<p>这个结果不含特殊字符。很多环境对密码复杂度有要求，比如，至少要含一个大写字母、一个小写字母、一个特殊符号、一个数字。以上的代码满足不了这个要求，怎么满足呢？一种可能的代码如代码清单7-6所示。</p>
+<center>代码清单7-6 生成随机密码：复杂8位</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">nextIndex</span><span class="params">(<span class="keyword">char</span>[] chars, Random rnd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> index = rnd.nextInt(chars.length);</span><br><span class="line">    <span class="keyword">while</span>(chars[index]! =<span class="number">0</span>)&#123;</span><br><span class="line">    index = rnd.nextInt(chars.length);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> index;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">nextSpecialChar</span><span class="params">(Random rnd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> SPECIAL_CHARS.charAt(rnd.nextInt(SPECIAL_CHARS.length()));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">nextUpperlLetter</span><span class="params">(Random rnd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">char</span>)(<span class="string">&#x27;A&#x27;</span>+rnd.nextInt(<span class="number">26</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">nextLowerLetter</span><span class="params">(Random rnd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">char</span>)(<span class="string">&#x27;a&#x27;</span>+rnd.nextInt(<span class="number">26</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">char</span> <span class="title">nextNumLetter</span><span class="params">(Random rnd)</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">char</span>)(<span class="string">&#x27;0&#x27;</span>+rnd.nextInt(<span class="number">10</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">randomPassword</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span>[] chars = <span class="keyword">new</span> <span class="keyword">char</span>[<span class="number">8</span>];</span><br><span class="line">    Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">    chars[nextIndex(chars, rnd)] = nextSpecialChar(rnd);</span><br><span class="line">    chars[nextIndex(chars, rnd)] = nextUpperlLetter(rnd);</span><br><span class="line">    chars[nextIndex(chars, rnd)] = nextLowerLetter(rnd);</span><br><span class="line">    chars[nextIndex(chars, rnd)] = nextNumLetter(rnd);</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">8</span>; i++)&#123;</span><br><span class="line">        <span class="keyword">if</span>(chars[i]==<span class="number">0</span>)&#123;</span><br><span class="line">            chars[i] = nextChar(rnd);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> String(chars);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>nextIndex随机生成一个未赋值的位置，程序先随机生成4个不同类型的字符，放到随机位置上，然后给未赋值的其他位置随机生成字符。</p>
+<h2 id="7-6-5-洗牌"><a href="#7-6-5-洗牌" class="headerlink" title="7.6.5 洗牌"></a>7.6.5 洗牌</h2><p>一种常见的随机场景是洗牌，就是将一个数组或序列随机重新排列。我们以一个整数数组为例来介绍如何随机重排，如代码清单7-7所示。</p>
+<center>代码清单7-7 随机重排</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">swap</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> tmp = arr[i];</span><br><span class="line">    arr[i] = arr[j];</span><br><span class="line">    arr[j] = tmp;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">shuffle</span><span class="params">(<span class="keyword">int</span>[] arr)</span></span>&#123;</span><br><span class="line">    Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> i=arr.length; i&gt;<span class="number">1</span>; i--) &#123;</span><br><span class="line">        swap(arr, i-<span class="number">1</span>, rnd.nextInt(i));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>shuffle方法能将参数数组arr随机重排，来看使用它的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">13</span>];</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;arr.length; i++)&#123;</span><br><span class="line">    arr[i] = i;</span><br><span class="line">&#125;</span><br><span class="line">shuffle(arr);</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>调用shuffle方法前，arr是排好序的，调用后，一次调用的输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[3, 8, 11, 10, 7, 9, 4, 1, 6, 12, 5, 0, 2]</span><br></pre></td></tr></table></figure>
+
+<p>已经随机重新排序了。shuffle的基本思路是什么呢？从后往前，逐个给每个数组位置重新赋值，值是从剩下的元素中随机挑选的。在如下关键语句中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swap(arr, i-<span class="number">1</span>, rnd.nextInt(i));</span><br></pre></td></tr></table></figure>
+
+<p>i-1表示当前要赋值的位置，rnd.nextInt(i)表示从剩下的元素中随机挑选。</p>
+<h2 id="7-6-6-带权重的随机选择"><a href="#7-6-6-带权重的随机选择" class="headerlink" title="7.6.6 带权重的随机选择"></a>7.6.6 带权重的随机选择</h2><p>实际场景中，经常要从多个选项中随机选择一个，不过，不同选项经常有不同的权重。比如，给用户随机奖励，三种面额：1元、5元和10元，权重分别为70、20和10。这个怎么实现呢？实现的基本思路是，使用概率中的累计概率分布。</p>
+<p>以上面的例子来说，计算每个选项的累计概率值，首先计算总的权重，这里正好是100，每个选项的概率是70%、20%和10%，累计概率则分别是70%、90%和100%。</p>
+<p>有了累计概率，则随机选择的过程是：使用nextDouble()生成一个0～1的随机数，然后使用二分查找，看其落入哪个区间，如果小于等于70%则选择第一个选项，70%和90%之间选第二个，90%以上选第三个，如图7-2所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209110957.jpeg" alt="epub_923038_54"></p>
+<center>图7-2 选项的累计概率值</center>
+
+<p>下面来看代码，我们使用一个类Pair表示选项和权重，如代码清单7-8所示。</p>
+<center>代码清单7-8 表示选项和权重的类Pair</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pair</span> </span>&#123;</span><br><span class="line">    Object item;</span><br><span class="line">    <span class="keyword">int</span> weight;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Pair</span><span class="params">(Object item, <span class="keyword">int</span> weight)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.item = item;</span><br><span class="line">        <span class="keyword">this</span>.weight = weight;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getItem</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> item;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getWeight</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> weight;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们使用一个类WeightRandom表示带权重的选择，如代码清单7-9所示。</p>
+<center>代码清单7-9 带权重的选择WeightRandom</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeightRandom</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Pair[] options;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span>[] cumulativeProbabilities;</span><br><span class="line">    <span class="keyword">private</span> Random rnd;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">WeightRandom</span><span class="params">(Pair[] options)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.options = options;</span><br><span class="line">        <span class="keyword">this</span>.rnd = <span class="keyword">new</span> Random();</span><br><span class="line">        prepare();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">prepare</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">int</span> weights = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(Pair pair : options)&#123;</span><br><span class="line">            weights += pair.getWeight();</span><br><span class="line">        &#125;</span><br><span class="line">        cumulativeProbabilities = <span class="keyword">new</span> <span class="keyword">double</span>[options.length];</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i&lt;options.length; i++) &#123;</span><br><span class="line">            sum += options[i].getWeight();</span><br><span class="line">            cumulativeProbabilities[i] = sum / (<span class="keyword">double</span>)weights;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">      <span class="function"><span class="keyword">public</span> Object <span class="title">nextItem</span><span class="params">()</span></span>&#123;</span><br><span class="line">          <span class="keyword">double</span> randomValue = rnd.nextDouble();</span><br><span class="line">          <span class="keyword">int</span> index = Arrays.binarySearch(cumulativeProbabilities, randomValue);</span><br><span class="line">          <span class="keyword">if</span>(index &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            index = -index-<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> options[index].getItem();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其中，prepare()方法计算每个选项的累计概率，保存在数组cumulativeProbabilities中， nextItem()方法根据权重随机选择一个，具体就是，首先生成一个0～1的数，然后使用二分查找，如果没找到，返回结果是-（插入点）-1，所以-index-1就是插入点，插入点的位置就对应选项的索引。</p>
+<p>回到上面的例子，随机选择10次，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Pair[] options = <span class="keyword">new</span> Pair[]&#123;</span><br><span class="line">        <span class="keyword">new</span> Pair(<span class="string">&quot;1元&quot;</span>,<span class="number">7</span>), <span class="keyword">new</span> Pair(<span class="string">&quot;2元&quot;</span>, <span class="number">2</span>), <span class="keyword">new</span> Pair(<span class="string">&quot;10元&quot;</span>, <span class="number">1</span>)</span><br><span class="line">&#125;;</span><br><span class="line">WeightRandom rnd = <span class="keyword">new</span> WeightRandom(options);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++)&#123;</span><br><span class="line">    System.out.print(rnd.nextItem()+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在一次运行中，输出正好符合预期，具体为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1元 1元 1元 2元 1元 10元 1元 2元 1元 1元</span><br></pre></td></tr></table></figure>
+
+<p>不过，需要说明的是，由于随机，每次执行结果比例不一定正好相等。</p>
+<h2 id="7-6-7-抢红包算法"><a href="#7-6-7-抢红包算法" class="headerlink" title="7.6.7 抢红包算法"></a>7.6.7 抢红包算法</h2><p>我们都知道，微信可以抢红包，红包有一个总金额和总数量，领的时候随机分配金额。金额是怎么随机分配的呢？微信具体是怎么做的，我们并不能确切地知道，但如下思路可以达到该效果。</p>
+<p>维护一个剩余总金额和总数量，分配时，如果数量等于1，直接返回总金额，如果大于1，则计算平均值，并设定随机最大值为平均值的两倍，然后取一个随机值，如果随机值小于0.01，则为0.01，这个随机值就是下一个的红包金额。</p>
+<p>我们来看代码，如代码清单7-10所示，为计算方便，金额用整数表示，以分为单位。</p>
+<center>代码清单7-10 抢红包算法</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomRedPacket</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> leftMoney;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> leftNum;</span><br><span class="line">    <span class="keyword">private</span> Random rnd;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">RandomRedPacket</span><span class="params">(<span class="keyword">int</span> total, <span class="keyword">int</span> num)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.leftMoney = total;</span><br><span class="line">        <span class="keyword">this</span>.leftNum = num;</span><br><span class="line">        <span class="keyword">this</span>.rnd = <span class="keyword">new</span> Random();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">int</span> <span class="title">nextMoney</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span>.leftNum&lt;=<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;抢光了&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">this</span>.leftNum==<span class="number">1</span>)&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">this</span>.leftMoney;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">double</span> max = <span class="keyword">this</span>.leftMoney/<span class="keyword">this</span>.leftNum＊<span class="number">2d</span>;</span><br><span class="line">        <span class="keyword">int</span> money = (<span class="keyword">int</span>)(rnd.nextDouble()＊max);</span><br><span class="line">        money = Math.max(<span class="number">1</span>, money);</span><br><span class="line">        <span class="keyword">this</span>.leftMoney -= money;</span><br><span class="line">        <span class="keyword">this</span>.leftNum --;</span><br><span class="line">        <span class="keyword">return</span> money;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码比较简单，就不解释了。关于synchronized修饰符，此处可以忽略，留待第15章介绍。看一个使用的例子，总金额为10元，10个红包，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">RandomRedPacket redPacket = <span class="keyword">new</span> RandomRedPacket(<span class="number">1000</span>, <span class="number">10</span>);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;<span class="number">10</span>; i++)&#123;</span><br><span class="line">    System.out.print(redPacket.nextMoney()+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一次输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">136 48 90 151 36 178 92 18 122 129</span><br></pre></td></tr></table></figure>
+
+<p>如果是这个算法，那先抢好，还是后抢好呢？先抢肯定抢不到特别大的，不过，后抢也不一定会，这要看前面抢的金额，剩下的多就有可能抢到大的，剩下的少就不可能有大的。</p>
+<h2 id="7-6-8-北京购车摇号算法"><a href="#7-6-8-北京购车摇号算法" class="headerlink" title="7.6.8 北京购车摇号算法"></a>7.6.8 北京购车摇号算法</h2><p>我们来看下影响很多人的北京购车摇号，它的算法是怎样的呢？思路大概是这样的：<br>1）每期摇号前，将每个符合摇号资格的人，分配一个从0到总数的编号，这个编号是公开的，比如总人数为2 304 567，则编号为0～2 304 566。<br>2）摇号第一步是生成一个随机种子数，这个随机种子数在摇号当天通过一定流程生成，整个过程由公证员公证，就是生成一个真正的随机数。<br>3）种子数生成后，然后就是循环调用类似Random.nextInt(int n)方法，生成中签的编号。</p>
+<p>编号是事先确定的，种子数是当场公证随机生成的，是公开的，随机算法是公开透明的，任何人都可以根据公开的种子数和编号验证中签的编号。</p>
+<h2 id="7-6-9-小结"><a href="#7-6-9-小结" class="headerlink" title="7.6.9 小结"></a>7.6.9 小结</h2><p>本节介绍了随机，介绍了Java中对随机的支持Math.random()以及Random类，介绍了其使用和实现原理，同时，介绍了随机的一些应用场景，包括随机密码、洗牌、带权重的随机选择、微信抢红包和北京购车摇号，完整的代码在github上，地址为<a target="_blank" rel="noopener" href="https://github.com/swiftma/program-logic">https://github.com/swiftma/program-logic</a> ，位于包shuo.laoma.commoncls.c34下。</p>
+<p>需要说明的是，Random类是线程安全的，也就是说，多个线程可以同时使用一个Random实例对象，不过，如果并发性很高，会产生竞争，这时，可以考虑使用多线程库中的ThreadLocalRandom类。另外，Java类库中还有一个随机类SecureRandom，可以产生安全性更高、随机性更强的随机数，用于安全加密等领域。</p>
+<p>至此，关于常用基础类就介绍完了。我们深入分析了各种包装类、String、String-Builder、Arrays、日期和时间、以及随机，这些都是日常程序中经常用到的功能。还有一些基础类，限于篇幅，就不介绍了，比如UUID、Math和Objects,UUID用于随机生成需要确保唯一性的标识符，Math用于进行数学运算，Objects包含一些操作对象、检查条件的方法，具体可参看API文档。</p>
+<p>之前章节中，我们经常提到泛型这一概念，它到底是什么呢？让我们下一章详细探讨。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/eb612b60/" title="7.6 随机">https://lanlan2017.github.io/JavaReadingNotes/eb612b60/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/31a72ecb/" rel="prev" title="7.0 第7章 常用基础类 7.1 包装类">
+                  <i class="fa fa-chevron-left"></i> 7.0 第7章 常用基础类 7.1 包装类
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/703d32a8/" rel="next" title="7.5 剖析日期和时间">
+                  7.5 剖析日期和时间 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/eb612b60/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/eb612b60/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

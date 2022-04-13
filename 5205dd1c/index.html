@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="10.5 MyBatis缓存机制在实际项目开发中,通常对数据库查询的性能要求很高,而MyBatis提供了查询缓存来缓存数据,从而达到提高查询性能的要求。 MyBatis的查询缓存分为一级缓存和二级缓存。  一级缓存是SqlSession级别的缓存, 二级缓存是mapper级别的缓存,二级缓存是多个SqlSession共享的。  MyBatis通过缓存机制减轻数据压力,提高数据库性能。 10.5.1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.5 MyBatis缓存机制 10.5.1一级缓存(SqlSession级别)">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="10.5 MyBatis缓存机制在实际项目开发中,通常对数据库查询的性能要求很高,而MyBatis提供了查询缓存来缓存数据,从而达到提高查询性能的要求。 MyBatis的查询缓存分为一级缓存和二级缓存。  一级缓存是SqlSession级别的缓存, 二级缓存是mapper级别的缓存,二级缓存是多个SqlSession共享的。  MyBatis通过缓存机制减轻数据压力,提高数据库性能。 10.5.1">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-12T05:52:55.000Z">
+<meta property="article:modified_time" content="2020-06-22T00:11:29.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/","path":"/5205dd1c/","title":"10.5 MyBatis缓存机制 10.5.1一级缓存(SqlSession级别)"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>10.5 MyBatis缓存机制 10.5.1一级缓存(SqlSession级别) | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-5-MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6"><span class="nav-text">10.5 MyBatis缓存机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-5-1%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98-SqlSession%E7%BA%A7%E5%88%AB"><span class="nav-text">10.5.1一级缓存(SqlSession级别)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6"><span class="nav-text">缓存机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-OneLevelCacheTest"><span class="nav-text">示例: OneLevelCacheTest</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">环境搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%B9%B6%E5%88%9D%E5%A7%8B%E5%8C%96%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8"><span class="nav-text">创建并初始化数据库表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%8C%81%E4%B9%85%E5%8C%96%E5%AF%B9%E8%B1%A1"><span class="nav-text">创建持久化对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-text">工具类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mapper-xml%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6"><span class="nav-text">Mapper.xml映射文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mapper%E6%8E%A5%E5%8F%A3"><span class="nav-text">Mapper接口</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%8E%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98%E4%B8%AD%E6%9F%A5%E8%AF%A2%E6%95%B0%E6%8D%AE"><span class="nav-text">测试从一级缓存中查询数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8CDML%E8%AF%AD%E5%8F%A5%E6%97%B6%E4%BC%9A%E8%87%AA%E5%8A%A8%E6%B8%85%E7%A9%BA%E7%BC%93%E5%AD%98"><span class="nav-text">执行DML语句时会自动清空缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E6%B8%85%E9%99%A4%E4%B8%80%E7%BA%A7%E7%BC%93%E5%AD%98-%E8%B0%83%E7%94%A8SqlSession%E7%9A%84clearCache%E6%96%B9%E6%B3%95"><span class="nav-text">手动清除一级缓存 调用SqlSession的clearCache方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%ADSqlSession%E6%97%B6%E7%BC%93%E5%AD%98%E4%BC%9A%E8%A2%AB%E6%B8%85%E7%A9%BA"><span class="nav-text">关闭SqlSession时缓存会被清空</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          10.5 MyBatis缓存机制 10.5.1一级缓存(SqlSession级别)
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-12 13:52:55" itemprop="dateCreated datePublished" datetime="2019-06-12T13:52:55+08:00">2019-06-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-06-22 08:11:29" itemprop="dateModified" datetime="2020-06-22T08:11:29+08:00">2020-06-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/" itemprop="url" rel="index"><span itemprop="name">第10章 深入使用MyBatis</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/10-5-MyBatis%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">10.5 MyBatis缓存机制</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/5205dd1c/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/5205dd1c/" data-xid="/JavaReadingNotes/5205dd1c/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="10-5-MyBatis缓存机制"><a href="#10-5-MyBatis缓存机制" class="headerlink" title="10.5 MyBatis缓存机制"></a>10.5 MyBatis缓存机制</h1><p>在实际项目开发中,通常对数据库查询的性能要求很高,而<code>MyBatis</code>提供了查询缓存来缓存数据,从而达到提高查询性能的要求。</p>
+<p><code>MyBatis</code>的查询缓存分为一级缓存和二级缓存。</p>
+<ul>
+<li>一级缓存是<code>SqlSession</code>级别的缓存,</li>
+<li>二级缓存是<code>mapper</code>级别的缓存,二级缓存是多个<code>SqlSession</code>共享的。</li>
+</ul>
+<p><code>MyBatis</code>通过缓存机制减轻数据压力,提高数据库性能。</p>
+<h1 id="10-5-1一级缓存-SqlSession级别"><a href="#10-5-1一级缓存-SqlSession级别" class="headerlink" title="10.5.1一级缓存(SqlSession级别)"></a>10.5.1一级缓存(SqlSession级别)</h1><p><code>MyBatis</code>的一级缓存是<code>SqlSession</code>级别的缓存。在操作数据库时需要构造<code>SqlSession</code>对象,<strong>在<code>SqlSession</code>对象中有一个<code>HashMap</code>用于存储缓存数据</strong>。<strong>不同的<code>SqlSession</code>之间的缓存数据区域(<code>HashMap</code>)是互相不影响的</strong>。<br>一级缓存的作用域是<code>SqlSession</code>范围的,当在同一个<code>SqlSession</code>中执行两次相同的SQL语句时,</p>
+<ul>
+<li>第一次执行完毕会将从数据库中査询的数据写到缓存(内存),</li>
+<li>第二次査询时会从缓存中获取数据,不再去底层数据库查询,从而提高查询效率。</li>
+</ul>
+<p>需要注意的是,<strong>如果<code>SqlSession</code>执行了<code>DML</code>操作(<code>insert</code>、<code>update</code>和<code>delete</code>),并提交到数据库,<code>MyBatis</code>则会清空<code>SqlSession</code>中的一级缓存</strong>,这样做的目的是为了保证缓存中存储的是最新的信息,避免出现脏读现象。<br><strong>当一个<code>SqlSession</code>结束后该<code>SqlSession</code>中的一级缓存也就不存在了</strong>。**<code>Mybatis</code>默认开启一级缓存,不需要进行任何配置**。</p>
+<h2 id="缓存机制"><a href="#缓存机制" class="headerlink" title="缓存机制"></a>缓存机制</h2><p><code>MyBatis</code>的缓存机制是基于<code>id</code>进行缓存的,也就是说,<code>MyBatis</code>使用<code>HashMap</code>缓存数据时,是使用对象的<code>id</code>作为<code>key</code>,对象作为<code>value</code>保存的.</p>
+<h2 id="示例-OneLevelCacheTest"><a href="#示例-OneLevelCacheTest" class="headerlink" title="示例: OneLevelCacheTest"></a>示例: OneLevelCacheTest</h2><p>接下来我们测试<code>MyBatis</code>的一级缓存.</p>
+<h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><details><summary>展开/折叠</summary><pre>
+G:\workspace_web2\MyOneLeveldureTest
+├─src\
+│ ├─db.properties
+│ ├─domain\
+│ │ └─User.java
+│ ├─fractory\
+│ │ └─SqlSessionFactoryTools.java
+│ ├─log4j.xml
+│ ├─mapper\
+│ │ ├─UserMapper.java
+│ │ └─UserMapper.xml
+│ ├─mybatis-config.xml
+│ ├─tb_user.sql
+│ └─test\
+│   ├─SelectAllUserTest.java
+│   ├─TestClearCache.java
+│   ├─TestClose.java
+│   ├─TestDelete.java
+│   └─TestSelectFromCache.java
+└─WebContent\
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    └─lib\
+      ├─ant-1.9.6.jar
+      ├─ant-launcher-1.9.6.jar
+      ├─asm-5.2.jar
+      ├─cglib-3.2.5.jar
+      ├─commons-logging-1.2.jar
+      ├─javassist-3.22.0-CR2.jar
+      ├─log4j-1.2.17.jar
+      ├─log4j-api-2.3.jar
+      ├─log4j-core-2.3.jar
+      ├─mybatis-3.4.5.jar
+      ├─mysql-connector-java-5.1.44-bin.jar
+      ├─ognl-3.1.15.jar
+      ├─slf4j-api-1.7.25.jar
+      └─slf4j-log4j12-1.7.25.jar
+</pre></details>
+
+
+<h3 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h3><h4 id="创建并初始化数据库表"><a href="#创建并初始化数据库表" class="headerlink" title="创建并初始化数据库表"></a>创建并初始化数据库表</h4><figure class="highlight sql"><figcaption><span>/MyOneLeveldureTest/src/tb_user.sql</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 创建数据库表</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> `tb_user`;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tb_user` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `sex` <span class="type">char</span>(<span class="number">2</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `age` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8mb4;</span><br><span class="line"># 插入数据</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_user` <span class="keyword">VALUES</span> (<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;小明&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;21&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_user` <span class="keyword">VALUES</span> (<span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;小王&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;22&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_user` <span class="keyword">VALUES</span> (<span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;小丽&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;18&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_user` <span class="keyword">VALUES</span> (<span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;小芳&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;18&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_user` <span class="keyword">VALUES</span> (<span class="string">&#x27;5&#x27;</span>, <span class="string">&#x27;小王&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;22&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="创建持久化对象"><a href="#创建持久化对象" class="headerlink" title="创建持久化对象"></a>创建持久化对象</h4><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/domain/User.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> domain;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">    <span class="keyword">private</span> String sex;</span><br><span class="line">    <span class="keyword">private</span> Integer age;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;User [id=&quot;</span> + id + <span class="string">&quot;, name=&quot;</span> + name + <span class="string">&quot;, sex=&quot;</span> + sex + <span class="string">&quot;, age=&quot;</span> + age + <span class="string">&quot;]&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h4><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/fractory/SqlSessionFactoryTools.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SqlSessionFactoryTools</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> SqlSessionFactory sqlSessionFactory = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">static</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            InputStream mybatisConfigXML = Resources.getResourceAsStream(<span class="string">&quot;mybatis-config.xml&quot;</span>);</span><br><span class="line">            sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(mybatisConfigXML);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e)</span><br><span class="line">        &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> SqlSession <span class="title">getSqlSession</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sqlSessionFactory.openSession();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Mapper-xml映射文件"><a href="#Mapper-xml映射文件" class="headerlink" title="Mapper.xml映射文件"></a>Mapper.xml映射文件</h4><figure class="highlight xml"><figcaption><span>/MyOneLeveldureTest/src/mapper/UserMapper.xml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span> </span></span><br><span class="line"><span class="meta"><span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namespace指用户自定义的命名空间。 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;mapper.UserMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 根据ID查询用户 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">&quot;selectUserById&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultType</span>=<span class="string">&quot;domain.User&quot;</span>&gt;</span> select * from tb_user where id=#&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 查询所有用户 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">&quot;selectAllUser&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultType</span>=<span class="string">&quot;domain.User&quot;</span>&gt;</span> select * from tb_user</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">delete</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">&quot;deleteUserById&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span>&gt;</span> delete from tb_user where id=#&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="Mapper接口"><a href="#Mapper接口" class="headerlink" title="Mapper接口"></a>Mapper接口</h4><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/mapper/UserMapper.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> mapper;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UserMapper</span> </span>&#123;</span><br><span class="line">    <span class="function">User <span class="title">selectUserById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">    <span class="function">List&lt;User&gt; <span class="title">selectAllUser</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">deleteUserById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="测试从一级缓存中查询数据"><a href="#测试从一级缓存中查询数据" class="headerlink" title="测试从一级缓存中查询数据"></a>测试从一级缓存中查询数据</h3><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/test/TestSelectFromCache.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestSelectFromCache</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);</span><br><span class="line">            <span class="comment">//第一次查询id为1的用户,将会执行SQL语句,从数据库中查询.</span></span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            <span class="comment">//再次查询id为1的用户,该用户已经缓存了,直接在一级缓存中查找，不需要再次执行SQL查找</span></span><br><span class="line">            user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br><span class="line">-------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+<p>仔细观察<code>MyBatis</code>的执行结果,在第一次查询<code>id</code>为<code>1</code>的<code>User</code>对象时执行了一条<code>select</code>语句,但是第二次获取<code>id</code>为<code>1</code>的<code>User</code>对象时并没有执行<code>select</code>语句。<br>因为此时一级缓存也就是<code>SqlSession</code>缓存中已经缓存了<code>id</code>为<code>1</code>的<code>User</code>对象,<code>MyBatis</code>直接从缓存中将对象取出来,并没有再次去数据库查询,所以第二次没有再执行<code>select</code>语句。</p>
+<h3 id="执行DML语句时会自动清空缓存"><a href="#执行DML语句时会自动清空缓存" class="headerlink" title="执行DML语句时会自动清空缓存"></a>执行DML语句时会自动清空缓存</h3><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/test/TestDelete.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestDelete</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);</span><br><span class="line">            <span class="comment">// 第一次查询id为1的用户,将会执行SQL语句,从数据库中查询.</span></span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            <span class="comment">// 删除掉一个用户,DML(insert,upate,delete)操作会清空一级缓存.</span></span><br><span class="line">            userMapper.deleteUserById(<span class="number">5</span>);</span><br><span class="line">            sqlSession.commit();</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------&quot;</span>);</span><br><span class="line">            <span class="comment">// 再次查询id为1的用户,因为缓存被清空了,将会再次执行select语句.</span></span><br><span class="line">            user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 结束了关闭会话</span></span><br><span class="line">            <span class="keyword">if</span> (sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: delete from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">5</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==    Updates: <span class="number">0</span></span><br><span class="line">-------------------------------------------------</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+<p>仔细观察<code>MyBatis</code>的执行结果,在第一次查询<code>id</code>为<code>1</code>的<code>User</code>对象时执行了一条<code>select</code>语句,接下来执行了一个<code>delete</code>操作,<code>MyBatis</code>为了保证缓存中存储的是最新的信息,会清空原来的<code>SqlSession</code>缓存。<br>当第二次获取<code>id</code>为<code>1</code>的<code>User</code>对象时.一级缓存也就是<code>SqlSession</code>缓存中并没有缓存任何对象,所以<code>MyBatis</code>再次执行<code>select</code>语句去查询<code>id</code>为<code>1</code>的<code>User</code>对象。<br>如果注释delete操作的代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//            userMapper.deleteUserById(5);</span></span><br><span class="line"><span class="comment">//            sqlSession.commit();</span></span><br></pre></td></tr></table></figure>
+<p>由于并没有执行<code>DML</code>操作并将操作提交到数据库,故此时<code>MyBatis</code>不会清空<code>SqlSession</code>缓存,当再次查询<code>id</code>为<code>1</code>的<code>User</code>对象时不会执行<code>select</code>语句。<br>此时运行效果如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br><span class="line">-------------------------------------------------</span><br><span class="line">-------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+<h3 id="手动清除一级缓存-调用SqlSession的clearCache方法"><a href="#手动清除一级缓存-调用SqlSession的clearCache方法" class="headerlink" title="手动清除一级缓存 调用SqlSession的clearCache方法"></a>手动清除一级缓存 调用SqlSession的clearCache方法</h3><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/test/TestClearCache.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestClearCache</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);</span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------------&quot;</span>);</span><br><span class="line">            <span class="comment">// 清空一级缓存</span></span><br><span class="line">            sqlSession.clearCache();</span><br><span class="line">            <span class="comment">// 因为缓存被清除,将再次执行select语句从数据库中获取信息</span></span><br><span class="line">            user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (sqlSession != <span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                sqlSession.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行效果如下:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br><span class="line">-------------------------------------------------------</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+<p>仔细观察<code>MyBatis</code>的执行结果,在第一次查询<code>id</code>为<code>1</code>的<code>User</code>对象时执行了一条<code>select</code>语句,接下来调用<code>SqlSession</code>的<code>clearCache()</code>方法,该方法会清空<code>SqlSession</code>缓存。<br>当第二次获取<code>id</code>为<code>1</code>的<code>User</code>对象时,因为一级缓存中并没有缓存任何对象,所以<code>MyBatis</code>会再次执行<code>select</code>语句去查询<code>id</code>为<code>1</code>的<code>User</code>对象。</p>
+<h3 id="关闭SqlSession时缓存会被清空"><a href="#关闭SqlSession时缓存会被清空" class="headerlink" title="关闭SqlSession时缓存会被清空"></a>关闭SqlSession时缓存会被清空</h3><figure class="highlight java"><figcaption><span>/MyOneLeveldureTest/src/test/TestClose.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> domain.User;</span><br><span class="line"><span class="keyword">import</span> fractory.SqlSessionFratoryTools;</span><br><span class="line"><span class="keyword">import</span> mapper.UserMapper;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestClose</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            UserMapper userMapper = sqlSession.getMapper(UserMapper.class);</span><br><span class="line">            User user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------------&quot;</span>);</span><br><span class="line">            <span class="comment">// 关闭会话,则缓存也会被清除</span></span><br><span class="line">            sqlSession.close();</span><br><span class="line">            <span class="comment">// 重新获取会话,</span></span><br><span class="line">            sqlSession = SqlSessionFratoryTools.getSqlSession();</span><br><span class="line">            <span class="comment">// 重新获取mapper接口的代理对象</span></span><br><span class="line">            userMapper = sqlSession.getMapper(UserMapper.class);</span><br><span class="line">            <span class="comment">// 新的会话中还没有缓存数据,将执行select语句查询数据</span></span><br><span class="line">            user = userMapper.selectUserById(<span class="number">1</span>);</span><br><span class="line">            System.out.println(<span class="string">&quot;-------------------------------------------------------&quot;</span>);</span><br><span class="line">            System.out.println(user);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 出错回滚</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (sqlSession != <span class="keyword">null</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                sqlSession.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>运行结果:</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br><span class="line">-------------------------------------------------------</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: select * from tb_user where id=? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">-------------------------------------------------------</span><br><span class="line">User [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">21</span>]</span><br></pre></td></tr></table></figure>
+<p>仔细观察<code>MyBatis</code>的执行结果,在第一次查询<code>id</code>为<code>1</code>的<code>User</code>对象时执行了一条<code>select</code>语句,接下来调用<code>SqlSession</code>的<code>close()</code>方法,该方法会关闭<code>SqlSession</code>缓存。<br>当第二次获取<code>id</code>为<code>1</code>的<code>User</code>对象时,一级缓存也就是<code>SqlSession</code>缓存是一个全新的对象,因为此时一级缓存中并没有缓存任何对象,所以<code>MyBatis</code>会再次执行<code>select</code>语句去查询<code>id</code>为<code>1</code>的<code>User</code>对象。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/" title="10.5 MyBatis缓存机制 10.5.1一级缓存(SqlSession级别)">https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/74600339/" rel="prev" title="10.4 MyBatis事务管理 10.4.3事务的配置创建和使用">
+                  <i class="fa fa-chevron-left"></i> 10.4 MyBatis事务管理 10.4.3事务的配置创建和使用
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/b12f38ab/" rel="next" title="10.5 MyBatis缓存机制 10.5.2二级缓存(mapper级别)">
+                  10.5 MyBatis缓存机制 10.5.2二级缓存(mapper级别) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/5205dd1c/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/5205dd1c/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

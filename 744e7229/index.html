@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="13.7 事务处理对于任何数据库应用而言,事务都是非常重要的,事务是保证底层数据完整的重要手段,没有事务支持的数据库应用,那将非常脆弱 13.7.1 事务的概念和MySQL事务支持事务是由一步或几步数据库操作序列组成的逻辑执行单元,这系列操作要么全部执行,要么全部放弃执行。 程序和事务是两个不同的概念。一般而言,一段程序中可能包含多个事务。 事务的4个特性事务具备4个特性:  原子性( Atomi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="13.7 事务处理 13.7.1 事务的概念和MySQL事务支持">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/744e7229/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="13.7 事务处理对于任何数据库应用而言,事务都是非常重要的,事务是保证底层数据完整的重要手段,没有事务支持的数据库应用,那将非常脆弱 13.7.1 事务的概念和MySQL事务支持事务是由一步或几步数据库操作序列组成的逻辑执行单元,这系列操作要么全部执行,要么全部放弃执行。 程序和事务是两个不同的概念。一般而言,一段程序中可能包含多个事务。 事务的4个特性事务具备4个特性:  原子性( Atomi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-05T11:01:01.000Z">
+<meta property="article:modified_time" content="2020-02-06T17:34:56.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/744e7229/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/744e7229/","path":"/744e7229/","title":"13.7 事务处理 13.7.1 事务的概念和MySQL事务支持"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>13.7 事务处理 13.7.1 事务的概念和MySQL事务支持 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#13-7-%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86"><span class="nav-text">13.7 事务处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#13-7-1-%E4%BA%8B%E5%8A%A1%E7%9A%84%E6%A6%82%E5%BF%B5%E5%92%8CMySQL%E4%BA%8B%E5%8A%A1%E6%94%AF%E6%8C%81"><span class="nav-text">13.7.1 事务的概念和MySQL事务支持</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%844%E4%B8%AA%E7%89%B9%E6%80%A7"><span class="nav-text">事务的4个特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="nav-text">原子性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-text">一致性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9A%94%E7%A6%BB%E6%80%A7"><span class="nav-text">隔离性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%81%E7%BB%AD%E6%80%A7"><span class="nav-text">持续性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E8%AF%AD%E5%8F%A5%E7%BB%84%E6%88%90"><span class="nav-text">事务语句组成</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4"><span class="nav-text">提交</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9E%E6%BB%9A"><span class="nav-text">回滚</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%BC%80%E5%90%AF-%E5%85%B3%E9%97%AD%E4%BA%8B%E5%8A%A1"><span class="nav-text">如何开启 关闭事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%B4%E6%97%B6%E5%BC%80%E5%90%AF%E4%BA%8B%E5%8A%A1"><span class="nav-text">临时开启事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E5%AD%98%E7%82%B9"><span class="nav-text">保存点</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/744e7229/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          13.7 事务处理 13.7.1 事务的概念和MySQL事务支持
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-07-05 19:01:01" itemprop="dateCreated datePublished" datetime="2019-07-05T19:01:01+08:00">2019-07-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+08:00">2020-02-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第13章 MySQL数据库与JDBC编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC13%E7%AB%A0-MySQL%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%8EJDBC%E7%BC%96%E7%A8%8B/13-7-%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">13.7 事务处理</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/744e7229/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/744e7229/" data-xid="/JavaReadingNotes/744e7229/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="13-7-事务处理"><a href="#13-7-事务处理" class="headerlink" title="13.7 事务处理"></a>13.7 事务处理</h1><p>对于任何数据库应用而言,事务都是非常重要的,事务是保证底层数据完整的重要手段,没有事务支持的数据库应用,那将非常脆弱</p>
+<h1 id="13-7-1-事务的概念和MySQL事务支持"><a href="#13-7-1-事务的概念和MySQL事务支持" class="headerlink" title="13.7.1 事务的概念和MySQL事务支持"></a>13.7.1 事务的概念和MySQL事务支持</h1><p><strong>事务是由一步或几步数据库操作序列组成的逻辑执行单元</strong>,<strong>这系列操作要么全部执行,要么全部放弃执行</strong>。</p>
+<p>程序和事务是两个不同的概念。一般而言,一段程序中可能包含多个事务。</p>
+<h2 id="事务的4个特性"><a href="#事务的4个特性" class="headerlink" title="事务的4个特性"></a>事务的4个特性</h2><p>事务具备4个特性:</p>
+<ul>
+<li>原子性( <code>Atomicity)</code>，</li>
+<li>一致性( <code>Consistency)</code>，</li>
+<li>隔离性( <code>Isolation)</code>，</li>
+<li>持续性( <code>Durability)</code>。</li>
+</ul>
+<p>这4个特性也简称为<code>ACID</code>性</p>
+<h3 id="原子性"><a href="#原子性" class="headerlink" title="原子性"></a>原子性</h3><p>原子性( <code>Atomicity)</code>:<strong>事务是应用中最小的执行单位</strong>,<strong>事务是应用中不可再分的最小逻辑执行体</strong>。</p>
+<h3 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h3><p>一致性( <code>Consistency)</code>:<strong>事务执行的结果,必须使数据库从一个一致性状态,变到另一个一致性状态</strong>。当数据库只包含事务成功提交的结果时,数据库处于一致性状态。如果系统运行发生中断,某个事务尚未完成而被迫中断,而该未完成的事务对数据库所做的修改已被写入数据库此时,数据库就处于一种不正确的状态。比如银行在两个账户之间转账:从A账户向B账户转入1000元,系统先减少A账户的1000元,然后再为B账户增加1000元。如果全部执行成功,数据库处于一致性状态;如果仅减少A账户金额,而没有增加B账户的金额,则数据库就处于不一致性状态;因此,<strong>一致性是通过原子性来保证的</strong>。</p>
+<h3 id="隔离性"><a href="#隔离性" class="headerlink" title="隔离性"></a>隔离性</h3><p>隔离性( <code>Isolation)</code>:各个事务的执行互不干扰,任意一个事务的内部操作对其他并发的事务都是隔离的。也就是说,<strong>并发执行的事务之间不能看到对方的中间状态,并发执行的事务之间不能互相影响</strong>。</p>
+<h3 id="持续性"><a href="#持续性" class="headerlink" title="持续性"></a>持续性</h3><p>持续性( <code>Durability)</code>:持续性也称为持久性( <code>Persistence)</code>,<strong>指事务一旦提交,对数据所做的任何改变都要记录到永久存储器中</strong>,通常就是保存进物理数据库。</p>
+<h2 id="事务语句组成"><a href="#事务语句组成" class="headerlink" title="事务语句组成"></a>事务语句组成</h2><p>数据库的事务由下列语句组成。</p>
+<ul>
+<li>一组<code>DML</code>语句,经过这组<code>DML</code>语句修改后的数据将保持较好的一致性。(<code>DML指的是:insert,update,delete这三条SQL语句)</code></li>
+<li>一条<code>DDL</code>语句。(<code>DDL</code>指的是<code>create</code>,<code>alter</code>,<code>drop</code>,<code>truncate</code>等语句)</li>
+<li>一条<code>DCL</code>语句。(<code>DCL</code>指的是:<code>grant</code>等语句)</li>
+</ul>
+<p><strong>注意</strong><br>事务中的<code>DDL</code>和<code>DCL</code>语句最多只能有一条,因为<code>DDL</code>和<code>DCL</code>语句都会导致事务立即提交。</p>
+<h2 id="提交"><a href="#提交" class="headerlink" title="提交"></a>提交</h2><p>当事务所包含的全部数据库操作都成功执行后,应该提交( <code>commit)</code>事务,使这些修改永久生效。<br>事务提交有两种方式:<code>显式提交</code>和<code>自动提交</code>。</p>
+<ul>
+<li>显式提交:使用<code>commit</code>时.</li>
+<li>自动提交:执行<code>DDL</code>或<code>DCL</code>语句,或者程序正常退出时。</li>
+</ul>
+<h2 id="回滚"><a href="#回滚" class="headerlink" title="回滚"></a>回滚</h2><p>当事务所包含的任意一个数据库操作执行失败后,应该回滚(<code>rollback)</code>事务,使该事务中所做的修改全部失效。事务回滚有两种方式:<code>显式回滚</code>和<code>自动回滚</code>。</p>
+<ul>
+<li>显式回滚:使用<code>rollback</code>。</li>
+<li>自动回滚:系统错误或者强行退出。</li>
+</ul>
+<h2 id="如何开启-关闭事务"><a href="#如何开启-关闭事务" class="headerlink" title="如何开启 关闭事务"></a>如何开启 关闭事务</h2><p><strong><code>MySQL</code>默认关闭事务</strong>(即打开自动提交),在默认情况下,用户在<code>MySQL</code>控制台输入一条<code>DML</code>语句,这条<code>DML</code>语句将会立即保存到数据库里。为了开启<code>MySQL</code>的事务支持,可以显式调用如下命令:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> AUTOCOMMIT<span class="operator">=</span>&#123;<span class="number">0</span><span class="operator">|</span><span class="number">1</span>&#125; #<span class="number">0</span>为关闭自动提交,即开启事务</span><br></pre></td></tr></table></figure>
+<p>注意:自动提交和开启事务恰好相反,如果<strong>开启自动提交就是关闭事务</strong>;<strong>关闭自动提交就是开启事务</strong>。</p>
+<h2 id="临时开启事务"><a href="#临时开启事务" class="headerlink" title="临时开启事务"></a>临时开启事务</h2><p>除此之外,如果不想关闭整个命令行窗口的自动提交,而只是想临时性地开始事务,则可以使用<code>MySQL</code>提供的<code>start transaction</code>或<code>begin</code>两个命令,它们都表示临时性地开始一次事务,处于<code>starttransaction</code>或<code>begin</code>后的<code>DML</code>语句不会立即生效,除非使用<code>commit</code>显式提交事务,或者执行<code>DDL</code>、<code>DCL</code>语者来隐式提交事务。如下<code>SQL</code>代码将不会对数据库有任何影响。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">begin</span>;</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> student_table <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;xx&#x27;</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> student_table <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;yy&#x27;</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> student_table <span class="keyword">values</span>(<span class="keyword">null</span>,<span class="string">&#x27;zz&#x27;</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> student_table; #①</span><br><span class="line"><span class="keyword">rollback</span>;</span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> student_table; #②</span><br></pre></td></tr></table></figure>
+<p>执行上面<code>SQL</code>语句中的第①条查询语句将会看到刚刚插入的3条记录,如果打开<code>MySQL</code>的其他命令行窗口将看不到这3条记录—这正体现了<code>事务的隔离性</code>。<br>接着程序<code>rollback</code>了事务中的全部修改,执行第②条查询语句时将看到数据库又恢复到事务开始前的状态。</p>
+<p>对于提交,不管是显式提交还是隐式提交,都会结束当前事务;<br>对于回滚,不管是显式回滚还是隐式回滚,都会结束当前事务。</p>
+<h2 id="保存点"><a href="#保存点" class="headerlink" title="保存点"></a>保存点</h2><p>除此之外, <code>MySQL</code>还提供了<code>savepoint</code>来设置事务的中间点,通过使用<code>savepoint</code>设置事务的中间点可以让事务回滚到指定中间点,而不是回滚全部事务。如下<code>SQL</code>语句设置了一个中间点:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">savepoint</span> a;</span><br></pre></td></tr></table></figure>
+<p>一旦设置了中间点后,就可以使用<code>rollback</code>回滚到指定中间点,回滚到指定中间点的代码如下:</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">rollback</span> <span class="keyword">to</span> a;</span><br></pre></td></tr></table></figure>
+<p>注意:<br>普通的提交、回滚都会结束当前事务,<br>但<strong>回滚到指定中间点因为依然处于事务之中,所以不会结束当前事务</strong>.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/744e7229/" title="13.7 事务处理 13.7.1 事务的概念和MySQL事务支持">https://lanlan2017.github.io/JavaReadingNotes/744e7229/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/57b34ebb/" rel="prev" title="13.6.3 离线RowSe的查询分页">
+                  <i class="fa fa-chevron-left"></i> 13.6.3 离线RowSe的查询分页
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/1d9bec40/" rel="next" title="13.7.2 JDBC的事务支持">
+                  13.7.2 JDBC的事务支持 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/744e7229/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/744e7229/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

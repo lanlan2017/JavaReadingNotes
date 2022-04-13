@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="15.10.4 访问文件属性早期的Java提供的File类可以访问一些简单的文件属性,比如文件大小、修改时间、文件是否隐藏、是文件还是目录等。如果程序需要获取或修改更多的文件属性,则必须利用运行所在平台的特定代码来实现,这是一件非常困难的事情。 文件属性工具类Java7的NIO.2在java.nio.file.attribute包下提供了大量的工具类,通过这些工具类,开发者可以非常简单地读取、修改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.10.4 访问文件属性">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/46580092/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="15.10.4 访问文件属性早期的Java提供的File类可以访问一些简单的文件属性,比如文件大小、修改时间、文件是否隐藏、是文件还是目录等。如果程序需要获取或修改更多的文件属性,则必须利用运行所在平台的特定代码来实现,这是一件非常困难的事情。 文件属性工具类Java7的NIO.2在java.nio.file.attribute包下提供了大量的工具类,通过这些工具类,开发者可以非常简单地读取、修改">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-06T20:04:50.000Z">
+<meta property="article:modified_time" content="2020-03-15T00:15:11.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/46580092/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/46580092/","path":"/46580092/","title":"15.10.4 访问文件属性"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>15.10.4 访问文件属性 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#15-10-4-%E8%AE%BF%E9%97%AE%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7"><span class="nav-text">15.10.4 访问文件属性</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-text">文件属性工具类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FileAttributeView"><span class="nav-text">FileAttributeView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AclFileAttributeView"><span class="nav-text">AclFileAttributeView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BasicFileAttributeView"><span class="nav-text">BasicFileAttributeView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BasicFileAttributes"><span class="nav-text">BasicFileAttributes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DosFileAttributeView"><span class="nav-text">DosFileAttributeView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DosFileAttributes"><span class="nav-text">DosFileAttributes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FileOwnerAttributeView"><span class="nav-text">FileOwnerAttributeView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PosixFileAttributeView"><span class="nav-text">PosixFileAttributeView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#PosixFileAttributes"><span class="nav-text">PosixFileAttributes</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UserDefinedFileAttributeView"><span class="nav-text">UserDefinedFileAttributeView</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-%E8%AF%BB%E5%8F%96-%E4%BF%AE%E6%94%B9%E6%96%87%E4%BB%B6%E5%B1%9E%E6%80%A7"><span class="nav-text">程序 读取 修改文件属性</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/46580092/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          15.10.4 访问文件属性
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-07 04:04:50" itemprop="dateCreated datePublished" datetime="2020-01-07T04:04:50+08:00">2020-01-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:11" itemprop="dateModified" datetime="2020-03-15T08:15:11+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-10-Java7%E7%9A%84NIO-2/" itemprop="url" rel="index"><span itemprop="name">15.10 Java7的NIO.2</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/46580092/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/46580092/" data-xid="/JavaReadingNotes/46580092/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="15-10-4-访问文件属性"><a href="#15-10-4-访问文件属性" class="headerlink" title="15.10.4 访问文件属性"></a>15.10.4 访问文件属性</h1><p>早期的<code>Java</code>提供的<code>File</code>类可以访问一些简单的文件属性,比如文件大小、修改时间、文件是否隐藏、是文件还是目录等。如果程序需要获取或修改更多的文件属性,则必须利用运行所在平台的特定代码来实现,这是一件非常困难的事情。</p>
+<h2 id="文件属性工具类"><a href="#文件属性工具类" class="headerlink" title="文件属性工具类"></a>文件属性工具类</h2><p><code>Java7</code>的<code>NIO.2</code>在<code>java.nio.file.attribute</code>包下提供了大量的工具类,通过这些工具类,开发者可以非常简单地读取、修改文件属性。这些工具类主要分为如下两类</p>
+<table>
+<thead>
+<tr>
+<th align="left">类</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>XxxAttributeView</code></td>
+<td align="left">代表某种文件属性的“视图”</td>
+</tr>
+<tr>
+<td align="left"><code>XxxAttributes</code></td>
+<td align="left">代表某种文件属性的“集合”,程序一般通过<code>XxxAttributeView</code>对象来获取<code>XxxAttributes</code>。</td>
+</tr>
+</tbody></table>
+<h2 id="FileAttributeView"><a href="#FileAttributeView" class="headerlink" title="FileAttributeView"></a>FileAttributeView</h2><p>在这些工具类中,<code>FileAttributeView</code>是其他<code>XxxAttributeView</code>的父接口,下面简单介绍一下这些<code>XxxAttributeView</code>。</p>
+<h3 id="AclFileAttributeView"><a href="#AclFileAttributeView" class="headerlink" title="AclFileAttributeView"></a>AclFileAttributeView</h3><p>通过<code>AclFileAttributeView</code>,开发者可以为特定文件设置<code>ACL</code>(<code>Access Control List)</code>及文件所有者属性。它的<code>getAcl()</code>方法返回<code>List&lt;AclEntry&gt;</code>对象,该返回值代表了该文件的<strong>权限集</strong>。通过<code>setAcl(List)</code>方法可以修改该文件的<code>ACL</code></p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>List&lt;AclEntry&gt; getAcl()</code></td>
+<td align="left">Reads the access control list.</td>
+</tr>
+<tr>
+<td align="left"><code>String name()</code></td>
+<td align="left">Returns the name of the attribute view.</td>
+</tr>
+<tr>
+<td align="left"><code>void setAcl(List&lt;AclEntry&gt; acl)</code></td>
+<td align="left">Updates (replace) the access control list.</td>
+</tr>
+</tbody></table>
+<h3 id="BasicFileAttributeView"><a href="#BasicFileAttributeView" class="headerlink" title="BasicFileAttributeView"></a>BasicFileAttributeView</h3><p>它可以<strong>获取或修改文件的基本属性</strong>,包括文件的<strong>最后修改时间</strong>、<strong>最后访问时间</strong>、<strong>创建时间</strong>、<strong>大小</strong>、<strong>是否为目录</strong>、<strong>是否为符号链接</strong>等。它的<code>readAttributes()</code>方法返回一个<code>BasicFileAttributes</code>对象,对<code>文件夹</code>基本属性的修改是通过<code>BasicFileAttributes</code>对象完成的。</p>
+<table>
+<thead>
+<tr>
+<th align="left">BasicFileAttributeView的readAttributes方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>BasicFileAttributes readAttributes()</code></td>
+<td align="left">Reads the basic file attributes as a bulk operation.</td>
+</tr>
+</tbody></table>
+<h4 id="BasicFileAttributes"><a href="#BasicFileAttributes" class="headerlink" title="BasicFileAttributes"></a>BasicFileAttributes</h4><table>
+<thead>
+<tr>
+<th align="left">BasicFileAttributes接口方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>FileTime creationTime()</code></td>
+<td align="left">Returns the creation time.</td>
+</tr>
+<tr>
+<td align="left"><code>Object fileKey()</code></td>
+<td align="left">Returns an object that uniquely identifies the given file, or null if a file key is not available.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isDirectory()</code></td>
+<td align="left">Tells whether the file is a directory.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isOther()</code></td>
+<td align="left">Tells whether the file is something other than a regular file, directory, or symbolic link.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isRegularFile()</code></td>
+<td align="left">Tells whether the file is a regular file with opaque content.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isSymbolicLink()</code></td>
+<td align="left">Tells whether the file is a symbolic link.</td>
+</tr>
+<tr>
+<td align="left"><code>FileTime lastAccessTime()</code></td>
+<td align="left">Returns the time of last access.</td>
+</tr>
+<tr>
+<td align="left"><code>FileTime lastModifiedTime()</code></td>
+<td align="left">Returns the time of last modification.</td>
+</tr>
+<tr>
+<td align="left"><code>long size()</code></td>
+<td align="left">Returns the size of the file (in bytes).</td>
+</tr>
+</tbody></table>
+<h3 id="DosFileAttributeView"><a href="#DosFileAttributeView" class="headerlink" title="DosFileAttributeView"></a>DosFileAttributeView</h3><p>它主要用于获取或修改文件**<code>DOS</code>相关属性**,比如文件<strong>是否只读</strong>、<strong>是否隐藏</strong>、<strong>是否为系统文件</strong>、<strong>是否是存档文件</strong>等。它的<code>readAttributes</code>方法返回一个<code>DosFileAttributes</code>对象,对这些属性的修改其实是由<code>DosFileAttributes</code>对象来完成的|</p>
+<h4 id="DosFileAttributes"><a href="#DosFileAttributes" class="headerlink" title="DosFileAttributes"></a>DosFileAttributes</h4><table>
+<thead>
+<tr>
+<th align="left"><code>DosFileAttributes</code>接口方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>boolean isArchive()</code></td>
+<td align="left">Returns the value of the archive attribute.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isHidden()</code></td>
+<td align="left">Returns the value of the hidden attribute.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isReadOnly()</code></td>
+<td align="left">Returns the value of the read-only attribute.</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isSystem()</code></td>
+<td align="left">Returns the value of the system attribute.</td>
+</tr>
+</tbody></table>
+<h3 id="FileOwnerAttributeView"><a href="#FileOwnerAttributeView" class="headerlink" title="FileOwnerAttributeView"></a>FileOwnerAttributeView</h3><p>它主要<strong>用于获取或修改文件的所有者</strong>。它的<code>getOwner()</code>方法返回一个<code>UserPrincipal</code>对象来代表文件所有者;也可调用<code>setOwner(UserPrincipal owner)</code>方法来改变文件的所有者</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>FileOwnerAttributeView</code>方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>UserPrincipal getOwner()</code></td>
+<td align="left">Read the file owner.</td>
+</tr>
+<tr>
+<td align="left"><code>void setOwner(UserPrincipal owner)</code></td>
+<td align="left">Updates the file owner.</td>
+</tr>
+</tbody></table>
+<h3 id="PosixFileAttributeView"><a href="#PosixFileAttributeView" class="headerlink" title="PosixFileAttributeView"></a>PosixFileAttributeView</h3><p>它主要<strong>用于获取或修改<code>POSX</code>(<code>Portable Operating System Interface of INIX</code>)属性</strong>,它的<code>readAttributes()</code>方法返回一个<code>PosixFileAttributes</code>对象,该对象可用于获取或修改文件的<strong>所有者</strong>、<strong>组所有者</strong>、<strong>访问权限信息</strong>(就是<code>UNIX</code>的<code>chmod</code>命令负责干的事情)。<strong>这个<code>view</code>只在<code>UNNX</code>、<code>Linux</code>等系统上有用</strong>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">PosixFileAttributeView方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>PosixFileAttributes readAttributes()</code></td>
+<td align="left">Reads the basic file attributes as a bulk operation.</td>
+</tr>
+</tbody></table>
+<h4 id="PosixFileAttributes"><a href="#PosixFileAttributes" class="headerlink" title="PosixFileAttributes"></a>PosixFileAttributes</h4><table>
+<thead>
+<tr>
+<th align="left">PosixFileAttributes接口方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>GroupPrincipal group()</code></td>
+<td align="left">Returns the group owner of the file.</td>
+</tr>
+<tr>
+<td align="left"><code>UserPrincipal owner()</code></td>
+<td align="left">Returns the owner of the file.</td>
+</tr>
+<tr>
+<td align="left"><code>Set&lt;PosixFilePermission&gt; permissions()</code></td>
+<td align="left">Returns the permissions of the file.</td>
+</tr>
+</tbody></table>
+<h3 id="UserDefinedFileAttributeView"><a href="#UserDefinedFileAttributeView" class="headerlink" title="UserDefinedFileAttributeView"></a>UserDefinedFileAttributeView</h3><p>它可以让开发者为文件设置一些自定义属性。</p>
+<h2 id="程序-读取-修改文件属性"><a href="#程序-读取-修改文件属性" class="headerlink" title="程序 读取 修改文件属性"></a>程序 读取 修改文件属性</h2><p>下面程序示范了如何读取、修改文件的属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.ByteBuffer;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.Charset;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.FileSystems;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Files;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Path;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.BasicFileAttributeView;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.BasicFileAttributes;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.DosFileAttributeView;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.FileOwnerAttributeView;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.UserDefinedFileAttributeView;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.attribute.UserPrincipal;</span><br><span class="line"><span class="keyword">import</span> java.util.Date;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AttributeViewTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 获取将要操作的文件</span></span><br><span class="line">        Path testPath = Paths.get(<span class="string">&quot;AttributeViewTest.java&quot;</span>);</span><br><span class="line">        <span class="comment">// 获取访问基本属性的BasicFileAttributeView</span></span><br><span class="line">        BasicFileAttributeView basicView = </span><br><span class="line">            Files.getFileAttributeView(testPath, BasicFileAttributeView.class);</span><br><span class="line">        <span class="comment">// 获取访问基本属性的BasicFileAttributes</span></span><br><span class="line">        BasicFileAttributes basicAttribs = basicView.readAttributes();</span><br><span class="line">        <span class="comment">// 访问文件的基本属性</span></span><br><span class="line">        System.out.println(<span class="string">&quot;创建时间：&quot;</span> + <span class="keyword">new</span> Date(basicAttribs.creationTime().toMillis()));</span><br><span class="line">        System.out.println(<span class="string">&quot;最后访问时间：&quot;</span> + <span class="keyword">new</span> Date(basicAttribs.lastAccessTime().toMillis()));</span><br><span class="line">        System.out.println(<span class="string">&quot;最后修改时间：&quot;</span> + <span class="keyword">new</span> Date(basicAttribs.lastModifiedTime().toMillis()));</span><br><span class="line">        System.out.println(<span class="string">&quot;文件大小：&quot;</span> + basicAttribs.size());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取访问文件属主信息的FileOwnerAttributeView</span></span><br><span class="line">        FileOwnerAttributeView ownerView =</span><br><span class="line">            Files.getFileAttributeView(testPath, FileOwnerAttributeView.class);</span><br><span class="line">        <span class="comment">// 获取该文件所属的用户</span></span><br><span class="line">        System.out.println(ownerView.getOwner());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 获取系统中guest对应的用户</span></span><br><span class="line">        UserPrincipal user = FileSystems.getDefault().getUserPrincipalLookupService().lookupPrincipalByName(<span class="string">&quot;guest&quot;</span>);</span><br><span class="line">        <span class="comment">// 修改用户</span></span><br><span class="line">        ownerView.setOwner(user);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取访问自定义属性的FileOwnerAttributeView</span></span><br><span class="line">        UserDefinedFileAttributeView userView = Files.getFileAttributeView(testPath,</span><br><span class="line">                UserDefinedFileAttributeView.class);</span><br><span class="line">        List&lt;String&gt; attrNames = userView.list();</span><br><span class="line">        <span class="comment">// 遍历所有的自定义属性</span></span><br><span class="line">        <span class="keyword">for</span> (String name : attrNames) &#123;</span><br><span class="line">            ByteBuffer buf = ByteBuffer.allocate(userView.size(name));</span><br><span class="line">            userView.read(name, buf);</span><br><span class="line">            buf.flip();</span><br><span class="line">            String value = Charset.defaultCharset().decode(buf).toString();</span><br><span class="line">            System.out.println(name + <span class="string">&quot;---&gt;&quot;</span> + value);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 添加一个自定义属性</span></span><br><span class="line">        userView.write(<span class="string">&quot;发行者&quot;</span>, Charset.defaultCharset().encode(<span class="string">&quot;疯狂Java联盟&quot;</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 获取访问DOS属性的DosFileAttributeView</span></span><br><span class="line">        DosFileAttributeView dosView = Files.getFileAttributeView(testPath, DosFileAttributeView.class);</span><br><span class="line">        <span class="comment">// 将文件设置隐藏、只读</span></span><br><span class="line">        dosView.setHidden(<span class="keyword">true</span>);</span><br><span class="line">        dosView.setReadOnly(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的分别访问了4种不同类型的文件属性,关于读取、修改文件属性的说明,程序中的代码已有详细说明,因此不再过多地解释。第二次运行该程序(记住第一次运行后<code>AttributeViewTestJava</code>文件变成隐藏、只读文件,因此第二次运行之前一定要先取消只读属性)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/46580092/" title="15.10.4 访问文件属性">https://lanlan2017.github.io/JavaReadingNotes/46580092/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/535e0b1a/" rel="prev" title="15.10.3 使用WatchService监控文件变化">
+                  <i class="fa fa-chevron-left"></i> 15.10.3 使用WatchService监控文件变化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/f9427fe5/" rel="next" title="15.11 本章小结">
+                  15.11 本章小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/46580092/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/46580092/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

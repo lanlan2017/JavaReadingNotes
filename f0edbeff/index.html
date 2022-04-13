@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="7.4 剖析Arrays数组是存储多个同类型元素的基本数据结构，数组中的元素在内存连续存放，可以通过数组下标直接定位任意元素，相比在后续章节介绍的其他容器而言效率非常高。 数组操作是计算机程序中的常见基本操作。Java中有一个类Arrays，包含一些对数组操作的静态方法，本节主要就来讨论这些方法。首先介绍怎么用，然后介绍它们的实现原理。学习Arrays的用法，就可以“避免重新发明轮子”，直接使用，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7.4 剖析Arrays">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="7.4 剖析Arrays数组是存储多个同类型元素的基本数据结构，数组中的元素在内存连续存放，可以通过数组下标直接定位任意元素，相比在后续章节介绍的其他容器而言效率非常高。 数组操作是计算机程序中的常见基本操作。Java中有一个类Arrays，包含一些对数组操作的静态方法，本节主要就来讨论这些方法。首先介绍怎么用，然后介绍它们的实现原理。学习Arrays的用法，就可以“避免重新发明轮子”，直接使用，">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-04T12:14:01.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:08.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/","path":"/f0edbeff/","title":"7.4 剖析Arrays"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>7.4 剖析Arrays | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#7-4-%E5%89%96%E6%9E%90Arrays"><span class="nav-text">7.4 剖析Arrays</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-1-%E7%94%A8%E6%B3%95"><span class="nav-text">7.4.1 用法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-toString"><span class="nav-text">1. toString</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E6%8E%92%E5%BA%8F"><span class="nav-text">2．排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%8E%E6%9F%A5%E6%89%BE"><span class="nav-text">3．查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%BC%8E%E6%9B%B4%E5%A4%9A%E6%96%B9%E6%B3%95"><span class="nav-text">4．更多方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-2-%E5%A4%9A%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="nav-text">7.4.2 多维数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-3-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">7.4.3 实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E4%BA%8C%E5%88%86%E6%9F%A5%E6%89%BE"><span class="nav-text">1．二分查找</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E6%8E%92%E5%BA%8F-1"><span class="nav-text">2．排序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-4-4-%E5%B0%8F%E7%BB%93"><span class="nav-text">7.4.4 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          7.4 剖析Arrays
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-04 20:14:01" itemprop="dateCreated datePublished" datetime="2021-12-04T20:14:01+08:00">2021-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:08" itemprop="dateModified" datetime="2021-12-07T12:07:08+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/2%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">2第二部分 面向对象</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/2%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/%E7%AC%AC7%E7%AB%A0-%E5%B8%B8%E7%94%A8%E5%9F%BA%E7%A1%80%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">第7章 常用基础类</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/f0edbeff/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/f0edbeff/" data-xid="/JavaReadingNotes/f0edbeff/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="7-4-剖析Arrays"><a href="#7-4-剖析Arrays" class="headerlink" title="7.4 剖析Arrays"></a>7.4 剖析Arrays</h1><p>数组是存储多个同类型元素的基本数据结构，数组中的元素在内存连续存放，可以通过数组下标直接定位任意元素，相比在后续章节介绍的其他容器而言效率非常高。</p>
+<p>数组操作是计算机程序中的常见基本操作。Java中有一个类Arrays，包含一些对数组操作的静态方法，本节主要就来讨论这些方法。首先介绍怎么用，然后介绍它们的实现原理。学习Arrays的用法，就可以“避免重新发明轮子”，直接使用，学习它的实现原理，就可以在需要的时候自己实现它不具备的功能。</p>
+<h2 id="7-4-1-用法"><a href="#7-4-1-用法" class="headerlink" title="7.4.1 用法"></a>7.4.1 用法</h2><p>Arrays类中有很多方法，我们主要介绍toString、排序、查找，对于一些其他方法，如复制、比较、批量设置值和计算哈希值等，我们也进行简单介绍。</p>
+<h3 id="1-toString"><a href="#1-toString" class="headerlink" title="1. toString"></a>1. toString</h3><p>Arrays的toString()方法可以方便地输出一个数组的字符串形式，以便查看。它有9个重载的方法，包括8个基本类型数组和1个对象类型数组，下面列举两个：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">toString</span><span class="params">(<span class="keyword">int</span>[] a)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">toString</span><span class="params">(Object[] a)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr = &#123;<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br><span class="line">String[] strArr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>&#125;;</span><br><span class="line">System.out.println(Arrays.toString(strArr));</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[9, 8, 3, 4]</span><br><span class="line">[hello, world]</span><br></pre></td></tr></table></figure>
+
+<p>如果不使用Arrays.toString方法，直接输出数组自身，即代码改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">toString</span><span class="params">(<span class="keyword">int</span>[] a)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">toString</span><span class="params">(Object[] a)</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span>[] arr </span>= &#123;<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br><span class="line">String[] strArr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>&#125;;</span><br><span class="line">System.out.println(Arrays.toString(strArr));</span><br><span class="line"><span class="keyword">int</span>[] arr = &#123;<span class="number">9</span>,<span class="number">8</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">System.out.println(arr);</span><br><span class="line">String[] strArr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>&#125;;</span><br><span class="line">System.out.println(strArr);</span><br></pre></td></tr></table></figure>
+
+<p>则输出会变为如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[I@1224b90</span><br><span class="line">[Ljava.lang.String; @728edb84</span><br></pre></td></tr></table></figure>
+
+<p>这个输出就难以阅读了，@后面的数字表示的是内存的地址。</p>
+<h3 id="2．排序"><a href="#2．排序" class="headerlink" title="2．排序"></a>2．排序</h3><p>排序是一种非常常见的操作。同toString一样，对每种基本类型的数组，Arrays都有sort方法（boolean除外），例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">int</span>[] a)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(<span class="keyword">double</span>[] a)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>排序按照从小到大升序排列，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr = &#123;<span class="number">4</span>, <span class="number">9</span>, <span class="number">3</span>, <span class="number">6</span>, <span class="number">10</span>&#125;;</span><br><span class="line">Arrays.sort(arr);</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">3</span>, <span class="number">4</span>, <span class="number">6</span>, <span class="number">9</span>, <span class="number">10</span>]</span><br></pre></td></tr></table></figure>
+
+<p>数组已经排好序了。</p>
+<p>除了基本类型，sort还可以直接接受对象类型，但对象需要实现Comparable接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Object[] a)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(Object[] a, <span class="keyword">int</span> fromIndex, <span class="keyword">int</span> toIndex)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>我们看个String数组的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] arr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;Break&quot;</span>, <span class="string">&quot;abc&quot;</span>&#125;;</span><br><span class="line">Arrays.sort(arr);</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Break, abc, hello, world]</span><br></pre></td></tr></table></figure>
+
+<p>“Break”之所以排在最前面，是因为大写字母的ASCII码比小写字母都小。那如果排序的时候希望忽略大小写呢？sort还有另外两个重载方法，可以接受一个比较器作为参数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(T[] a, Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="keyword">void</span> <span class="title">sort</span><span class="params">(T[] a, <span class="keyword">int</span> fromIndex, <span class="keyword">int</span> toIndex,Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>方法声明中的T表示泛型，泛型我们在第8章介绍，这里表示的是，这个方法可以支持所有对象类型，只要传递这个类型对应的比较器就可以了。Comparator就是比较器，它是一个接口，Java 7中的定义是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Comparator</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(T o1, T o2)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object obj)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最主要的是compare这个方法，它比较两个对象，返回一个表示比较结果的值，-1表示o1小于o2,0表示o1等于o2,1表示o1大于o2。排序是通过比较来实现的，sort方法在排序的过程中需要对对象进行比较的时候，就调用比较器的compare方法。Java 8中Comparator增加了多个静态和默认方法，具体可参看API文档。</p>
+<p>String类有一个public静态成员，表示忽略大小写的比较器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Comparator&lt;String&gt; CASE_INSENSITIVE_ORDER = <span class="keyword">new</span> CaseInsensitiveComparator();</span><br></pre></td></tr></table></figure>
+
+<p>我们通过这个比较器再来对上面的String数组排序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] arr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;Break&quot;</span>, <span class="string">&quot;abc&quot;</span>&#125;;</span><br><span class="line">Arrays.sort(arr, String.CASE_INSENSITIVE_ORDER);</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>这样，大小写就忽略了，输出变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[abc, Break, hello, world]</span><br></pre></td></tr></table></figure>
+
+<p>为进一步理解Comparator，我们来看下String的这个比较器的主要实现代码，如代码清单7-2所示。</p>
+<center>代码清单7-2 String的CaseInsensitiveComparator实现</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">CaseInsensitiveComparator</span></span></span><br><span class="line"><span class="class">        <span class="keyword">implements</span> <span class="title">Comparator</span>&lt;<span class="title">String</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String s1, String s2)</span> </span>&#123;</span><br><span class="line">          <span class="keyword">int</span> n1 = s1.length();</span><br><span class="line">          <span class="keyword">int</span> n2 = s2.length();</span><br><span class="line">          <span class="keyword">int</span> min = Math.min(n1, n2);</span><br><span class="line">          <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; min; i++) &#123;</span><br><span class="line">              <span class="keyword">char</span> c1 = s1.charAt(i);</span><br><span class="line">              <span class="keyword">char</span> c2 = s2.charAt(i);</span><br><span class="line">              <span class="keyword">if</span>(c1 ! = c2) &#123;</span><br><span class="line">                  c1 = Character.toUpperCase(c1);</span><br><span class="line">                  c2 = Character.toUpperCase(c2);</span><br><span class="line">                  <span class="keyword">if</span>(c1 ! = c2) &#123;</span><br><span class="line">                      c1 = Character.toLowerCase(c1);</span><br><span class="line">                      c2 = Character.toLowerCase(c2);</span><br><span class="line">                      <span class="keyword">if</span>(c1 ! = c2) &#123;</span><br><span class="line">                        <span class="comment">//No overflow because of numeric promotion</span></span><br><span class="line">                        <span class="keyword">return</span> c1 - c2;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> n1 - n2;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码比较简单直接，就不解释了。</p>
+<p>sort方法默认是从小到大排序，如果希望按照从大到小排序呢？对于对象类型，可以指定一个不同的Comparator，可以用匿名内部类来实现Comparator，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">String[] arr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;Break&quot;</span>, <span class="string">&quot;abc&quot;</span>&#125;;</span><br><span class="line">Arrays.sort(arr, <span class="keyword">new</span> Comparator&lt;String&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String o1, String o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o2.compareToIgnoreCase(o1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>程序输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[world, hello, Break, abc]</span><br></pre></td></tr></table></figure>
+
+<p>以上代码使用一个匿名内部类实现Comparator接口，返回o2与o1进行忽略大小写比较的结果，这样就能实现忽略大小写且按从大到小排序。</p>
+<p>Collections类中有两个静态方法，可以返回逆序的Comparator，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function">Comparator&lt;T&gt; <span class="title">reverseOrder</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; Comparator&lt;T&gt; <span class="title">reverseOrder</span><span class="params">(Comparator&lt;T&gt; cmp)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>关于Collections类，我们在12.2节介绍。</p>
+<p>这样，上面字符串忽略大小写逆序排序的代码可以改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] arr = &#123;<span class="string">&quot;hello&quot;</span>, <span class="string">&quot;world&quot;</span>, <span class="string">&quot;Break&quot;</span>, <span class="string">&quot;abc&quot;</span>&#125;;</span><br><span class="line">Arrays.sort(arr, Collections.reverseOrder(String.CASE_INSENSITIVE_ORDER));</span><br><span class="line">System.out.println(Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p><strong>传递比较器Comparator给sort方法，体现了程序设计中一种重要的思维方式。将不变和变化相分离，排序的基本步骤和算法是不变的，但按什么排序是变化的，sort方法将不变的算法设计为主体逻辑，而将变化的排序方式设计为参数，允许调用者动态指定，这也是一种常见的设计模式，称为策略模式，不同的排序方式就是不同的策略</strong>。</p>
+<h3 id="3．查找"><a href="#3．查找" class="headerlink" title="3．查找"></a>3．查找</h3><p>Arrays包含很多与sort对应的查找方法，可以在已排序的数组中进行二分查找。所谓二分查找就是从中间开始查找，如果小于中间元素，则在前半部分查找，否则在后半部分查找，每比较一次，要么找到，要么将查找范围缩小一半，所以查找效率非常高。</p>
+<p>二分查找既可以针对基本类型数组，也可以针对对象数组，对对象数组，也可以传递Comparator，也可以指定查找范围。比如，针对int数组：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] a, <span class="keyword">int</span> key)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(<span class="keyword">int</span>[] a, <span class="keyword">int</span> fromIndex, <span class="keyword">int</span> toIndex, <span class="keyword">int</span> key)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>针对对象数组：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(Object[] a, Object key)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>指定自定义比较器：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">int</span> <span class="title">binarySearch</span><span class="params">(T[] a, T key, Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>如果能找到，binarySearch返回找到的元素索引，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr = &#123;<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">13</span>,<span class="number">21</span>&#125;;</span><br><span class="line">System.out.println(Arrays.binarySearch(arr, <span class="number">13</span>));</span><br></pre></td></tr></table></figure>
+
+<p>输出为3。如果没找到，返回一个负数，这个负数等于-（插入点+<br>1）。插入点表示，如果在这个位置插入没找到的元素，可以保持原数组有序，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr = &#123;<span class="number">3</span>,<span class="number">5</span>,<span class="number">7</span>,<span class="number">13</span>,<span class="number">21</span>&#125;;</span><br><span class="line">System.out.println(Arrays.binarySearch(arr, <span class="number">11</span>));</span><br></pre></td></tr></table></figure>
+
+<p>输出为-4，表示插入点为3，如果在3这个索引位置处插入11，可以保持数组有序，即数组会变为{3,5,7,11,13,21}。</p>
+<p>需要注意的是，binarySearch针对的必须是已排序数组，如果指定了Comparator，需要和排序时指定的Comparator保持一致。另外，如果数组中有多个匹配的元素，则返回哪一个是不确定的。</p>
+<h3 id="4．更多方法"><a href="#4．更多方法" class="headerlink" title="4．更多方法"></a>4．更多方法</h3><p>除了常用的toString、排序和查找，Arrays中还有复制、比较、批量设置值和计算哈希值等方法。</p>
+<p>基于原数组，复制一个新数组，与toString一样，也有多种重载形式，例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">long</span>[] copyOf(<span class="keyword">long</span>[] original, <span class="keyword">int</span> newLength)</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; T[] copyOf(T[] original, <span class="keyword">int</span> newLength)</span><br></pre></td></tr></table></figure>
+
+<p>判断两个数组是否相同，支持基本类型和对象类型，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(<span class="keyword">boolean</span>[] a, <span class="keyword">boolean</span>[] a2)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">equals</span><span class="params">(Object[] a, Object[] a2)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>只有数组长度相同，且每个元素都相同，才返回true，否则返回false。对于对象，相同是指equals返回true。</p>
+<p>Arrays包含很多fill方法，可以给数组中的每个元素设置一个相同的值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fill</span><span class="params">(<span class="keyword">int</span>[] a, <span class="keyword">int</span> val)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>也可以给数组中一个给定范围的每个元素设置一个相同的值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">fill</span><span class="params">(<span class="keyword">int</span>[] a, <span class="keyword">int</span> fromIndex, <span class="keyword">int</span> toIndex, <span class="keyword">int</span> val)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>针对数组，计算一个数组的哈希值：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">(<span class="keyword">int</span> a[])</span></span></span><br></pre></td></tr></table></figure>
+
+<p>计算hashCode的算法和String是类似的，我们看下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">hashCode</span><span class="params">(<span class="keyword">int</span> a[])</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(a == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">int</span> result = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> element : a)</span><br><span class="line">        result = <span class="number">31</span> ＊ result + element;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>回顾一下，String计算hashCode的算法也是类似的，数组中的每个元素都影响hash值，位置不同，影响也不同，使用31一方面产生的哈希值更分散，另一方面计算效率也比较高。</p>
+<p>Java 8和9对Arrays类又增加了一些方法，比如将数组转换为流、并行排序、数组比较等，具体可参看API文档。</p>
+<h2 id="7-4-2-多维数组"><a href="#7-4-2-多维数组" class="headerlink" title="7.4.2 多维数组"></a>7.4.2 多维数组</h2><p>之前介绍的数组都是一维的，数组还可以是多维的。先来看二维数组，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][<span class="number">3</span>];</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>; i&lt;arr.length; i++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">int</span> j=<span class="number">0</span>; j&lt;arr[i].length; j++)&#123;</span><br><span class="line">        arr[i][j] = i+j;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>arr就是一个二维数组，第一维长度为2，第二维长度为3，类似于一个矩阵，或者类似于一个表格，第一维表示行，第二维表示列。arr[i]表示第i行，它本身还是一个数组， arr[i][j]表示第i行中的第j个元素。</p>
+<p>除了二维，数组还可以是三维、四维等，但一般而言，很少用到三维以上的数组，有几维，就有几个[]。比如，一个三维数组的声明为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][][] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">10</span>][<span class="number">10</span>][<span class="number">10</span>];</span><br></pre></td></tr></table></figure>
+
+<p>在创建数组时，除了第一维的长度需要指定外，其他维的长度不需要指定，甚至第一维中每个元素的第二维的长度可以不一样，看个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">2</span>][];</span><br><span class="line">arr[<span class="number">0</span>] = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">3</span>];</span><br><span class="line">arr[<span class="number">1</span>] = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">5</span>];</span><br></pre></td></tr></table></figure>
+
+<p>arr是一个二维数组，第一维的长度为2，第一个元素的第二维长度为3，而第二个元素的第二维长度为5。</p>
+<p>多维数组到底是什么呢？其实，可以认为，<strong>多维数组只是一个假象，只有一维数组，只是数组中的每个元素还可以是一个数组</strong>，这样就形成二维数组；如果其中每个元素还都是一个数组，那就是三维数组。</p>
+<p>Arrays中的toString、equals、hashCode都有对应的针对多维数组的方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">deepToString</span><span class="params">(Object[] a)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">boolean</span> <span class="title">deepEquals</span><span class="params">(Object[] a1, Object[] a2)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">deepHashCode</span><span class="params">(Object a[])</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这些deepXXX方法，都会判断参数中的元素是否也为数组，如果是，会递归进行操作。</p>
+<p>看个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[][] arr = <span class="keyword">new</span> <span class="keyword">int</span>[][]&#123;&#123;<span class="number">0</span>,<span class="number">1</span>&#125;, &#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;, &#123;<span class="number">5</span>,<span class="number">6</span>,<span class="number">7</span>,<span class="number">8</span>&#125;&#125;;</span><br><span class="line">System.out.println(Arrays.deepToString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[0, 1], [2, 3, 4], [5, 6, 7, 8]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="7-4-3-实现原理"><a href="#7-4-3-实现原理" class="headerlink" title="7.4.3 实现原理"></a>7.4.3 实现原理</h2><p>下面介绍Arrays的方法的实现原理。hashCode()的实现我们已经介绍了；fill和equals等的实现都很简单，循环操作即可，不再赘述；下面主要介绍二分查找和排序的实现代码。</p>
+<h3 id="1．二分查找"><a href="#1．二分查找" class="headerlink" title="1．二分查找"></a>1．二分查找</h3><p>二分查找（binarySearch）的代码比较直接，如代码清单7-3所示。</p>
+<center>代码清单7-3 Arrays的二分查找实现</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">int</span> <span class="title">binarySearch0</span><span class="params">(T[] a, <span class="keyword">int</span> fromIndex, <span class="keyword">int</span> toIndex,</span></span></span><br><span class="line"><span class="params"><span class="function">                                      T key, Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> low = fromIndex;</span><br><span class="line">    <span class="keyword">int</span> high = toIndex - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span>(low &lt;= high) &#123;</span><br><span class="line">        <span class="keyword">int</span> mid = (low + high) &gt;&gt;&gt; <span class="number">1</span>;</span><br><span class="line">        T midVal = a[mid];</span><br><span class="line">        <span class="keyword">int</span> cmp = c.compare(midVal, key);</span><br><span class="line">        <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>)</span><br><span class="line">            low = mid + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>)</span><br><span class="line">            high = mid - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> mid; <span class="comment">//key found</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> -(low + <span class="number">1</span>);   <span class="comment">//key not found</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上述代码中有两个标志：low和high，表示查找范围，在while循环中，与中间值进行对比，大于则在后半部分查找（提高low），否则在前半部分查找（降低high）。</p>
+<h3 id="2．排序-1"><a href="#2．排序-1" class="headerlink" title="2．排序"></a>2．排序</h3><p>与Arrays中的其他方法相比，sort要复杂得多。排序是计算机程序中一个非常重要的方面，几十年来，计算机科学家和工程师们对此进行了大量的研究，设计实现了各种各样的算法，进行了大量的优化。一般而言，没有一个最好的算法，不同算法往往有不同的适用场合。</p>
+<p>那Arrays的sort是如何实现的呢？具体实现非常复杂，我们简单了解下。</p>
+<p>对于基本类型的数组，Java采用的算法是<strong>双枢轴快速排序</strong>（Dual-PivotQuicksort）。这个算法是Java 7引入的，在此之前，Java采用的算法是普通的快速排序。双枢轴快速排序是对快速排序的优化，新算法的实现代码位于类java.util.DualPivotQuicksort中。</p>
+<p>对于对象类型，Java采用的算法是TimSort。TimSort也是在Java 7引入的，在此之前， Java采用的是归并排序。TimSort实际上是对归并排序的一系列优化，TimSort的实现代码位于类java.util.TimSort中。</p>
+<p>在这些排序算法中，如果数组长度比较小，它们还会采用效率更高的插入排序。</p>
+<p>为什么基本类型和对象类型的算法不一样呢？排序算法有一个稳定性的概念，所谓稳定性就是对值相同的元素，如果排序前和排序后，算法可以保证它们的相对顺序不变，那算法就是稳定的，否则就是不稳定的。</p>
+<p>快速排序更快，但不稳定，而归并排序是稳定的。对于基本类型，值相同就是完全相同，所以稳定不稳定没有关系。但对于对象类型，相同只是比较结果一样，它们还是不同的对象，其他实例变量也不见得一样，稳定不稳定可能就很有关系了，所以采用归并排序。</p>
+<p>这些算法的实现是比较复杂的，所幸的是，Java提供了很好的封装，绝大多数情况下，我们会用就可以了。</p>
+<h2 id="7-4-4-小结"><a href="#7-4-4-小结" class="headerlink" title="7.4.4 小结"></a>7.4.4 小结</h2><p>其实，Arrays中包含的数组方法是比较少的，很多常用的操作没有，比如，Arrays的binarySearch只能针对已排序数组进行查找，那没有排序的数组怎么方便查找呢？</p>
+<p>Apache有一个开源包（<a target="_blank" rel="noopener" href="http://commons.apache.org/proper/commons-lang/%EF%BC%89%EF%BC%8C%E9%87%8C%E9%9D%A2%E6%9C%89%E4%B8%80%E4%B8%AA%E7%B1%BBArrayUtils%EF%BC%88%E4%BD%8D%E4%BA%8E%E5%8C%85org.apache.commons.lang3%EF%BC%89%EF%BC%8C%E5%8C%85%E5%90%AB%E4%BA%86%E6%9B%B4%E5%A4%9A%E7%9A%84%E5%B8%B8%E7%94%A8%E6%95%B0%E7%BB%84%E6%93%8D%E4%BD%9C%EF%BC%8C%E8%BF%99%E9%87%8C%E5%B0%B1%E4%B8%8D%E5%88%97%E4%B8%BE%E4%BA%86%E3%80%82">http://commons.apache.org/proper/commons-lang/），里面有一个类ArrayUtils（位于包org.apache.commons.lang3），包含了更多的常用数组操作，这里就不列举了。</a></p>
+<p>数组是计算机程序中的基本数据结构，Arrays类以及ArrayUtils类封装了关于数组的常见操作，使用这些方法，避免“重新发明轮子”吧。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/" title="7.4 剖析Arrays">https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/703d32a8/" rel="prev" title="7.5 剖析日期和时间">
+                  <i class="fa fa-chevron-left"></i> 7.5 剖析日期和时间
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/cb0345d2/" rel="next" title="5.3 内部类的本质">
+                  5.3 内部类的本质 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/f0edbeff/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/f0edbeff/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

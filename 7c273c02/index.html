@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="第26章 函数式编程Java 8引入了一个重要新语法——Lambda表达式，它是一种紧凑的传递代码的方式，利用它，可以实现简洁灵活的函数式编程。 基于Lambda表达式，针对常见的集合数据处理，Java 8引入了一套新的类库，位于包java.util.stream下，称为Stream API。这套API操作数据的思路不同于我们之前介绍的容器类API，它们是函数式的，非常简洁、灵活、易读。 Stre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="26.0 第26章 函数式编程 26.1 Lambda表达式">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/7c273c02/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="第26章 函数式编程Java 8引入了一个重要新语法——Lambda表达式，它是一种紧凑的传递代码的方式，利用它，可以实现简洁灵活的函数式编程。 基于Lambda表达式，针对常见的集合数据处理，Java 8引入了一套新的类库，位于包java.util.stream下，称为Stream API。这套API操作数据的思路不同于我们之前介绍的容器类API，它们是函数式的，非常简洁、灵活、易读。 Stre">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211211212654.jpeg">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211211212741.jpeg">
+<meta property="article:published_time" content="2021-12-08T04:34:35.000Z">
+<meta property="article:modified_time" content="2021-12-08T04:34:35.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211211212654.jpeg">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/7c273c02/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/7c273c02/","path":"/7c273c02/","title":"26.0 第26章 函数式编程 26.1 Lambda表达式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>26.0 第26章 函数式编程 26.1 Lambda表达式 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC26%E7%AB%A0-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B"><span class="nav-text">第26章 函数式编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#26-1-Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-text">26.1 Lambda表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-1-%E9%80%9A%E8%BF%87%E6%8E%A5%E5%8F%A3%E4%BC%A0%E9%80%92%E4%BB%A3%E7%A0%81"><span class="nav-text">26.1.1 通过接口传递代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-2-Lambda%E8%AF%AD%E6%B3%95"><span class="nav-text">26.1.2 Lambda语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-3-%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3"><span class="nav-text">26.1.3 函数式接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-4-%E9%A2%84%E5%AE%9A%E4%B9%89%E7%9A%84%E5%87%BD%E6%95%B0%E5%BC%8F%E6%8E%A5%E5%8F%A3"><span class="nav-text">26.1.4 预定义的函数式接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Predicate%E7%A4%BA%E4%BE%8B"><span class="nav-text">1. Predicate示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Function%E7%A4%BA%E4%BE%8B"><span class="nav-text">2. Function示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Consumer%E7%A4%BA%E4%BE%8B"><span class="nav-text">3. Consumer示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-5-%E6%96%B9%E6%B3%95%E5%BC%95%E7%94%A8"><span class="nav-text">26.1.5 方法引用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-6-%E5%87%BD%E6%95%B0%E7%9A%84%E5%A4%8D%E5%90%88"><span class="nav-text">26.1.6 函数的复合</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Comparator%E4%B8%AD%E7%9A%84%E5%A4%8D%E5%90%88%E6%96%B9%E6%B3%95"><span class="nav-text">1. Comparator中的复合方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-function%E5%8C%85%E4%B8%AD%E7%9A%84%E5%A4%8D%E5%90%88%E6%96%B9%E6%B3%95"><span class="nav-text">2. function包中的复合方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#26-1-7-%E5%B0%8F%E7%BB%93"><span class="nav-text">26.1.7 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/7c273c02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          26.0 第26章 函数式编程 26.1 Lambda表达式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-08 12:34:35" itemprop="dateCreated datePublished" datetime="2021-12-08T12:34:35+08:00">2021-12-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/6%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86-%E5%8A%A8%E6%80%81%E4%B8%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">6第六部分 动态与函数式编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/6%E7%AC%AC%E5%85%AD%E9%83%A8%E5%88%86-%E5%8A%A8%E6%80%81%E4%B8%8E%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/%E7%AC%AC26%E7%AB%A0-%E5%87%BD%E6%95%B0%E5%BC%8F%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第26章 函数式编程</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/7c273c02/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/7c273c02/" data-xid="/JavaReadingNotes/7c273c02/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="第26章-函数式编程"><a href="#第26章-函数式编程" class="headerlink" title="第26章 函数式编程"></a>第26章 函数式编程</h1><p>Java 8引入了一个重要新语法——Lambda表达式，<strong>它是一种紧凑的传递代码的方式</strong>，利用它，可以实现简洁灵活的函数式编程。</p>
+<p>基于Lambda表达式，针对常见的集合数据处理，Java 8引入了一套新的类库，位于包java.util.stream下，称为Stream API。这套API操作数据的思路不同于我们之前介绍的容器类API，它们是函数式的，非常简洁、灵活、易读。</p>
+<p>Stream API是对容器类的增强，它可以将对集合数据的多个操作以流水线的方式组合在一起。Java 8还增加了一个新的类CompletableFuture，它是对并发编程的增强，<strong>可以方便地将多个有一定依赖关系的异步任务以流水线的方式组合在一起，大大简化多异步任务的开发</strong>。</p>
+<p>利用Lambda表达式，Java 8还增强了日期和时间API。</p>
+<p>本章就来介绍这些Java 8引入的函数式编程特性和API，具体分为5节：26.1节介绍Lambda表达式；26.2节介绍函数式数据处理的基本用法；26.3节重点讨论函数式数据处理中的收集器；26.4节介绍组合式异步编程CompletableFuture;26.5节介绍Java 8的日期和时间API。</p>
+<h1 id="26-1-Lambda表达式"><a href="#26-1-Lambda表达式" class="headerlink" title="26.1 Lambda表达式"></a>26.1 Lambda表达式</h1><p>Lambda表达式到底是什么？有什么用？本节进行详细探讨。Lambda这个名字来源于学术界的λ演算，具体我们就不探讨了。理解Lambda表达式，我们需要先回顾一下接口、匿名内部类和代码传递。</p>
+<h2 id="26-1-1-通过接口传递代码"><a href="#26-1-1-通过接口传递代码" class="headerlink" title="26.1.1 通过接口传递代码"></a>26.1.1 通过接口传递代码</h2><p>我们之前介绍过接口以及面向接口的编程，针对接口而非具体类型进行编程，可以降低程序的耦合性，提高灵活性，提高复用性。<strong>接口常被用于传递代码</strong>，比如，我们知道File有如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> File[] listFiles(FilenameFilter filter)</span><br></pre></td></tr></table></figure>
+
+<p>listFiles需要的其实不是FilenameFilter对象，而是它包含的如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File dir, String name)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>或者说，listFiles希望接受一段方法代码作为参数，但没有办法直接传递这个方法代码本身，只能传递一个接口。</p>
+<p>再如，类Collections中的很多方法都接受一个参数Comparator，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T&gt; <span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(List&lt;T&gt; list, Comparator&lt;? <span class="keyword">super</span> T&gt; c)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>它们需要的也不是Comparator对象，而是它包含的如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">compare</span><span class="params">(T o1, T o2)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>但是，没有办法直接传递方法，只能传递一个接口。</p>
+<p>又如，异步任务执行服务ExecutorService，提交任务的方法有：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; <span class="function">Future&lt;T&gt; <span class="title">submit</span><span class="params">(Callable&lt;T&gt; task)</span></span>;</span><br><span class="line">Future&lt;?&gt; submit(Runnable task);</span><br></pre></td></tr></table></figure>
+
+<p>Callable和Runnable接口也用于传递任务代码。</p>
+<p>通过接口传递行为代码，就要传递一个实现了该接口的实例对象，在之前的章节中，最简洁的方式是使用匿名内部类，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//列出当前目录下的所有扩展名为．txt的文件</span></span><br><span class="line">File f = <span class="keyword">new</span> File(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">File[] files = f.listFiles(<span class="keyword">new</span> FilenameFilter()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File dir, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(name.endsWith(<span class="string">&quot;.txt&quot;</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>将files按照文件名排序，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Arrays.sort(files, <span class="keyword">new</span> Comparator&lt;File&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(File f1, File f2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> f1.getName().compareTo(f2.getName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>提交一个最简单的任务，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService executor = Executors.newFixedThreadPool(<span class="number">100</span>);</span><br><span class="line">executor.submit(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;hello world&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="26-1-2-Lambda语法"><a href="#26-1-2-Lambda语法" class="headerlink" title="26.1.2 Lambda语法"></a>26.1.2 Lambda语法</h2><p>Java 8提供了一种新的紧凑的传递代码的语法：Lambda表达式。对于前面列出文件的例子，代码可以改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">File f = <span class="keyword">new</span> File(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">File[] files = f.listFiles((File dir, String name) -&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span>(name.endsWith(<span class="string">&quot;.txt&quot;</span>)) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>可以看出，相比匿名内部类，传递代码变得更为直观，不再有实现接口的模板代码，不再声明方法，也没有名字，而是直接给出了方法的实现代码。Lambda表达式由-&gt;分隔为两部分，前面是方法的参数，后面{}内是方法的代码。上面的代码可以简化为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">File[] files = f.listFiles((File dir, String name) -&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> name.endsWith(<span class="string">&quot;.txt&quot;</span>);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>当主体代码只有一条语句的时候，括号和return语句也可以省略，上面的代码可以变为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File[] files = f.listFiles((File dir, String name) -&gt; name.endsWith(<span class="string">&quot;.txt&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>注意：没有括号的时候，主体代码是一个表达式，这个表达式的值就是函数的返回值，结尾不能加分号，也不能加return语句。</p>
+<p>方法的参数类型声明也可以省略，上面的代码还可以继续简化为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File[] files = f.listFiles((dir, name) -&gt; name.endsWith(<span class="string">&quot;.txt&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>之所以可以省略方法的参数类型，是因为Java可以自动推断出来，它知道listFiles接受的参数类型是FilenameFilter，这个接口只有一个方法accept，这个方法的两个参数类型分别是File和String。这样简化下来，代码是不是简洁多了？</p>
+<p>排序的代码用Lambda表达式可以写为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Arrays.sort(files, (f1, f2) -&gt; f1.getName().compareTo(f2.getName()));</span><br></pre></td></tr></table></figure>
+
+<p>提交任务的代码用Lambda表达式可以写为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">executor.submit(()-&gt;System.out.println(<span class="string">&quot;hello&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>参数部分为空，写为()。</p>
+<p>当参数只有一个的时候，参数部分的括号可以省略。比如，File还有如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> File[] listFiles(FileFilter filter)</span><br></pre></td></tr></table></figure>
+
+<p>FileFilter的定义为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">FileFilter</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">accept</span><span class="params">(File pathname)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用FileFilter重写上面的列举文件的例子，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">File[] files = f.listFiles(path -&gt; path.getName().endsWith(<span class="string">&quot;.txt&quot;</span>));</span><br></pre></td></tr></table></figure>
+
+<p>与匿名内部类类似，Lambda表达式也可以访问定义在主体代码外部的变量，但对于局部变量，它也只能访问final类型的变量，与匿名内部类的区别是，它不要求变量声明为final，但变量事实上不能被重新赋值。比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String msg = <span class="string">&quot;hello world&quot;</span>;</span><br><span class="line">executor.submit(()-&gt;System.out.println(msg));</span><br></pre></td></tr></table></figure>
+
+<p>可以访问局部变量msg，但msg不能被重新赋值，如果这样写：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String msg = <span class="string">&quot;hello world&quot;</span>;</span><br><span class="line">msg = <span class="string">&quot;good morning&quot;</span>;</span><br><span class="line">executor.submit(()-&gt;System.out.println(msg));</span><br></pre></td></tr></table></figure>
+
+<p>Java编译器会提示错误。</p>
+<p>这个原因与匿名内部类是一样的，Java会将msg的值作为参数传递给Lambda表达式，为Lambda表达式建立一个副本，它的代码访问的是这个副本，而不是外部声明的msg变量。如果允许msg被修改，则程序员可能会误以为Lambda表达式读到修改后的值，引起更多的混淆。</p>
+<p>为什么非要建立副本，直接访问外部的msg变量不行吗？不行，因为msg定义在栈中，当Lambda表达式被执行的时候，msg可能早已被释放了。如果希望能够修改值，可以将变量定义为实例变量，或者将变量定义为数组，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String[] msg = <span class="keyword">new</span> String[]&#123;<span class="string">&quot;hello world&quot;</span>&#125;;</span><br><span class="line">msg[<span class="number">0</span>] = <span class="string">&quot;good morning&quot;</span>;</span><br><span class="line">executor.submit(()-&gt;System.out.println(msg[<span class="number">0</span>]));</span><br></pre></td></tr></table></figure>
+
+<p>从以上内容可以看出，Lambda表达式与匿名内部类很像，主要就是简化了语法，那它是不是语法糖，内部实现其实就是内部类呢？答案是否定的，<strong>Java会为每个匿名内部类生成一个类，但Lambda表达式不会</strong>。Lambda表达式通常比较短，为每个表达式生成一个类会生成大量的类，性能会受到影响。</p>
+<p>内部实现上，Java利用了Java 7引入的为支持动态类型语言引入的invokedynamic指令、方法句柄（method handle）等，具体实现比较复杂，我们就不探讨了，感兴趣的读者可以参看<a target="_blank" rel="noopener" href="http://cr.openjdk.java.net/~briangoetz/lambda/lambda-translation.html">http://cr.openjdk.java.net/~briangoetz/lambda/lambda-translation.html</a> ，我们需要知道的是，Java的实现是非常高效的，不用担心生成太多类的问题。</p>
+<p>Lambda表达式不是匿名内部类，那它的类型到底是什么呢？是<strong>函数式接口</strong>。</p>
+<h2 id="26-1-3-函数式接口"><a href="#26-1-3-函数式接口" class="headerlink" title="26.1.3 函数式接口"></a>26.1.3 函数式接口</h2><p>Java 8引入了函数式接口的概念，函数式接口也是接口，但只能有一个抽象方法，前面提及的接口都只有一个抽象方法，都是函数式接口。之所以强调是“抽象”方法，是因为Java 8中还允许定义静态方法和默认方法。Lambda表达式可以赋值给函数式接口，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">FileFilter filter = path -&gt; path.getName().endsWith(<span class="string">&quot;.txt&quot;</span>);</span><br><span class="line">FilenameFilter fileNameFilter = (dir, name) -&gt; name.endsWith(<span class="string">&quot;.txt&quot;</span>);</span><br><span class="line">Comparator&lt;File&gt; comparator = (f1, f2) -&gt;</span><br><span class="line">                    f1.getName().compareTo(f2.getName());</span><br><span class="line">Runnable task = () -&gt; System.out.println(<span class="string">&quot;hello world&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>如果看这些接口的定义，会发现它们都有一个注解<code>@FunctionalInterface</code>，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@FunctionalInterface</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>@FunctionalInterface</code>用于清晰地告知使用者这是一个函数式接口，不过，这个注解不是必需的，不加，只要只有一个抽象方法，也是函数式接口。但如果加了，而又定义了超过一个抽象方法，Java编译器会报错，这类似于我们之前介绍的Override注解。</p>
+<h2 id="26-1-4-预定义的函数式接口"><a href="#26-1-4-预定义的函数式接口" class="headerlink" title="26.1.4 预定义的函数式接口"></a>26.1.4 预定义的函数式接口</h2><p>Java 8定义了大量的预定义函数式接口，用于常见类型的代码传递，这些函数定义在包java.util.function下，主要接口如表26-1所示。</p>
+<center>表26-1 主要的预定义函数式接口</center>
+
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211211212654.jpeg" alt="epub_923038_153"><br>对于基本类型boolean、int、long和double，为避免装箱/拆箱，Java 8提供了一些专门的函数，比如，int相关的部分函数如表26-2所示。</p>
+<center>表26-2 int类型的函数式接口</center>
+
+
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211211212741.jpeg" alt="epub_923038_154"><br>这些函数有什么用呢？它们被大量用于Java 8的函数式数据处理Stream相关的类中，即使不使用Stream，也可以在自己的代码中直接使用这些预定义的函数。我们看一些简单的示例，包括Predicate、Function和Consumer。</p>
+<h3 id="1-Predicate示例"><a href="#1-Predicate示例" class="headerlink" title="1. Predicate示例"></a>1. Predicate示例</h3><p>为便于举例，我们先定义一个简单的学生类Student，它有name和score两个属性，如下所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> </span>&#123;</span><br><span class="line">    String name;</span><br><span class="line">    <span class="keyword">double</span> score;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们省略了构造方法和getter/setter方法。</p>
+<p>有一个学生列表：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Student&gt; students = Arrays.asList(<span class="keyword">new</span> Student[] &#123;</span><br><span class="line">        <span class="keyword">new</span> Student(<span class="string">&quot;zhangsan&quot;</span>, <span class="number">89d</span>), <span class="keyword">new</span> Student(<span class="string">&quot;lisi&quot;</span>, <span class="number">89d</span>),</span><br><span class="line">        <span class="keyword">new</span> Student(<span class="string">&quot;wangwu&quot;</span>, <span class="number">98d</span>) &#125;);</span><br></pre></td></tr></table></figure>
+
+<p>在日常开发中，列表处理的一个常见需求是过滤，列表的类型经常不一样，过滤的条件也经常变化，但主体逻辑都是类似的，可以借助Predicate写一个通用的方法，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function">List&lt;E&gt; <span class="title">filter</span><span class="params">(List&lt;E&gt; list, Predicate&lt;E&gt; pred)</span> </span>&#123;</span><br><span class="line">    List&lt;E&gt; retList = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span>(E e : list) &#123;</span><br><span class="line">        <span class="keyword">if</span>(pred.test(e)) &#123;</span><br><span class="line">            retList.add(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> retList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法可以这么用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//过滤90分以上的</span></span><br><span class="line">students = filter(students, t -&gt; t.getScore() &gt; <span class="number">90</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-Function示例"><a href="#2-Function示例" class="headerlink" title="2. Function示例"></a>2. Function示例</h3><p>列表处理的另一个常见需求是转换。比如，给定一个学生列表，需要返回名称列表，或者将名称转换为大写返回，可以借助Function写一个通用的方法，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, R&gt; <span class="function">List&lt;R&gt; <span class="title">map</span><span class="params">(List&lt;T&gt; list, Function&lt;T, R&gt; mapper)</span> </span>&#123;</span><br><span class="line">    List&lt;R&gt; retList = <span class="keyword">new</span> ArrayList&lt;&gt;(list.size());</span><br><span class="line">    <span class="keyword">for</span>(T e : list) &#123;</span><br><span class="line">        retList.add(mapper.apply(e));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> retList;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据学生列表返回名称列表的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; names = map(students, t -&gt; t.getName());</span><br></pre></td></tr></table></figure>
+
+<p>将学生名称转换为大写的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">students = map(students, t -&gt; <span class="keyword">new</span> Student(</span><br><span class="line">    t.getName().toUpperCase(), t.getScore()));</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-Consumer示例"><a href="#3-Consumer示例" class="headerlink" title="3. Consumer示例"></a>3. Consumer示例</h3><p>在上面转换学生名称为大写的例子中，我们为每个学生创建了一个新的对象，另一种常见的情况是直接修改原对象，通过代码传递，这时，可以用Consumer写一个通用的方法，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E&gt; <span class="function"><span class="keyword">void</span> <span class="title">foreach</span><span class="params">(List&lt;E&gt; list, Consumer&lt;E&gt; consumer)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(E e : list) &#123;</span><br><span class="line">        consumer.accept(e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面转换为大写的例子可以改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">foreach(students, t -&gt; t.setName(t.getName().toUpperCase()));</span><br></pre></td></tr></table></figure>
+
+<p>以上这些示例主要用于演示函数式接口的基本概念，实际中可以直接使用流API。</p>
+<h2 id="26-1-5-方法引用"><a href="#26-1-5-方法引用" class="headerlink" title="26.1.5 方法引用"></a>26.1.5 方法引用</h2><p>Lambda表达式经常用于调用对象的某个方法，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; names = map(students, t -&gt; t.getName());</span><br></pre></td></tr></table></figure>
+
+<p>这时，它可以进一步简化，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">List&lt;String&gt; names = map(students, Student::getName);</span><br></pre></td></tr></table></figure>
+
+<p>Student::getName这种写法是Java 8引入的一种新语法，称为<strong>方法引用</strong>。它是Lambda表达式的一种简写方法，由：：分隔为两部分，前面是类名或变量名，后面是方法名。方法可以是实例方法，也可以是静态方法，但含义不同。</p>
+<p>我们看一些例子，还是以Student为例，先增加一个静态方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getCollegeName</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;Laoma School&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于静态方法，如下两条语句是等价的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. Supplier&lt;String&gt; s = Student::getCollegeName;</span><br><span class="line">2. Supplier&lt;String&gt; s = () -&gt; Student.getCollegeName();</span><br></pre></td></tr></table></figure>
+
+<p>它们的参数都是空，返回类型为String。</p>
+<p>而对于实例方法，它的第一个参数就是该类型的实例，比如，如下两条语句是等价的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. Function&lt;Student, String&gt; f = Student::getName;</span><br><span class="line">2. Function&lt;Student, String&gt; f = (Student t) -&gt; t.getName();</span><br></pre></td></tr></table></figure>
+
+<p>对于Student::setName，它是一个BiConsumer，即如下两条语句是等价的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. BiConsumer&lt;Student, String&gt; c = Student::setName;</span><br><span class="line">2. BiConsumer&lt;Student, String&gt; c = (t, name) -&gt; t.setName(name);</span><br></pre></td></tr></table></figure>
+
+<p>如果方法引用的第一部分是变量名，则相当于调用那个对象的方法。比如，假定t是一个Student类型的变量，则如下两条语句是等价的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. Supplier&lt;String&gt; s = t::getName;</span><br><span class="line">2. Supplier&lt;String&gt; s = () -&gt; t.getName();</span><br></pre></td></tr></table></figure>
+
+<p>下面两条语句也是等价的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1. Consumer&lt;String&gt; consumer = t::setName;</span><br><span class="line">2. Consumer&lt;String&gt; consumer = (name) -&gt; t.setName(name);</span><br></pre></td></tr></table></figure>
+
+<p>对于构造方法，方法引用的语法是&lt;类名&gt;::new，如Student::new，即下面两条语句等价：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">1. BiFunction&lt;String, Double, Student&gt; s = (name, score)</span><br><span class="line">                                -&gt; new Student(name, score);</span><br><span class="line">2. BiFunction&lt;String, Double, Student&gt; s = Student::new;</span><br></pre></td></tr></table></figure>
+
+<h2 id="26-1-6-函数的复合"><a href="#26-1-6-函数的复合" class="headerlink" title="26.1.6 函数的复合"></a>26.1.6 函数的复合</h2><p>在前面的例子中，函数式接口都用作方法的参数，其他部分通过Lambda表达式传递具体代码给它。<strong>函数式接口和Lambda表达式还可用作方法的返回值，传递代码回调用者，将这两种用法结合起来，可以构造复合的函数，使程序简洁易读</strong>。</p>
+<p>下面我们看一些例子，这些例子利用了Java 8对接口的增强，即静态方法和默认方法，并利用它们实现复合函数，包括Comparator接口和function包。</p>
+<h3 id="1-Comparator中的复合方法"><a href="#1-Comparator中的复合方法" class="headerlink" title="1. Comparator中的复合方法"></a>1. Comparator中的复合方法</h3><p>Comparator接口定义了如下静态方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;T, U extends Comparable&lt;? <span class="keyword">super</span> U&gt;&gt; <span class="function">Comparator&lt;T&gt; <span class="title">comparing</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        Function&lt;? <span class="keyword">super</span> T, ? extends U&gt; keyExtractor)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(keyExtractor);</span><br><span class="line">    <span class="keyword">return</span> (Comparator&lt;T&gt; &amp; Serializable)</span><br><span class="line">        (c1, c2) -&gt; keyExtractor.apply(c1).compareTo(keyExtractor.apply(c2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个方法是什么意思呢？它用于构建一个Comparator，比如，在前面的例子中，对文件按照文件名排序的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Arrays.sort(files, (f1, f2) -&gt; f1.getName().compareTo(f2.getName()));</span><br></pre></td></tr></table></figure>
+
+<p>使用comparing方法，代码可以简化为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Arrays.sort(files, Comparator.comparing(File::getName));</span><br></pre></td></tr></table></figure>
+
+<p>这样，代码的可读性是不是大大增强了？comparing方法为什么能达到这个效果呢？它构建并返回了一个符合Comparator接口的Lambda表达式，这个Comparator接受的参数类型是File，它使用了传递过来的函数代码keyExtractor将File转换为String进行比较。像comparing这样使用复合方式构建并传递代码并不容易阅读，但调用者很方便，也很容易理解。</p>
+<p>Comparator还有很多默认方法，我们看两个：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">default</span> Comparator&lt;T&gt; <span class="title">reversed</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Collections.reverseOrder(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">default</span> Comparator&lt;T&gt; <span class="title">thenComparing</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> T&gt; other)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(other);</span><br><span class="line">    <span class="keyword">return</span> (Comparator&lt;T&gt; &amp; Serializable) (c1, c2) -&gt; &#123;</span><br><span class="line">        <span class="keyword">int</span> res = compare(c1, c2);</span><br><span class="line">        <span class="keyword">return</span> (res ! = <span class="number">0</span>) ? res : other.compare(c1, c2);</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>reversed返回一个新的Comparator，按原排序逆序排。thenComparing也返回一个新的Comparator，在原排序认为两个元素排序相同的时候，使用传递的Comparator other进行比较。</p>
+<p>看一个使用的例子，将学生列表按照分数倒序排（高分在前），分数一样的按照名字进行排序：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">students.sort(Comparator.comparing(Student::getScore)</span><br><span class="line">                          .reversed()</span><br><span class="line">                          .thenComparing(Student::getName));</span><br></pre></td></tr></table></figure>
+
+<p>这样，代码是不是很容易读？</p>
+<h3 id="2-function包中的复合方法"><a href="#2-function包中的复合方法" class="headerlink" title="2. function包中的复合方法"></a>2. function包中的复合方法</h3><p>在java.util.function包的很多函数式接口里，都定义了一些复合方法，我们看一些例子。</p>
+<p>Function接口有如下定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">default</span> &lt;V&gt; <span class="function">Function&lt;T, V&gt; <span class="title">andThen</span><span class="params">(Function&lt;? <span class="keyword">super</span> R, ? extends V&gt; after)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(after);</span><br><span class="line">    <span class="keyword">return</span> (T t) -&gt; after.apply(apply(t));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先将T类型的参数转化为类型R，再调用after将R转换为V，最后返回类型V。</p>
+<p>还有如下定义：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">default</span> &lt;V&gt; <span class="function">Function&lt;V, R&gt; <span class="title">compose</span><span class="params">(</span></span></span><br><span class="line"><span class="params"><span class="function">        Function&lt;? <span class="keyword">super</span> V, ? extends T&gt; before)</span> </span>&#123;</span><br><span class="line">    Objects.requireNonNull(before);</span><br><span class="line">    <span class="keyword">return</span> (V v) -&gt; apply(before.apply(v));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对V类型的参数，先调用before将V转换为T类型，再调用当前的apply方法转换为R类型返回。</p>
+<p>Consumer、Predicate等都有一些复合方法，它们大量用于函数式数据处理API中，具体我们就不探讨了。</p>
+<h2 id="26-1-7-小结"><a href="#26-1-7-小结" class="headerlink" title="26.1.7 小结"></a>26.1.7 小结</h2><p>本节介绍了Java 8中的一些新概念，包括Lambda表达式、函数式接口和方法引用等。</p>
+<p>最重要的变化是，传递代码变得简单了，函数变为了代码世界的“一等公民”，可以方便地被作为参数传递，被作为返回值，被复合利用以构建新的函数，看上去，这些只是语法上的一些小变化，但利用这些小变化，却能使得代码更为通用、更为灵活、更为简洁易读，这大概就是函数式编程的奇妙之处。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/7c273c02/" title="26.0 第26章 函数式编程 26.1 Lambda表达式">https://lanlan2017.github.io/JavaReadingNotes/7c273c02/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/b34b5819/" rel="prev" title="26.2 函数式数据处理：基本用法">
+                  <i class="fa fa-chevron-left"></i> 26.2 函数式数据处理：基本用法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/74dd3bfe/" rel="next" title="25.0 第25章 正则表达式 25.1 语法">
+                  25.0 第25章 正则表达式 25.1 语法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/7c273c02/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/7c273c02/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

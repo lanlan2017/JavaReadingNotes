@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="14.4 标准序列化机制在前面几节，我们在将对象保存到文件时，使用的是DataOutputStream，从文件读入对象时，使用的是DataInputStream，使用它们，需要逐个处理对象中的每个字段，我们提到，这种方式比较烦琐，Java中有一种更为简单的机制，那就是序列化。 简单来说，序列化就是将对象转化为字节流，反序列化就是将字节流转化为对象。在Java中，具体如何来使用呢？它是如何实现的？有">
+<meta property="og:type" content="article">
+<meta property="og:title" content="14.4 标准序列化机制">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/b4012b8/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="14.4 标准序列化机制在前面几节，我们在将对象保存到文件时，使用的是DataOutputStream，从文件读入对象时，使用的是DataInputStream，使用它们，需要逐个处理对象中的每个字段，我们提到，这种方式比较烦琐，Java中有一种更为简单的机制，那就是序列化。 简单来说，序列化就是将对象转化为字节流，反序列化就是将字节流转化为对象。在Java中，具体如何来使用呢？它是如何实现的？有">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-06T01:29:12.000Z">
+<meta property="article:modified_time" content="2021-12-08T04:34:05.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b4012b8/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/b4012b8/","path":"/b4012b8/","title":"14.4 标准序列化机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>14.4 标准序列化机制 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#14-4-%E6%A0%87%E5%87%86%E5%BA%8F%E5%88%97%E5%8C%96%E6%9C%BA%E5%88%B6"><span class="nav-text">14.4 标准序列化机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-text">14.4.1 基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-2-%E5%A4%8D%E6%9D%82%E5%AF%B9%E8%B1%A1"><span class="nav-text">14.4.2 复杂对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-3-%E5%AE%9A%E5%88%B6%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-text">14.4.3 定制序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-4-%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%8E%9F%E7%90%86"><span class="nav-text">14.4.4 序列化的基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-5-%E7%89%88%E6%9C%AC%E9%97%AE%E9%A2%98"><span class="nav-text">14.4.5 版本问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-4-6-%E5%BA%8F%E5%88%97%E5%8C%96%E7%89%B9%E7%82%B9%E5%88%86%E6%9E%90"><span class="nav-text">14.4.6 序列化特点分析</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/b4012b8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          14.4 标准序列化机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-06 09:29:12" itemprop="dateCreated datePublished" datetime="2021-12-06T09:29:12+08:00">2021-12-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-08 12:34:05" itemprop="dateModified" datetime="2021-12-08T12:34:05+08:00">2021-12-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">4第四部分 文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/%E7%AC%AC14%E7%AB%A0-%E6%96%87%E4%BB%B6%E9%AB%98%E7%BA%A7%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">第14章 文件高级技术</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/b4012b8/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/b4012b8/" data-xid="/JavaReadingNotes/b4012b8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="14-4-标准序列化机制"><a href="#14-4-标准序列化机制" class="headerlink" title="14.4 标准序列化机制"></a>14.4 标准序列化机制</h1><p>在前面几节，我们在将对象保存到文件时，使用的是DataOutputStream，从文件读入对象时，使用的是DataInputStream，使用它们，需要逐个处理对象中的每个字段，我们提到，这种方式比较烦琐，Java中有一种更为简单的机制，那就是序列化。</p>
+<p>简单来说，序列化就是将对象转化为字节流，反序列化就是将字节流转化为对象。在Java中，具体如何来使用呢？它是如何实现的？有什么优缺点？本节就来探讨这些问题，我们先从它的基本用法谈起。</p>
+<h2 id="14-4-1-基本用法"><a href="#14-4-1-基本用法" class="headerlink" title="14.4.1 基本用法"></a>14.4.1 基本用法</h2><p>要让一个类支持序列化，只需要让这个类实现接口java.io.Serializable。Serializable没有定义任何方法，只是一个标记接口。比如，对于前面章节提到的Student类，为支持序列化，可改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="comment">//省略主体代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>声明实现了Serializable接口后，保存/读取Student对象就可以使用ObjectOutput-Stream/ObjectInputStream流了。ObjectOutputStream是OutputStream的子类，但实现了Object-Output接口。ObjectOutput是DataOutput的子接口，增加了一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法能够将对象obj转化为字节，写到流中。</p>
+<p>ObjectInputStream是InputStream的子类，它实现了ObjectInput接口。ObjectInput是DataInput的子接口，增加了一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Object <span class="title">readObject</span><span class="params">()</span> <span class="keyword">throws</span> ClassNotFoundException, IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>这个方法能够从流中读取字节，转化为一个对象。</p>
+<p>使用这两个流，保存学生列表的代码就可以变为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeStudents</span><span class="params">(List&lt;Student&gt; students)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    ObjectOutputStream out = <span class="keyword">new</span> ObjectOutputStream(</span><br><span class="line">            <span class="keyword">new</span> BufferedOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">&quot;students.dat&quot;</span>)));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        out.writeInt(students.size());</span><br><span class="line">        <span class="keyword">for</span>(Student s : students) &#123;</span><br><span class="line">            out.writeObject(s);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>而从文件中读入学生列表的代码可以变为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Student&gt; <span class="title">readStudents</span><span class="params">()</span> <span class="keyword">throws</span> IOException,</span></span><br><span class="line"><span class="function">        ClassNotFoundException </span>&#123;</span><br><span class="line">    ObjectInputStream in = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> BufferedInputStream(</span><br><span class="line">            <span class="keyword">new</span> FileInputStream(<span class="string">&quot;students.dat&quot;</span>)));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">int</span> size = in.readInt();</span><br><span class="line">        List&lt;Student&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;(size);</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++) &#123;</span><br><span class="line">            list.add((Student) in.readObject());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> list;</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        in.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>实际上，只要List对象也实现了Serializable（ArrayList/LinkedList都实现了），上面代码还可以进一步简化，读写只需要一行代码，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeStudents</span><span class="params">(List&lt;Student&gt; students)</span></span></span><br><span class="line"><span class="function">      <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">      ObjectOutputStream out = <span class="keyword">new</span> ObjectOutputStream(</span><br><span class="line">            <span class="keyword">new</span> BufferedOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">&quot;students.dat&quot;</span>)));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        out.writeObject(students);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        out.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> List&lt;Student&gt; <span class="title">readStudents</span><span class="params">()</span> <span class="keyword">throws</span> IOException,</span></span><br><span class="line"><span class="function">        ClassNotFoundException </span>&#123;</span><br><span class="line">    ObjectInputStream in = <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> BufferedInputStream(</span><br><span class="line">            <span class="keyword">new</span> FileInputStream(<span class="string">&quot;students.dat&quot;</span>)));</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> (List&lt;Student&gt;) in.readObject();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        in.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>是不是很神奇？只要将类声明实现Serializable接口，然后就可以使用ObjectOutput-Stream/ObjectInputStream直接读写对象了。我们之前介绍的各种类，如String、Date、Double、ArrayList、LinkedList、HashMap、TreeMap等，都实现了Serializable。</p>
+<h2 id="14-4-2-复杂对象"><a href="#14-4-2-复杂对象" class="headerlink" title="14.4.2 复杂对象"></a>14.4.2 复杂对象</h2><p>上面例子中的Student对象是非常简单的，如果对象比较复杂呢？比如：<br>1）如果a、b两个对象都引用同一个对象c，序列化后c是保存两份还是一份？在反序列化后还能让a、b指向同一个对象吗？答案是，c只会保存一份，反序列化后指向相同对象。<br>2）如果a、b两个对象有循环引用呢？即a引用了b，而b也引用了a。这种情况Java也没问题，可以保持引用关系。</p>
+<p>这就是Java序列化机制的神奇之处，它能自动处理引用同一个对象的情况，也能自动处理循环引用的情况，具体例子我们就不介绍了，感兴趣可以参看微信公众号“老马说编程”第62篇文章。</p>
+<h2 id="14-4-3-定制序列化"><a href="#14-4-3-定制序列化" class="headerlink" title="14.4.3 定制序列化"></a>14.4.3 定制序列化</h2><p>默认的序列化机制已经很强大了，它可以自动将对象中的所有字段自动保存和恢复，但这种默认行为有时候不是我们想要的。</p>
+<p>对于有些字段，它的值可能与内存位置有关，比如默认的hashCode()方法的返回值，当恢复对象后，内存位置肯定变了，基于原内存位置的值也就没有了意义。还有一些字段，可能与当前时间有关，比如表示对象创建时的时间，保存和恢复这个字段就是不正确的。</p>
+<p>还有一些情况，<strong>如果类中的字段表示的是类的实现细节，而非逻辑信息，那默认序列化也是不适合的</strong>。为什么不适合呢？因为序列化格式表示一种契约，应该描述类的逻辑结构，而非与实现细节相绑定，绑定实现细节将使得难以修改，破坏封装。</p>
+<p>比如，我们在容器类中介绍的LinkedList，它的默认序列化就是不适合的。为什么呢？因为LinkedList表示一个List，它的逻辑信息是列表的长度，以及列表中的每个对象，但LinkedList类中的字段表示的是链表的实现细节，如头尾节点指针，对每个节点，还有前驱和后继节点指针等。</p>
+<p>那怎么办呢？Java提供了多种定制序列化的机制，主要的有两种：一种是transient关键字，另外一种是实现writeObject和readObject方法。</p>
+<p>将字段声明为transient，默认序列化机制将忽略该字段，不会进行保存和恢复。比如，类LinkedList中，它的字段都声明为了transient，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">transient</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">transient</span> Node&lt;E&gt; first;</span><br><span class="line"><span class="keyword">transient</span> Node&lt;E&gt; last;</span><br></pre></td></tr></table></figure>
+
+<p>声明为了transient，不是说就不保存该字段了，而是告诉Java默认序列化机制，不要<strong>自动</strong>保存该字段了，可以实现writeObject/readObject方法来自己保存该字段。</p>
+<p>类可以实现writeObject方法，以自定义该类对象的序列化过程，其声明必须为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(java.io.ObjectOutputStream s)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> java.io.IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>可以在这个方法中，调用ObjectOutputStream的方法向流中写入对象的数据。比如， LinkedList使用如下代码序列化列表的逻辑数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">writeObject</span><span class="params">(java.io.ObjectOutputStream s)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> java.io.IOException </span>&#123;</span><br><span class="line">    s.defaultWriteObject();</span><br><span class="line">    <span class="comment">//写元素个数</span></span><br><span class="line">    s.writeInt(size);</span><br><span class="line">    <span class="comment">//循环写每个元素</span></span><br><span class="line">    <span class="keyword">for</span>(Node&lt;E&gt; x = first; x ! = <span class="keyword">null</span>; x = x.next)</span><br><span class="line">        s.writeObject(x.item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s.defaultWriteObject();</span><br></pre></td></tr></table></figure>
+
+<p>这一行是必需的，它会调用默认的序列化机制，默认机制会保存所有没声明为transient的字段，即使类中的所有字段都是transient，也应该写这一行，因为Java的序列化机制不仅会保存纯粹的数据信息，还会保存一些元数据描述等隐藏信息，这些隐藏的信息是序列化之所以能够神奇的重要原因。</p>
+<p>与writeObject对应的是readObject方法，通过它自定义反序列化过程，其声明必须为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> java.io.IOException, ClassNotFoundException</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个方法中，调用ObjectInputStream的方法从流中读入数据，然后初始化类中的成员变量。比如，LinkedList的反序列化代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span></span><br><span class="line"><span class="function">    <span class="keyword">throws</span> java.io.IOException, ClassNotFoundException </span>&#123;</span><br><span class="line">    s.defaultReadObject();</span><br><span class="line">    <span class="comment">//读元素个数</span></span><br><span class="line">    <span class="keyword">int</span> size = s.readInt();</span><br><span class="line">    <span class="comment">//循环读入每个元素</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; size; i++)</span><br><span class="line">        linkLast((E)s.readObject());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">s.defaultReadObject();</span><br></pre></td></tr></table></figure>
+
+<p>这一行代码也是必需的。</p>
+<p>除了自定义writeObject/readObject方法，还有一些自定义序列化过程的机制：Exter-nalizable接口、readResolve方法和writeReplace方法，这些机制用得相对较少，我们就不介绍了。</p>
+<h2 id="14-4-4-序列化的基本原理"><a href="#14-4-4-序列化的基本原理" class="headerlink" title="14.4.4 序列化的基本原理"></a>14.4.4 序列化的基本原理</h2><p>稍微总结一下。</p>
+<p>1）如果类的字段表示的就是类的逻辑信息，如上面的Student类，那就可以使用默认序列化机制，只要声明实现Serializable接口即可。<br>2）否则的话，如LinkedList，那就可以使用transient关键字，实现writeObject和read-Object自定义序列化过程。<br>3）Java的序列化机制可以自动处理如引用同一个对象、循环引用等情况。</p>
+<p>序列化到底是如何发生的呢？关键在ObjectOutputStream的writeObject和ObjectInput-Stream的readObject方法内。它们的实现都非常复杂，正因为这些复杂的实现才使得序列化看上去很神奇，我们简单介绍其基本逻辑。</p>
+<p>writeObject的基本逻辑是：<br>1）如果对象没有实现Serializable，抛出异常NotSerializableException。<br>2）每个对象都有一个编号，如果之前已经写过该对象了，则本次只会写该对象的引用，这可以解决对象引用和循环引用的问题。<br>3）如果对象实现了writeObject方法，调用它的自定义方法。<br>4）默认是利用反射机制（反射在第21章介绍），遍历对象结构图，对每个没有标记为transient的字段，根据其类型，分别进行处理，写出到流，流中的信息包括字段的类型，即完整类名、字段名、字段值等。</p>
+<p>readObject的基本逻辑是：<br>1）不调用任何构造方法；<br>2）它自己就相当于是一个独立的构造方法，根据字节流初始化对象，利用的也是反射机制；<br>3）在解析字节流时，对于引用到的类型信息，会动态加载，如果找不到类，会抛出ClassNotFoundException。</p>
+<h2 id="14-4-5-版本问题"><a href="#14-4-5-版本问题" class="headerlink" title="14.4.5 版本问题"></a>14.4.5 版本问题</h2><p>前面的介绍，我们忽略了一个问题，那就是版本问题。我们知道，代码是在不断演化的，而序列化的对象可能是持久保存在文件上的，如果类的定义发生了变化，那持久化的对象还能反序列化吗？</p>
+<p>默认情况下，Java会给类定义一个版本号，这个版本号是根据类中一系列的信息自动生成的。在反序列化时，如果类的定义发生了变化，版本号就会变化，与流中的版本号就会不匹配，反序列化就会抛出异常，类型为java.io.InvalidClassException。</p>
+<p>通常情况下，我们希望自定义这个版本号，而非让Java自动生成，一方面是为了更好地控制，另一方面是为了性能，因为Java自动生成的性能比较低。怎么自定义呢？在类中定义如下变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br></pre></td></tr></table></figure>
+
+<p>在Java IDE如Eclipse中，如果声明实现了Serializable而没有定义该变量，IDE会提示自动生成。这个变量的值可以是任意的，代表该类的版本号。在序列化时，会将该值写入流，在反序列化时，会将流中的值与类定义中的值进行比较，如果不匹配，会抛出InvalidClassException。</p>
+<p>那如果版本号一样，但实际的字段不匹配呢？Java会分情况自动进行处理，以尽量保持兼容性，大概分为三种情况：</p>
+<ul>
+<li>字段删掉了：即流中有该字段，而类定义中没有，该字段会被忽略；</li>
+<li>新增了字段：即类定义中有，而流中没有，该字段会被设为默认值；</li>
+<li>字段类型变了：对于同名的字段，类型变了，会抛出InvalidClassException。</li>
+</ul>
+<h2 id="14-4-6-序列化特点分析"><a href="#14-4-6-序列化特点分析" class="headerlink" title="14.4.6 序列化特点分析"></a>14.4.6 序列化特点分析</h2><p>序列化的主要用途有两个：一个是对象持久化；另一个是跨网络的数据交换、远程过程调用。Java标准的序列化机制有很多优点，使用简单，可自动处理对象引用和循环引用，也可以方便地进行定制，处理版本问题等，但它也有一些重要的局限性。<br>1）Java序列化格式是一种私有格式，是一种Java特有的技术，不能被其他语言识别，不能实现跨语言的数据交换。<br>2）Java在序列化字节中保存了很多描述信息，使得序列化格式比较大。<br>3）Java的默认序列化使用反射分析遍历对象结构，性能比较低。<br>4）Java的序列化格式是二进制的，不方便查看和修改。</p>
+<p>由于这些局限性，实践中往往会使用一些替代方案。在跨语言的数据交换格式中，XML/JSON是被广泛采用的文本格式，各种语言都有对它们的支持，文件格式清晰易读。有很多查看和编辑工具，它们的不足之处是性能和序列化大小，在性能和大小敏感的领域，往往会采用更为精简高效的二进制方式，如ProtoBuf、Thrift、MessagePack等。</p>
+<p>至此，关于Java的标准序列化机制就介绍完了。我们介绍了它的用法和基本原理，最后分析了它的特点，它是一种神奇的机制，通过简单的Serializable接口就能自动处理很多复杂的事情，但它也有一些重要的限制，最重要的是不能跨语言。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/b4012b8/" title="14.4 标准序列化机制">https://lanlan2017.github.io/JavaReadingNotes/b4012b8/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/6c418449/" rel="prev" title="14.3 内存映射文件">
+                  <i class="fa fa-chevron-left"></i> 14.3 内存映射文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/c7a15d1f/" rel="next" title="14.5 使用Jackson序列化为JSON_XML_MessagePack">
+                  14.5 使用Jackson序列化为JSON_XML_MessagePack <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/b4012b8/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/b4012b8/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

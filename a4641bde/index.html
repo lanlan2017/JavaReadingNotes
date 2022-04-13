@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="16.8.2 Java8增强的ForkJoinPool现在计算机大多已向多CPU方向发展,即使普通PC,甚至小型智能设备(如手机)、多核处理器也已被广泛应用。在未来的日子里,处理器的核心数将会发展到更多。虽然硬件上的多核CPU已经十分成熟,但很多应用程序并未为这种多核CPU做好准备,因此并不能很好地利用多核CPU的性能优势。为了充分利用多CPU、多核CPU的性能优势,计算机软件系统应该可以充分“挖">
+<meta property="og:type" content="article">
+<meta property="og:title" content="16.8.2 Java8增强的ForkJoinPool">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/a4641bde/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="16.8.2 Java8增强的ForkJoinPool现在计算机大多已向多CPU方向发展,即使普通PC,甚至小型智能设备(如手机)、多核处理器也已被广泛应用。在未来的日子里,处理器的核心数将会发展到更多。虽然硬件上的多核CPU已经十分成熟,但很多应用程序并未为这种多核CPU做好准备,因此并不能很好地利用多核CPU的性能优势。为了充分利用多CPU、多核CPU的性能优势,计算机软件系统应该可以充分“挖">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.8.2/1.png">
+<meta property="article:published_time" content="2020-01-09T21:12:19.000Z">
+<meta property="article:modified_time" content="2020-03-27T01:59:12.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.8.2/1.png">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/a4641bde/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/a4641bde/","path":"/a4641bde/","title":"16.8.2 Java8增强的ForkJoinPool"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>16.8.2 Java8增强的ForkJoinPool | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#16-8-2-Java8%E5%A2%9E%E5%BC%BA%E7%9A%84ForkJoinPool"><span class="nav-text">16.8.2 Java8增强的ForkJoinPool</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java7%E6%8F%90%E4%BE%9B%E7%9A%84ForkJoinPool"><span class="nav-text">Java7提供的ForkJoinPool</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ForkJoinPool%E6%9E%84%E9%80%A0%E5%99%A8"><span class="nav-text">ForkJoinPool构造器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Java8%E5%AF%B9ForkJoinPool%E7%9A%84%E6%89%A9%E5%B1%95"><span class="nav-text">Java8对ForkJoinPool的扩展</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ForkJoinTask"><span class="nav-text">ForkJoinTask</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%A0%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E5%A4%A7%E4%BB%BB%E5%8A%A1%E5%88%86%E8%A7%A3"><span class="nav-text">无返回值的大任务分解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-%E4%BD%BF%E7%94%A8ForkJoinPool%E5%B0%86%E5%A4%A7%E4%BB%BB%E5%8A%A1%E6%8B%86%E5%88%86"><span class="nav-text">程序 使用ForkJoinPool将大任务拆分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89%E8%BF%94%E5%9B%9E%E5%80%BC%E7%9A%84%E5%A4%A7%E4%BB%BB%E5%8A%A1%E5%88%86%E8%A7%A3"><span class="nav-text">有返回值的大任务分解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-%E4%BD%BF%E7%94%A8RecursiveTask%E5%AF%B9%E6%95%B0%E7%BB%84%E6%B1%82%E5%92%8C"><span class="nav-text">程序 使用RecursiveTask对数组求和</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/a4641bde/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          16.8.2 Java8增强的ForkJoinPool
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-10 05:12:19" itemprop="dateCreated datePublished" datetime="2020-01-10T05:12:19+08:00">2020-01-10</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-27 09:59:12" itemprop="dateModified" datetime="2020-03-27T09:59:12+08:00">2020-03-27</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第16章 多线程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/16-8-%E7%BA%BF%E7%A8%8B%E6%B1%A0/" itemprop="url" rel="index"><span itemprop="name">16.8 线程池</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/a4641bde/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/a4641bde/" data-xid="/JavaReadingNotes/a4641bde/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="16-8-2-Java8增强的ForkJoinPool"><a href="#16-8-2-Java8增强的ForkJoinPool" class="headerlink" title="16.8.2 Java8增强的ForkJoinPool"></a>16.8.2 Java8增强的ForkJoinPool</h1><p>现在计算机大多已向多<code>CPU</code>方向发展,即使普通<code>PC</code>,甚至小型智能设备(如手机)、多核处理器也已被广泛应用。在未来的日子里,处理器的核心数将会发展到更多。<br>虽然硬件上的多核<code>CPU</code>已经十分成熟,但很多应用程序并未为这种多核<code>CPU</code>做好准备,因此并不能很好地利用多核<code>CPU</code>的性能优势。<br>为了充分利用多<code>CPU</code>、多核<code>CPU</code>的性能优势,计算机软件系统应该可以充分“挖掘”每个<code>CPU</code>的计算能力,绝不能让某个<code>CPU</code>处于“空闲”状态。为了充分利用多<code>CPU</code>、多核<code>CPU</code>的优势,可以考虑把一个任务拆分成多个“小任务”,把多个“小任务”放到多个处理器核心上并行执行;当多个“小任务”执行完成之后,再将这些执行结果合并起来即可。</p>
+<h2 id="Java7提供的ForkJoinPool"><a href="#Java7提供的ForkJoinPool" class="headerlink" title="Java7提供的ForkJoinPool"></a>Java7提供的ForkJoinPool</h2><p><strong><code>Java7</code>提供了<code>ForkJoinPool</code>来支持将一个任务拆分成多个“小任务”并行计算,再把多个“小任务”的结果合并成总的计算结果</strong>。<br><strong><code>ForkJoinPool</code>是<code>ExecutorService</code>的实现类,因此是一种特殊的线程池</strong>。</p>
+<h3 id="ForkJoinPool构造器"><a href="#ForkJoinPool构造器" class="headerlink" title="ForkJoinPool构造器"></a>ForkJoinPool构造器</h3><p><code>ForkJoinPool</code>提供了如下两个常用的构造器。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>ForkJoinPool(int parallelism)</code></td>
+<td align="left">创建一个包含<code>parallelism</code>个并行线程的<code>ForkJoinPool</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>ForkJoinPool()</code></td>
+<td align="left">以<code>Runtime.availableProcessors()</code>方法的返回值作为<code>parallelism</code>参数来创建<code>ForkJoinPool</code>。</td>
+</tr>
+</tbody></table>
+<h2 id="Java8对ForkJoinPool的扩展"><a href="#Java8对ForkJoinPool的扩展" class="headerlink" title="Java8对ForkJoinPool的扩展"></a>Java8对ForkJoinPool的扩展</h2><p><code>Java8</code>进一步扩展了<code>ForkJoinPool</code>的功能,<code>Java8</code>为<code>ForkJoinPool</code>增加了<strong>通用池</strong>功能。</p>
+<p><code>ForkJoinPool</code>类通过如下两个静态方法提供通用池功能。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static ForkJoinPool commonPool()</code></td>
+<td align="left">该方法返回一个通用池.<br>通用池的运行状态不会受<code>shutdown()</code>或<code>shutdownNow()</code>方法的影响。<br>当然,如果程序直接执行<code>System.exit(0);</code>来终止虚拟机,<br>则通用池以及通用池中正在执行的任务都会被自动终止。</td>
+</tr>
+<tr>
+<td align="left"><code>static int getCommonPoolParallelism()</code></td>
+<td align="left">返回通用池的并行级别</td>
+</tr>
+</tbody></table>
+<h2 id="ForkJoinTask"><a href="#ForkJoinTask" class="headerlink" title="ForkJoinTask"></a>ForkJoinTask</h2><p>创建了<code>ForkJoinPool</code>实例之后,就可调用<code>ForkJoinPool</code>的<code>submit(ForkJoinTask task)</code>或<code>invoke(ForkJoinTask task)</code>方法来执行指定任务了。</p>
+<ul>
+<li>其中**<code>ForkJoinTask</code>代表一个可以并行、合并的任务**。</li>
+<li>这个<code>ForkJoinTask</code>是一个抽象类,它还有两个抽象子类:<code>RecursiveAction</code>和<code>RecursiveTask</code>。其中<ul>
+<li><code>RecursiveTask</code>代表<strong>有返回值的任务</strong>,</li>
+<li><code>RecursiveAction</code>代表<strong>没有返回值的任务</strong>。</li>
+</ul>
+</li>
+</ul>
+<p>图16.14显示了<code>ForkJoinPool</code>、<code>ForkJoinTask</code>等类的类图。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.8.2/1.png" alt="这里有一张图片"></p>
+<h2 id="无返回值的大任务分解"><a href="#无返回值的大任务分解" class="headerlink" title="无返回值的大任务分解"></a>无返回值的大任务分解</h2><h3 id="程序-使用ForkJoinPool将大任务拆分"><a href="#程序-使用ForkJoinPool将大任务拆分" class="headerlink" title="程序 使用ForkJoinPool将大任务拆分"></a>程序 使用ForkJoinPool将大任务拆分</h3><p>下面以执行没有返回值的“大任务”(简单地打印0-300的数值)为例,程序将一个“大任务”拆分成多个“小任务”,并将任务交给<code>ForkJoinPool</code>来执行。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 继承RecursiveAction来实现&quot;可分解&quot;的任务</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PrintTask</span> <span class="keyword">extends</span> <span class="title">RecursiveAction</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 每个“小任务”只最多只打印50个数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THRESHOLD = <span class="number">50</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> start;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> end;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 打印从start到end的任务</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">PrintTask</span><span class="params">(<span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.start = start;</span><br><span class="line">        <span class="keyword">this</span>.end = end;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">compute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 当end与start之间的差小于THRESHOLD时，开始打印</span></span><br><span class="line">        <span class="keyword">if</span> (end - start &lt; THRESHOLD) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() + <span class="string">&quot;的i值：&quot;</span> + i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 如果当end与start之间的差大于THRESHOLD时，即要打印的数超过50个</span></span><br><span class="line">            <span class="comment">// 将大任务分解成两个小任务。</span></span><br><span class="line">            <span class="keyword">int</span> middle = (start + end) / <span class="number">2</span>;</span><br><span class="line">            PrintTask left = <span class="keyword">new</span> PrintTask(start, middle);</span><br><span class="line">            PrintTask right = <span class="keyword">new</span> PrintTask(middle, end);</span><br><span class="line">            <span class="comment">// 并行执行两个“小任务”</span></span><br><span class="line">            left.fork();</span><br><span class="line">            right.fork();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ForkJoinPoolTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        ForkJoinPool pool = <span class="keyword">new</span> ForkJoinPool();</span><br><span class="line">        <span class="comment">// 提交可分解的PrintTask任务</span></span><br><span class="line">        pool.submit(<span class="keyword">new</span> PrintTask(<span class="number">0</span>, <span class="number">300</span>));</span><br><span class="line">        pool.awaitTermination(<span class="number">2</span>, TimeUnit.SECONDS);</span><br><span class="line">        <span class="comment">// 关闭线程池</span></span><br><span class="line">        pool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 如果当end与start之间的差大于THRESHOLD时，即要打印的数超过50个</span></span><br><span class="line"><span class="comment">// 将大任务分解成两个小任务。</span></span><br><span class="line"><span class="keyword">int</span> middle = (start + end) / <span class="number">2</span>;</span><br><span class="line">PrintTask left = <span class="keyword">new</span> PrintTask(start, middle);</span><br><span class="line">PrintTask right = <span class="keyword">new</span> PrintTask(middle, end);</span><br><span class="line"><span class="comment">// 并行执行两个“小任务”</span></span><br><span class="line">left.fork();</span><br><span class="line">right.fork();</span><br></pre></td></tr></table></figure>
+<p>实现了对指定打印任务的分解,分解后的任务分别调用<code>fork()</code>方法开始并行执行运行上面程序,可以看到下所示的结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">ForkJoinPool-1-worker-1的i值：262</span><br><span class="line">ForkJoinPool-1-worker-3的i值：37 </span><br><span class="line">ForkJoinPool-1-worker-4的i值：0  </span><br><span class="line">ForkJoinPool-1-worker-2的i值：112</span><br><span class="line">ForkJoinPool-1-worker-4的i值：1  </span><br><span class="line">ForkJoinPool-1-worker-3的i值：38 </span><br><span class="line">ForkJoinPool-1-worker-1的i值：263</span><br><span class="line">ForkJoinPool-1-worker-3的i值：39 </span><br><span class="line">ForkJoinPool-1-worker-4的i值：2  </span><br><span class="line">ForkJoinPool-1-worker-2的i值：113</span><br><span class="line">ForkJoinPool-1-worker-4的i值：3  </span><br><span class="line">ForkJoinPool-1-worker-3的i值：40 </span><br><span class="line">ForkJoinPool-1-worker-1的i值：264</span><br><span class="line">ForkJoinPool-1-worker-3的i值：41 </span><br><span class="line">ForkJoinPool-1-worker-4的i值：4  </span><br><span class="line">ForkJoinPool-1-worker-2的i值：114</span><br><span class="line">ForkJoinPool-1-worker-4的i值：5  </span><br><span class="line">......</span><br><span class="line">ForkJoinPool-1-worker-2的i值：257</span><br><span class="line">ForkJoinPool-1-worker-2的i值：258</span><br><span class="line">ForkJoinPool-1-worker-2的i值：259</span><br><span class="line">ForkJoinPool-1-worker-2的i值：260</span><br><span class="line">ForkJoinPool-1-worker-2的i值：261</span><br></pre></td></tr></table></figure>
+<p>从执行结果来看,<code>ForkJoinPool</code>启动了4个线程来执行这个打印任务—这是因为测试计算机的<code>CPU</code>是4核的。不仅如此,读者可以看到程序虽然打印了0-299这300个数字,但并不是连续打印的,这是因为程序将这个打印任务进行了分解,分解后的任务会并行执行,所以不会按顺序从0打印到299。</p>
+<h2 id="有返回值的大任务分解"><a href="#有返回值的大任务分解" class="headerlink" title="有返回值的大任务分解"></a>有返回值的大任务分解</h2><p>上面定义的任务是一个没有返回值的打印任务,如果大任务是有返回值的任务,则可以<strong>让任务继承<code>RecursiveTask&lt;T&gt;</code>,其中泛型参数<code>T</code>就代表了该任务的返回值类型。</strong></p>
+<h3 id="程序-使用RecursiveTask对数组求和"><a href="#程序-使用RecursiveTask对数组求和" class="headerlink" title="程序 使用RecursiveTask对数组求和"></a>程序 使用<code>RecursiveTask</code>对数组求和</h3><p>下面程序示范了使用<code>RecursiveTask</code>对一个长度为100的数组的元素值进行累加。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 继承RecursiveTask来实现&quot;可分解&quot;的任务</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CalTask</span> <span class="keyword">extends</span> <span class="title">RecursiveTask</span>&lt;<span class="title">Integer</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">// 每个“小任务”只最多只累加20个数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THRESHOLD = <span class="number">20</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> arr[];</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> start;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> end;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 累加从start到end的数组元素</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CalTask</span><span class="params">(<span class="keyword">int</span>[] arr, <span class="keyword">int</span> start, <span class="keyword">int</span> end)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.arr = arr;</span><br><span class="line">        <span class="keyword">this</span>.start = start;</span><br><span class="line">        <span class="keyword">this</span>.end = end;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">protected</span> Integer <span class="title">compute</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 当end与start之间的差小于THRESHOLD时，开始进行实际累加</span></span><br><span class="line">        <span class="keyword">if</span> (end - start &lt; THRESHOLD) &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = start; i &lt; end; i++) &#123;</span><br><span class="line">                sum += arr[i];</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> sum;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 如果当end与start之间的差大于THRESHOLD时，即要累加的数超过20个时</span></span><br><span class="line">            <span class="comment">// 将大任务分解成两个小任务。</span></span><br><span class="line">            <span class="keyword">int</span> middle = (start + end) / <span class="number">2</span>;</span><br><span class="line">            CalTask left = <span class="keyword">new</span> CalTask(arr, start, middle);</span><br><span class="line">            CalTask right = <span class="keyword">new</span> CalTask(arr, middle, end);</span><br><span class="line">            <span class="comment">// 并行执行两个“小任务”</span></span><br><span class="line">            left.fork();</span><br><span class="line">            right.fork();</span><br><span class="line">            <span class="comment">// 把两个“小任务”累加的结果合并起来</span></span><br><span class="line">            <span class="keyword">return</span> left.join() + right.join(); <span class="comment">// ①</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Sum</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[<span class="number">100</span>];</span><br><span class="line">        Random rand = <span class="keyword">new</span> Random();</span><br><span class="line">        <span class="keyword">int</span> total = <span class="number">0</span>;</span><br><span class="line">        <span class="comment">// 初始化100个数字元素</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>, len = arr.length; i &lt; len; i++) &#123;</span><br><span class="line">            <span class="keyword">int</span> tmp = rand.nextInt(<span class="number">20</span>);</span><br><span class="line">            <span class="comment">// 对数组元素赋值，并将数组元素的值添加到sum总和中。</span></span><br><span class="line">            total += (arr[i] = tmp);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(total);</span><br><span class="line">        <span class="comment">// 创建一个通用池</span></span><br><span class="line">        ForkJoinPool pool = ForkJoinPool.commonPool();</span><br><span class="line">        <span class="comment">// 提交可分解的CalTask任务</span></span><br><span class="line">        Future&lt;Integer&gt; future = pool.submit(<span class="keyword">new</span> CalTask(arr, <span class="number">0</span>, arr.length));</span><br><span class="line">        System.out.println(future.get());</span><br><span class="line">        <span class="comment">// 关闭线程池</span></span><br><span class="line">        pool.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序与前一个程序基本相似,同样是将任务进行了分解,并调用分解后的任务的<code>fork()</code>方法使它们并行执行。与前一个程序不同的是,现在任务是带返回值的,因此程序还在①号代码处将两个分解后的“小任务”的返回值进行了合并。<br>运行上面程序,将可以看到程序通过<code>CalTask</code>计算出来的总和,与初始化数组元素时统计出来的总和总是相等,这表明程序一切正常。</p>
+<!-- CrazyJavaHandout4/Chapter16/16.8.2/ -->
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/a4641bde/" title="16.8.2 Java8增强的ForkJoinPool">https://lanlan2017.github.io/JavaReadingNotes/a4641bde/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/547f08c8/" rel="prev" title="16.8 线程池">
+                  <i class="fa fa-chevron-left"></i> 16.8 线程池
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/a8a61bd3/" rel="next" title="16.9 线程相关类 16.9.1 Threadlocal类">
+                  16.9 线程相关类 16.9.1 Threadlocal类 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/a4641bde/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/a4641bde/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

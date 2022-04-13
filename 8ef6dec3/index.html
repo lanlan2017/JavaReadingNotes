@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="10.4 剖析TreeMap在介绍HashMap时，我们提到，HashMap有一个重要局限，键值对之间没有特定的顺序，我们还提到，Map接口有另一个重要的实现类TreeMap，在TreeMap中，键值对之间按键有序，TreeMap的实现基础是排序二叉树，10.3节介绍了排序二叉树的基本概念和算法，本节我们来详细讨论TreeMap。除了Map接口，因为有序，TreeMap还实现了更多接口和方法。下面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.4 剖析TreeMap">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="10.4 剖析TreeMap在介绍HashMap时，我们提到，HashMap有一个重要局限，键值对之间没有特定的顺序，我们还提到，Map接口有另一个重要的实现类TreeMap，在TreeMap中，键值对之间按键有序，TreeMap的实现基础是排序二叉树，10.3节介绍了排序二叉树的基本概念和算法，本节我们来详细讨论TreeMap。除了Map接口，因为有序，TreeMap还实现了更多接口和方法。下面">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-05T03:43:42.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:08.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/","path":"/8ef6dec3/","title":"10.4 剖析TreeMap"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>10.4 剖析TreeMap | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-4-%E5%89%96%E6%9E%90TreeMap"><span class="nav-text">10.4 剖析TreeMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10-4-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-text">10.4.1 基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-4-2-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">10.4.2 实现原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E5%86%85%E9%83%A8%E7%BB%84%E6%88%90"><span class="nav-text">1．内部组成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E4%BF%9D%E5%AD%98%E9%94%AE%E5%80%BC%E5%AF%B9"><span class="nav-text">2．保存键值对</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%8E%E6%A0%B9%E6%8D%AE%E9%94%AE%E8%8E%B7%E5%8F%96%E5%80%BC"><span class="nav-text">3．根据键获取值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%EF%BC%8E%E6%9F%A5%E7%9C%8B%E6%98%AF%E5%90%A6%E5%8C%85%E5%90%AB%E6%9F%90%E4%B8%AA%E5%80%BC"><span class="nav-text">4．查看是否包含某个值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%EF%BC%8E%E6%A0%B9%E6%8D%AE%E9%94%AE%E5%88%A0%E9%99%A4%E9%94%AE%E5%80%BC%E5%AF%B9"><span class="nav-text">5．根据键删除键值对</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-4-3-%E5%B0%8F%E7%BB%93"><span class="nav-text">10.4.3 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          10.4 剖析TreeMap
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-05 11:43:42" itemprop="dateCreated datePublished" datetime="2021-12-05T11:43:42+08:00">2021-12-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:08" itemprop="dateModified" datetime="2021-12-07T12:07:08+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/3%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E6%B3%9B%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">3第三部分 泛型与容器</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/3%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E6%B3%9B%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/%E7%AC%AC10%E7%AB%A0-Map%E5%92%8CSet/" itemprop="url" rel="index"><span itemprop="name">第10章 Map和Set</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/8ef6dec3/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/8ef6dec3/" data-xid="/JavaReadingNotes/8ef6dec3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="10-4-剖析TreeMap"><a href="#10-4-剖析TreeMap" class="headerlink" title="10.4 剖析TreeMap"></a>10.4 剖析TreeMap</h1><p>在介绍HashMap时，我们提到，HashMap有一个重要局限，键值对之间没有特定的顺序，我们还提到，Map接口有另一个重要的实现类TreeMap，在TreeMap中，键值对之间按键有序，TreeMap的实现基础是排序二叉树，10.3节介绍了排序二叉树的基本概念和算法，本节我们来详细讨论TreeMap。除了Map接口，因为有序，TreeMap还实现了更多接口和方法。下面，我们先来介绍TreeMap的用法，然后介绍其内部实现。</p>
+<h2 id="10-4-1-基本用法"><a href="#10-4-1-基本用法" class="headerlink" title="10.4.1 基本用法"></a>10.4.1 基本用法</h2><p>TreeMap有两个基本构造方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">TreeMap</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">TreeMap</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> K&gt; comparator)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>第一个为默认构造方法，如果使用默认构造方法，要求Map中的键实现Comparabe接口，TreeMap内部进行各种比较时会调用键的Comparable接口中的compareTo方法。</p>
+<p>第二个接受一个比较器对象comparator，如果comparator不为null，在TreeMap内部进行比较时会调用这个comparator的compare方法，而不再调用键的compareTo方法，也不再要求键实现Comparable接口。</p>
+<p>应该用哪一个呢？第一个更为简单，但要求键实现Comparable接口，且期望的排序和键的比较结果是一致的；第二个更为灵活，不要求键实现Comparable接口，比较器可以用灵活复杂的方式进行实现。</p>
+<p>需要强调的是，TreeMap是按键而不是按值有序，无论哪一种，都是对键而非值进行比较。</p>
+<p>看段简单的示例代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map   = <span class="keyword">new</span> TreeMap&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;a&quot;</span>, <span class="string">&quot;abstract&quot;</span>);</span><br><span class="line">map.put(<span class="string">&quot;c&quot;</span>, <span class="string">&quot;call&quot;</span>);</span><br><span class="line">map.put(<span class="string">&quot;b&quot;</span>, <span class="string">&quot;basic&quot;</span>);</span><br><span class="line">map.put(<span class="string">&quot;T&quot;</span>, <span class="string">&quot;tree&quot;</span>);</span><br><span class="line"><span class="keyword">for</span>(Entry&lt;String, String&gt; kv : map.entrySet())&#123;</span><br><span class="line">    System.out.print(kv.getKey()+<span class="string">&quot;=&quot;</span>+kv.getValue()+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建了一个TreeMap，但只是当作Map使用，不过迭代时，其输出却是按键排序的，输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=tree a=abstract b=basic c=call</span><br></pre></td></tr></table></figure>
+
+<p>T排在最前面，是因为大写字母的ASCII码都小于小写字母。如果希望忽略大小写呢？可以传递一个比较器，String类有一个静态成员CASE_INSENSITIVE_ORDER，它就是一个忽略大小写的Comparator对象，替换第一行代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> TreeMap&lt;&gt;(String.CASE_INSENSITIVE_ORDER);</span><br></pre></td></tr></table></figure>
+
+<p>输出就会变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a=abstract b=basic c=call T=tree</span><br></pre></td></tr></table></figure>
+
+<p>正常排序是从小到大，如果希望逆序呢？可以传递一个不同的Comparator对象，第一行代码可以替换为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map   = <span class="keyword">new</span> TreeMap&lt;&gt;(<span class="keyword">new</span> Comparator&lt;String&gt;()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String o1, String o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o2.compareTo(o1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这样，输出会变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">c=call b=basic a=abstract T=tree</span><br></pre></td></tr></table></figure>
+
+<p>为什么这样就可以逆序呢？正常排序中，compare方法内是o1.compareTo(o2)，两个对象翻过来，自然就是逆序了，Collections类有一个静态方法reverseOrder()可以返回一个逆序比较器，也就是说，上面的代码也可以替换为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map = <span class="keyword">new</span> TreeMap&lt;&gt;(Collections.reverseOrder());</span><br></pre></td></tr></table></figure>
+
+<p>如果希望逆序且忽略大小写呢？第一行可以替换为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map   = <span class="keyword">new</span> TreeMap&lt;&gt;(Collections.reverseOrder(String.CASE_INSENSITIVE_ORDER));</span><br></pre></td></tr></table></figure>
+
+<p>需要说明的是，TreeMap使用键的比较结果对键进行排重，即使键实际上不同，但只要比较结果相同，它们就会被认为相同，键只会保存一份。比如，如下代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, String&gt; map   = <span class="keyword">new</span> TreeMap&lt;&gt;(String.CASE_INSENSITIVE_ORDER);</span><br><span class="line">map.put(<span class="string">&quot;T&quot;</span>, <span class="string">&quot;tree&quot;</span>);</span><br><span class="line">map.put(<span class="string">&quot;t&quot;</span>, <span class="string">&quot;try&quot;</span>);</span><br><span class="line"><span class="keyword">for</span>(Entry&lt;String, String&gt; kv : map.entrySet())&#123;</span><br><span class="line">    System.out.print(kv.getKey()+<span class="string">&quot;=&quot;</span>+kv.getValue()+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看上去有两个不同的键”T”和”t”，但因为比较器忽略大小写，所以只会有一个，输出会是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T=try</span><br></pre></td></tr></table></figure>
+
+<p>键为第一次put时的，这里即”T”，而值为最后一次put时的，这里即”try”。</p>
+<p>我们再来看一个例子，键为字符串形式的日期，值为一个统计数字，希望按照日期输出，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map   = <span class="keyword">new</span> TreeMap&lt;&gt;();</span><br><span class="line">map.put(<span class="string">&quot;2016-7-3&quot;</span>, <span class="number">100</span>);</span><br><span class="line">map.put(<span class="string">&quot;2016-7-10&quot;</span>, <span class="number">120</span>);</span><br><span class="line">map.put(<span class="string">&quot;2016-8-1&quot;</span>, <span class="number">90</span>);</span><br><span class="line"><span class="keyword">for</span>(Entry&lt;String, Integer&gt; kv : map.entrySet())&#123;</span><br><span class="line">    System.out.println(kv.getKey()+<span class="string">&quot;, &quot;</span>+kv.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2016-7-10,120</span><br><span class="line">2016-7-3,100</span><br><span class="line">2016-8-1,90</span><br></pre></td></tr></table></figure>
+
+<p>7月10号的排在了7月3号的前面，与期望的不符，这是因为，它们是按照字符串比较的，按字符串，2016-7-10就是小于2016-7-3，因为第一个不同之处1小于3。</p>
+<p>怎么解决呢？可以使用一个自定义的比较器，将字符串转换为日期，按日期进行比较，第一行代码可以改为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Integer&gt; map   = <span class="keyword">new</span> TreeMap&lt;&gt;(<span class="keyword">new</span> Comparator&lt;String&gt;() &#123;</span><br><span class="line">    SimpleDateFormat sdf = <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd&quot;</span>);</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String o1, String o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> sdf.parse(o1).compareTo(sdf.parse(o2));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (ParseException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这样，输出就符合期望了，会变为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">2016-7-3,100</span><br><span class="line">2016-7-10,120</span><br><span class="line">2016-8-1,90</span><br></pre></td></tr></table></figure>
+
+<p>以上就是TreeMap的基本用法，与HashMap相比：相同的是，它们都实现了Map接口，都可以按Map进行操作。不同的是，迭代时，TreeMap按键有序，为了实现有序，它要求要么键实现Comparable接口，要么创建TreeMap时传递一个Comparator对象。</p>
+<p>由于TreeMap按键有序，它还支持更多接口和方法，具体来说，它还实现了Sorted-Map和NavigableMap接口，而NavigableMap接口扩展了SortedMap，通过这两个接口，可以方便地根据键的顺序进行查找，如第一个、最后一个、某一范围的键、邻近键等，限于篇幅，我们就不介绍了，具体可参见API文档。</p>
+<h2 id="10-4-2-实现原理"><a href="#10-4-2-实现原理" class="headerlink" title="10.4.2 实现原理"></a>10.4.2 实现原理</h2><p>TreeMap内部是用红黑树实现的，红黑树是一种大致平衡的排序二叉树，10.3节我们介绍了排序二叉树的基本概念和算法，本节主要看TreeMap的一些代码实现（基于Java 7），先来看TreeMap的内部组成。</p>
+<h3 id="1．内部组成"><a href="#1．内部组成" class="headerlink" title="1．内部组成"></a>1．内部组成</h3><p>TreeMap内部主要有如下成员：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> Comparator&lt;? <span class="keyword">super</span> K&gt; comparator;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> Entry&lt;K, V&gt; root = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>comparator就是比较器，在构造方法中传递，如果没传，就是null。size为当前键值对个数。root指向树的根节点，从根节点可以访问到每个节点，节点的类型为Entry。Entry是TreeMap的一个内部类，其内部成员和构造方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Entry</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; <span class="keyword">implements</span> <span class="title">Map</span>.<span class="title">Entry</span>&lt;<span class="title">K</span>, <span class="title">V</span>&gt; </span>&#123;</span><br><span class="line">    K key;</span><br><span class="line">    V value;</span><br><span class="line">    Entry&lt;K, V&gt; left = <span class="keyword">null</span>;</span><br><span class="line">    Entry&lt;K, V&gt; right = <span class="keyword">null</span>;</span><br><span class="line">    Entry&lt;K, V&gt; parent;</span><br><span class="line">    <span class="keyword">boolean</span> color = BLACK;</span><br><span class="line">    Entry(K key, V value, Entry&lt;K, V&gt; parent) &#123;</span><br><span class="line">        <span class="keyword">this</span>.key = key;</span><br><span class="line">        <span class="keyword">this</span>.value = value;</span><br><span class="line">        <span class="keyword">this</span>.parent = parent;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>每个节点除了键（key）和值（value）之外，还有三个引用，分别指向其左孩子（left）、右孩子（right）和父节点（parent），对于根节点，父节点为null，对于叶子节点，孩子节点都为null，还有一个成员color表示颜色，TreeMap是用红黑树实现的，每个节点都有一个颜色，非黑即红。</p>
+<p>了解了TreeMap的内部组成，我们来看一些主要方法的实现代码。</p>
+<h3 id="2．保存键值对"><a href="#2．保存键值对" class="headerlink" title="2．保存键值对"></a>2．保存键值对</h3><p>put方法的代码稍微有点长，我们分段来看。先看第一段，添加第一个节点的情况：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">put</span><span class="params">(K key, V value)</span> </span>&#123;</span><br><span class="line">    Entry&lt;K, V&gt; t = root;</span><br><span class="line">    <span class="keyword">if</span>(t == <span class="keyword">null</span>) &#123;</span><br><span class="line">        compare(key, key); <span class="comment">// type (and possibly null) check</span></span><br><span class="line">        root = <span class="keyword">new</span> Entry&lt;&gt;(key, value, <span class="keyword">null</span>);</span><br><span class="line">        size = <span class="number">1</span>;</span><br><span class="line">        modCount++;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//…</span></span><br></pre></td></tr></table></figure>
+
+<p>当添加第一个节点时，root为null，执行的就是这段代码，主要就是新建一个节点，设置root指向它，size设置为1, modCount++的含义与之前章节介绍的类似，用于迭代过程中检测结构性变化。</p>
+<p>令人费解的是compare调用，compare(key, key); , key与key比，有什么意义呢？我们看compare方法的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(Object k1, Object k2)</span> </span>&#123;</span><br><span class="line">      <span class="keyword">return</span> comparator==<span class="keyword">null</span> ? ((Comparable&lt;? <span class="keyword">super</span> K&gt;)k1).compareTo((K)k2)</span><br><span class="line">        : comparator.compare((K)k1, (K)k2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实，这里的目的不是为了比较，而是为了检查key的类型和null，如果类型不匹配或为null，那么compare方法会抛出异常。</p>
+<p>如果不是第一次添加，会执行后面的代码，添加的关键步骤是寻找父节点。寻找父节点根据是否设置了comparator分为两种情况，我们先来看已设置的情况，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> cmp;</span><br><span class="line">Entry&lt;K, V&gt; parent;</span><br><span class="line"><span class="comment">//split comparator and comparable paths</span></span><br><span class="line">Comparator&lt;? <span class="keyword">super</span> K&gt; cpr = comparator;</span><br><span class="line"><span class="keyword">if</span>(cpr ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        parent = t;</span><br><span class="line">        cmp = cpr.compare(key, t.key);</span><br><span class="line">        <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>)</span><br><span class="line">            t = t.left;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>)</span><br><span class="line">            t = t.right;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> t.setValue(value);</span><br><span class="line">    &#125; <span class="keyword">while</span> (t ! = <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>寻找是一个从根节点开始循环的过程，在循环中，cmp保存比较结果，t指向当前比较节点，parent为t的父节点，循环结束后parent就是要找的父节点。t一开始指向根节点，从根节点开始比较键，如果小于根节点，就将t设为左孩子，与左孩子比较，大于就与右孩子比较，就这样一直比，直到t为null或比较结果为0。如果比较结果为0，表示已经有这个键了，设置值，然后返回。如果t为null，则当退出循环时，parent就指向待插入节点的父节点。</p>
+<p>我们再来看没有设置comparator的情况，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">if</span>(key == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    Comparable&lt;? <span class="keyword">super</span> K&gt; k = (Comparable&lt;? <span class="keyword">super</span> K&gt;) key;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        parent = t;</span><br><span class="line">        cmp = k.compareTo(t.key);</span><br><span class="line">        <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>)</span><br><span class="line">            t = t.left;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>)</span><br><span class="line">            t = t.right;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> t.setValue(value);</span><br><span class="line">    &#125; <span class="keyword">while</span>(t ! = <span class="keyword">null</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本逻辑是一样的，当退出循环时parent指向父节点，只是如果没有设置comparator，则假设key一定实现了Comparable接口，使用Comparable接口的compareTo方法进行比较。</p>
+<p>找到父节点后，就是新建一个节点，根据新的键与父节点键的比较结果，插入作为左孩子或右孩子，并增加size和modCount，代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Entry&lt;K, V&gt; e = <span class="keyword">new</span> Entry&lt;&gt;(key, value, parent);</span><br><span class="line"><span class="keyword">if</span>(cmp &lt; <span class="number">0</span>)</span><br><span class="line">    parent.left = e;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    parent.right = e;</span><br><span class="line">fixAfterInsertion(e);</span><br><span class="line">size++;</span><br><span class="line">modCount++;</span><br></pre></td></tr></table></figure>
+
+<p>代码大部分都容易理解，不过，里面有一行重要调用fixAfterInsertion(e); ，它就是在调整树的结构，使之符合红黑树的约束，保持大致平衡，其代码我们就不介绍了。</p>
+<p>稍微总结一下，其基本思路就是：循环比较找到父节点，并插入作为其左孩子或右孩子，然后调整保持树的大致平衡。</p>
+<h3 id="3．根据键获取值"><a href="#3．根据键获取值" class="headerlink" title="3．根据键获取值"></a>3．根据键获取值</h3><p>根据键获取值的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">get</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    Entry&lt;K, V&gt; p = getEntry(key);</span><br><span class="line">    <span class="keyword">return</span>(p==<span class="keyword">null</span> ? <span class="keyword">null</span> : p.value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就是根据key找对应节点p，找到节点后获取值p.value，来看getEntry的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> Entry&lt;K, V&gt; <span class="title">getEntry</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Offload comparator-based version for sake of performance</span></span><br><span class="line">    <span class="keyword">if</span>(comparator ! = <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> getEntryUsingComparator(key);</span><br><span class="line">    <span class="keyword">if</span>(key == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException();</span><br><span class="line">    Comparable&lt;? <span class="keyword">super</span> K&gt; k = (Comparable&lt;? <span class="keyword">super</span> K&gt;) key;</span><br><span class="line">    Entry&lt;K, V&gt; p = root;</span><br><span class="line">    <span class="keyword">while</span>(p ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">int</span> cmp = k.compareTo(p.key);</span><br><span class="line">        <span class="keyword">if</span>(cmp &lt; <span class="number">0</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(cmp &gt; <span class="number">0</span>)</span><br><span class="line">            p = p.right;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果comparator不为空，调用单独的方法getEntryUsingComparator，否则，假定key实现了Comparable接口，使用接口的compareTo方法进行比较，找的逻辑也很简单，从根开始找，小于往左边找，大于往右边找，直到找到为止，如果没找到，返回null。getEntry-UsingComparator方法的逻辑类似，就不赘述了。</p>
+<h3 id="4．查看是否包含某个值"><a href="#4．查看是否包含某个值" class="headerlink" title="4．查看是否包含某个值"></a>4．查看是否包含某个值</h3><p>TreeMap可以高效地按键进行查找，但如果要根据值进行查找，则需要遍历，我们来看代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">containsValue</span><span class="params">(Object value)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(Entry&lt;K, V&gt; e = getFirstEntry(); e ! = <span class="keyword">null</span>; e = successor(e))</span><br><span class="line">        <span class="keyword">if</span>(valEquals(value, e.value))</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主体就是一个循环遍历，getFirstEntry方法返回第一个节点，successor方法返回给定节点的后继节点，valEquals就是比较值，从第一个节点开始，逐个进行比较，直到找到为止，如果循环结束也没找到则返回false。getFirstEntry的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">final</span> Entry&lt;K, V&gt; <span class="title">getFirstEntry</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Entry&lt;K, V&gt; p = root;</span><br><span class="line">    <span class="keyword">if</span>(p ! = <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">while</span> (p.left ! = <span class="keyword">null</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码很简单，第一个节点就是最左边的节点。</p>
+<p>10.3节我们介绍过找后继节点的算法，successor的具体代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> &lt;K, V&gt; TreeMap.<span class="function">Entry&lt;K, V&gt; <span class="title">successor</span><span class="params">(Entry&lt;K, V&gt; t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(t == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(t.right ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">        Entry&lt;K, V&gt; p = t.right;</span><br><span class="line">        <span class="keyword">while</span> (p.left ! = <span class="keyword">null</span>)</span><br><span class="line">            p = p.left;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Entry&lt;K, V&gt; p = t.parent;</span><br><span class="line">        Entry&lt;K, V&gt; ch = t;</span><br><span class="line">        <span class="keyword">while</span>(p ! = <span class="keyword">null</span> &amp;&amp; ch == p.right) &#123;</span><br><span class="line">            ch = p;</span><br><span class="line">            p = p.parent;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如10.3节后继算法所述，有两种情况：<br>1）如果有右孩子（t.right! =null），则后继节点为右子树中最小的节点。<br>2）如果没有右孩子，后继节点为某祖先节点，从当前节点往上找，如果它是父节点的右孩子，则继续找父节点，直到它不是右孩子或父节点为空，第一个非右孩子节点的父亲节点就是后继节点，如果父节点为空，则后继节点为null。</p>
+<p>代码与算法是对应的，就不再赘述了，这个描述比较抽象，可以参考图10-7，进行对照。</p>
+<h3 id="5．根据键删除键值对"><a href="#5．根据键删除键值对" class="headerlink" title="5．根据键删除键值对"></a>5．根据键删除键值对</h3><p>根据键删除键值对的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> V <span class="title">remove</span><span class="params">(Object key)</span> </span>&#123;</span><br><span class="line">    Entry&lt;K, V&gt; p = getEntry(key);</span><br><span class="line">    <span class="keyword">if</span>(p == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    V oldValue = p.value;</span><br><span class="line">    deleteEntry(p);</span><br><span class="line">    <span class="keyword">return</span> oldValue;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>根据key找到节点，调用deleteEntry删除节点，然后返回原来的值。</p>
+<p>10.3节介绍过节点删除的算法，节点有三种情况：<br>1）叶子节点：这个容易处理，直接修改父节点对应引用置null即可。<br>2）只有一个孩子：就是在父亲节点和孩子节点直接建立链接。<br>3）有两个孩子：先找到后继节点，找到后，替换当前节点的内容为后继节点，然后再删除后继节点，因为这个后继节点一定没有左孩子，所以就将两个孩子的情况转换为了前面两种情况。</p>
+<p>deleteEntry的具体代码也稍微有点长，我们分段来看：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">deleteEntry</span><span class="params">(Entry&lt;K, V&gt; p)</span> </span>&#123;</span><br><span class="line">    modCount++;</span><br><span class="line">    size--;</span><br><span class="line">    <span class="comment">//If strictly internal, copy successor&#x27;s element to p and then make p</span></span><br><span class="line">    <span class="comment">//point to successor.</span></span><br><span class="line">    <span class="keyword">if</span>(p.left ! = <span class="keyword">null</span> &amp;&amp; p.right ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">        Entry&lt;K, V&gt; s = successor(p);</span><br><span class="line">        p.key = s.key;</span><br><span class="line">        p.value = s.value;</span><br><span class="line">        p = s;</span><br><span class="line">    &#125; <span class="comment">//p has 2 children</span></span><br></pre></td></tr></table></figure>
+
+<p>这里处理的就是两个孩子的情况，s为后继，当前节点p的key和value设置为了s的key和value，然后将待删节点p指向了s，这样就转换为了一个孩子或叶子节点的情况。</p>
+<p>再往下看一个孩子情况的代码：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Start fixup at replacement node, if it exists.</span></span><br><span class="line">Entry&lt;K, V&gt; replacement = (p.left ! = <span class="keyword">null</span> ? p.left : p.right);</span><br><span class="line"><span class="keyword">if</span>(replacement ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">    <span class="comment">//Link replacement to parent</span></span><br><span class="line">    replacement.parent = p.parent;</span><br><span class="line">    <span class="keyword">if</span>(p.parent == <span class="keyword">null</span>)</span><br><span class="line">        root = replacement;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span>(p == p.parent.left)</span><br><span class="line">        p.parent.left   = replacement;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        p.parent.right = replacement;</span><br><span class="line">    <span class="comment">// Null out links so they are OK to use by fixAfterDeletion.</span></span><br><span class="line">    p.left = p.right = p.parent = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">// Fix replacement</span></span><br><span class="line">    <span class="keyword">if</span>(p.color == BLACK)</span><br><span class="line">        fixAfterDeletion(replacement);</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span> (p.parent == <span class="keyword">null</span>) &#123; <span class="comment">// return if we are the only node.</span></span><br></pre></td></tr></table></figure>
+
+<p>p为待删节点，replacement为要替换p的孩子节点，主体代码就是在p的父节点p.parent和replacement之间建立链接，以替换p.parent和p原来的链接，如果p.parent为null，则修改root以指向新的根。fixAfterDeletion重新平衡树。</p>
+<p>最后来看叶子节点的情况：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span>(p.parent == <span class="keyword">null</span>) &#123; <span class="comment">// return if we are the only node.</span></span><br><span class="line">    root = <span class="keyword">null</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123; <span class="comment">//   No children. Use self as phantom replacement and unlink.</span></span><br><span class="line">    <span class="keyword">if</span>(p.color == BLACK)</span><br><span class="line">        fixAfterDeletion(p);</span><br><span class="line">    <span class="keyword">if</span>(p.parent ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span>(p == p.parent.left)</span><br><span class="line">            p.parent.left = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span>(p == p.parent.right)</span><br><span class="line">            p.parent.right = <span class="keyword">null</span>;</span><br><span class="line">        p.parent = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再具体分为两种情况：一种是删除最后一个节点，修改root为null；另一种是根据待删节点是父节点的左孩子还是右孩子，相应的设置孩子节点为null。</p>
+<p>以上就是TreeMap的基本实现原理，与10.3节介绍的排序二叉树的基本概念和算法是一致的，只是TreeMap用了红黑树。</p>
+<h2 id="10-4-3-小结"><a href="#10-4-3-小结" class="headerlink" title="10.4.3 小结"></a>10.4.3 小结</h2><p>本节介绍了TreeMap的用法和实现原理，与HashMap相比，TreeMap同样实现了Map接口，但内部使用红黑树实现。红黑树是统计效率比较高的大致平衡的排序二叉树，这决定了它有如下特点：<br>1）按键有序，TreeMap同样实现了SortedMap和NavigableMap接口，可以方便地根据键的顺序进行查找，如第一个、最后一个、某一范围的键、邻近键等。<br>2）为了按键有序，TreeMap要求键实现Comparable接口或通过构造方法提供一个Com-parator对象。<br>3）根据键保存、查找、删除的效率比较高，为O(h), h为树的高度，在树平衡的情况下，h为log2(N), N为节点数。</p>
+<p>应该用HashMap还是TreeMap呢？不要求排序，优先考虑HashMap，要求排序，考虑TreeMap。HashMap有对应的TreeMap, HashSet也有对应的TreeSet，下节，我们来看TreeSet。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/" title="10.4 剖析TreeMap">https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/faa0a7e5/" rel="prev" title="10.3 排序二叉树">
+                  <i class="fa fa-chevron-left"></i> 10.3 排序二叉树
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/42b48a4c/" rel="next" title="10.5 剖析TreeSet">
+                  10.5 剖析TreeSet <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/8ef6dec3/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/8ef6dec3/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

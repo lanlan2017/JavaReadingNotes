@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="10.8 剖析EnumSet本节介绍同样针对枚举类型的Set接口的实现类EnumSet。与EnumMap类似，之所以会有一个专门的针对枚举类型的实现类，主要是因为它可以非常高效地实现Set接口。 之前介绍的Set接口的实现类HashSet&#x2F;TreeSet，它们内部都是用对应的HashMap&#x2F;TreeMap实现的，但EnumSet不是，它的实现与EnumMap没有任何关系，而是用极为精简和高效的位向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.8 剖析EnumSet">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="10.8 剖析EnumSet本节介绍同样针对枚举类型的Set接口的实现类EnumSet。与EnumMap类似，之所以会有一个专门的针对枚举类型的实现类，主要是因为它可以非常高效地实现Set接口。 之前介绍的Set接口的实现类HashSet&#x2F;TreeSet，它们内部都是用对应的HashMap&#x2F;TreeMap实现的，但EnumSet不是，它的实现与EnumMap没有任何关系，而是用极为精简和高效的位向">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209140616.jpeg">
+<meta property="article:published_time" content="2021-12-05T04:17:08.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:08.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209140616.jpeg">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/","path":"/ae5312b7/","title":"10.8 剖析EnumSet"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>10.8 剖析EnumSet | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-8-%E5%89%96%E6%9E%90EnumSet"><span class="nav-text">10.8 剖析EnumSet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#10-8-1-%E5%9F%BA%E6%9C%AC%E7%94%A8%E6%B3%95"><span class="nav-text">10.8.1 基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-8-2-%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-text">10.8.2 应用场景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-8-3-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86"><span class="nav-text">10.8.3 实现原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-8-4-%E5%B0%8F%E7%BB%93"><span class="nav-text">10.8.4 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          10.8 剖析EnumSet
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-05 12:17:08" itemprop="dateCreated datePublished" datetime="2021-12-05T12:17:08+08:00">2021-12-05</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:08" itemprop="dateModified" datetime="2021-12-07T12:07:08+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/3%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E6%B3%9B%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">3第三部分 泛型与容器</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/3%E7%AC%AC%E4%B8%89%E9%83%A8%E5%88%86-%E6%B3%9B%E5%9E%8B%E4%B8%8E%E5%AE%B9%E5%99%A8/%E7%AC%AC10%E7%AB%A0-Map%E5%92%8CSet/" itemprop="url" rel="index"><span itemprop="name">第10章 Map和Set</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/ae5312b7/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/ae5312b7/" data-xid="/JavaReadingNotes/ae5312b7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="10-8-剖析EnumSet"><a href="#10-8-剖析EnumSet" class="headerlink" title="10.8 剖析EnumSet"></a>10.8 剖析EnumSet</h1><p>本节介绍同样针对枚举类型的Set接口的实现类EnumSet。与EnumMap类似，之所以会有一个专门的针对枚举类型的实现类，主要是因为它可以非常高效地实现Set接口。</p>
+<p>之前介绍的Set接口的实现类HashSet/TreeSet，它们内部都是用对应的HashMap/TreeMap实现的，但EnumSet不是，它的实现与EnumMap没有任何关系，而是用极为精简和高效的<strong>位向量</strong>实现的。<strong>位向量是计算机程序中解决问题的一种常用方式，我们有必要理解和掌握</strong>。</p>
+<p>除了实现机制，EnumSet的用法也有一些不同。EnumSet可以说是处理枚举类型数据的一把利器，在一些应用领域，它非常方便和高效。</p>
+<p>下面，我们先来看EnumSet的基本用法，然后通过一个场景来看EnumSet的应用，最后分析EnumSet的实现机制。</p>
+<h2 id="10-8-1-基本用法"><a href="#10-8-1-基本用法" class="headerlink" title="10.8.1 基本用法"></a>10.8.1 基本用法</h2><p>与TreeSet/HashSet不同，<strong>EnumSet是一个抽象类</strong>，不能直接通过new新建，也就是说，类似下面代码是错误的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">EnumSet&lt;Size&gt; set = <span class="keyword">new</span> EnumSet&lt;Size&gt;();</span><br></pre></td></tr></table></figure>
+
+<p>不过，EnumSet提供了若干静态工厂方法，可以创建EnumSet类型的对象，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E extends Enum&lt;E&gt;&gt; <span class="function">EnumSet&lt;E&gt; <span class="title">noneOf</span><span class="params">(Class&lt;E&gt; elementType)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>noneOf方法会创建一个指定枚举类型的EnumSet，不含任何元素。创建的EnumSet对象的实际类型是EnumSet的子类，待会我们再分析其具体实现。</p>
+<p>为方便举例，我们定义一个表示星期几的枚举类Day，值从周一到周日，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Day</span> </span>&#123;</span><br><span class="line">    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以这么用noneOf方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;Day&gt; weekend = EnumSet.noneOf(Day.class);</span><br><span class="line">weekend.add(Day.SATURDAY);</span><br><span class="line">weekend.add(Day.SUNDAY);</span><br><span class="line">System.out.println(weekend);</span><br></pre></td></tr></table></figure>
+
+<p>weekend表示休息日，noneOf返回的Set为空，添加了周六和周日，所以输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[SATURDAY, SUNDAY]</span><br></pre></td></tr></table></figure>
+
+<p>EnumSet还有很多其他静态工厂方法，如下所示（省略了修饰public static）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//初始集合包括指定枚举类型的所有枚举值</span></span><br><span class="line">&lt;E extends Enum&lt;E&gt;&gt; <span class="function">EnumSet&lt;E&gt; <span class="title">allOf</span><span class="params">(Class&lt;E&gt; elementType)</span></span></span><br><span class="line"><span class="function"><span class="comment">//初始集合包括枚举值中指定范围的元素</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">range</span><span class="params">(E from, E to)</span></span></span><br><span class="line"><span class="function"><span class="comment">//初始集合包括指定集合的补集</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">complementOf</span><span class="params">(EnumSet&lt;E&gt; s)</span></span></span><br><span class="line"><span class="function"><span class="comment">//初始集合包括参数中的所有元素</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">of</span><span class="params">(E e)</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">of</span><span class="params">(E e1, E e2)</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">of</span><span class="params">(E e1, E e2, E e3)</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">of</span><span class="params">(E e1, E e2, E e3, E e4)</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">of</span><span class="params">(E e1, E e2, E e3, E e4, E e5)</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">of</span><span class="params">(E first, E... rest)</span></span></span><br><span class="line"><span class="function"><span class="comment">//初始集合包括参数容器中的所有元素</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">copyOf</span><span class="params">(EnumSet&lt;E&gt; s)</span></span></span><br><span class="line"><span class="function">&lt;E extends Enum&lt;E&gt;&gt; EnumSet&lt;E&gt; <span class="title">copyOf</span><span class="params">(Collection&lt;E&gt; c)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，EnumSet有很多重载形式的of方法，最后一个接受的是可变参数，其他重载方法看上去是多余的，之所以有其他重载方法是因为可变参数的运行效率低一些。</p>
+<h2 id="10-8-2-应用场景"><a href="#10-8-2-应用场景" class="headerlink" title="10.8.2 应用场景"></a>10.8.2 应用场景</h2><p>下面，我们通过一个场景来看EnumSet的应用。想象一个场景，在一些工作中（如医生、客服），不是每个工作人员每天都在的，每个人可工作的时间是不一样的，比如张三可能是周一和周三，李四可能是周四和周六，给定每个人可工作的时间，我们可能有一些问题需要回答。比如：</p>
+<ul>
+<li>有没有哪天一个人都不会来？</li>
+<li>有哪些天至少会有一个人来？</li>
+<li>有哪些天至少会有两个人来？</li>
+<li>有哪些天所有人都会来，以便开会？</li>
+<li>哪些人周一和周二都会来？</li>
+</ul>
+<p>使用EnumSet，可以方便高效地回答这些问题，怎么做呢？我们先来定义一个表示工作人员的类Worker，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span> </span>&#123;</span><br><span class="line">    String name;</span><br><span class="line">    Set&lt;Day&gt; availableDays;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Worker</span><span class="params">(String name, Set&lt;Day&gt; availableDays)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">        <span class="keyword">this</span>.availableDays = availableDays;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//省略getter方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为演示方便，将所有工作人员的信息放到一个数组workers中，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Worker[] workers = <span class="keyword">new</span> Worker[]&#123;</span><br><span class="line">    <span class="keyword">new</span> Worker(<span class="string">&quot;张三&quot;</span>, EnumSet.of(</span><br><span class="line">            Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.FRIDAY)),</span><br><span class="line">    <span class="keyword">new</span> Worker(<span class="string">&quot;李四&quot;</span>, EnumSet.of(</span><br><span class="line">            Day.TUESDAY, Day.THURSDAY, Day.SATURDAY)),</span><br><span class="line">    <span class="keyword">new</span> Worker(<span class="string">&quot;王五&quot;</span>, EnumSet.of(Day.TUESDAY, Day.THURSDAY)),</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>每个工作人员的可工作时间用一个EnumSet表示。有了这个信息，我们就可以回答以上的问题了。哪些天一个人都不会来？代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;Day&gt; days = EnumSet.allOf(Day.class);</span><br><span class="line"><span class="keyword">for</span>(Worker w : workers)&#123;</span><br><span class="line">    days.removeAll(w.getAvailableDays());</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(days);</span><br></pre></td></tr></table></figure>
+
+<p>days初始化为所有值，然后遍历workers，从days中删除可工作的所有时间，最终剩下的就是一个人都不会来的时间，这实际是在求worker时间并集的补集，输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[SUNDAY]</span><br></pre></td></tr></table></figure>
+
+<p>有哪些天至少会有一个人来？就是求worker时间的并集，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;Day&gt; days = EnumSet.noneOf(Day.class);</span><br><span class="line"><span class="keyword">for</span>(Worker w : workers)&#123;</span><br><span class="line">    days.addAll(w.getAvailableDays());</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(days);</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY]</span><br></pre></td></tr></table></figure>
+
+<p>有哪些天所有人都会来？就是求worker时间的交集，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;Day&gt; days = EnumSet.allOf(Day.class);</span><br><span class="line"><span class="keyword">for</span>(Worker w : workers)&#123;</span><br><span class="line">    days.retainAll(w.getAvailableDays());</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(days);</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[TUESDAY]</span><br></pre></td></tr></table></figure>
+
+<p>哪些人周一和周二都会来？使用containsAll方法，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;Worker&gt; availableWorkers = <span class="keyword">new</span> HashSet&lt;Worker&gt;();</span><br><span class="line"><span class="keyword">for</span>(Worker w : workers)&#123;</span><br><span class="line">    <span class="keyword">if</span>(w.getAvailableDays().containsAll(</span><br><span class="line">            EnumSet.of(Day.MONDAY, Day.TUESDAY)))&#123;</span><br><span class="line">        availableWorkers.add(w);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>(Worker w : availableWorkers)&#123;</span><br><span class="line">    System.out.println(w.getName());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">张三</span><br></pre></td></tr></table></figure>
+
+<p>哪些天至少会有两个人来？我们先使用EnumMap统计每天的人数，然后找出至少有两个人的天，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;Day, Integer&gt; countMap = <span class="keyword">new</span> EnumMap&lt;&gt;(Day.class);</span><br><span class="line"><span class="keyword">for</span>(Worker w : workers)&#123;</span><br><span class="line">    <span class="keyword">for</span>(Day d : w.getAvailableDays())&#123;</span><br><span class="line">        Integer count = countMap.get(d);</span><br><span class="line">        countMap.put(d, count==<span class="keyword">null</span>?<span class="number">1</span>:count+<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">Set&lt;Day&gt; days = EnumSet.noneOf(Day.class);</span><br><span class="line"><span class="keyword">for</span>(Map.Entry&lt;Day, Integer&gt; entry : countMap.entrySet())&#123;</span><br><span class="line">    <span class="keyword">if</span>(entry.getValue()&gt;=<span class="number">2</span>)&#123;</span><br><span class="line">        days.add(entry.getKey());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">System.out.println(days);</span><br></pre></td></tr></table></figure>
+
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[TUESDAY, THURSDAY]</span><br></pre></td></tr></table></figure>
+
+<p>理解了EnumSet的使用，下面我们来看它是怎么实现的（基于Java 7）。</p>
+<h2 id="10-8-3-实现原理"><a href="#10-8-3-实现原理" class="headerlink" title="10.8.3 实现原理"></a>10.8.3 实现原理</h2><p>EnumSet是使用位向量实现的，什么是位向量呢？就是用一个位表示一个元素的状态，用一组位表示一个集合的状态，每个位对应一个元素，而状态只可能有两种。</p>
+<p>对于之前的枚举类Day，它有7个枚举值，一个Day的集合就可以用一个字节byte表示，最高位不用，设为0，最右边的位对应顺序最小的枚举值，从右到左，每位对应一个枚举值，1表示包含该元素，0表示不含该元素。</p>
+<p>比如，表示包含Day.MONDAY、Day.TUESDAY、Day.WEDNESDAY、Day.FRIDAY的集合，位向量结构如图10-14所示。</p>
+<p>对应的整数是23。</p>
+<p>位向量能表示的元素个数与向量长度有关，一个byte类型能表示8个元素，一个long类型能表示64个元素，那EnumSet用的长度是多少呢？</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211209140616.jpeg" alt="epub_923038_84"></p>
+<center>图10-14 位向量示例</center>
+
+<p>EnumSet是一个抽象类，它没有定义使用的向量长度，它有两个子类：RegularEnumSet和JumboEnumSet。RegularEnumSet使用一个long类型的变量作为位向量，long类型的位长度是64，而JumboEnumSet使用一个long类型的数组。如果枚举值个数小于等于64，则静态工厂方法中创建的就是RegularEnumSet，如果大于64就是JumboEnumSet。</p>
+<p>理解了位向量的基本概念，下面我们来看EnumSet的实现，包括其内部组成和一些主要方法的实现。同EnumMap一样，EnumSet也有表示类型信息和所有枚举值的实例变量，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> Class&lt;E&gt; elementType;</span><br><span class="line"><span class="keyword">final</span> Enum[] universe;</span><br></pre></td></tr></table></figure>
+
+<p>elementType表示类型信息，universe表示枚举类的所有枚举值。</p>
+<p>EnumSet自身没有记录元素个数的变量，也没有位向量，它们是子类维护的。对于RegularEnumSet，它用一个long类型表示位向量，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> elements = <span class="number">0L</span>;</span><br></pre></td></tr></table></figure>
+
+<p>它没有定义表示元素个数的变量，是实时计算出来的，计算的代码是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">size</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Long.bitCount(elements);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对于JumboEnumSet，它用一个long数组表示，有单独的size变量，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">long</span> elements[];</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> size = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们来看EnumSet的静态工厂方法noneOf，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> &lt;E extends Enum&lt;E&gt;&gt; <span class="function">EnumSet&lt;E&gt; <span class="title">noneOf</span><span class="params">(Class&lt;E&gt; elementType)</span> </span>&#123;</span><br><span class="line">Enum[] universe = getUniverse(elementType);</span><br><span class="line"><span class="keyword">if</span>(universe == <span class="keyword">null</span>)</span><br><span class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> ClassCastException(elementType + <span class="string">&quot; not an enum&quot;</span>);</span><br><span class="line"><span class="keyword">if</span>(universe.length &lt;= <span class="number">64</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> RegularEnumSet&lt;&gt;(elementType, universe);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> JumboEnumSet&lt;&gt;(elementType, universe);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>getUniverse的代码与EnumMap是一样的，就不赘述了。如果元素个数不超过64，就创建RegularEnumSet，否则创建JumboEnumSet。</p>
+<p>RegularEnumSet和JumboEnumSet的构造方法为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RegularEnumSet(Class&lt;E&gt;elementType, Enum[] universe) &#123;</span><br><span class="line">    <span class="keyword">super</span>(elementType, universe);</span><br><span class="line">&#125;</span><br><span class="line">JumboEnumSet(Class&lt;E&gt;elementType, Enum[] universe) &#123;</span><br><span class="line">    <span class="keyword">super</span>(elementType, universe);</span><br><span class="line">    elements = <span class="keyword">new</span> <span class="keyword">long</span>[(universe.length + <span class="number">63</span>) &gt;&gt;&gt; <span class="number">6</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它们都调用了父类EnumSet的构造方法，其代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">EnumSet(Class&lt;E&gt;elementType, Enum[] universe) &#123;</span><br><span class="line">    <span class="keyword">this</span>.elementType = elementType;</span><br><span class="line">    <span class="keyword">this</span>.universe     = universe;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>就是给实例变量赋值，JumboEnumSet根据元素个数分配足够长度的long数组。</p>
+<p>其他工厂方法基本都是先调用noneOf方法构造一个空的集合，然后再调用添加方法。我们来看添加方法，RegularEnumSet的add方法的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    typeCheck(e);</span><br><span class="line">    <span class="keyword">long</span> oldElements = elements;</span><br><span class="line">    elements |= (<span class="number">1L</span> &lt;&lt; ((Enum)e).ordinal());</span><br><span class="line">    <span class="keyword">return</span> elements ! = oldElements;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要代码是按位或操作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elements |= (<span class="number">1L</span> &lt;&lt; ((Enum)e).ordinal());</span><br></pre></td></tr></table></figure>
+
+<p>(1L &lt;&lt; ((Enum)e).ordinal())将元素e对应的位设为1，与现有的位向量elements相或，就表示添加e了。JumboEnumSet的add方法的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    typeCheck(e);</span><br><span class="line">    <span class="keyword">int</span> eOrdinal = e.ordinal();</span><br><span class="line">    <span class="keyword">int</span> eWordNum = eOrdinal &gt;&gt;&gt; <span class="number">6</span>;</span><br><span class="line">    <span class="keyword">long</span> oldElements = elements[eWordNum];</span><br><span class="line">    elements[eWordNum] |= (<span class="number">1L</span> &lt;&lt; eOrdinal);</span><br><span class="line">    <span class="keyword">boolean</span> result = (elements[eWordNum] ! = oldElements);</span><br><span class="line">    <span class="keyword">if</span>(result)</span><br><span class="line">        size++;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>与RegularEnumSet的add方法的区别是，它先找对应的数组位置，<code>eOrdinal&gt;&gt;&gt; 6</code>就是eOrdinal除以64, eWordNum就表示数组索引，有了索引之后，其他操作与Regular-EnumSet就类似了。</p>
+<p>对于其他操作，JumboEnumSet的思路是类似的，主要算法与RegularEnumSet一样，主要是增加了寻找对应long位向量的操作，或者有一些循环处理，逻辑也都比较简单，后文就只介绍RegularEnumSet的实现了。</p>
+<p>RegularEnumSet的remove方法的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(e == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    Class eClass = e.getClass();</span><br><span class="line">    <span class="keyword">if</span>(eClass ! = elementType &amp;&amp; eClass.getSuperclass() ! = elementType)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">long</span> oldElements = elements;</span><br><span class="line">    elements &amp;= ~(<span class="number">1L</span> &lt;&lt; ((Enum)e).ordinal());</span><br><span class="line">    <span class="keyword">return</span> elements ! = oldElements;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要代码是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elements &amp;= ~(<span class="number">1L</span> &lt;&lt; ((Enum)e).ordinal());</span><br></pre></td></tr></table></figure>
+
+<p>~是取反，该代码将元素e对应的位设为了0，这样就完成了删除。</p>
+<p>查看是否包含某元素的方法是contains，其代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(e == <span class="keyword">null</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    Class eClass = e.getClass();</span><br><span class="line">    <span class="keyword">if</span>(eClass ! = elementType &amp;&amp; eClass.getSuperclass() ! = elementType)</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    <span class="keyword">return</span> (elements &amp; (<span class="number">1L</span> &lt;&lt; ((Enum)e).ordinal())) ! = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>代码也很简单，按位与操作，不为0，则表示包含。</p>
+<p>EnumSet的静态工厂方法complementOf是求补集，它调用的代码是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">complement</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(universe.length ! = <span class="number">0</span>) &#123;</span><br><span class="line">        elements = ~elements;</span><br><span class="line">        elements &amp;= -<span class="number">1L</span> &gt;&gt;&gt; -universe.length;   <span class="comment">// Mask unused bits</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这段代码有点晦涩，elements=~elements比较容易理解，就是按位取反，相当于就是取补集，但我们知道elements是64位的，当前枚举类可能没有用那么多位，取反后高位部分都变为了1，需要将超出universe.length的部分设为0。下面的代码就是在做这件事：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elements &amp;= -<span class="number">1L</span> &gt;&gt;&gt; -universe.length;</span><br></pre></td></tr></table></figure>
+
+<p>-1L是64位全1的二进制，我们在剖析Integer一节介绍过移动位数是负数的情况，上面代码相当于：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">elements &amp;= -<span class="number">1L</span> &gt;&gt;&gt; (<span class="number">64</span>-universe.length);</span><br></pre></td></tr></table></figure>
+
+<p>如果universe.length为7，则-1L&gt;&gt;&gt;(64-7)就是二进制的1111111，与elements相与，就会将超出universe.length部分的右边的57位都变为0。</p>
+<p>以上就是EnumSet的基本实现原理，内部使用位向量，表示很简洁，节省空间，大部分操作都是按位运算，效率极高。</p>
+<h2 id="10-8-4-小结"><a href="#10-8-4-小结" class="headerlink" title="10.8.4 小结"></a>10.8.4 小结</h2><p>本节介绍了EnumSet的用法和实现原理，用法上，它是处理枚举类型数据的一把利器，简洁方便，实现原理上，它使用位向量，精简高效。</p>
+<p><strong>对于只有两种状态，且需要进行集合运算的数据，使用位向量进行表示、位运算进行处理，是计算机程序中一种常用的思维方式</strong>。</p>
+<p>Java中有一个更为通用的可动态扩展长度的位向量容器类BitSet，可以方便地对指定位置的位进行操作，与其他位向量进行位运算，具体可参看API文档，我们就不介绍了。</p>
+<p>至此，关于Map和Set的实现类就介绍完了，关于它们的系统总结，我们留待到介绍完所有容器类之后，下一章，我们来看另一种数据结构：堆。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/" title="10.8 剖析EnumSet">https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/8f625e4d/" rel="prev" title="10.7 剖析EnumMap">
+                  <i class="fa fa-chevron-left"></i> 10.7 剖析EnumMap
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/6c34a95f/" rel="next" title="11.0 第11章 堆与优先级队列 11.1 堆的概念与算法">
+                  11.0 第11章 堆与优先级队列 11.1 堆的概念与算法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/ae5312b7/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/ae5312b7/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="12.10 使用JTree和TreeModel创建树树也是图形用户界面中使用非常广泛的GUI组件,例如使用Windows资源管理器时,将看到如图12.38所示的目录树。如图12.38所示的树,代表计算机世界里的树,它从自然界实际的树抽象而来。计算机世界里的树是由一系列具有严格父子关系的节点组成的,每个节点既可以是其上一级节点的子节点,也可以是其下一级节点的父节点,因此同一个节点既可以是父节点,也可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="12.10 使用JTree和TreeModel创建树 12.10.1 创建树">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="12.10 使用JTree和TreeModel创建树树也是图形用户界面中使用非常广泛的GUI组件,例如使用Windows资源管理器时,将看到如图12.38所示的目录树。如图12.38所示的树,代表计算机世界里的树,它从自然界实际的树抽象而来。计算机世界里的树是由一系列具有严格父子关系的节点组成的,每个节点既可以是其上一级节点的子节点,也可以是其下一级节点的父节点,因此同一个节点既可以是父节点,也可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.10.0/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.10.1/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout/Chapter12/12.10.1/1.png">
+<meta property="article:published_time" content="2020-02-16T02:00:36.000Z">
+<meta property="article:modified_time" content="2020-03-02T20:57:54.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.10.0/2.png">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/","path":"/b18e72c0/","title":"12.10 使用JTree和TreeModel创建树 12.10.1 创建树"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>12.10 使用JTree和TreeModel创建树 12.10.1 创建树 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#12-10-%E4%BD%BF%E7%94%A8JTree%E5%92%8CTreeModel%E5%88%9B%E5%BB%BA%E6%A0%91"><span class="nav-text">12.10 使用JTree和TreeModel创建树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E5%88%86%E7%B1%BB"><span class="nav-text">节点分类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12-10-1-%E5%88%9B%E5%BB%BA%E6%A0%91"><span class="nav-text">12.10.1 创建树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-%E7%AE%80%E5%8D%95Swing%E6%95%B0%E7%BB%84"><span class="nav-text">程序 简单Swing数组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E6%98%BE%E7%A4%BA%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E7%9A%84%E8%BF%9E%E7%BA%BF"><span class="nav-text">不显示节点之间的连线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AA%E6%9C%89%E6%B0%B4%E5%B9%B3%E5%88%86%E5%89%B2%E7%BA%BF"><span class="nav-text">只有水平分割线</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9A%90%E8%97%8F%E6%A0%B9%E8%8A%82%E7%82%B9"><span class="nav-text">隐藏根节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%8D%E5%8E%86%E6%89%80%E6%9C%89%E5%AD%90%E8%8A%82%E7%82%B9"><span class="nav-text">遍历所有子节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E8%8A%82%E7%82%B9"><span class="nav-text">获取节点</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          12.10 使用JTree和TreeModel创建树 12.10.1 创建树
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-02-16 10:00:36" itemprop="dateCreated datePublished" datetime="2020-02-16T10:00:36+08:00">2020-02-16</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-03 04:57:54" itemprop="dateModified" datetime="2020-03-03T04:57:54+08:00">2020-03-03</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC12%E7%AB%A0-Swing%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第12章 Swing编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC12%E7%AB%A0-Swing%E7%BC%96%E7%A8%8B/12-10-%E4%BD%BF%E7%94%A8JTree%E5%92%8CTreeModel%E5%88%9B%E5%BB%BA%E6%A0%91/" itemprop="url" rel="index"><span itemprop="name">12.10 使用JTree和TreeModel创建树</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/b18e72c0/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/b18e72c0/" data-xid="/JavaReadingNotes/b18e72c0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="12-10-使用JTree和TreeModel创建树"><a href="#12-10-使用JTree和TreeModel创建树" class="headerlink" title="12.10 使用JTree和TreeModel创建树"></a>12.10 使用JTree和TreeModel创建树</h1><p>树也是图形用户界面中使用非常广泛的<code>GUI</code>组件,例如使用<code>Windows</code>资源管理器时,将看到如图12.38所示的目录树。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.10.0/2.png"><br>如图12.38所示的树,代表计算机世界里的树,它从自然界实际的树抽象而来。<strong>计算机世界里的树是由一系列具有严格父子关系的节点组成的,每个节点既可以是其上一级节点的子节点,也可以是其下一级节点的父节点,因此同一个节点既可以是父节点,也可以是子节点</strong>(类似于一个人,他既是他儿子的父亲,又是他父亲的儿子)。</p>
+<h2 id="节点分类"><a href="#节点分类" class="headerlink" title="节点分类"></a>节点分类</h2><p>如果按节点是否包含子节点来分,节点分为如下两种</p>
+<ul>
+<li>普通节点:包含子节点的节点。</li>
+<li>叶子节点:没有子节点的节点,因此叶子节点不可作为父节点。</li>
+</ul>
+<p>如果按节点是否具有唯一的父节点来分,节点又可分为如下两种</p>
+<ul>
+<li><strong>根节点</strong>:没有父节点的节点,根节点不可作为子节点。</li>
+<li><strong>普通节点</strong>:具有唯一父节点的节点。</li>
+</ul>
+<p>棵树只能有一个根节点,如果一棵树有了多个根节点,那它就不是一棵树了,而是多棵树的集合,有时也被称为森林。图12.39显示了计算机世界里树的一些专业术语。<br>使用<code>Swing</code>里的<code>JTree</code>、<code>TreeModel</code>及其相关的辅助类可以很轻松地开发出计算机世界里的树,如图1239所示</p>
+<!-- CrazyJavaHandout4/Chapter12/12.10.0/3 -->
+<h1 id="12-10-1-创建树"><a href="#12-10-1-创建树" class="headerlink" title="12.10.1 创建树"></a>12.10.1 创建树</h1><p><code>Swing</code>使用<code>JTree</code>对象来代表一棵树(实际上,<code>JTree</code>可以代表森林,因为在使用<code>JTree</code>创建树时可以传入多个根节点),<br><code>JTree</code>树中节点可以使用<code>TreePath</code>来标识,<strong><code>TreePath</code>对象封装了当前节点及其所有的父节点</strong>。必须指出,<strong>节点及其所有的父节点才能唯一地标识一个节点</strong>;也可以使用行数来标识,如图12.39所示,显示区域的每一行都标识一个节点。<br>当一个节点具有子节点时,该节点有两种状态。</p>
+<ul>
+<li>展开状态:当父节点处于展开状态时,其子节点是可见的。</li>
+<li>折叠状态:当父节点处于折叠状态时,其子节点都是不可见的。</li>
+</ul>
+<p>如果某个节点是可见的,则该节点的父节点(包括直接的、间接的父节点)都必须处于展开状态,只要有任意一个父节点处于折叠状态,该节点就是不可见的。<br>如果希望创建一棵树,则直接使用<code>JTree</code>的构造器创建<code>JTree</code>对象即可。<code>JTree</code>提供了如下几个常用构造器。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>JTree(TreeModel newModel)</code></td>
+<td align="left">使用指定的数据模型创建<code>JTree</code>对象,它默认显示根节点。</td>
+</tr>
+<tr>
+<td align="left"><code>JTree(TreeNode root)</code></td>
+<td align="left">使用<code>root</code>作为根节点创建<code>JTree</code>对象,它默认显示根节点。</td>
+</tr>
+<tr>
+<td align="left"><code>JTree(TreeNode root, boolean asksAllowsChildren)</code></td>
+<td align="left">使用<code>root</code>作为根节点创建<code>JTree</code>对象,它默认显示根节点。**<code>asksAllowsChildren</code>参数控制怎样的节点才算叶子节点**:<ul><li>如果该参数为<code>true</code>,则只有当程序使用<code>setAllowsChildren(false)</code>显式设置某个节点不允许添加子节点时(以后也不会拥有子节点),该节点才会被<code>JTree</code>当成叶子节点;</li><li>如果该参数为<code>false</code>,则只要某个节点当时没有子节点(不管以后是否拥有子节点),该节点都会被<code>JTree</code>当成叶子节点。</li></ul></td>
+</tr>
+</tbody></table>
+<p>上面的第一个构造器需要显式传入一个<code>TreeModel</code>对象,<code>Swing</code>为<code>TreeModel</code>提供了一个<code>DefaultTreeModel</code>实现类,通常可先创建<code>DefaultTreeModel</code>对象,然后利用<code>DefaultTreeModel</code>来创建<code>JTree</code>,但通过<code>DefaultTreeModel</code>的<code>API</code>文档会发现,创建<code>DefaultTreeModel</code>对象依然需要传入根节点,所以直接通过根节点创建<code>JTree</code>更加简洁。<br>为了利用根节点来创建<code>JTree</code>,程序需要创建一个<code>TreeNode</code>对象。<code>TreeNode</code>是一个接口,该接口有个<code>MutableTreeNode</code>子接口,<code>Swing</code>为该接口提供了默认的实现类:<code>DefaultMutableTreeNode</code>,程序可以通过<code>DefaultMutableTreeNode</code>来为树创建节点,并通过<code>DefaultMutableTreeNode</code>提供的<code>add()</code>方法建立各节点之间的父子关系,然后调用<code>JTree</code>的<code>JTree(TreeNodeRoot</code>构造器来创建一棵树。</p>
+<p>图12.40显示了<code>JTree</code>相关类的关系,从该图可以看出<code>DefaultTreeModel</code>是<code>TreeModel</code>的默认实现类,当程序通过<code>TreeNode</code>类创建<code>JTree</code>时,其状态数据实际上由<code>DefaultTreeModel</code>对象维护,因为创建<code>JTree</code>时传入的<code>TreeNode</code>对象,实际上传给了<code>DefaultTreeModel</code>对象。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter12/12.10.1/1.png"></p>
+<!-- CrazyJavaHandout4/Chapter12/12.10.1/ -->
+<p><code>DefaultTreeModel</code>也提供了<code>DefaultTreeModel(TreeNode root)</code>构造器,用于接收一个<code>TreeNode</code>根节点来创建一个默认的<code>TreeModel</code>对象;当程序中通过传入一个根节点来创建<code>JTree</code>对象时,实际上是将该节点传入对应的<code>DefaultTreeModel</code>对象,并使用该<code>DefaultTreeModel</code>对象来创建<code>JTree</code>对象</p>
+<h2 id="程序-简单Swing数组"><a href="#程序-简单Swing数组" class="headerlink" title="程序 简单Swing数组"></a>程序 简单Swing数组</h2><p>下面程序创建了一棵最简单的<code>Swing</code>树:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> javax.swing.*;</span><br><span class="line"><span class="keyword">import</span> javax.swing.tree.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SimpleJTree</span> </span>&#123;</span><br><span class="line">    JFrame jf = <span class="keyword">new</span> JFrame(<span class="string">&quot;简单树&quot;</span>);</span><br><span class="line">    JTree tree;</span><br><span class="line">    DefaultMutableTreeNode root;</span><br><span class="line">    DefaultMutableTreeNode guangdong;</span><br><span class="line">    DefaultMutableTreeNode guangxi;</span><br><span class="line">    DefaultMutableTreeNode foshan;</span><br><span class="line">    DefaultMutableTreeNode shantou;</span><br><span class="line">    DefaultMutableTreeNode guilin;</span><br><span class="line">    DefaultMutableTreeNode nanning;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 依次创建树中所有节点</span></span><br><span class="line">        root = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;中国&quot;</span>);</span><br><span class="line">        guangdong = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;广东&quot;</span>);</span><br><span class="line">        guangxi = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;广西&quot;</span>);</span><br><span class="line">        foshan = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;佛山&quot;</span>);</span><br><span class="line">        shantou = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;汕头&quot;</span>);</span><br><span class="line">        guilin = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;桂林&quot;</span>);</span><br><span class="line">        nanning = <span class="keyword">new</span> DefaultMutableTreeNode(<span class="string">&quot;南宁&quot;</span>);</span><br><span class="line">        <span class="comment">// 通过add()方法建立树节点之间的父子关系</span></span><br><span class="line">        guangdong.add(foshan);</span><br><span class="line">        guangdong.add(shantou);</span><br><span class="line">        guangxi.add(guilin);</span><br><span class="line">        guangxi.add(nanning);</span><br><span class="line">        root.add(guangdong);</span><br><span class="line">        root.add(guangxi);</span><br><span class="line">        <span class="comment">// 以根节点创建树</span></span><br><span class="line">        tree = <span class="keyword">new</span> JTree(root); <span class="comment">// ①</span></span><br><span class="line">        jf.add(<span class="keyword">new</span> JScrollPane(tree));</span><br><span class="line">        jf.pack();</span><br><span class="line">        jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);</span><br><span class="line">        jf.setVisible(<span class="keyword">true</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> SimpleJTree().init();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的粗体字代码创建了一系列的<code>DefaultMutableNode</code>对象,并通过<code>add()</code>方法为这些节点建立了相应的父子关系。程序中①号代码则以一个根节点创建了一个<code>JTree</code>对象。当程序把<code>JTree</code>对象添加到其他容器中后,<code>JTree</code>就会在该容器中绘制出一棵<code>Swing</code>树。运行上面程序,会看到如图12.41所示的窗口。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout/Chapter12/12.10.1/1.png"></p>
+<!-- CrazyJavaHandout/Chapter12/12.10.1/1 -->
+<p>从图12.41中可以看出,<code>Swing</code>树的默认风格是使用一个特殊图标来表示节点的展开、折叠,而不是使用我们熟悉的“+”、“-”图标来表示节点的展开、折叠。如果希望使用“+”、“-”图标来表示节点的展开、折叠,则可以考虑使用<code>Windows</code>风格。</p>
+<h2 id="不显示节点之间的连线"><a href="#不显示节点之间的连线" class="headerlink" title="不显示节点之间的连线"></a>不显示节点之间的连线</h2><p>从图12.41中可以看出,<code>Swing</code>树默认使用连接线来连接所有节点,程序可以使用如下代码来强制<code>JTree</code>不显示节点之间的连接线。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//没有连接线</span></span><br><span class="line">tree.putClientProperty(<span class="string">&quot;JTree.lineStyle&quot;</span>,<span class="string">&quot;None&quot;</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="只有水平分割线"><a href="#只有水平分割线" class="headerlink" title="只有水平分割线"></a>只有水平分割线</h2><p>或者使用如下代码来强制节点之间只有水平分隔线。<br>图12.41中显示的根节点前没有绘制表示节点展开、折叠的特殊图标,如果希望根节点也绘制表示节点展开、折叠的特殊图标,则使用如下代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置是否显示根节点的“展开、折叠”图标,默认是fase</span></span><br><span class="line">tree.setShowsRootHandles(<span class="keyword">true</span>);</span><br></pre></td></tr></table></figure>
+<h2 id="隐藏根节点"><a href="#隐藏根节点" class="headerlink" title="隐藏根节点"></a>隐藏根节点</h2><p><code>JTree</code>甚至允许把整个根节点都隐藏起来,可以通过如下代码来隐藏根节点。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//设置根节点是否可见,默认是true</span></span><br><span class="line">tree.setRootvisible(<span class="keyword">false</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="遍历所有子节点"><a href="#遍历所有子节点" class="headerlink" title="遍历所有子节点"></a>遍历所有子节点</h2><p><code>DefaultMutableTreeNode</code>是<code>JTree</code>默认的树节点,该类提供了大量的方法来访问树中的节点,包括遍历该节点的所有子节点的两个方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Enumeration&lt;TreeNode&gt; breadthFirstEnumeration()</code></td>
+<td align="left">按广度优先的顺序遍历以此节点为根的子树,并返回所有节点组成的枚举对象。</td>
+</tr>
+<tr>
+<td align="left"><code>Enumeration&lt;TreeNode&gt; preorderEnumeration()</code></td>
+<td align="left">Creates and returns an enumeration that traverses the subtree rooted at this node in preorder.</td>
+</tr>
+<tr>
+<td align="left"><code>Enumeration&lt;TreeNode&gt; depthFirstEnumeration()</code></td>
+<td align="left">按深度优先的顺序遍历以此节点为根的子树,并返回所有节点组成的枚举对象。</td>
+</tr>
+<tr>
+<td align="left"><code>Enumeration&lt;TreeNode&gt; postorderEnumeration()</code></td>
+<td align="left">Creates and returns an enumeration that traverses the subtree rooted at this node in postorder.</td>
+</tr>
+</tbody></table>
+<h2 id="获取节点"><a href="#获取节点" class="headerlink" title="获取节点"></a>获取节点</h2><p>除此之外,<code>DefaultMutableTreeNode</code>也提供了大量的方法来获取指定节点的兄弟节点、父节点节点等,常用的有如下几个方法:</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>DefaultMutableTreeNode getNextSibling()</code></td>
+<td align="left">返回此节点的下一个兄弟节点</td>
+</tr>
+<tr>
+<td align="left"><code>TreeNode getParent()</code></td>
+<td align="left">返回此节点的父节点。如果此节点没有父节点,则返回<code>null</code></td>
+</tr>
+<tr>
+<td align="left"><code>TreeNode[] getPath()</code></td>
+<td align="left">返回从根节点到达此节点的所有节点组成的数组。</td>
+</tr>
+<tr>
+<td align="left"><code>protected TreeNode[] getPathToRoot(TreeNode aNode, int depth)</code></td>
+<td align="left">返回包含此节点的树的根节点。</td>
+</tr>
+<tr>
+<td align="left"><code>DefaultMutableTreeNode getPreviousSibling()</code></td>
+<td align="left">返回此节点的上一个兄弟节点。</td>
+</tr>
+<tr>
+<td align="left"><code>TreeNode getRoot()</code></td>
+<td align="left">返回包含此节点的树的根节点</td>
+</tr>
+<tr>
+<td align="left"><code>TreeNode getSharedAncestor(DefaultMutableTreeNode aNode)</code></td>
+<td align="left">返回此节点和<code>aNode</code>最近的共同祖先</td>
+</tr>
+<tr>
+<td align="left"><code>int getSiblingCount()</code></td>
+<td align="left">返回此节点的兄弟节点数</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isLeaf()</code></td>
+<td align="left">返回该节点是否是叶子节点。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isNodeAncestor(TreeNode anotherNode)</code></td>
+<td align="left">判断<code>anotherNode</code>是否是当前节点的祖先节点(包括父节点)。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isNodeChild(TreeNode aNode)</code></td>
+<td align="left">如果<code>aNode</code>是此节点的子节点,则返回<code>true</code></td>
+</tr>
+<tr>
+<td align="left"><code>boolean isNodeDescendant(DefaultMutableTreeNode anotherNode)</code></td>
+<td align="left">如果<code>anotherNode</code>是此节点的后代,包括是此节点本身、此节点的子节点或此节点的子节点的后代,都将返回<code>tnue</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isNodeRelated(DefaultMutableTreeNode aNode)</code></td>
+<td align="left">当<code>aNode</code>和当前节点位于同一棵树中时返回<code>true</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isNodeSibling(TreeNode anotherNode)</code></td>
+<td align="left">返回<code>anotherNode</code>是否是当前节点的兄弟节点。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean isRoot()</code></td>
+<td align="left">返回当前节点是否是根节点。</td>
+</tr>
+<tr>
+<td align="left"><code>Enumeration&lt;TreeNode&gt; pathFromAncestorEnumeration(TreeNode ancestor)</code></td>
+<td align="left">返回从指定祖先节点到当前节点的所有节点组成的枚举对象</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/" title="12.10 使用JTree和TreeModel创建树 12.10.1 创建树">https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/ac2f3e1/" rel="prev" title="12.9.4 使用ListCellRenderer改变列表项外观">
+                  <i class="fa fa-chevron-left"></i> 12.9.4 使用ListCellRenderer改变列表项外观
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/bca8ecf9/" rel="next" title="12.10.2 拖动 编辑树节点">
+                  12.10.2 拖动 编辑树节点 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/b18e72c0/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/b18e72c0/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

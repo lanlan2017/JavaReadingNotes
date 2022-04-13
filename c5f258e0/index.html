@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="2.14 Tomcat8.5的WebSocket支持严格来说,WebSocket并不属于JavaWeb相关规范,WebSocket属于HTML5规范的一部分,WebSocket允许通过JavaScript建立与远程服务器的连接,从而允许远程服务器将数据推送给浏览器。通过使用WebSocket,可以构建出实时性要求比较高的应用,比如在线游戏、在线证券、设备监控、新闻在线播报等,只要服务器端有了新数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2.14 Tomcat8.5的WebSocket支持">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="2.14 Tomcat8.5的WebSocket支持严格来说,WebSocket并不属于JavaWeb相关规范,WebSocket属于HTML5规范的一部分,WebSocket允许通过JavaScript建立与远程服务器的连接,从而允许远程服务器将数据推送给浏览器。通过使用WebSocket,可以构建出实时性要求比较高的应用,比如在线游戏、在线证券、设备监控、新闻在线播报等,只要服务器端有了新数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/LightweightJavaEEEnterpriseApplicationCombat(5thEdition)/Chapter2/2.14/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/LightweightJavaEEEnterpriseApplicationCombat(5thEdition)/Chapter2/2.14/2.png">
+<meta property="article:published_time" content="2020-06-20T21:39:26.000Z">
+<meta property="article:modified_time" content="2020-06-20T22:47:38.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/LightweightJavaEEEnterpriseApplicationCombat(5thEdition)/Chapter2/2.14/1.png">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/","path":"/c5f258e0/","title":"2.14 Tomcat8.5的WebSocket支持"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>2.14 Tomcat8.5的WebSocket支持 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#2-14-Tomcat8-5%E7%9A%84WebSocket%E6%94%AF%E6%8C%81"><span class="nav-text">2.14 Tomcat8.5的WebSocket支持</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E5%8F%91WebSocket%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%9A%84%E6%96%B9%E5%BC%8F"><span class="nav-text">开发WebSocket服务端的方式</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E4%BA%BA%E5%AE%9E%E6%97%B6%E8%81%8A%E5%A4%A9%E7%A8%8B%E5%BA%8F"><span class="nav-text">多人实时聊天程序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF"><span class="nav-text">思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A5%E9%AA%A4"><span class="nav-text">步骤</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ChatEntpoint-java"><span class="nav-text">ChatEntpoint.java</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#chat-html"><span class="nav-text">chat.html</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-text">测试</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2.14 Tomcat8.5的WebSocket支持
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-06-21 05:39:26 / 修改时间：06:47:38" itemprop="dateCreated datePublished" datetime="2020-06-21T05:39:26+08:00">2020-06-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">第2章 JSP Servlet及相关技术详解</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC2%E7%AB%A0-JSP-Servlet%E5%8F%8A%E7%9B%B8%E5%85%B3%E6%8A%80%E6%9C%AF%E8%AF%A6%E8%A7%A3/2-14-Tomcat8-5%E7%9A%84WebSocket%E6%94%AF%E6%8C%81/" itemprop="url" rel="index"><span itemprop="name">2.14 Tomcat8.5的WebSocket支持</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/c5f258e0/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/c5f258e0/" data-xid="/JavaReadingNotes/c5f258e0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="2-14-Tomcat8-5的WebSocket支持"><a href="#2-14-Tomcat8-5的WebSocket支持" class="headerlink" title="2.14 Tomcat8.5的WebSocket支持"></a>2.14 Tomcat8.5的WebSocket支持</h1><p>严格来说,<code>WebSocket</code>并不属于<code>JavaWeb</code>相关规范,<code>WebSocket</code>属于<code>HTML5</code>规范的一部分,<code>WebSocket</code>允许通过<code>JavaScript</code>建立与远程服务器的连接,从而允许远程服务器将数据推送给浏览器。<br>通过使用<code>WebSocket</code>,可以构建出实时性要求比较高的应用,比如<strong>在线游戏</strong>、<strong>在线证券</strong>、<strong>设备监控</strong>、<strong>新闻在线播报</strong>等,只要服务器端有了新数据,<strong>服务端就可以直接将数据推送给浏览器,让浏览器显示最新的状态</strong>。<br><code>WebSocket</code>规范已经相当成熟,而且各种主流浏览器(如<code>Firefox</code>、<code>Chrome</code>、<code>Safari</code>、<code>Opera</code>等)都已经支持<code>WebSocket</code>技术,<code>Java EE</code>规范则提供了<code>WebSocket</code>服务端规范,而<code>Tomcat8.5</code>则对该规范提供了优秀的实现。</p>
+<h2 id="开发WebSocket服务端的方式"><a href="#开发WebSocket服务端的方式" class="headerlink" title="开发WebSocket服务端的方式"></a>开发WebSocket服务端的方式</h2><p>使用<code>Tomcat8.5</code>开发<code>WebSocket</code>服务端非常简单,大致有如下两种方式:</p>
+<ul>
+<li>使用注解方式开发,被<code>@ServerEndpoint</code>修饰的<code>Java</code>类即可作为<code>WebSocket</code>服务端。</li>
+<li>继承<code>Endpoint</code>基类实现<code>WebSocket</code>服务端</li>
+</ul>
+<p>由于使用注解方式开发不仅开发简单,而且是目前的主流方式,因此本书将介绍使用注解方式进行开发。<br>与开发<code>Servlet</code>一样,<code>Servlet</code>并不需要处理底层并发、网络通信等通用的底层细节——因为<code>Servlet</code>处于<code>Web</code>服务器中运行,<code>Web</code>服务器为<code>Servlet</code>处理了底层的并发、网络通信等;开发<code>WebSocket</code>服务端同样需要位于<code>web</code>服务器中运行,因此此处开发的<code>WebSocket</code>同样无须处理并发、网络通信等细节。<br>开发被<code>@ServerEndpoint</code>修饰的<code>Java</code>类之后,该类中还可以定义如下方法:</p>
+<ul>
+<li>被<code>@OnOpen</code>修饰的方法:当客户端与该<code>WebSocket</code>服务端建立连接时激发该方法。</li>
+<li>被<code>@OnClose</code>修饰的方法:当客户端与该<code>WebSocket</code>服务端断开连接时激发该方法</li>
+<li>被<code>@OnMessage</code>修饰的方法:当<code>WebSocket</code>服务端收到客户端消息时激发该方法。</li>
+<li>被<code>@OnError</code>修饰的方法:当客户端与该<code>WebSocket</code>服务端连接出现错误时激发该方法。</li>
+</ul>
+<h1 id="多人实时聊天程序"><a href="#多人实时聊天程序" class="headerlink" title="多人实时聊天程序"></a>多人实时聊天程序</h1><h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>下面将基于<code>WebSocket</code>开发一个多人实时聊天的程序,该程序的思路很简单:</p>
+<ul>
+<li>在这个程序中,每个客户所用的浏览器都与服务器建立一个<code>WebSocket</code>,从而保持实时连接,这样客户端的浏览器可以随时把数据发送到服务器端;</li>
+<li>当服务器收到任何一个浏览器发送来的消息之后,将该消息依次向每个客户端浏览器发送一遍。</li>
+</ul>
+<p>图2.54显示了基于<code>WebSocket</code>的多人实时聊天示意图<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/LightweightJavaEEEnterpriseApplicationCombat(5thEdition)/Chapter2/2.14/1.png"></p>
+<h2 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h2><p>为了实现图2.54所示的示意图,按如下步骤开发<code>WebSocket</code>服务端程序即可:</p>
+<ol>
+<li>定义<code>@OnOpen</code>修饰的方法,每当客户端连接进来时激发该方法,程序使用集合保存所有连接进来的客户端。</li>
+<li>定义<code>@OnMessage</code>修饰的方法,每当该服务端收到客户端消息时激发该方法,服务端收到消息之后遍历保存客户端的集合,并将消息逐个发给所有客户端。</li>
+<li>定义<code>@OnClose</code>修饰的方法,每当客户端断开与该服务端连接时激发该方法,程序将该客户端从集合中删除。</li>
+</ol>
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><pre>
+E:\workspacne_JDK8Tomcat8.5\WebSocket
+├─src\
+│ └─lee\
+│   └─ChatEntpoint.java
+└─WebContent\
+  ├─chat.html
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─lib\
+    └─web.xml
+</pre>
+<h2 id="ChatEntpoint-java"><a href="#ChatEntpoint-java" class="headerlink" title="ChatEntpoint.java"></a>ChatEntpoint.java</h2><p>下面程序就是基于<code>WebSocket</code>实现多人实时聊天的服务器程序。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.util.Set;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CopyOnWriteArraySet;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"><span class="keyword">import</span> javax.websocket.*;</span><br><span class="line"><span class="keyword">import</span> javax.websocket.server.*;</span><br><span class="line"></span><br><span class="line"><span class="meta">@ServerEndpoint(value = &quot;/websocket/chat&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChatEntpoint</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> String GUEST_PREFIX = <span class="string">&quot;访客&quot;</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> AtomicInteger connectionIds = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">    <span class="comment">// 定义一个集合，用于保存所有接入的WebSocket客户端</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Set&lt;ChatEntpoint&gt; clientSet = <span class="keyword">new</span> CopyOnWriteArraySet&lt;&gt;();</span><br><span class="line">    <span class="comment">// 定义一个成员变量，记录WebSocket客户端的聊天昵称</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String nickname;</span><br><span class="line">    <span class="comment">// 定义一个成员变量，记录与WebSocket之间的会话</span></span><br><span class="line">    <span class="keyword">private</span> Session session;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ChatEntpoint</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        nickname = GUEST_PREFIX + connectionIds.getAndIncrement();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当客户端连接进来时自动激发该方法</span></span><br><span class="line">    <span class="meta">@OnOpen</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">start</span><span class="params">(Session session)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.session = session;</span><br><span class="line">        <span class="comment">// 将WebSocket客户端会话添加到集合中</span></span><br><span class="line">        clientSet.add(<span class="keyword">this</span>);</span><br><span class="line">        String message = String.format(<span class="string">&quot;【%s %s】&quot;</span>, nickname, <span class="string">&quot;加入了聊天室！&quot;</span>);</span><br><span class="line">        <span class="comment">// 发送消息</span></span><br><span class="line">        broadcast(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当客户端断开连接时自动激发该方法</span></span><br><span class="line">    <span class="meta">@OnClose</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        clientSet.remove(<span class="keyword">this</span>);</span><br><span class="line">        String message = String.format(<span class="string">&quot;【%s %s】&quot;</span>, nickname, <span class="string">&quot;离开了聊天室！&quot;</span>);</span><br><span class="line">        <span class="comment">// 发送消息</span></span><br><span class="line">        broadcast(message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 每当收到客户端消息时自动激发该方法</span></span><br><span class="line">    <span class="meta">@OnMessage</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">incoming</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        String filteredMessage = String.format(<span class="string">&quot;%s: %s&quot;</span>, nickname, filter(message));</span><br><span class="line">        <span class="comment">// 发送消息</span></span><br><span class="line">        broadcast(filteredMessage);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 当客户端通信出现错误时，激发该方法</span></span><br><span class="line">    <span class="meta">@OnError</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onError</span><span class="params">(Throwable t)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;WebSocket服务端错误 &quot;</span> + t);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现广播消息的工具方法</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">broadcast</span><span class="params">(String msg)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历服务器关联的所有客户端</span></span><br><span class="line">        <span class="keyword">for</span> (ChatEntpoint client : clientSet) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (client) &#123;</span><br><span class="line">                    <span class="comment">// 发送消息</span></span><br><span class="line">                    client.session.getBasicRemote().sendText(msg);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;聊天错误，向客户端 &quot;</span> + client + <span class="string">&quot; 发送消息出现错误。&quot;</span>);</span><br><span class="line">                clientSet.remove(client);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    client.session.close();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e1) &#123;</span><br><span class="line">                &#125;</span><br><span class="line">                String message = String.format(<span class="string">&quot;【%s %s】&quot;</span>, client.nickname, <span class="string">&quot;已经被断开了连接。&quot;</span>);</span><br><span class="line">                broadcast(message);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 定义一个工具方法，用于对字符串中的HTML字符标签进行转义</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> String <span class="title">filter</span><span class="params">(String message)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (message == <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">char</span> content[] = <span class="keyword">new</span> <span class="keyword">char</span>[message.length()];</span><br><span class="line">        message.getChars(<span class="number">0</span>, message.length(), content, <span class="number">0</span>);</span><br><span class="line">        StringBuilder result = <span class="keyword">new</span> StringBuilder(content.length + <span class="number">50</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; content.length; i++) &#123;</span><br><span class="line">            <span class="comment">// 控制对尖括号等特殊字符进行转义</span></span><br><span class="line">            <span class="keyword">switch</span> (content[i]) &#123;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;&lt;&#x27;</span>:</span><br><span class="line">                    result.append(<span class="string">&quot;&amp;lt;&quot;</span>);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;&gt;&#x27;</span>:</span><br><span class="line">                    result.append(<span class="string">&quot;&amp;gt;&quot;</span>);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;&amp;&#x27;</span>:</span><br><span class="line">                    result.append(<span class="string">&quot;&amp;amp;&quot;</span>);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">&#x27;&quot;&#x27;</span>:</span><br><span class="line">                    result.append(<span class="string">&quot;&amp;quot;&quot;</span>);</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">default</span>:</span><br><span class="line">                    result.append(content[i]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> (result.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的<code>ChatEntpoint</code>主要就是实现了<code>@OnOpen</code>、<code>@OnClose</code>、<code>@OnMessage</code>和<code>@OnError</code>这4个注解修饰的方法。<br>需要说明的是,该<code>ChatEntpoint</code>类并不是真正的<code>WebSocket</code>服务端,它只实现了<code>WebSocket</code>服务端的核心功能,<code>Tomcat</code>会调用它的方法作为<code>WebSocket</code>服务端。因此,<code>Tomcat</code>会为每个<code>WebSocket</code>客户端创建一个<code>ChatEntpoint</code>对象,也就是说,有一个<code>WebSocket</code>客户端,程序就有一个<code>ChatEntpoint</code>对象。所以上面程序中<code>clientSet</code>集合保存了多个<code>ChatEntpoint</code>对象,其中每个<code>ChatEndpoint</code>对象对应一个<code>WebSocket</code>客户端。<br>编译<code>ChatEntpoint</code>类,并将生成的<code>class</code>文件放在<code>Web</code>应用的<code>WEB-NF/Classes</code>目录下,该<code>ChatEntpoint</code>即可作为<code>WebSocket</code>服务端使用。<br>上面<code>ChatEntpoint</code>类用到了<code>WebSocket API</code>规范的相关注解,因此读者需要将<code>Tomcat</code>的<code>lib</code>目录下的<code>websocket-api.jar</code>添加到<code>CLASSPATH</code>环境变量下。</p>
+<h2 id="chat-html"><a href="#chat-html" class="headerlink" title="chat.html"></a>chat.html</h2><p>接下来使用<code>JavaScript</code>开发<code>WebSocket</code>客户端。此处<code>WebSocket</code>客户端使用一个简单的<code>HTML</code>页面即可</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;author&quot;</span> <span class="attr">content</span>=<span class="string">&quot;Yeeku.H.Lee(CrazyIt.org)&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Type&quot;</span> <span class="attr">content</span>=<span class="string">&quot;text/html; charset=UTF-8&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span> 使用WebSocket通信 <span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">&quot;text/javascript&quot;</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="comment">// 创建WebSocket对象</span></span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> webSocket = <span class="keyword">new</span> WebSocket(<span class="string">&quot;ws://127.0.0.1:8888/WebSocket/websocket/chat&quot;</span>);</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> sendMsg = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">var</span> inputElement = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;msg&#x27;</span>);</span></span><br><span class="line"><span class="javascript">            <span class="comment">// 发送消息</span></span></span><br><span class="line"><span class="javascript">            webSocket.send(inputElement.value);</span></span><br><span class="line"><span class="javascript">            <span class="comment">// 清空单行文本框</span></span></span><br><span class="line"><span class="javascript">            inputElement.value = <span class="string">&quot;&quot;</span>;</span></span><br><span class="line"><span class="javascript">        &#125;</span></span><br><span class="line"><span class="javascript">        <span class="keyword">var</span> send = <span class="function"><span class="keyword">function</span>(<span class="params">event</span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="keyword">if</span> (event.keyCode == <span class="number">13</span>)</span></span><br><span class="line"><span class="javascript">            &#123;</span></span><br><span class="line"><span class="javascript">                sendMsg();</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">        &#125;;</span></span><br><span class="line"><span class="javascript">        webSocket.onopen = <span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="comment">// 为onmessage事件绑定监听器，接收消息</span></span></span><br><span class="line"><span class="javascript">            webSocket.onmessage= <span class="function"><span class="keyword">function</span>(<span class="params">event</span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">            </span>&#123;</span></span><br><span class="line"><span class="javascript">                <span class="keyword">var</span> show = <span class="built_in">document</span>.getElementById(<span class="string">&#x27;show&#x27;</span>)</span></span><br><span class="line"><span class="javascript">                <span class="comment">// 接收、并显示消息</span></span></span><br><span class="line"><span class="javascript">                show.innerHTML += event.data + <span class="string">&quot;&lt;br/&gt;&quot;</span>;</span></span><br><span class="line"><span class="javascript">                show.scrollTop = show.scrollHeight;</span></span><br><span class="line"><span class="javascript">            &#125;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">document</span>.getElementById(<span class="string">&#x27;msg&#x27;</span>).onkeydown = send;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">document</span>.getElementById(<span class="string">&#x27;sendBn&#x27;</span>).onclick = sendMsg;</span></span><br><span class="line"><span class="javascript">        &#125;;</span></span><br><span class="line"><span class="javascript">        webSocket.onclose = <span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span></span></span><br><span class="line"><span class="function"><span class="javascript">        </span>&#123;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">document</span>.getElementById(<span class="string">&#x27;msg&#x27;</span>).onkeydown = <span class="literal">null</span>;</span></span><br><span class="line"><span class="javascript">            <span class="built_in">document</span>.getElementById(<span class="string">&#x27;sendBn&#x27;</span>).onclick = <span class="literal">null</span>;</span></span><br><span class="line"><span class="javascript">            Console.log(<span class="string">&#x27;WebSocket已经被关闭。&#x27;</span>);</span></span><br><span class="line"><span class="javascript">        &#125;;</span></span><br><span class="line"><span class="javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&quot;width:600px;height:240px;</span></span></span><br><span class="line"><span class="string"><span class="tag">    overflow-y:auto;border:1px solid #333;&quot;</span> <span class="attr">id</span>=<span class="string">&quot;show&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;text&quot;</span> <span class="attr">size</span>=<span class="string">&quot;80&quot;</span> <span class="attr">id</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">placeholder</span>=<span class="string">&quot;输入聊天内容&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;button&quot;</span> <span class="attr">value</span>=<span class="string">&quot;发送&quot;</span> <span class="attr">id</span>=<span class="string">&quot;sendBn&quot;</span> <span class="attr">name</span>=<span class="string">&quot;sendBn&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上面程序中代码:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> webSocket = <span class="keyword">new</span> WebSocket(<span class="string">&quot;ws://127.0.0.1:8888/WebSocket/websocket/chat&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>创建了一个<code>WebSocket</code>对象(<code>WebSocket</code>是<code>HTML5</code>规范新增的类)创建对象时指定<code>WebSocket</code>服务端的地址。一旦程序得到了<code>WebSocket</code>对象,接下来程序即可调用<code>WebSocket</code>的<code>send()</code>方法向服务器发送消息。<br>除此之外,还可以为<code>WebSocket</code>绑定如下三个事件处理函数:</p>
+<ul>
+<li><code>onopen</code>:当<code>WebSocket</code>客户端与服务端建立连接时自动激发该事件处理函数。</li>
+<li><code>onclose</code>:当<code>WebSocket</code>客户端与服务端关闭连接时自动激发该事件处理函数。</li>
+<li><code>onmessage</code>:当<code>WebSocket</code>客户端收到服务端消息时自动激发该事件处理函数。</li>
+</ul>
+<p><code>WebSocket</code>肯定会成为<code>Web</code>应用开发的主流技术,这种技术颠覆了传统<code>Web</code>应用请求响应架构模型,它可以让服务端与浏览器建立实时通信的<code>Socket</code>,因此具有广泛的用途。为了使用<code>WebSocket</code>,还需要<code>JavaScript</code>编程知识,关于<code>JavaScript</code>和<code>WebSocket</code>相关知识,请参考《疯狂HTML5/CSS3/JavaScript讲义》</p>
+<h2 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h2><p>首先启动<code>ChatEntpoint</code>所在的<code>web</code>应用,使用多个浏览器登录<code>chat.html</code>页面聊天即可看到如图2.55所示的聊天效果。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/WebSocket/chat.html</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/LightweightJavaEEEnterpriseApplicationCombat(5thEdition)/Chapter2/2.14/2.png"></p>
+<!-- LightweightJavaEEEnterpriseApplicationCombat(5thEdition)/Chapter2/2.14/2 -->
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/" title="2.14 Tomcat8.5的WebSocket支持">https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/8dcbd8d1/" rel="prev" title="2.13 Servlet3.1新增的非阻塞式IO">
+                  <i class="fa fa-chevron-left"></i> 2.13 Servlet3.1新增的非阻塞式IO
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/f23fe08c/" rel="next" title="2.15 本章小结">
+                  2.15 本章小结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/c5f258e0/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/c5f258e0/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

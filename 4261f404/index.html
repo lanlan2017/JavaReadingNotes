@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="15.10 Java7的NIO.2Java7对原有的NIO进行了重大改进,改进主要包括如下两方面的内容。  提供了全面的文件IO和文件系统访问支持。 基于异步Channel的IO。  第一个改进表现为Java7新增的java.nio.file包及各个子包;第二个改进表现为Java7在java.nio.channels包下增加了多个以Asynchronous开头的Channel接口和类。Java7把">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/4261f404/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="15.10 Java7的NIO.2Java7对原有的NIO进行了重大改进,改进主要包括如下两方面的内容。  提供了全面的文件IO和文件系统访问支持。 基于异步Channel的IO。  第一个改进表现为Java7新增的java.nio.file包及各个子包;第二个改进表现为Java7在java.nio.channels包下增加了多个以Asynchronous开头的Channel接口和类。Java7把">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-01-06T02:34:37.000Z">
+<meta property="article:modified_time" content="2020-03-15T00:15:11.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/4261f404/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/4261f404/","path":"/4261f404/","title":"15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#15-10-Java7%E7%9A%84NIO-2"><span class="nav-text">15.10 Java7的NIO.2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#15-1-0-1-Path-Paths%E5%92%8CFiles%E6%A0%B8%E5%BF%83API"><span class="nav-text">15.1.0.1 Path Paths和Files核心API</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Path%E6%8E%A5%E5%8F%A3"><span class="nav-text">Path接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Path%E6%8E%A5%E5%8F%A3%E6%96%B9%E6%B3%95"><span class="nav-text">Path接口方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-text">工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%91%BD%E5%90%8D%E8%A7%84%E5%88%99"><span class="nav-text">工具类命名规则</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Paths%E5%B7%A5%E5%85%B7%E7%B1%BB%E6%96%B9%E6%B3%95"><span class="nav-text">Paths工具类方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-Path%E6%8E%A5%E5%8F%A3Paths%E5%B7%A5%E5%85%B7%E7%B1%BB%E7%A4%BA%E4%BE%8B"><span class="nav-text">程序 Path接口Paths工具类示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Files%E5%B7%A5%E5%85%B7%E7%B1%BB"><span class="nav-text">Files工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%81%E6%93%8D%E4%BD%9C"><span class="nav-text">流操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copy%E6%96%B9%E6%B3%95"><span class="nav-text">copy方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%96%B9%E6%B3%95"><span class="nav-text">判断方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E5%8F%AF%E8%AF%BB%E5%8F%AF%E5%86%99%E5%8F%AF%E6%89%A7%E8%A1%8C"><span class="nav-text">是否可读可写可执行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E9%9A%90%E8%97%8F-%E6%98%AF%E5%90%A6%E7%AC%A6%E5%8F%B7%E9%93%BE%E6%8E%A5"><span class="nav-text">是否隐藏 是否符号链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E6%96%87%E4%BB%B6-%E6%98%AF%E5%90%A6%E7%9B%AE%E5%BD%95-%E6%98%AF%E5%90%A6%E5%90%8C%E4%B8%80%E4%B8%AA%E6%96%87%E4%BB%B6"><span class="nav-text">是否文件 是否目录 是否同一个文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%98%AF%E5%90%A6%E5%AD%98%E5%9C%A8"><span class="nav-text">是否存在</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#read%E6%96%B9%E6%B3%95"><span class="nav-text">read方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%97%E5%88%B0%E5%AD%97%E8%8A%82%E6%95%B0%E7%BB%84"><span class="nav-text">得到字节数组</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%97%E5%88%B0%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-text">得到字符串</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%97%E5%88%B0%E6%89%80%E6%9C%89%E8%A1%8C"><span class="nav-text">得到所有行</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BE%97%E5%88%B0%E5%85%B6%E4%BB%96"><span class="nav-text">得到其他</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#create%E6%96%B9%E6%B3%95"><span class="nav-text">create方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95"><span class="nav-text">创建目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%96%87%E4%BB%B6"><span class="nav-text">创建文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%93%BE%E6%8E%A5"><span class="nav-text">创建链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%B4%E6%97%B6%E7%9B%AE%E5%BD%95"><span class="nav-text">创建临时目录</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%B4%E6%97%B6%E6%96%87%E4%BB%B6"><span class="nav-text">创建临时文件</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#delete%E6%96%B9%E6%B3%95"><span class="nav-text">delete方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set%E6%96%B9%E6%B3%95"><span class="nav-text">set方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get%E6%96%B9%E6%B3%95"><span class="nav-text">get方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#new%E6%96%B9%E6%B3%95"><span class="nav-text">new方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#newBufferedReader"><span class="nav-text">newBufferedReader</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#newBufferedWriter"><span class="nav-text">newBufferedWriter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#newByteChannel"><span class="nav-text">newByteChannel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#newDirectoryStream"><span class="nav-text">newDirectoryStream</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#newInputStream"><span class="nav-text">newInputStream</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#write%E6%96%B9%E6%B3%95"><span class="nav-text">write方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#write"><span class="nav-text">write</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#writeString"><span class="nav-text">writeString</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#walk%E6%96%B9%E6%B3%95"><span class="nav-text">walk方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#walk"><span class="nav-text">walk</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#walkFileTree"><span class="nav-text">walkFileTree</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E6%B5%81%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-text">返回流的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#walk-1"><span class="nav-text">walk</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#find"><span class="nav-text">find</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#lines"><span class="nav-text">lines</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#list%E6%96%B9%E6%B3%95"><span class="nav-text">list方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%96%B9%E6%B3%95"><span class="nav-text">其他方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F-Files%E5%B7%A5%E5%85%B7%E7%B1%BB%E7%A4%BA%E4%BE%8B"><span class="nav-text">程序 Files工具类示例</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/4261f404/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-06 10:34:37" itemprop="dateCreated datePublished" datetime="2020-01-06T10:34:37+08:00">2020-01-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:11" itemprop="dateModified" datetime="2020-03-15T08:15:11+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-10-Java7%E7%9A%84NIO-2/" itemprop="url" rel="index"><span itemprop="name">15.10 Java7的NIO.2</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/4261f404/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/4261f404/" data-xid="/JavaReadingNotes/4261f404/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="15-10-Java7的NIO-2"><a href="#15-10-Java7的NIO-2" class="headerlink" title="15.10 Java7的NIO.2"></a>15.10 Java7的NIO.2</h1><p><code>Java7</code>对原有的<code>NIO</code>进行了重大改进,改进主要包括如下两方面的内容。</p>
+<ul>
+<li>提供了全面的文件<code>IO</code>和文件系统访问支持。</li>
+<li>基于异步<code>Channel</code>的<code>IO</code>。</li>
+</ul>
+<p>第一个改进表现为<code>Java7</code>新增的<code>java.nio.file</code>包及各个子包;<br>第二个改进表现为<code>Java7</code>在<code>java.nio.channels</code>包下增加了多个以<code>Asynchronous</code>开头的<code>Channel</code>接口和类。<code>Java7</code>把这种改进称为<code>NIO.2</code>,本章先详细介绍<code>NIO</code>的第二个改进。</p>
+<h1 id="15-1-0-1-Path-Paths和Files核心API"><a href="#15-1-0-1-Path-Paths和Files核心API" class="headerlink" title="15.1.0.1 Path Paths和Files核心API"></a>15.1.0.1 Path Paths和Files核心API</h1><p>早期的<code>Java</code>只提供了一个<code>File</code>类来访问文件系统,但<code>File</code>类的功能比较有限,它不能利用特定文件系统的特性,<code>File</code>所提供的方法的性能也不高。而且,其大多数方法在出错时仅返回失败,并不会提供异常信息</p>
+<h2 id="Path接口"><a href="#Path接口" class="headerlink" title="Path接口"></a>Path接口</h2><p><code>NIO.2</code>为了弥补这种不足,引入了一个<code>Path</code>接口,<strong><code>Path</code>接口代表一个平台无关的平台路径</strong>。</p>
+<h3 id="Path接口方法"><a href="#Path接口方法" class="headerlink" title="Path接口方法"></a>Path接口方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Path getRoot()</code></td>
+<td align="left">Returns the root component of this path as a Path object, or null if this path does not have a root component.</td>
+</tr>
+<tr>
+<td align="left"><code>Path toAbsolutePath()</code></td>
+<td align="left">Returns a Path object representing the absolute path of this path.</td>
+</tr>
+<tr>
+<td align="left"><code>Path getName(int index)</code></td>
+<td align="left">Returns a name element of this path as a Path object.</td>
+</tr>
+<tr>
+<td align="left"><code>int getNameCount()</code></td>
+<td align="left">返回<code>Path</code>路径所包含的路径名的数量,例如<code>g:\publishl\codes</code>调用该方法就会返回3。</td>
+</tr>
+</tbody></table>
+<h2 id="工具类"><a href="#工具类" class="headerlink" title="工具类"></a>工具类</h2><p>除此之外,<code>NIO.2</code>还提供了<code>Files</code>、<code>Paths</code>两个工具类,其中</p>
+<ul>
+<li><code>Files</code>包含了大量静态的工具方法来操作文件;</li>
+<li><code>Paths</code>则包含了两个返回<code>Path</code>的静态工厂方法。</li>
+</ul>
+<h3 id="工具类命名规则"><a href="#工具类命名规则" class="headerlink" title="工具类命名规则"></a>工具类命名规则</h3><p><code>Files</code>和<code>Paths</code>两个工具类非常符合<code>Java</code>一贯的命名风格,比如前面介绍的操作数组的工具类为<code>Arrays</code>,操作集合的工具类为<code>Collections</code>,这种一致的命名风格可以让读者快速了解这些工具类的用途。</p>
+<h2 id="Paths工具类方法"><a href="#Paths工具类方法" class="headerlink" title="Paths工具类方法"></a>Paths工具类方法</h2><table>
+<thead>
+<tr>
+<th align="left"><code>Paths</code>接口方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path get(String first, String... more)</code></td>
+<td align="left">Converts a path string, or a sequence of strings that when joined form a path string, to a Path.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path get(URI uri)</code></td>
+<td align="left">Converts the given URI to a Path object.</td>
+</tr>
+</tbody></table>
+<p>第一个<code>get</code>方法会将给定的多个字符串连缀成路径,比如<code>Paths.get(&quot;g:&quot;,&quot;publish&quot;,&quot;codes&quot;)</code>就返回<code>g:\publish\codes</code>路径。</p>
+<h2 id="程序-Path接口Paths工具类示例"><a href="#程序-Path接口Paths工具类示例" class="headerlink" title="程序 Path接口Paths工具类示例"></a>程序 Path接口Paths工具类示例</h2><p>下面程序简单示范了<code>Path</code>接口的功能和用法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.file.Path;</span><br><span class="line"><span class="keyword">import</span> java.nio.file.Paths;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PathTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 以当前路径来创建Path对象</span></span><br><span class="line">        Path path = Paths.get(<span class="string">&quot;.&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;path里包含的路径数量：&quot;</span> + path.getNameCount());</span><br><span class="line">        System.out.println(<span class="string">&quot;path的根路径：&quot;</span> + path.getRoot());</span><br><span class="line">        <span class="comment">// 获取path对应的绝对路径。</span></span><br><span class="line">        Path absolutePath = path.toAbsolutePath();</span><br><span class="line">        System.out.println(absolutePath);</span><br><span class="line">        <span class="comment">// 获取绝对路径的根路径</span></span><br><span class="line">        System.out.println(<span class="string">&quot;absolutePath的根路径：&quot;</span> + absolutePath.getRoot());</span><br><span class="line">        <span class="comment">// 获取绝对路径所包含的路径数量</span></span><br><span class="line">        System.out.println(<span class="string">&quot;absolutePath里包含的路径数量：&quot;</span> + absolutePath.getNameCount());</span><br><span class="line">        System.out.println(absolutePath.getName(<span class="number">3</span>));</span><br><span class="line">        <span class="comment">// 以多个String来构建Path对象</span></span><br><span class="line">        Path path2 = Paths.get(<span class="string">&quot;g:&quot;</span>, <span class="string">&quot;publish&quot;</span>, <span class="string">&quot;codes&quot;</span>);</span><br><span class="line">        System.out.println(path2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Files工具类"><a href="#Files工具类" class="headerlink" title="Files工具类"></a>Files工具类</h2><p><code>Files</code>类是一个高度封装的工具类,它提供了大量的工具方法来完成文件<strong>复制</strong>、<strong>读取文件内容</strong>、<strong>写入文件内容</strong>等功能,这些原本需要程序员通过<code>IO</code>操作才能完成的功能,现在<code>Files</code>类只要一个工具方法即可。读者应该熟练掌握<code>Files</code>工具类的用法,它所包含的工具方法可以大大地简化文件<code>IO</code>。</p>
+<h3 id="流操作"><a href="#流操作" class="headerlink" title="流操作"></a>流操作</h3><p><code>Java8</code>进一步增强了<code>Files</code>工具类的功能,允许开发者使用<code>Stream API</code>来操作文件目录和文件内容。</p>
+<h3 id="copy方法"><a href="#copy方法" class="headerlink" title="copy方法"></a>copy方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static long copy(InputStream in, Path target, CopyOption... options)</code></td>
+<td align="left">Copies all bytes from an input stream to a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static long copy(Path source, OutputStream out)</code></td>
+<td align="left">Copies all bytes from a file to an output stream.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path copy(Path source, Path target, CopyOption... options)</code></td>
+<td align="left">Copy a file to a target file.</td>
+</tr>
+</tbody></table>
+<h3 id="判断方法"><a href="#判断方法" class="headerlink" title="判断方法"></a>判断方法</h3><h4 id="是否可读可写可执行"><a href="#是否可读可写可执行" class="headerlink" title="是否可读可写可执行"></a>是否可读可写可执行</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static boolean isReadable(Path path)</code></td>
+<td align="left">Tests whether a file is readable.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean isWritable(Path path)</code></td>
+<td align="left">Tests whether a file is writable.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean isExecutable(Path path)</code></td>
+<td align="left">Tests whether a file is executable.</td>
+</tr>
+</tbody></table>
+<h4 id="是否隐藏-是否符号链接"><a href="#是否隐藏-是否符号链接" class="headerlink" title="是否隐藏 是否符号链接"></a>是否隐藏 是否符号链接</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static boolean isHidden(Path path)</code></td>
+<td align="left">Tells whether or not a file is considered hidden.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean isSymbolicLink(Path path)</code></td>
+<td align="left">Tests whether a file is a symbolic link.</td>
+</tr>
+</tbody></table>
+<h4 id="是否文件-是否目录-是否同一个文件"><a href="#是否文件-是否目录-是否同一个文件" class="headerlink" title="是否文件 是否目录 是否同一个文件"></a>是否文件 是否目录 是否同一个文件</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static boolean isDirectory(Path path, LinkOption... options)</code></td>
+<td align="left">Tests whether a file is a directory.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean isRegularFile(Path path, LinkOption... options)</code></td>
+<td align="left">Tests whether a file is a regular file with opaque content.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean isSameFile(Path path, Path path2)</code></td>
+<td align="left">Tests if two paths locate the same file.</td>
+</tr>
+</tbody></table>
+<h4 id="是否存在"><a href="#是否存在" class="headerlink" title="是否存在"></a>是否存在</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static boolean exists(Path path, LinkOption... options)</code></td>
+<td align="left">Tests whether a file exists.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean notExists(Path path, LinkOption... options)</code></td>
+<td align="left">Tests whether the file located by this path does not exist.</td>
+</tr>
+</tbody></table>
+<h3 id="read方法"><a href="#read方法" class="headerlink" title="read方法"></a>read方法</h3><h4 id="得到字节数组"><a href="#得到字节数组" class="headerlink" title="得到字节数组"></a>得到字节数组</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static byte[] readAllBytes(Path path)</code></td>
+<td align="left">Reads all the bytes from a file.</td>
+</tr>
+</tbody></table>
+<h4 id="得到字符串"><a href="#得到字符串" class="headerlink" title="得到字符串"></a>得到字符串</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static String readString(Path path)</code></td>
+<td align="left">Reads all content from a file into a string, decoding from bytes to characters using the UTF-8 charset.</td>
+</tr>
+<tr>
+<td align="left"><code>static String readString(Path path, Charset cs)</code></td>
+<td align="left">Reads all characters from a file into a string, decoding from bytes to characters using the specified charset.</td>
+</tr>
+</tbody></table>
+<h4 id="得到所有行"><a href="#得到所有行" class="headerlink" title="得到所有行"></a>得到所有行</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static List&lt;String&gt; readAllLines(Path path)</code></td>
+<td align="left">Read all lines from a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static List&lt;String&gt; readAllLines(Path path, Charset cs)</code></td>
+<td align="left">Read all lines from a file.</td>
+</tr>
+</tbody></table>
+<h4 id="得到其他"><a href="#得到其他" class="headerlink" title="得到其他"></a>得到其他</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static &lt;A extends BasicFileAttributes&gt; A readAttributes(Path path, Class&lt;A&gt; type, LinkOption... options)</code></td>
+<td align="left">Reads a file’s attributes as a bulk operation.</td>
+</tr>
+<tr>
+<td align="left"><code>static Map&lt;String,​Object&gt; readAttributes(Path path, String attributes, LinkOption... options)</code></td>
+<td align="left">Reads a set of file attributes as a bulk operation.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path readSymbolicLink(Path link)</code></td>
+<td align="left">Reads the target of a symbolic link (optional operation).</td>
+</tr>
+</tbody></table>
+<h3 id="create方法"><a href="#create方法" class="headerlink" title="create方法"></a>create方法</h3><h4 id="创建目录"><a href="#创建目录" class="headerlink" title="创建目录"></a>创建目录</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path createDirectories(Path dir, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a directory by creating all nonexistent parent directories first.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path createDirectory(Path dir, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a new directory.</td>
+</tr>
+</tbody></table>
+<h4 id="创建文件"><a href="#创建文件" class="headerlink" title="创建文件"></a>创建文件</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path createFile(Path path, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a new and empty file, failing if the file already exists.</td>
+</tr>
+</tbody></table>
+<h4 id="创建链接"><a href="#创建链接" class="headerlink" title="创建链接"></a>创建链接</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path createLink(Path link, Path existing)</code></td>
+<td align="left">Creates a new link (directory entry) for an existing file (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>static Path createSymbolicLink(Path link, Path target, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a symbolic link to a target (optional operation).</td>
+</tr>
+</tbody></table>
+<h4 id="创建临时目录"><a href="#创建临时目录" class="headerlink" title="创建临时目录"></a>创建临时目录</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path createTempDirectory(String prefix, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a new directory in the default temporary-file directory, using the given prefix to generate its name.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path createTempDirectory(Path dir, String prefix, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a new directory in the specified directory, using the given prefix to generate its name.</td>
+</tr>
+</tbody></table>
+<h4 id="创建临时文件"><a href="#创建临时文件" class="headerlink" title="创建临时文件"></a>创建临时文件</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path createTempFile(String prefix, String suffix, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates an empty file in the default temporary-file directory, using the given prefix and suffix to generate its name.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path createTempFile(Path dir, String prefix, String suffix, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Creates a new empty file in the specified directory, using the given prefix and suffix strings to generate its name.</td>
+</tr>
+</tbody></table>
+<h3 id="delete方法"><a href="#delete方法" class="headerlink" title="delete方法"></a>delete方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static void delete(Path path)</code></td>
+<td align="left">Deletes a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static boolean deleteIfExists(Path path)</code></td>
+<td align="left">Deletes a file if it exists.</td>
+</tr>
+</tbody></table>
+<h3 id="set方法"><a href="#set方法" class="headerlink" title="set方法"></a>set方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path setAttribute(Path path, String attribute, Object value, LinkOption... options)</code></td>
+<td align="left">Sets the value of a file attribute.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path setLastModifiedTime(Path path, FileTime time)</code></td>
+<td align="left">Updates a file’s last modified time attribute.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path setOwner(Path path, UserPrincipal owner)</code></td>
+<td align="left">Updates the file owner.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path setPosixFilePermissions(Path path, Set&lt;PosixFilePermission&gt; perms)</code></td>
+<td align="left">Sets a file’s POSIX permissions.</td>
+</tr>
+</tbody></table>
+<h3 id="get方法"><a href="#get方法" class="headerlink" title="get方法"></a>get方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Object getAttribute(Path path, String attribute, LinkOption... options)</code></td>
+<td align="left">Reads the value of a file attribute.</td>
+</tr>
+<tr>
+<td align="left"><code>static FileTime getLastModifiedTime(Path path, LinkOption... options)</code></td>
+<td align="left">Returns a file’s last modified time.</td>
+</tr>
+<tr>
+<td align="left"><code>static UserPrincipal getOwner(Path path, LinkOption... options)</code></td>
+<td align="left">Returns the owner of a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static Set&lt;PosixFilePermission&gt; getPosixFilePermissions(Path path, LinkOption... options)</code></td>
+<td align="left">Returns a file’s POSIX file permissions.</td>
+</tr>
+<tr>
+<td align="left"><code>static &lt;V extends FileAttributeView&gt; V getFileAttributeView(Path path, Class&lt;V&gt; type, LinkOption... options)</code></td>
+<td align="left">Returns a file attribute view of a given type.</td>
+</tr>
+<tr>
+<td align="left"><code>static FileStore getFileStore(Path path)</code></td>
+<td align="left">Returns the FileStore representing the file store where a file is located.</td>
+</tr>
+</tbody></table>
+<h3 id="new方法"><a href="#new方法" class="headerlink" title="new方法"></a>new方法</h3><h4 id="newBufferedReader"><a href="#newBufferedReader" class="headerlink" title="newBufferedReader"></a>newBufferedReader</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static BufferedReader newBufferedReader(Path path)</code></td>
+<td align="left">Opens a file for reading, returning a BufferedReader to read text from the file in an efficient manner.</td>
+</tr>
+<tr>
+<td align="left"><code>static BufferedReader newBufferedReader(Path path, Charset cs)</code></td>
+<td align="left">Opens a file for reading, returning a BufferedReader that may be used to read text from the file in an efficient manner.</td>
+</tr>
+</tbody></table>
+<h4 id="newBufferedWriter"><a href="#newBufferedWriter" class="headerlink" title="newBufferedWriter"></a>newBufferedWriter</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static BufferedWriter newBufferedWriter(Path path, Charset cs, OpenOption... options)</code></td>
+<td align="left">Opens or creates a file for writing, returning a BufferedWriter that may be used to write text to the file in an efficient manner.</td>
+</tr>
+<tr>
+<td align="left"><code>static BufferedWriter newBufferedWriter(Path path, OpenOption... options)</code></td>
+<td align="left">Opens or creates a file for writing, returning a BufferedWriter to write text to the file in an efficient manner.</td>
+</tr>
+</tbody></table>
+<h4 id="newByteChannel"><a href="#newByteChannel" class="headerlink" title="newByteChannel"></a>newByteChannel</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static SeekableByteChannel newByteChannel(Path path, OpenOption... options)</code></td>
+<td align="left">Opens or creates a file, returning a seekable byte channel to access the file.</td>
+</tr>
+<tr>
+<td align="left"><code>static SeekableByteChannel newByteChannel(Path path, Set&lt;? extends OpenOption&gt; options, FileAttribute&lt;?&gt;... attrs)</code></td>
+<td align="left">Opens or creates a file, returning a seekable byte channel to access the file.</td>
+</tr>
+</tbody></table>
+<h4 id="newDirectoryStream"><a href="#newDirectoryStream" class="headerlink" title="newDirectoryStream"></a>newDirectoryStream</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static DirectoryStream&lt;Path&gt; newDirectoryStream(Path dir)</code></td>
+<td align="left">Opens a directory, returning a DirectoryStream to iterate over all entries in the directory.</td>
+</tr>
+<tr>
+<td align="left"><code>static DirectoryStream&lt;Path&gt; newDirectoryStream(Path dir, String glob)</code></td>
+<td align="left">Opens a directory, returning a DirectoryStream to iterate over the entries in the directory.</td>
+</tr>
+<tr>
+<td align="left"><code>static DirectoryStream&lt;Path&gt; newDirectoryStream(Path dir, DirectoryStream.Filter&lt;? super Path&gt; filter)</code></td>
+<td align="left">Opens a directory, returning a DirectoryStream to iterate over the entries in the directory.</td>
+</tr>
+</tbody></table>
+<h4 id="newInputStream"><a href="#newInputStream" class="headerlink" title="newInputStream"></a>newInputStream</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static InputStream newInputStream(Path path, OpenOption... options)</code></td>
+<td align="left">Opens a file, returning an input stream to read from the file.</td>
+</tr>
+<tr>
+<td align="left"><code>static OutputStream newOutputStream(Path path, OpenOption... options)</code></td>
+<td align="left">Opens or creates a file, returning an output stream that may be used to write bytes to the file.</td>
+</tr>
+</tbody></table>
+<h3 id="write方法"><a href="#write方法" class="headerlink" title="write方法"></a>write方法</h3><h4 id="write"><a href="#write" class="headerlink" title="write"></a>write</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path write(Path path, byte[] bytes, OpenOption... options)</code></td>
+<td align="left">Writes bytes to a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path write(Path path, Iterable&lt;? extends CharSequence&gt; lines, Charset cs, OpenOption... options)</code></td>
+<td align="left">Write lines of text to a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path write(Path path, Iterable&lt;? extends CharSequence&gt; lines, OpenOption... options)</code></td>
+<td align="left">Write lines of text to a file.</td>
+</tr>
+</tbody></table>
+<h4 id="writeString"><a href="#writeString" class="headerlink" title="writeString"></a>writeString</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path writeString(Path path, CharSequence csq, Charset cs, OpenOption... options)</code></td>
+<td align="left">Write a CharSequence to a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path writeString(Path path, CharSequence csq, OpenOption... options)</code></td>
+<td align="left">Write a CharSequence to a file.</td>
+</tr>
+</tbody></table>
+<h3 id="walk方法"><a href="#walk方法" class="headerlink" title="walk方法"></a>walk方法</h3><h4 id="walk"><a href="#walk" class="headerlink" title="walk"></a>walk</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Stream&lt;Path&gt; walk(Path start, int maxDepth, FileVisitOption... options)</code></td>
+<td align="left">Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.</td>
+</tr>
+<tr>
+<td align="left"><code>static Stream&lt;Path&gt; walk(Path start, FileVisitOption... options)</code></td>
+<td align="left">Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.</td>
+</tr>
+</tbody></table>
+<h4 id="walkFileTree"><a href="#walkFileTree" class="headerlink" title="walkFileTree"></a>walkFileTree</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path walkFileTree(Path start, FileVisitor&lt;? super Path&gt; visitor)</code></td>
+<td align="left">Walks a file tree.</td>
+</tr>
+<tr>
+<td align="left"><code>static Path walkFileTree(Path start, Set&lt;FileVisitOption&gt; options, int maxDepth, FileVisitor&lt;? super Path&gt; visitor)</code></td>
+<td align="left">Walks a file tree.</td>
+</tr>
+</tbody></table>
+<h3 id="返回流的方法"><a href="#返回流的方法" class="headerlink" title="返回流的方法"></a>返回流的方法</h3><h4 id="walk-1"><a href="#walk-1" class="headerlink" title="walk"></a>walk</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Stream&lt;Path&gt; walk(Path start, int maxDepth, FileVisitOption... options)</code></td>
+<td align="left">Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.</td>
+</tr>
+<tr>
+<td align="left"><code>static Stream&lt;Path&gt; walk(Path start, FileVisitOption... options)</code></td>
+<td align="left">Return a Stream that is lazily populated with Path by walking the file tree rooted at a given starting file.</td>
+</tr>
+</tbody></table>
+<h4 id="find"><a href="#find" class="headerlink" title="find"></a>find</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Stream&lt;Path&gt; find(Path start, int maxDepth, BiPredicate&lt;Path,​BasicFileAttributes&gt; matcher, FileVisitOption... options)</code></td>
+<td align="left">Return a Stream that is lazily populated with Path by searching for files in a file tree rooted at a given starting file.</td>
+</tr>
+</tbody></table>
+<h4 id="lines"><a href="#lines" class="headerlink" title="lines"></a>lines</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Stream&lt;String&gt; lines(Path path)</code></td>
+<td align="left">Read all lines from a file as a Stream.</td>
+</tr>
+<tr>
+<td align="left"><code>static Stream&lt;String&gt; lines(Path path, Charset cs)</code></td>
+<td align="left">Read all lines from a file as a Stream.</td>
+</tr>
+</tbody></table>
+<h4 id="list方法"><a href="#list方法" class="headerlink" title="list方法"></a>list方法</h4><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Stream&lt;Path&gt; list(Path dir)</code></td>
+<td align="left">Return a lazily populated Stream, the elements of which are the entries in the directory.</td>
+</tr>
+</tbody></table>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static Path move(Path source, Path target, CopyOption... options)</code></td>
+<td align="left">Move or rename a file to a target file.</td>
+</tr>
+<tr>
+<td align="left"><code>static String probeContentType(Path path)</code></td>
+<td align="left">Probes the content type of a file.</td>
+</tr>
+<tr>
+<td align="left"><code>static long size(Path path)</code></td>
+<td align="left">Returns the size of a file (in bytes).</td>
+</tr>
+</tbody></table>
+<h2 id="程序-Files工具类示例"><a href="#程序-Files工具类示例" class="headerlink" title="程序 Files工具类示例"></a>程序 Files工具类示例</h2><p><code>Files</code>是一个操作文件的工具类,它提供了大量便捷的工具方法,下面程序简单示范了<code>Files</code>类的用法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.file.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FilesTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 复制文件</span></span><br><span class="line">        Files.copy(Paths.get(<span class="string">&quot;FilesTest.java&quot;</span>), <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;a.txt&quot;</span>));</span><br><span class="line">        <span class="comment">// 判断FilesTest.java文件是否为隐藏文件</span></span><br><span class="line">        System.out.println(<span class="string">&quot;FilesTest.java是否为隐藏文件：&quot;</span> </span><br><span class="line">            + Files.isHidden(Paths.get(<span class="string">&quot;FilesTest.java&quot;</span>)));</span><br><span class="line">        <span class="comment">// 一次性读取FilesTest.java文件的所有行</span></span><br><span class="line">        List&lt;String&gt; lines = Files.readAllLines(Paths.get(<span class="string">&quot;FilesTest.java&quot;</span>), Charset.forName(<span class="string">&quot;gbk&quot;</span>));</span><br><span class="line">        System.out.println(lines);</span><br><span class="line">        <span class="comment">// 判断指定文件的大小</span></span><br><span class="line">        System.out.println(<span class="string">&quot;FilesTest.java的大小为：&quot;</span> + Files.size(Paths.get(<span class="string">&quot;FilesTest.java&quot;</span>)));</span><br><span class="line">        List&lt;String&gt; poem = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">        poem.add(<span class="string">&quot;水晶潭底银鱼跃&quot;</span>);</span><br><span class="line">        poem.add(<span class="string">&quot;清徐风中碧竿横&quot;</span>);</span><br><span class="line">        <span class="comment">// 直接将多个字符串内容写入指定文件中</span></span><br><span class="line">        Files.write(Paths.get(<span class="string">&quot;pome.txt&quot;</span>), poem, Charset.forName(<span class="string">&quot;gbk&quot;</span>));</span><br><span class="line">        <span class="comment">// 使用Java 8新增的Stream API列出当前目录下所有文件和子目录</span></span><br><span class="line">        Files.list(Paths.get(<span class="string">&quot;.&quot;</span>)).forEach(path -&gt; System.out.println(path));</span><br><span class="line">        <span class="comment">// 使用Java 8新增的Stream API读取文件内容</span></span><br><span class="line">        Files.lines(Paths.get(<span class="string">&quot;FilesTest.java&quot;</span>), Charset.forName(<span class="string">&quot;gbk&quot;</span>))</span><br><span class="line">            .forEach(line -&gt; System.out.println(line));</span><br><span class="line">        FileStore cStore = Files.getFileStore(Paths.get(<span class="string">&quot;C:&quot;</span>));</span><br><span class="line">        <span class="comment">// 判断C盘的总空间，可用空间</span></span><br><span class="line">        System.out.println(<span class="string">&quot;C:共有空间：&quot;</span> + cStore.getTotalSpace());</span><br><span class="line">        System.out.println(<span class="string">&quot;C:可用空间：&quot;</span> + cStore.getUsableSpace());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序简单示范了<code>Files</code>工具类的用法。</p>
+<p>上面示例程序中①号代码使用<code>Stream API</code>列出了指定路径下的所有文件和目录;②号代码则使用了<code>Stream API</code>读取文件内容。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/4261f404/" title="15.10 Java7的NIO.2 15.10.1 Path Paths和Files核心API">https://lanlan2017.github.io/JavaReadingNotes/4261f404/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/3b9051b1/" rel="prev" title="15.9.5 文件锁">
+                  <i class="fa fa-chevron-left"></i> 15.9.5 文件锁
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/5599d3e6/" rel="next" title="15.10.2 使用FileVisitor遍历文件和目录">
+                  15.10.2 使用FileVisitor遍历文件和目录 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/4261f404/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/4261f404/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

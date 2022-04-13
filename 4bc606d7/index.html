@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="3.3 代码的组织机制使用任何语言进行编程都有一个类似的问题，那就是如何组织代码。具体来说，如何避免命名冲突？如何合理组织各种源文件？如何使用第三方库？各种代码和依赖库如何编译链接为一个完整的程序？本节就来讨论Java中的解决机制，具体包括包、jar包、程序的编译与链接等。 3.3.1 包的概念使用任何语言进行编程都有一个相同的问题，就是命名冲突。程序一般不全是一个人写的，会调用系统提供的代码、第">
+<meta property="og:type" content="article">
+<meta property="og:title" content="3.3 代码的组织机制">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="3.3 代码的组织机制使用任何语言进行编程都有一个类似的问题，那就是如何组织代码。具体来说，如何避免命名冲突？如何合理组织各种源文件？如何使用第三方库？各种代码和依赖库如何编译链接为一个完整的程序？本节就来讨论Java中的解决机制，具体包括包、jar包、程序的编译与链接等。 3.3.1 包的概念使用任何语言进行编程都有一个相同的问题，就是命名冲突。程序一般不全是一个人写的，会调用系统提供的代码、第">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-12-04T12:14:01.000Z">
+<meta property="article:modified_time" content="2021-12-07T04:07:07.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/","path":"/4bc606d7/","title":"3.3 代码的组织机制"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>3.3 代码的组织机制 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#3-3-%E4%BB%A3%E7%A0%81%E7%9A%84%E7%BB%84%E7%BB%87%E6%9C%BA%E5%88%B6"><span class="nav-text">3.3 代码的组织机制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-1-%E5%8C%85%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">3.3.1 包的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E5%A3%B0%E6%98%8E%E7%B1%BB%E6%89%80%E5%9C%A8%E7%9A%84%E5%8C%85"><span class="nav-text">1．声明类所在的包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E9%80%9A%E8%BF%87%E5%8C%85%E4%BD%BF%E7%94%A8%E7%B1%BB"><span class="nav-text">2．通过包使用类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%8E%E5%8C%85%E8%8C%83%E5%9B%B4%E5%8F%AF%E8%A7%81%E6%80%A7"><span class="nav-text">3．包范围可见性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-2-jar%E5%8C%85"><span class="nav-text">3.3.2 jar包</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-3-%E7%A8%8B%E5%BA%8F%E7%9A%84%E7%BC%96%E8%AF%91%E4%B8%8E%E9%93%BE%E6%8E%A5"><span class="nav-text">3.3.3 程序的编译与链接</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-4-%E5%B0%8F%E7%BB%93"><span class="nav-text">3.3.4 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          3.3 代码的组织机制
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-04 20:14:01" itemprop="dateCreated datePublished" datetime="2021-12-04T20:14:01+08:00">2021-12-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-07 12:07:07" itemprop="dateModified" datetime="2021-12-07T12:07:07+08:00">2021-12-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/2%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">2第二部分 面向对象</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/2%E7%AC%AC%E4%BA%8C%E9%83%A8%E5%88%86-%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1/%E7%AC%AC3%E7%AB%A0-%E7%B1%BB%E7%9A%84%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">第3章 类的基础</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/4bc606d7/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/4bc606d7/" data-xid="/JavaReadingNotes/4bc606d7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="3-3-代码的组织机制"><a href="#3-3-代码的组织机制" class="headerlink" title="3.3 代码的组织机制"></a>3.3 代码的组织机制</h1><p>使用任何语言进行编程都有一个类似的问题，那就是如何组织代码。具体来说，如何避免命名冲突？如何合理组织各种源文件？如何使用第三方库？各种代码和依赖库如何编译链接为一个完整的程序？本节就来讨论Java中的解决机制，具体包括包、jar包、程序的编译与链接等。</p>
+<h2 id="3-3-1-包的概念"><a href="#3-3-1-包的概念" class="headerlink" title="3.3.1 包的概念"></a>3.3.1 包的概念</h2><p>使用任何语言进行编程都有一个相同的问题，就是命名冲突。程序一般不全是一个人写的，会调用系统提供的代码、第三方库中的代码、项目中其他人写的代码等，不同的人就不同的目的可能定义同样的类名/接口名，Java中解决这个问题的主要方法就是<strong>包</strong>。</p>
+<p>即使代码都是一个人写的，将多个关系不太大的类和接口都放在一起，也不便于理解和维护，Java中组织类和接口的方式也是包。</p>
+<p>包是一个比较容易理解的概念，类似于计算机中的文件夹，正如我们在计算机中管理文件，文件放在文件夹中一样，类和接口放在包中，为便于组织，文件夹一般是一个层次结构，包也类似。</p>
+<p>包有包名，这个名称以点号（.）分隔表示层次结构。比如，我们之前常用的String类就位于包java.lang下，其中java是上层包名，lang是下层包名。带完整包名的类名称为其<strong>完全限定名</strong>，比如String类的完全限定名为java.lang.String。Java API中所有的类和接口都位于包Java或javax下，Java是标准包，javax是扩展包。</p>
+<p>接下来，我们讨论包的细节，包括包的声明、使用和包范围可见性。</p>
+<h3 id="1．声明类所在的包"><a href="#1．声明类所在的包" class="headerlink" title="1．声明类所在的包"></a>1．声明类所在的包</h3><p>我们之前定义类的时候没有定义其所在的包，默认情况下，类位于默认包下，使用默认包是不建议的，我们使用默认包只是简单起见。</p>
+<p>定义类的时候，应该先使用关键字package声明其包名，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shuo.laoma;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="comment">//类的定义</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上声明类Hello的包名为shuo.laoma，包声明语句应该位于源代码的最前面，前面不能有注释外的其他语句。</p>
+<p>包名和文件目录结构必须匹配，如果源文件的根目录为E:\src\，则上面的Hello类对应的文件Hello.java，其全路径就应该是E:\src\shuo\laoma\Hello.java。如果不匹配，Java会提示编译错误。</p>
+<p>为避免命名冲突，Java中命名包名的一个惯例是使用域名作为前缀，因为域名是唯一的，一般按照域名的反序来定义包名，比如，域名是apache.org，包名就以org.apache开头。</p>
+<p>没有域名的也没关系，使用一个其他代码不太会用的包名即可，比如本节使用的shuo. laoma。如果代码需要公开给其他人用，最好有一个域名以确保唯一性，如果只是内部使用，则确保内部没有其他代码使用该包名即可。</p>
+<p>除了避免命名冲突，包也是一种方便组织代码的机制。一般而言，同一个项目下的所有代码都有一个相同的包前缀，这个前缀是唯一的，不会与其他代码重名，在项目内部，根据不同目的再细分为子包，子包可能又会分为下一级子包，形成层次结构，内部实现一般位于比较底层的包。</p>
+<p>包可以方便模块化开发，不同功能可以位于不同包内，不同开发人员负责不同的包。包也可以方便封装，供外部使用的类可以放在包的上层，而内部的实现细节则可以放在比较底层的子包内。</p>
+<h3 id="2．通过包使用类"><a href="#2．通过包使用类" class="headerlink" title="2．通过包使用类"></a>2．通过包使用类</h3><p>同一个包下的类之间互相引用是不需要包名的，可以直接使用。但如果类不在同一个包内，则必须要知道其所在的包。使用有两种方式：一种是通过类的完全限定名；另外一种是将用到的类引入当前类。只有一个例外，java.lang包下的类可以直接使用，不需要引入，也不需要使用完全限定名，比如String类、System类，其他包内的类则不行。</p>
+<p>看个例子，使用Arrays类中的sort方法，通过完全限定名可以这样使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">java.util.Arrays.sort(arr);</span><br><span class="line">System.out.println(java.util.Arrays.toString(arr));</span><br></pre></td></tr></table></figure>
+
+<p>显然，这样比较烦琐，另外一种就是将该类引入当前类。引入的关键字是import,import需要放在package定义之后，类定义之前，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> shuo.laoma;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">        Arrays.sort(arr);</span><br><span class="line">        System.out.println(Arrays.toString(arr));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>做import操作时，可以一次将某个包下的所有类引入，语法是使用<code>.*</code>，比如，将<code>java.util</code>包下的所有类引入，语法是：<code>import java.util.*</code>。需要注意的是，这个引入不能递归，它只会引入<code>java.util</code>包下的直接类，而不会引入<code>java.util</code>下嵌套包内的类，比如，不会引入包<code>java.util.zip</code>下面的类。试图嵌套引入的形式也是无效的，如<code>import java.util.*.*</code>。</p>
+<p>在一个类内，对其他类的引用必须是唯一确定的，不能有重名的类，如果有，则通过import只能引入其中的一个类，其他同名的类则必须要使用完全限定名。</p>
+<p>引入类是一个比较烦琐的工作，不过，大多数Java开发环境都提供工具自动做这件事。比如，在Eclipse中，通过执行Source→Organize Imports命令或按对应的快捷键Ctrl+Shift+O就可以自动管理引用的类。</p>
+<p>有一种特殊类型的导入，称为静态导入，它有一个static关键字，可以直接导入类的公开静态方法和成员。看个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.util.Arrays.＊; <span class="comment">//静态导入Arrays中的所有静态方法</span></span><br><span class="line"><span class="keyword">import</span> <span class="keyword">static</span> java.lang.System.out; <span class="comment">//导入静态变量out</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Hello</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">1</span>,<span class="number">4</span>,<span class="number">2</span>,<span class="number">3</span>&#125;;</span><br><span class="line">        sort(arr);  <span class="comment">//可以直接使用Arrays中的sort方法</span></span><br><span class="line">        out.println(Arrays.toString(arr)); <span class="comment">//可以直接使用out变量</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>静态导入不应过度使用，否则难以区分访问的是哪个类的代码。</p>
+<h3 id="3．包范围可见性"><a href="#3．包范围可见性" class="headerlink" title="3．包范围可见性"></a>3．包范围可见性</h3><p>前面章节我们介绍过，对于类、变量和方法，都可以有一个可见性修饰符public/private，我们还提到，可以不写修饰符。如果什么修饰符都不写，它的可见性范围就是同一个包内，同一个包内的其他类可以访问，而其他包内的类则不可以访问。</p>
+<p>需要说明的是，同一个包指的是同一个直接包，子包下的类并不能访问。比如，类shuo.laoma.Hello和shuo.laoma.inner.Test，其所在的包shuo.laoma和shuo.laoma.inner是两个完全独立的包，并没有逻辑上的联系，Hello类和Test类不能互相访问对方的包可见性方法和属性。</p>
+<p>除了public和private修饰符，还有一个与继承有关的修饰符protected。关于protected的细节我们下章介绍，这里需要说明的是，protected<strong>可见性包括包可见性</strong>，也就是说，声明为protected不仅表明子类可以访问，还表明同一个包内的其他类可以访问，即使这些类不是子类也可以。</p>
+<p>总结来说，可见性范围从小到大是：private &lt; <strong>默认(包)</strong> &lt; protected &lt; public。</p>
+<h2 id="3-3-2-jar包"><a href="#3-3-2-jar包" class="headerlink" title="3.3.2 jar包"></a>3.3.2 jar包</h2><p>为方便使用第三方代码，也为了方便我们写的代码给其他人使用，各种程序语言大多有打包的概念，打包的一般不是源代码，而是编译后的代码。打包将多个编译后的文件打包为一个文件，方便其他程序调用。</p>
+<p>在Java中，编译后的一个或多个包的Java class文件可以打包为一个文件，Java中打包命令为jar，打包后的文件扩展名为．jar，一般称之为jar包。</p>
+<p>可以使用如下方式打包，首先到编译后的java class文件根目录，然后运行如下命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -cvf &lt;包名&gt;.jar &lt;最上层包名&gt;</span><br></pre></td></tr></table></figure>
+
+<p>比如，对前面介绍的类打包，如果Hello.class位于E:\bin\shuo\laoma\Hello.class，则可以到目录 E:\bin下，然后运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jar -cvf hello.jar shuo</span><br></pre></td></tr></table></figure>
+
+<p>hello.jar就是jar包，jar包其实就是一个压缩文件，可以使用解压缩工具打开。</p>
+<p>Java类库、第三方类库都是以jar包形式提供的。如何使用jar包呢？将其加入<strong>类路径</strong>（classpath）中即可。类路径是什么呢？我们下面来看。</p>
+<h2 id="3-3-3-程序的编译与链接"><a href="#3-3-3-程序的编译与链接" class="headerlink" title="3.3.3 程序的编译与链接"></a>3.3.3 程序的编译与链接</h2><p>从Java源代码到运行的程序，有编译和链接两个步骤。编译是将源代码文件变成扩展名是．class的一种字节码，这个工作一般是由javac命令完成的。链接是在运行时动态执行的，.class文件不能直接运行，运行的是Java虚拟机，虚拟机听起来比较抽象，执行的就是Java命令，这个命令解析．class文件，转换为机器能识别的二进制代码，然后运行。所谓链接就是根据引用到的类加载相应的字节码并执行。</p>
+<p>Java编译和运行时，都需要以参数指定一个classpath，即类路径。类路径可以有多个，对于直接的class文件，路径是class文件的根目录；对于jar包，路径是jar包的完整名称（包括路径和jar包名）。在Windows系统中，多个路径用分号“; ”分隔；在其他系统中，以冒号“:”分隔。</p>
+<p>在Java源代码编译时，Java编译器会确定引用的每个类的完全限定名，确定的方式是根据import语句和classpath。如果导入的是完全限定类名，则可以直接比较并确定。如果是模糊导入（import带．*），则根据classpath找对应父包，再在父包下寻找是否有对应的类。如果多个模糊导入的包下都有同样的类名，则Java会提示编译错误，此时应该明确指定导入哪个类。</p>
+<p>Java运行时，会根据类的完全限定名寻找并加载类，寻找的方式就是在类路径中寻找，如果是class文件的根目录，则直接查看是否有对应的子目录及文件，如果是jar文件，则首先在内存中解压文件，然后再查看是否有对应的类。</p>
+<p>总结来说，<strong>import是编译时概念，用于确定完全限定名，在运行时，只根据完全限定名寻找并加载类</strong>，编译和运行时都依赖类路径，类路径中的jar文件会被解压缩用于寻找和加载类。</p>
+<h2 id="3-3-4-小结"><a href="#3-3-4-小结" class="headerlink" title="3.3.4 小结"></a>3.3.4 小结</h2><p>本节介绍了Java中代码组织的机制、包和jar包，以及程序的编译和链接。将类和接口放在合适的具有层次结构的包内，避免命名冲突，代码可以更为清晰，便于实现封装和模块化开发；通过jar包使用第三方代码，将自身代码打包为jar包供其他程序使用。这些都是解决复杂问题所必需的。</p>
+<p>在Java 9中，清晰地引入了<strong>模块</strong>的概念，JDK和JRE都按模块化进行了重构，传统的组织机制依然是支持的，但新的应用可以使用模块。一个应用可由多个模块组成，一个模块可由多个包组成。模块之间可以有一定的依赖关系，一个模块可以导出包给其他模块用，可以提供服务给其他模块用，也可以使用其他模块提供的包，调用其他模块提供的服务。对于复杂的应用，模块化有很多好处，比如更强的封装、更为可靠的配置、更为松散的耦合、更动态灵活等。模块是一个很大的主题，限于篇幅，我们就不详细介绍了。</p>
+<p>至此，关于类的基础知识就介绍完了。类之间除了组合关系，还有一种非常重要的关系，那就是继承，我们下章来探讨。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/" title="3.3 代码的组织机制">https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/65d3d518/" rel="prev" title="4.0 第4章 类的继承 4.1 基本概念">
+                  <i class="fa fa-chevron-left"></i> 4.0 第4章 类的继承 4.1 基本概念
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/d32d4643/" rel="next" title="3.2 类的组合">
+                  3.2 类的组合 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/4bc606d7/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/4bc606d7/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

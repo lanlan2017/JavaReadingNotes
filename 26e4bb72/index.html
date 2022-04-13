@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="10.1.2 一对多在实际项目开发中,一对多是非常常见的关系,比如,一个班级可以有多个学生,一个学生只能属于一个班级,班级和学生之间是一对多的关系,而学生和班级之间是多对一的关系。 多方维护关系在数据库中一对多关系通常使用主外键关联,外键列应该在多方,即多方维护关系。下面我们就用一个示例来看看MyBatis怎么处理一对多关系。 示例:OneToManyTest项目结构展开&#x2F;折叠 G:\Deskto">
+<meta property="og:type" content="article">
+<meta property="og:title" content="10.1.2 一对多">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="10.1.2 一对多在实际项目开发中,一对多是非常常见的关系,比如,一个班级可以有多个学生,一个学生只能属于一个班级,班级和学生之间是一对多的关系,而学生和班级之间是多对一的关系。 多方维护关系在数据库中一对多关系通常使用主外键关联,外键列应该在多方,即多方维护关系。下面我们就用一个示例来看看MyBatis怎么处理一对多关系。 示例:OneToManyTest项目结构展开&#x2F;折叠 G:\Deskto">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-06-06T07:11:47.000Z">
+<meta property="article:modified_time" content="2020-06-22T00:11:29.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/","path":"/26e4bb72/","title":"10.1.2 一对多"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>10.1.2 一对多 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#10-1-2-%E4%B8%80%E5%AF%B9%E5%A4%9A"><span class="nav-text">10.1.2 一对多</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%96%B9%E7%BB%B4%E6%8A%A4%E5%85%B3%E7%B3%BB"><span class="nav-text">多方维护关系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-OneToManyTest"><span class="nav-text">示例:OneToManyTest</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A1%B9%E7%9B%AE%E7%BB%93%E6%9E%84"><span class="nav-text">项目结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%95%B0%E6%8D%AE%E5%BA%93%E8%A1%A8"><span class="nav-text">创建数据库表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E6%8C%81%E4%B9%85%E5%8C%96%E5%AF%B9%E8%B1%A1"><span class="nav-text">创建持久化对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Student-java"><span class="nav-text">Student.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Clazz-java"><span class="nav-text">Clazz.java</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAXML%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6"><span class="nav-text">创建XML映射文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ClazzMapper-xml"><span class="nav-text">ClazzMapper.xml</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#collection%E6%A0%87%E7%AD%BE%E8%AF%A6%E8%A7%A3"><span class="nav-text">collection标签详解</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7"><span class="nav-text">属性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyBatis%E6%A0%B9%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%B8%AD-%E5%BC%80%E5%90%AF%E6%87%92%E5%8A%A0%E8%BD%BD"><span class="nav-text">MyBatis根配置文件中 开启懒加载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="nav-text">设置说明</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StudentMapper-xml"><span class="nav-text">StudentMapper.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E7%A4%BA"><span class="nav-text">提示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAmapper%E6%8E%A5%E5%8F%A3%E5%AF%B9%E8%B1%A1"><span class="nav-text">创建mapper接口对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ClazzMapper%E6%8E%A5%E5%8F%A3"><span class="nav-text">ClazzMapper接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StudentMapper%E6%8E%A5%E5%8F%A3"><span class="nav-text">StudentMapper接口</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%B1%BB"><span class="nav-text">测试类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E7%BB%93%E6%9E%9C"><span class="nav-text">运行结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#collection%E6%A0%87%E7%AD%BE"><span class="nav-text">collection标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#collection%E6%A0%87%E7%AD%BE%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">collection标签的属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#collection%E6%A0%87%E7%AD%BE%E7%9A%84%E5%AD%90%E6%A0%87%E7%AD%BE"><span class="nav-text">collection标签的子标签</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#association%E6%A0%87%E7%AD%BE"><span class="nav-text">association标签</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#association%E6%A0%87%E7%AD%BE%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">association标签的属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#association%E6%A0%87%E7%AD%BE%E7%9A%84%E5%AD%90%E6%A0%87%E7%AD%BE"><span class="nav-text">association标签的子标签</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          10.1.2 一对多
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-06 15:11:47" itemprop="dateCreated datePublished" datetime="2019-06-06T15:11:47+08:00">2019-06-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-06-22 08:11:29" itemprop="dateModified" datetime="2020-06-22T08:11:29+08:00">2020-06-22</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/" itemprop="url" rel="index"><span itemprop="name">第10章 深入使用MyBatis</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC10%E7%AB%A0-%E6%B7%B1%E5%85%A5%E4%BD%BF%E7%94%A8MyBatis/10-1-MyBatis%E5%85%B3%E8%81%94%E6%98%A0%E5%B0%84/" itemprop="url" rel="index"><span itemprop="name">10.1 MyBatis关联映射</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/26e4bb72/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/26e4bb72/" data-xid="/JavaReadingNotes/26e4bb72/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="10-1-2-一对多"><a href="#10-1-2-一对多" class="headerlink" title="10.1.2 一对多"></a>10.1.2 一对多</h1><p>在实际项目开发中,一对多是非常常见的关系,比如,一个班级可以有多个学生,一个学生只能属于一个班级,班级和学生之间是一对多的关系,而学生和班级之间是多对一的关系。</p>
+<h2 id="多方维护关系"><a href="#多方维护关系" class="headerlink" title="多方维护关系"></a>多方维护关系</h2><p><strong>在数据库中一对多关系通常使用主外键关联</strong>,<strong>外键列应该在多方,即多方维护关系</strong>。下面我们就用一个示例来看看<code>MyBatis</code>怎么处理一对多关系。</p>
+<h1 id="示例-OneToManyTest"><a href="#示例-OneToManyTest" class="headerlink" title="示例:OneToManyTest"></a>示例:OneToManyTest</h1><h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><details><summary>展开/折叠</summary><pre>
+G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\10\OneToManyTest
+├─src\
+│ ├─db.properties
+│ ├─log4j.xml
+│ ├─mybatis-config.xml
+│ ├─org\
+│ │ └─fkit\
+│ │   ├─domain\
+│ │   │ ├─Clazz.java
+│ │   │ └─Student.java
+│ │   ├─factory\
+│ │   │ └─FKSqlSessionFactory.java
+│ │   ├─mapper\
+│ │   │ ├─ClazzMapper.java
+│ │   │ ├─ClazzMapper.xml
+│ │   │ ├─StudentMapper.java
+│ │   │ └─StudentMapper.xml
+│ │   └─test\
+│ │     └─OneToManyTest.java
+│ └─tb_test.sql
+└─WebContent\
+  ├─META-INF\
+  │ └─MANIFEST.MF
+  └─WEB-INF\
+    ├─lib\
+    │ ├─ant-1.9.6.jar
+    │ ├─ant-launcher-1.9.6.jar
+    │ ├─asm-5.2.jar
+    │ ├─cglib-3.2.5.jar
+    │ ├─commons-logging-1.2.jar
+    │ ├─javassist-3.22.0-CR2.jar
+    │ ├─log4j-1.2.17.jar
+    │ ├─log4j-api-2.3.jar
+    │ ├─log4j-core-2.3.jar
+    │ ├─mybatis-3.4.5.jar
+    │ ├─mysql-connector-java-8.0.17.jar
+    │ ├─ognl-3.1.15.jar
+    │ ├─slf4j-api-1.7.25.jar
+    │ └─slf4j-log4j12-1.7.25.jar
+    └─web.xml
+</pre></details>
+
+<h2 id="创建数据库表"><a href="#创建数据库表" class="headerlink" title="创建数据库表"></a>创建数据库表</h2><p>首先,给之前创建的<code>mybatis</code>数据库创建两个表<code>tb_clazz</code>和<code>tb_student</code>,并插入测试数据:</p>
+<figure class="highlight sql"><figcaption><span>/OneToManyTest/src/tb_test.sql</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">use mybatis;</span><br><span class="line"># 取消外键检查</span><br><span class="line"><span class="keyword">SET</span> FOREIGN_KEY_CHECKS<span class="operator">=</span><span class="number">0</span>;</span><br><span class="line"># 创建tb_clazz表</span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> `tb_clazz`;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tb_clazz` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `code` <span class="type">varchar</span>(<span class="number">18</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">18</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`)</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line"># 插入数据到tb_clazz表</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_clazz` <span class="keyword">VALUES</span> (<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;B151516&#x27;</span>, <span class="string">&#x27;Java基础班&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">DROP</span> <span class="keyword">TABLE</span> IF <span class="keyword">EXISTS</span> `tb_student`;</span><br><span class="line"><span class="keyword">CREATE</span> <span class="keyword">TABLE</span> `tb_student` (</span><br><span class="line">  `id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">NOT</span> <span class="keyword">NULL</span> AUTO_INCREMENT,</span><br><span class="line">  `name` <span class="type">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `sex` <span class="type">varchar</span>(<span class="number">18</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `age` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  `clazz_id` <span class="type">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="keyword">NULL</span>,</span><br><span class="line">  <span class="keyword">PRIMARY</span> KEY (`id`),</span><br><span class="line">  KEY `clazz_id` (`clazz_id`),</span><br><span class="line">  <span class="keyword">CONSTRAINT</span> `tb_student_ibfk_1` <span class="keyword">FOREIGN</span> KEY (`clazz_id`)</span><br><span class="line">  <span class="keyword">REFERENCES</span> `tb_clazz` (`id`) <span class="keyword">ON</span> <span class="keyword">DELETE</span> CASCADE <span class="keyword">ON</span> UPDATE CASCADE</span><br><span class="line">) ENGINE<span class="operator">=</span>InnoDB <span class="keyword">DEFAULT</span> CHARSET<span class="operator">=</span>utf8;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_student` <span class="keyword">VALUES</span> (<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;小明&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;24&#x27;</span>, <span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_student` <span class="keyword">VALUES</span> (<span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;小王&#x27;</span>, <span class="string">&#x27;男&#x27;</span>, <span class="string">&#x27;23&#x27;</span>, <span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_student` <span class="keyword">VALUES</span> (<span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;小芳&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;22&#x27;</span>, <span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> `tb_student` <span class="keyword">VALUES</span> (<span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;小丽&#x27;</span>, <span class="string">&#x27;女&#x27;</span>, <span class="string">&#x27;22&#x27;</span>, <span class="string">&#x27;1&#x27;</span>);</span><br><span class="line"># 恢复外键检查</span><br><span class="line"><span class="keyword">SET</span> FOREIGN_KEY_CHECKS<span class="operator">=</span><span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+<p><code>tb_student</code>表的<code>clazz_id</code>作为外键参照<code>tb_clazz</code>表的主键<code>id</code>.<br>在<code>mybatis</code>数据库中执行<code>SQL</code>脚本,完成创建数据库和表的操作。<br>接下来,创建一个<code>clazz</code>对象和一个<code>Student</code>对象分别映射<code>tb_clazz</code>和<code>tb_student</code>表.</p>
+<h2 id="创建持久化对象"><a href="#创建持久化对象" class="headerlink" title="创建持久化对象"></a>创建持久化对象</h2><h3 id="Student-java"><a href="#Student-java" class="headerlink" title="Student.java"></a>Student.java</h3><figure class="highlight java"><figcaption><span>/OneToManyTest/src/org/fkit/domain/Student.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.domain;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Student</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = -<span class="number">8985198663152992443L</span>;</span><br><span class="line">    <span class="keyword">private</span> Integer id; <span class="comment">// 学生id，主键</span></span><br><span class="line">    <span class="keyword">private</span> String name; <span class="comment">// 姓名</span></span><br><span class="line">    <span class="keyword">private</span> String sex;  <span class="comment">// 性别</span></span><br><span class="line">    <span class="keyword">private</span> Integer age; <span class="comment">// 年龄</span></span><br><span class="line">    <span class="comment">// 学生和班级是多对一的关系，即一个学生只属于一个班级</span></span><br><span class="line">    <span class="keyword">private</span> Clazz clazz;</span><br><span class="line">    <span class="comment">// 省略构造方法</span></span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="comment">// 省略toString()方法</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>学生和班级之间是多对一的关系</strong>,即一个学生只属于一个班级。在<code>Student</code>类当中定义了一个<code>clazz</code>属性,该属性是一个<code>Clazz</code>类型,用来映射多对一的关联关系,表示该学生所属的班级</p>
+<h3 id="Clazz-java"><a href="#Clazz-java" class="headerlink" title="Clazz.java"></a>Clazz.java</h3><figure class="highlight java"><figcaption><span>/OneToManyTest/src/org/fkit/domain/Clazz.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.domain;</span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Clazz</span> <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">7120329740548835778L</span>;</span><br><span class="line">    <span class="keyword">private</span> Integer id; <span class="comment">// 班级id，主键</span></span><br><span class="line">    <span class="keyword">private</span> String code; <span class="comment">// 班级编号</span></span><br><span class="line">    <span class="keyword">private</span> String name; <span class="comment">// 班级名称</span></span><br><span class="line">    <span class="comment">// 班级和学生是一对多的关系，即一个班级可以有多个学生</span></span><br><span class="line">    <span class="keyword">private</span> ArrayList&lt;Student&gt; students;</span><br><span class="line">    <span class="comment">// 省略构造方法</span></span><br><span class="line">    <span class="comment">// 省略getter和setter方法</span></span><br><span class="line">    <span class="comment">// 省略toString方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>班级和学生之间是一对多的关系</strong>,即一个班级可以有多个学生。在<code>Clazz</code>类当中定义了一个<code>students</code>属性,该属性是一个<code>List</code>集合,用来映射一对多的关联关系,表示一个班级有多个学生.</p>
+<h2 id="创建XML映射文件"><a href="#创建XML映射文件" class="headerlink" title="创建XML映射文件"></a>创建XML映射文件</h2><p>再接下来是<code>XML</code>映射文件。</p>
+<h3 id="ClazzMapper-xml"><a href="#ClazzMapper-xml" class="headerlink" title="ClazzMapper.xml"></a>ClazzMapper.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span> <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namespace指用户自定义的命名空间。 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;org.fkit.mapper.ClazzMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 根据id查询班级信息，返回resultMap --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectClazzById&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">resultMap</span>=<span class="string">&quot;clazzResultMap&quot;</span>&gt;</span> </span><br><span class="line">        SELECT * FROM tb_clazz WHERE id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 映射Clazz对象的resultMap --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">type</span>=<span class="string">&quot;org.fkit.domain.Clazz&quot;</span> <span class="attr">id</span>=<span class="string">&quot;clazzResultMap&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;code&quot;</span> <span class="attr">column</span>=<span class="string">&quot;code&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 一对多关联映射:collection fetchType=&quot;lazy&quot;表示懒加载 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">collection</span></span></span><br><span class="line"><span class="tag">            <span class="attr">column</span>=<span class="string">&quot;id&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">select</span>=<span class="string">&quot;org.fkit.mapper.StudentMapper.selectStudentByClazzId&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">property</span>=<span class="string">&quot;students&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">javaType</span>=<span class="string">&quot;ArrayList&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">ofType</span>=<span class="string">&quot;org.fkit.domain.Student&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">fetchType</span>=<span class="string">&quot;lazy&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">property</span>=<span class="string">&quot;sex&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">collection</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>ClazzMapper.xml</code>中定义了一个<code>select</code>标签,其根据<code>id</code>查询班级信息。由于<code>Clazz</code>类除了简单的属性<code>id</code>、<code>code</code>、<code>name</code>以外,还有一个关联对象<code>students</code>,所以返回的是一个id为<code>clazzResultMap</code>的<code>resultMap</code>。由于<code>students</code>是一个<code>List</code>集合,所以<code>clazzResultMap</code>中<strong>使用了<code>collection</code>元素映射一对多的关联关系</strong>,</p>
+<h4 id="collection标签详解"><a href="#collection标签详解" class="headerlink" title="collection标签详解"></a>collection标签详解</h4><h5 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h5><ul>
+<li><code>column</code>属性要查询的<strong>数据库表的列名</strong>。</li>
+<li><code>select</code>属性表示会使用<code>column</code>属性值<code>id</code>作为参数执行<code>StudentMapper</code>中定义的<code>id</code>为<code>selectStudentByClazzId</code>的<code>select</code>标签,以便查询该班级对应的所有学生数据,</li>
+<li><code>property</code>属性用于<strong>指定一个持久化对象的属性</strong>,<code>select</code>语句的查询的结果将会封装到这个属性中.</li>
+<li><code>javaType</code>属性用于<strong>指定属性的类型</strong>,也就是<code>students</code>变量的类型是<code>ArrayList</code>类型.</li>
+<li><code>ofType</code>属性用于<strong>指定属性的位置</strong>(也就是<strong>指定属性定义的类</strong>),<code>ofType=&quot;org.fkit.domain.Student&quot;</code>表示<code>students</code>属性是<code>org.fkit.domain.Student</code>的属性。查询出的数据将被封装到<code>property</code>表示的<code>students</code>对象当中。</li>
+<li>还使用了一个新的属性<code>fetchType</code>,该属性的取值有<code>eager</code>和<code>lazy</code>,<ul>
+<li><code>eager</code>表示立即加载,即查询<code>Clazz</code>对象的时候,会立即执行关联的<code>selectStudentByClazzId</code>中定义的<code>SQL</code>语句去査询班级的所有学生;</li>
+<li><code>lazy</code>表示懒加载,其不会立即发送<code>SQL</code>语句去查询班级的所有学生,而是等到需要使用到班级的<code>students</code>属性时,才会发送<code>SQL</code>语句去查询班级的所有学生。</li>
+<li><code>fetch</code>机制更多的是为了性能考虑,<ul>
+<li>如果查询班级时确定会访问班级的所有学生则该属性应该被设置为<code>eager</code>;</li>
+<li>如果査询班级时只是查询班级信息,有可能不会访问班级的所有学生,则该属性应该被设置为<code>lazy</code>。</li>
+<li><strong>正常情况下,一对多所关联的集合对象,都应该被设置成<code>lazy</code>。</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="MyBatis根配置文件中-开启懒加载"><a href="#MyBatis根配置文件中-开启懒加载" class="headerlink" title="MyBatis根配置文件中 开启懒加载"></a>MyBatis根配置文件中 开启懒加载</h3><figure class="highlight xml"><figcaption><span>/OneToManyTest/src/mybatis-config.xml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">configuration</span></span></span><br><span class="line"><span class="meta">  <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">  <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- XML 配置文件包含对 MyBatis 系统的核心设置 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 省略其他配置...... --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 指定 MyBatis 所用日志的具体实现 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 省略其他配置...... --&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 要使延迟加载生效必须配置下面两个属性 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;lazyLoadingEnabled&quot;</span> <span class="attr">value</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">setting</span> <span class="attr">name</span>=<span class="string">&quot;aggressiveLazyLoading&quot;</span> <span class="attr">value</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">settings</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 省略其他配置...... --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="设置说明"><a href="#设置说明" class="headerlink" title="设置说明"></a>设置说明</h4><ul>
+<li><code>lazyLoadingEnabled</code>属性表示延迟加载的全局开关。当开启时,所有关联对象都会延迟加载。默认为<code>false</code>。这里设为<code>true</code>表示延迟加载关联对象.</li>
+<li><code>aggressiveLazyLoading</code>属性启用时,会使带有延迟加载属性的对象立即加载;反之,每种属性将会按需加载。默认为<code>true</code>,所以这里需要设置成<code>false</code>,表示按需加载。</li>
+</ul>
+<h3 id="StudentMapper-xml"><a href="#StudentMapper-xml" class="headerlink" title="StudentMapper.xml"></a>StudentMapper.xml</h3><figure class="highlight xml"><figcaption><span>/OneToManyTest/src/org/fkit/mapper/StudentMapper.xml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mapper</span> <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Mapper 3.0//EN&quot;</span> <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-mapper.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- namespace指用户自定义的命名空间。 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mapper</span> <span class="attr">namespace</span>=<span class="string">&quot;org.fkit.mapper.StudentMapper&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 根据id查询学生信息，多表连接，返回resultMap --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectStudentById&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;studentResultMap&quot;</span>&gt;</span> </span><br><span class="line">        SELECT * FROM tb_clazz c,tb_student s WHERE c.id =s.clazz_id AND s.id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 根据班级id查询学生信息，返回resultMap --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;selectStudentByClazzId&quot;</span> <span class="attr">parameterType</span>=<span class="string">&quot;int&quot;</span> <span class="attr">resultMap</span>=<span class="string">&quot;studentResultMap&quot;</span>&gt;</span> </span><br><span class="line">        SELECT * FROM tb_student WHERE clazz_id = #&#123;id&#125;</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 映射Student对象的resultMap --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">resultMap</span> <span class="attr">type</span>=<span class="string">&quot;org.fkit.domain.Student&quot;</span></span></span><br><span class="line"><span class="tag">        <span class="attr">id</span>=<span class="string">&quot;studentResultMap&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;sex&quot;</span> <span class="attr">column</span>=<span class="string">&quot;sex&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;age&quot;</span> <span class="attr">column</span>=<span class="string">&quot;age&quot;</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 多对一关联映射:association --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">association</span> <span class="attr">property</span>=<span class="string">&quot;clazz&quot;</span></span></span><br><span class="line"><span class="tag">            <span class="attr">javaType</span>=<span class="string">&quot;org.fkit.domain.Clazz&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">id</span> <span class="attr">property</span>=<span class="string">&quot;id&quot;</span> <span class="attr">column</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;code&quot;</span> <span class="attr">column</span>=<span class="string">&quot;code&quot;</span> /&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">result</span> <span class="attr">property</span>=<span class="string">&quot;name&quot;</span> <span class="attr">column</span>=<span class="string">&quot;name&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">association</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">resultMap</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mapper</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>StudentMapper.xml</code>中定义了一个<code>id=&quot;selectStudentById&quot;</code>的<code>select</code>标签,其会根据学生<code>id</code>查询学生信息,由于<code>Student</code>类除了简单的属性<code>id</code>、<code>name</code>、<code>sex</code>和<code>age</code>之外,还有一个关联对象<code>clazz</code>,所以它返回的是一个名为<code>studentResultMap</code>的<code>resultMap</code>.</p>
+<h3 id="提示"><a href="#提示" class="headerlink" title="提示"></a>提示</h3><p>在实际开发中,<strong><code>一对多</code>关系通常<code>映射为集合对象</code>,而由于多方的数据量可能很大,所以通常使用懒加载</strong>;而<code>多对一</code>只是<code>关联到一个对象</code>,所以通常使用多表连接直接把数据提取出来。</p>
+<h2 id="创建mapper接口对象"><a href="#创建mapper接口对象" class="headerlink" title="创建mapper接口对象"></a>创建mapper接口对象</h2><h3 id="ClazzMapper接口"><a href="#ClazzMapper接口" class="headerlink" title="ClazzMapper接口"></a>ClazzMapper接口</h3><figure class="highlight java"><figcaption><span>/OneToManyTest/src/org/fkit/mapper/ClazzMapper.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ClazzMapper</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 根据id查询班级信息</span></span><br><span class="line">    <span class="function">Clazz <span class="title">selectClazzById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="StudentMapper接口"><a href="#StudentMapper接口" class="headerlink" title="StudentMapper接口"></a>StudentMapper接口</h3><figure class="highlight java"><figcaption><span>/OneToManyTest/src/org/fkit/mapper/StudentMapper.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">StudentMapper</span> </span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 根据id查询学生信息</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> id</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> Student对象.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="function">Student <span class="title">selectStudentById</span><span class="params">(Integer id)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="测试类"><a href="#测试类" class="headerlink" title="测试类"></a>测试类</h2><figure class="highlight java"><figcaption><span>/OneToManyTest/src/org/fkit/test/OneToManyTest.java</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.fkit.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> org.apache.ibatis.session.SqlSession;</span><br><span class="line"><span class="keyword">import</span> org.fkit.domain.Clazz;</span><br><span class="line"><span class="keyword">import</span> org.fkit.domain.Student;</span><br><span class="line"><span class="keyword">import</span> org.fkit.factory.FKSqlSessionFactory;</span><br><span class="line"><span class="keyword">import</span> org.fkit.mapper.ClazzMapper;</span><br><span class="line"><span class="keyword">import</span> org.fkit.mapper.StudentMapper;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OneToManyTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 1.定义SqlSession变量</span></span><br><span class="line">        SqlSession sqlSession = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 2.创建SqlSession实例</span></span><br><span class="line">            sqlSession = FKSqlSessionFactory.getSqlSession();</span><br><span class="line">            OneToManyTest t = <span class="keyword">new</span> OneToManyTest();</span><br><span class="line">            t.testSelectClazzById(sqlSession);</span><br><span class="line">            <span class="comment">// t.testSelectStudentById(sqlSession);</span></span><br><span class="line">            <span class="comment">// 提交事务</span></span><br><span class="line">            sqlSession.commit();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 回滚事务</span></span><br><span class="line">            sqlSession.rollback();</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 关闭SqlSession</span></span><br><span class="line">            <span class="keyword">if</span> (sqlSession != <span class="keyword">null</span>)</span><br><span class="line">                sqlSession.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试一对多，查询班级Clazz（一）的时候级联查询学生Student（多）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectClazzById</span><span class="params">(SqlSession sqlSession)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 1.获得ClazzMapper接口的代理对象</span></span><br><span class="line">        ClazzMapper cm = sqlSession.getMapper(ClazzMapper.class);</span><br><span class="line">        <span class="comment">// 2.调用接口的代理对象的selectClazzById方法</span></span><br><span class="line">        Clazz clazz = cm.selectClazzById(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 查看查询到的clazz对象信息</span></span><br><span class="line">        System.out.println(clazz.getId() + <span class="string">&quot; &quot;</span> + clazz.getCode() + <span class="string">&quot; &quot;</span> + clazz.getName());</span><br><span class="line">        <span class="comment">// 查看clazz对象关联的学生信息</span></span><br><span class="line">        List&lt;Student&gt; students = clazz.getStudents();</span><br><span class="line">        students.forEach(stu -&gt; System.out.println(<span class="string">&quot;    &quot;</span> + stu));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试多对一，查询学生Student（多）的时候级联查询 班级Clazz（一）</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSelectStudentById</span><span class="params">(SqlSession sqlSession)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 获得StudentMapper接口的代理对象</span></span><br><span class="line">        StudentMapper sm = sqlSession.getMapper(StudentMapper.class);</span><br><span class="line">        <span class="comment">// 调用selectStudentById方法</span></span><br><span class="line">        Student stu = sm.selectStudentById(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 查看查询到的Student对象信息</span></span><br><span class="line">        System.out.println(stu);</span><br><span class="line">        <span class="comment">// 查看Student对象关联的班级信息</span></span><br><span class="line">        System.out.println(stu.getClazz());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在<code>OneToManyTest</code>类中定义了一个<code>testSelectClazzById()</code>方法,该方法用于测试一对多关系,查询班级<code>Clazz</code>(一)的时候关联查询学生<code>Student</code>(多)的信息。</p>
+<h2 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h2><p>在<code>main</code>方法中运行<code>testSelectStudentById()</code>方法,其通过<code>SqlSession</code>的<code>getMapper(Class&lt;T&gt; type)</code>方法获得<code>mapper</code>接口的代理对象<code>ClazzMapper</code>,调用<code>selectClazzById</code>方法时会执<code>ClazzMapper.xml</code>中<code>id=&quot;selectClazzById&quot;</code>的<code>select</code>元素中定义的<code>SQL</code>语可。控制台显示如下:</p>
+<figure class="highlight cmd"><figcaption><span>控制台输出</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT * FROM tb_clazz c,tb_student s WHERE c.id =s.clazz_id AND s.id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line">Student [id=<span class="number">1</span>, name=Java基础班, sex=男, age=<span class="number">24</span>]</span><br><span class="line">Clazz [id=<span class="number">1</span>, code=B151516, name=Java基础班]</span><br></pre></td></tr></table></figure>
+<p>在<code>main</code>方法中运行<code>testSelectClazzById()</code>方法,控制台显示如下:</p>
+<figure class="highlight cmd"><figcaption><span>控制台输出</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT * FROM tb_clazz WHERE id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">1</span></span><br><span class="line"><span class="number">1</span> B151516 Java基础班</span><br><span class="line">DEBUG [main] ==&gt;  Preparing: SELECT * FROM tb_student WHERE clazz_id = ? </span><br><span class="line">DEBUG [main] ==&gt; Parameters: <span class="number">1</span>(Integer)</span><br><span class="line">DEBUG [main] &lt;==      Total: <span class="number">4</span></span><br><span class="line">Student [id=<span class="number">1</span>, name=小明, sex=男, age=<span class="number">24</span>]</span><br><span class="line">Student [id=<span class="number">2</span>, name=小王, sex=男, age=<span class="number">23</span>]</span><br><span class="line">Student [id=<span class="number">3</span>, name=小芳, sex=女, age=<span class="number">22</span>]</span><br><span class="line">Student [id=<span class="number">4</span>, name=小丽, sex=女, age=<span class="number">22</span>]</span><br></pre></td></tr></table></figure>
+<p>可以看到,<code>MyBatis</code>执行了一个多表查询语句,并且将查询到的班级信息封装到了学生对象的关联属性中。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="collection标签"><a href="#collection标签" class="headerlink" title="collection标签"></a>collection标签</h2><h3 id="collection标签的属性"><a href="#collection标签的属性" class="headerlink" title="collection标签的属性"></a>collection标签的属性</h3><ul>
+<li><code>column</code>属性指定要将哪一列,作为<code>select</code>标签关联的查询语句的参数.</li>
+<li><code>select</code>属性指定关联查询的<code>select</code>标签</li>
+<li><code>property</code>属性指定接收查询结果集的集合的变量名</li>
+<li><code>javaType</code>属性指定接收查询结果集的集合的类型</li>
+<li><code>ofType</code>属性指定集合中存放的元素的类型</li>
+</ul>
+<h3 id="collection标签的子标签"><a href="#collection标签的子标签" class="headerlink" title="collection标签的子标签"></a>collection标签的子标签</h3><ul>
+<li><code>id</code>标签</li>
+<li><code>result</code>标签</li>
+</ul>
+<h2 id="association标签"><a href="#association标签" class="headerlink" title="association标签"></a>association标签</h2><p>对于多对一,一对一联系,使用<code>多表连接查询</code>即可.</p>
+<h3 id="association标签的属性"><a href="#association标签的属性" class="headerlink" title="association标签的属性"></a>association标签的属性</h3><ul>
+<li><code>column</code>属性指定要将哪一列,作为<code>select</code>标签关联的查询语句的参数.</li>
+<li><code>select</code>属性指定关联查询的<code>select</code>标签</li>
+<li><code>property</code>设置接收查询结果的持久化对象的属性</li>
+<li><code>javaType</code>设置该属性的类型</li>
+</ul>
+<h3 id="association标签的子标签"><a href="#association标签的子标签" class="headerlink" title="association标签的子标签"></a>association标签的子标签</h3><ul>
+<li><code>id</code>标签</li>
+<li><code>result</code>标签</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/" title="10.1.2 一对多">https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/3de7370b/" rel="prev" title="10.1 MyBatis关联映射 10.1.1 一对一联系">
+                  <i class="fa fa-chevron-left"></i> 10.1 MyBatis关联映射 10.1.1 一对一联系
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/18ab9715/" rel="next" title="10.1.3 多对多">
+                  10.1.3 多对多 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/26e4bb72/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/26e4bb72/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

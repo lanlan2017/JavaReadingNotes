@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="15.9.2 使用Buffer从内部结构上来看,Buffer就像一个数组,它可以保存多个类型相同的数据。Buffer是一个抽象类,其最常用的子类是ByteBuffer,它可以在底层字节数组上进行get&#x2F;set操作。除ByteBuffer之外,对应于其他基本数据类型(boolean除外)都有相应的Buffer类:CharBuffer、ShortBuffer、IntBuffer、LongBuffer、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="15.9.2 使用Buffer">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/d63ba950/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="15.9.2 使用Buffer从内部结构上来看,Buffer就像一个数组,它可以保存多个类型相同的数据。Buffer是一个抽象类,其最常用的子类是ByteBuffer,它可以在底层字节数组上进行get&#x2F;set操作。除ByteBuffer之外,对应于其他基本数据类型(boolean除外)都有相应的Buffer类:CharBuffer、ShortBuffer、IntBuffer、LongBuffer、">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/1.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/2.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/3.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/4.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/5.png">
+<meta property="article:published_time" content="2020-01-05T20:35:02.000Z">
+<meta property="article:modified_time" content="2020-03-15T00:15:12.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/1.png">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/d63ba950/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/d63ba950/","path":"/d63ba950/","title":"15.9.2 使用Buffer"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>15.9.2 使用Buffer | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#15-9-2-%E4%BD%BF%E7%94%A8Buffer"><span class="nav-text">15.9.2 使用Buffer</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BABuffer%E5%AF%B9%E8%B1%A1"><span class="nav-text">创建Buffer对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MappedByteBuffer"><span class="nav-text">MappedByteBuffer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E9%87%8F-%E7%95%8C%E9%99%90-%E4%BD%8D%E7%BD%AE"><span class="nav-text">容量 界限 位置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0"><span class="nav-text">标记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">Buffer的作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A3%85%E5%85%A5%E6%95%B0%E6%8D%AE-put%E6%96%B9%E6%B3%95"><span class="nav-text">装入数据 put方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ByteBuffer%E7%9A%84put%E6%96%B9%E6%B3%95"><span class="nav-text">ByteBuffer的put方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CharBuffer%E7%9A%84put%E6%96%B9%E6%B3%95"><span class="nav-text">CharBuffer的put方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E8%BE%93%E5%87%BA%E6%95%B0%E6%8D%AE-flip%E6%96%B9%E6%B3%95"><span class="nav-text">准备输出数据 flip方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E8%AF%BB%E5%8F%96Buffer%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E6%97%B6%E8%B0%83%E7%94%A8flip%E6%96%B9%E6%B3%95"><span class="nav-text">需要读取Buffer中的数据时调用flip方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%86%8D%E6%AC%A1%E8%A3%85%E5%85%A5%E6%95%B0%E6%8D%AE-clear%E6%96%B9%E6%B3%95"><span class="nav-text">准备再次装入数据 clear方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%96%E5%87%BAflip-%E5%86%8D%E6%AC%A1%E8%A3%85%E5%85%A5clear"><span class="nav-text">取出flip 再次装入clear</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer%E5%85%B6%E4%BB%96%E5%B8%B8%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-text">Buffer其他常用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%BE%E5%85%A5-%E5%8F%96%E5%87%BA"><span class="nav-text">放入 取出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%AF%B9-%E7%BB%9D%E5%AF%B9"><span class="nav-text">相对 绝对</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A0%E5%8F%82get%E6%96%B9%E6%B3%95%E4%BC%9A%E4%BD%BF%E5%BE%97position%E5%8A%A0%E4%B8%80"><span class="nav-text">无参get方法会使得position加一</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E7%B4%A2%E5%BC%95%E8%8E%B7%E5%8F%96%E5%80%BC%E7%9A%84get%E6%96%B9%E6%B3%95%E4%B8%8D%E4%BC%9A%E5%BD%B1%E5%93%8Dposition"><span class="nav-text">根据索引获取值的get方法不会影响position</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%99%AE%E9%80%9ABuffer-%E7%9B%B4%E6%8E%A5Buffer"><span class="nav-text">普通Buffer 直接Buffer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AA%E6%9C%89%E5%9C%A8ByteBuffer%E7%BA%A7%E5%88%AB%E4%B8%8A%E6%89%8D%E8%83%BD%E5%88%9B%E5%BB%BA%E7%9B%B4%E6%8E%A5Buffer"><span class="nav-text">只有在ByteBuffer级别上才能创建直接Buffer</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/d63ba950/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          15.9.2 使用Buffer
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-06 04:35:02" itemprop="dateCreated datePublished" datetime="2020-01-06T04:35:02+08:00">2020-01-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-9-NIO/" itemprop="url" rel="index"><span itemprop="name">15.9 NIO</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/d63ba950/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/d63ba950/" data-xid="/JavaReadingNotes/d63ba950/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="15-9-2-使用Buffer"><a href="#15-9-2-使用Buffer" class="headerlink" title="15.9.2 使用Buffer"></a>15.9.2 使用Buffer</h1><p>从内部结构上来看,<code>Buffer</code>就像一个数组,它可以保存多个类型相同的数据。<code>Buffer</code>是一个抽象类,其最常用的子类是<code>ByteBuffer</code>,它可以在底层字节数组上进行<code>get/set</code>操作。除<code>ByteBuffer</code>之外,对应于其他基本数据类型(<code>boolean</code>除外)都有相应的<code>Buffer</code>类:<code>CharBuffer</code>、<code>ShortBuffer</code>、<code>IntBuffer</code>、<code>LongBuffer</code>、<code>FloatBuffer</code>、<code>DoubleBuffer</code>。</p>
+<h2 id="创建Buffer对象"><a href="#创建Buffer对象" class="headerlink" title="创建Buffer对象"></a>创建Buffer对象</h2><p>上面这些<code>Buffer</code>类,除<code>ByteBuffer</code>之外,它们都采用相同或相似的方法来管理数据,只是各自管理的数据类型不同而已。这些<code>Buffer</code>类都没有提供构造器,通过使用如下方法来得到一个<code>Buffer</code>对象。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static XxxBuffer allocate(int capacity)</code></td>
+<td align="left">创建一个容量为<code>capacity</code>的<code>XxX Buffer</code>对象。</td>
+</tr>
+</tbody></table>
+<details><summary>展开/折叠</summary>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static ByteBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new byte buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static ShortBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new short buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static IntBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new int buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static LongBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new long buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static CharBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new char buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static FloatBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new float buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static DoubleBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new double buffer.</td>
+</tr>
+</tbody></table>
+</details>
+
+<p>但实际使用较多的是<code>ByteBuffer</code>和<code>CharBuffer</code>,其他<code>Buffer</code>子类则较少用到。</p>
+<h2 id="MappedByteBuffer"><a href="#MappedByteBuffer" class="headerlink" title="MappedByteBuffer"></a>MappedByteBuffer</h2><p>其中<code>ByteBuffer</code>类还有一个子类:<code>MappedByteBuffer</code>,<strong><code>MappedByteBuffer</code>用于表示<code>Channel</code>将磁盘文件的部分或全部内容映射到内存中后得到的<mark>结果</mark></strong>,通常<code>MappedByteBuffer</code>对象由<code>Channel</code>的<code>map()</code>方法返回。</p>
+<h2 id="容量-界限-位置"><a href="#容量-界限-位置" class="headerlink" title="容量 界限 位置"></a>容量 界限 位置</h2><p>在<code>Buffer</code>中有三个重要的概念:容量(<code>capacity</code>)、界限(<code>limit</code>)和位置(<code>position</code>)</p>
+<ul>
+<li><strong>容量(<code>capacity</code>)</strong>:<ul>
+<li>缓冲区的容量(<code>capacity</code>)表示该<code>Buffer</code>的最大数据容量,即<strong>最多可以存储多少数据</strong>。<strong>缓冲区的容量不可能为负值,创建后不能改变</strong>。</li>
+</ul>
+</li>
+<li><strong>界限(<code>limit</code>)</strong>:<ul>
+<li><strong>第一个不应该被读出或者写入的缓冲区位置索引</strong>。也就是说,<strong>位于<code>limit</code>后的数据既不可被读,也不可被写</strong>。</li>
+</ul>
+</li>
+<li><strong>位置(<code>position</code>)</strong>:<ul>
+<li>用于指明<strong>下一个可以被读出的或者写入的缓冲区位置索引</strong>(类似于<code>IO</code>流中的记录指针)。<strong>当使用<code>Buffer</code>从<code>Channel</code>中读取数据时,<code>position</code>的<mark>值</mark>恰好等于已经读到了多少数据</strong>:</li>
+<li>当刚刚新建一个<code>Buffer</code>对象时,其<code>position</code>为0,也就是<strong>第1个位置的索引为0</strong>;</li>
+<li>如果从<code>Channel</code>中读取了2个数据到该<code>Buffer</code>中,则<code>position</code>为2,指向<code>Buffer</code>中第3个位置</li>
+</ul>
+</li>
+</ul>
+<h2 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h2><p>除此之外,<code>Buffer</code>里还支持一个可选的标记(<code>mark</code>),类似于传统<code>IO</code>流中的<code>mark()</code>,<strong><code>Buffer</code>允许直接将<code>position</code>定位到该<code>mark</code>处</strong>。这些值满足如下关系:<br><strong>0≤mark≤position≤limit≤capacity</strong><br>图15.16显示了某个<code>Buffer</code>读入了一些数据后的示意图<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/1.png" alt="这里有一张图片"></p>
+<h2 id="Buffer的作用"><a href="#Buffer的作用" class="headerlink" title="Buffer的作用"></a>Buffer的作用</h2><p><strong><code>Buffer</code>的主要作用就是装入数据,然后输出数据</strong>(其作用类似于前面介绍的取水的“竹筒”),<strong>开始时<code>Buffer</code>的<code>position</code>为0,<code>limit</code>为<code>capacity</code></strong></p>
+<h2 id="装入数据-put方法"><a href="#装入数据-put方法" class="headerlink" title="装入数据 put方法"></a>装入数据 put方法</h2><p><strong>程序可通过<code>put()</code>方法向<code>Buffer</code>中放入一些数据</strong>(或者从<code>Channel</code>中获取一些数据),<strong>每放入一些数据,<code>Buffer</code>的<code>position</code>相应地向后移动一些位置</strong>。</p>
+<h3 id="ByteBuffer的put方法"><a href="#ByteBuffer的put方法" class="headerlink" title="ByteBuffer的put方法"></a>ByteBuffer的put方法</h3><details><summary>展开/折叠</summary>
+
+<table>
+<thead>
+<tr>
+<th align="left"><code>ByteBuffer</code>的<code>put</code>方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract ByteBuffer put(byte b)</code></td>
+<td align="left">Relative put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>ByteBuffer put(byte[] src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>ByteBuffer put(byte[] src, int offset, int length)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer put(int index, byte b)</code></td>
+<td align="left">Absolute put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>ByteBuffer put(ByteBuffer src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract ByteBuffer putChar(char value)</code></td>
+<td align="left">Relative put method for writing a char value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putChar(int index, char value)</code></td>
+<td align="left">Absolute put method for writing a char value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putDouble(double value)</code></td>
+<td align="left">Relative put method for writing a double value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putDouble(int index, double value)</code></td>
+<td align="left">Absolute put method for writing a double value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putFloat(float value)</code></td>
+<td align="left">Relative put method for writing a float value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putFloat(int index, float value)</code></td>
+<td align="left">Absolute put method for writing a float value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putInt(int value)</code></td>
+<td align="left">Relative put method for writing an int value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putInt(int index, int value)</code></td>
+<td align="left">Absolute put method for writing an int value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putLong(int index, long value)</code></td>
+<td align="left">Absolute put method for writing a long value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putLong(long value)</code></td>
+<td align="left">Relative put method for writing a long value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putShort(int index, short value)</code></td>
+<td align="left">Absolute put method for writing a short value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putShort(short value)</code></td>
+<td align="left">Relative put method for writing a short value (optional operation).</td>
+</tr>
+</tbody></table>
+</details>
+
+<h3 id="CharBuffer的put方法"><a href="#CharBuffer的put方法" class="headerlink" title="CharBuffer的put方法"></a>CharBuffer的put方法</h3><details><summary>展开/折叠</summary>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract CharBuffer put(char c)</code></td>
+<td align="left">Relative put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(char[] src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(char[] src, int offset, int length)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract CharBuffer put(int index, char c)</code></td>
+<td align="left">Absolute put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(String src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(String src, int start, int end)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(CharBuffer src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+</tbody></table>
+</details>
+
+<h2 id="准备输出数据-flip方法"><a href="#准备输出数据-flip方法" class="headerlink" title="准备输出数据 flip方法"></a>准备输出数据 flip方法</h2><p>当<code>Buffer</code>装入数据结束后,调用<code>Buffer</code>的<code>flip()</code>方法,<strong>该方法将<code>limit</code>设置为<code>position</code>所在位置,并将<code>position</code>设为0,这就使得<code>Buffer</code>的读写指针又移到了开始位置。</strong></p>
+<h3 id="需要读取Buffer中的数据时调用flip方法"><a href="#需要读取Buffer中的数据时调用flip方法" class="headerlink" title="需要读取Buffer中的数据时调用flip方法"></a>需要读取Buffer中的数据时调用flip方法</h3><p>也就是说,<strong><code>Buffer</code>调用<code>flip()</code>方法之后,<code>Buffer</code><mark>为输出数据做好了准备</mark></strong>;</p>
+<table>
+<thead>
+<tr>
+<th align="left">Buffer类的flip方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Buffer flip()</code></td>
+<td align="left">Flips this buffer.</td>
+</tr>
+</tbody></table>
+<h2 id="准备再次装入数据-clear方法"><a href="#准备再次装入数据-clear方法" class="headerlink" title="准备再次装入数据 clear方法"></a>准备再次装入数据 clear方法</h2><p>当<code>Buffer</code>输出数据结束后,<code>Buffer</code>调用<code>clear()</code>方法,<code>clear</code>方法不是清空<code>Buffer</code>的数据,它仅仅<strong>将<code>position</code>置为0,将<code>limit</code>置为<code>capacity</code></strong>,这样<strong>为再次向<code>Buffer</code>中装入数据做好准备</strong>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">Buffer类的clear方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Buffer clear()</code></td>
+<td align="left">Clears this buffer.</td>
+</tr>
+</tbody></table>
+<h2 id="取出flip-再次装入clear"><a href="#取出flip-再次装入clear" class="headerlink" title="取出flip 再次装入clear"></a>取出flip 再次装入clear</h2><p><code>Buffer</code>中包含两个重要的方法,即<code>flip()</code>和<code>clear()</code>,</p>
+<ul>
+<li><code>flip</code>为从<code>Buffer</code>中取出数据做好准备,</li>
+<li><code>clear</code>为再次向<code>Buffer</code>中装入数据做好准备</li>
+</ul>
+<h2 id="Buffer其他常用方法"><a href="#Buffer其他常用方法" class="headerlink" title="Buffer其他常用方法"></a>Buffer其他常用方法</h2><p>除此之外,<code>Buffer</code>还包含如下一些常用的方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>int capacity()</code></td>
+<td align="left">返回<code>Buffer</code>的<code>capacity</code>大小。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean hasRemaining()</code></td>
+<td align="left">判断当前位置(<code>position</code>)和界限(<code>limit</code>)之间是否还有元素可供处理</td>
+</tr>
+<tr>
+<td align="left"><code>int limit()</code></td>
+<td align="left">返回<code>Buffer</code>的界限(<code>limit</code>)的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer limit(int newLimit)</code></td>
+<td align="left">重新设置界限(<code>limit</code>)的值,并返回一个具有新的<code>limit</code>的缓冲区对象</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer mark()</code></td>
+<td align="left">设置<code>Buffer</code>的<code>mark</code>位置,它只能在0和位置(<code>position</code>)之间做<code>mark</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>int position()</code></td>
+<td align="left">返回<code>Buffer</code>中的<code>position</code>值</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer position(int newPosition)</code></td>
+<td align="left">设置<code>Buffer</code>的<code>position</code>,并返回<code>position</code>被修改后的<code>Buffer</code>对象</td>
+</tr>
+<tr>
+<td align="left"><code>int remaining()</code></td>
+<td align="left">返回当前位置和界限(<code>limit</code>)之间的元素个数</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer reset()</code></td>
+<td align="left">将位置(<code>position</code>)转到<code>mark</code>所在的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer rewind()</code></td>
+<td align="left">将位置(<code>position</code>)设置成0,取消设置的<code>mark</code></td>
+</tr>
+</tbody></table>
+<h2 id="放入-取出"><a href="#放入-取出" class="headerlink" title="放入 取出"></a>放入 取出</h2><p>除这些移动<code>position</code>、<code>limit</code>、<code>mark</code>的方法之外,<code>Buffer</code>的所有子类还提供了两个重要的方法:<code>put()</code>和<code>get()</code>方法,用于向<code>Buffer</code>中放入数据和从<code>Buffer</code>中取出数据。<strong>当使用<code>put()</code>和<code>get()</code>方法放入、取出数据时,<code>Buffer</code>既支持对单个数据的访问,也支持对批量数据的访问</strong>(以数组作为参数)。</p>
+<h3 id="相对-绝对"><a href="#相对-绝对" class="headerlink" title="相对 绝对"></a>相对 绝对</h3><p>当使用<code>put()</code>和<code>get()</code>来访问<code>Buffer</code>中的数据时,分为相对和绝对两种。</p>
+<ul>
+<li><strong>相对(<code>Relative</code>)</strong>:<ul>
+<li>从<code>Buffer</code>的当前<code>position</code>处开始读取或写入数据,然后将位置(<code>position</code>)的值按处理元素的个数增加</li>
+</ul>
+</li>
+<li><strong>绝对(<code>Absolute</code>)</strong>:<ul>
+<li>直接**<mark>根据索引</mark>向<code>Buffer</code>中读取或写入数据**,<strong>使用绝对方式访问<code>Buffer</code>里的数据时,并不会影响位置(<code>position</code>)的值</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><p>下面程序示范了<code>Buffer</code>的一些常规操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BufferTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Buffer</span></span><br><span class="line">        CharBuffer buff = CharBuffer.allocate(<span class="number">8</span>); <span class="comment">// ①</span></span><br><span class="line">        System.out.println(<span class="string">&quot;capacity: &quot;</span> + buff.capacity());</span><br><span class="line">        System.out.println(<span class="string">&quot;limit: &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;position: &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 放入元素</span></span><br><span class="line">        buff.put(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">        buff.put(<span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">        buff.put(<span class="string">&#x27;c&#x27;</span>); <span class="comment">// ②</span></span><br><span class="line">        System.out.println(<span class="string">&quot;加入三个元素后，position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 调用flip()方法 准备取出数据</span></span><br><span class="line">        buff.flip(); <span class="comment">// ③</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行flip()后，limit = &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 取出第一个元素</span></span><br><span class="line">        System.out.println(<span class="string">&quot;第一个元素(position=0)：&quot;</span> + buff.get()); <span class="comment">// ④</span></span><br><span class="line">        System.out.println(<span class="string">&quot;取出一个元素后，position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 调用clear方法 准备再次放入数据</span></span><br><span class="line">        buff.clear(); <span class="comment">// ⑤</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，limit = &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，position = &quot;</span> + buff.position());</span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，缓冲区内容并没有被清除：&quot;</span> +</span><br><span class="line">            <span class="string">&quot;第三个元素为：&quot;</span> + buff.get(<span class="number">2</span>)); <span class="comment">// ⑥</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行绝对读取后，position = &quot;</span> + buff.position());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面程序的①号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CharBuffer buff = CharBuffer.allocate(<span class="number">8</span>); <span class="comment">// ①</span></span><br></pre></td></tr></table></figure>
+<p>通过<code>CharBuffer</code>的一个静态方法<code>allocate()</code>创建了一个<code>capacity</code>为8的<code>CharBuffer</code>,此时该<code>Buffer</code>的<code>limit</code>和<code>capacity</code>为8,<code>position</code>为0,如图15.17所示<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/2.png" alt="这里有一张图片"><br>接下来程序执行到②号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">buff.put(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">buff.put(<span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">buff.put(<span class="string">&#x27;c&#x27;</span>); <span class="comment">// ②</span></span><br></pre></td></tr></table></figure>
+<p>程序向<code>CharBuffer</code>中放入3个数值,放入3个数值后的<code>CharBuffer</code>效果如图15.18所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/3.png" alt="这里有一张图片"><br>程序执行到③号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buff.flip(); <span class="comment">// ③</span></span><br></pre></td></tr></table></figure>
+<p>调用了<code>Buffer</code>的<code>flip()</code>方法,该方法将把<code>limit</code>设为<code>position</code>处,把<code>position</code>设为0,如图15.19所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/4.png" alt="这里有一张图片"><br>从图15.19中可以看出,当<code>Buffer</code>调用了<code>flip()</code>方法之后,<code>limit</code>就移到了原来<code>position</code>所在位置,这样<strong>相当于把<code>Buffer</code>中<code>没有数据的存储空间“封印”起来</code>,从而避免读取<code>Buffer</code>数据时读到<code>null</code>值</strong>。</p>
+<h3 id="无参get方法会使得position加一"><a href="#无参get方法会使得position加一" class="headerlink" title="无参get方法会使得position加一"></a>无参get方法会使得position加一</h3><p>接下来程序在④号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;第一个元素(position=0)：&quot;</span> + buff.get()); <span class="comment">// ④</span></span><br></pre></td></tr></table></figure>
+<p>取出一个元素,<strong>取出一个元素后<code>position</code>向后移动一位</strong>,也就是该<code>Buffer</code>的<code>position</code>等于1。<br>程序执行到⑤号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buff.clear(); <span class="comment">// ⑤</span></span><br></pre></td></tr></table></figure>
+<p><code>Buffer</code>调用<code>clear()</code>方法将<code>position</code>设为0,将<code>limit</code>设为与<code>capacity</code>相等。执行<code>clear()</code>方法后的<code>Buffer</code>示意图如图15.20所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/5.png" alt="这里有一张图片"></p>
+<h3 id="根据索引获取值的get方法不会影响position"><a href="#根据索引获取值的get方法不会影响position" class="headerlink" title="根据索引获取值的get方法不会影响position"></a>根据索引获取值的get方法不会影响position</h3><p>从图15.20中可以看出,对<code>Buffer</code>执行<code>clear</code>方法后,该<code>Buffer</code>对象里的数据依然存在,所以程序在⑥号代码处依然可以取出位置为2的值,也就是字符c。因为⑥号代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;执行clear()后，缓冲区内容并没有被清除：&quot;</span> +</span><br><span class="line">    <span class="string">&quot;第三个元素为：&quot;</span> + buff.get(<span class="number">2</span>)); <span class="comment">// ⑥</span></span><br></pre></td></tr></table></figure>
+<p>采用的是<strong>根据索引来取值的方式</strong>,所以该方法不会影响<code>Buffer</code>的<code>position</code>.</p>
+<h2 id="普通Buffer-直接Buffer"><a href="#普通Buffer-直接Buffer" class="headerlink" title="普通Buffer 直接Buffer"></a>普通Buffer 直接Buffer</h2><p>通过<code>allocate</code>方法创建的<code>Buffer</code>对象是<strong>普通<code>Buffer</code></strong>.<br><code>ByteBuffer</code>还提供了一个<code>allocateDirect()</code>方法来创建<strong>直接<code>Buffer</code><strong>。</strong>直接<code>Buffer</code>的创建成本比普通<code>Buffer</code>的创建成本高,但直接<code>Buffer</code>的读取效率更高</strong>。</p>
+<h3 id="只有在ByteBuffer级别上才能创建直接Buffer"><a href="#只有在ByteBuffer级别上才能创建直接Buffer" class="headerlink" title="只有在ByteBuffer级别上才能创建直接Buffer"></a>只有在<code>ByteBuffer</code>级别上才能创建直接<code>Buffer</code></h3><p>由于直接<code>Buffer</code>的创建成本很高,所以**直接<code>Buffer</code>只适用于长生存期的<code>Buffer</code>,而不适用于短生存期、一次用完就丢弃的<code>Buffer</code><strong>。而且只有<code>ByteBuffer</code>才提供了<code>allocateDirect()</code>方法,所以</strong>只有在<code>ByteBuffer</code>级别上才能创建直接<code>Buffer</code><strong>。如果希望使用其他类型,则应该将该</strong>直接<code>Buffer</code>**转换成其他类型的<code>Buffer</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static ByteBuffer allocateDirect(int capacity)</code></td>
+<td align="left">Allocates a new direct byte buffer.</td>
+</tr>
+</tbody></table>
+<!-- CrazyJavaHandout4/Chapter/15/15.9.2/ -->
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/d63ba950/" title="15.9.2 使用Buffer">https://lanlan2017.github.io/JavaReadingNotes/d63ba950/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/32004866/" rel="prev" title="15.9 NIO 15.9.1 Java新IO概述">
+                  <i class="fa fa-chevron-left"></i> 15.9 NIO 15.9.1 Java新IO概述
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/233df632/" rel="next" title="15.9.3 使用Channel">
+                  15.9.3 使用Channel <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/d63ba950/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/d63ba950/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

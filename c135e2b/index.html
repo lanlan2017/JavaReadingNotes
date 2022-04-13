@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="6.3 数据格式化Spring使用Converter转换器进行源类型对象到目标类型对象的转换,Spring的转换器并不承担输入以及输出信息格式化的工作。如果需要转换的源类型数据是从客户端界面中传过来的,比如日期、时间、数字、货币等数据,它们往往都拥有一定的格式。在不同的本地化环境中,同一类型的数据还会相应地呈现不同的显示格式 如何从格式化的数据中获取真正的数据以完成数据绑定,并将处理完成的数据输出">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1.使用Formatter格式化数据">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/c135e2b/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="6.3 数据格式化Spring使用Converter转换器进行源类型对象到目标类型对象的转换,Spring的转换器并不承担输入以及输出信息格式化的工作。如果需要转换的源类型数据是从客户端界面中传过来的,比如日期、时间、数字、货币等数据,它们往往都拥有一定的格式。在不同的本地化环境中,同一类型的数据还会相应地呈现不同的显示格式 如何从格式化的数据中获取真正的数据以完成数据绑定,并将处理完成的数据输出">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/18.png">
+<meta property="og:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/19.png">
+<meta property="article:published_time" content="2019-06-01T07:58:32.000Z">
+<meta property="article:modified_time" content="2020-06-03T21:36:46.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/18.png">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/c135e2b/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/c135e2b/","path":"/c135e2b/","title":"1.使用Formatter格式化数据"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>1.使用Formatter格式化数据 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#6-3-%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E5%8C%96"><span class="nav-text">6.3 数据格式化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Converter%E5%92%8CFormatter%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-text">Converter和Formatter的区别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-MVC%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%8E%A5%E5%8F%A3"><span class="nav-text">Spring MVC格式化接口</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Printer%E6%8E%A5%E5%8F%A3"><span class="nav-text">Printer接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Parser%E6%8E%A5%E5%8F%A3"><span class="nav-text">Parser接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Formatter%E6%8E%A5%E5%8F%A3"><span class="nav-text">Formatter接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FormatterRegistrar%E6%8E%A5%E5%8F%A3"><span class="nav-text">FormatterRegistrar接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AnnotationFormatterFactory%E6%8E%A5%E5%8F%A3"><span class="nav-text">AnnotationFormatterFactory接口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-%E4%BD%BF%E7%94%A8Formatter%E6%A0%BC%E5%BC%8F%E5%8C%96%E6%95%B0%E6%8D%AE"><span class="nav-text">示例 使用Formatter格式化数据</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9A%84%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%B1%BB"><span class="nav-text">使用自定义的格式化类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DateFormatter"><span class="nav-text">DateFormatter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#springmvc-config-xml"><span class="nav-text">springmvc-config.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#User-java"><span class="nav-text">User.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UserController-java"><span class="nav-text">UserController.java</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#registerForm-jsp"><span class="nav-text">registerForm.jsp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#success-jsp"><span class="nav-text">success.jsp</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95"><span class="nav-text">测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E9%93%BE%E6%8E%A5"><span class="nav-text">测试链接</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A1%AB%E5%86%99%E6%95%B0%E6%8D%AE"><span class="nav-text">填写数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E6%95%88%E6%9E%9C"><span class="nav-text">转换效果</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%8F%B0%E8%BE%93%E5%87%BA"><span class="nav-text">控制台输出</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Spring%E6%8F%90%E4%BE%9B%E7%9A%84%E6%A0%BC%E5%BC%8F%E5%8C%96%E7%B1%BB"><span class="nav-text">使用Spring提供的格式化类</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/c135e2b/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          1.使用Formatter格式化数据
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-06-01 15:58:32" itemprop="dateCreated datePublished" datetime="2019-06-01T15:58:32+08:00">2019-06-01</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-06-04 05:36:46" itemprop="dateModified" datetime="2020-06-04T05:36:46+08:00">2020-06-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">4 Spring+Mybatis企业应用实战(第2版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC6%E7%AB%A0-SpringMVC%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%92%8C%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/" itemprop="url" rel="index"><span itemprop="name">第6章 SpringMVC的数据转换 格式化和数据校验</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/4-Spring-Mybatis%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC2%E7%89%88/%E7%AC%AC6%E7%AB%A0-SpringMVC%E7%9A%84%E6%95%B0%E6%8D%AE%E8%BD%AC%E6%8D%A2-%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%92%8C%E6%95%B0%E6%8D%AE%E6%A0%A1%E9%AA%8C/6-3-%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">6.3 数据格式化</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/c135e2b/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/c135e2b/" data-xid="/JavaReadingNotes/c135e2b/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="6-3-数据格式化"><a href="#6-3-数据格式化" class="headerlink" title="6.3 数据格式化"></a>6.3 数据格式化</h1><p><code>Spring</code>使用<code>Converter</code>转换器进行源类型对象到目标类型对象的转换,<code>Spring</code>的转换器并不承担输入以及输出信息格式化的工作。如果需要转换的源类型数据是从客户端界面中传过来的,比如日期、时间、数字、货币等数据,它们往往都拥有一定的格式。在不同的本地化环境中,同一类型的数据还会相应地呈现不同的显示格式</p>
+<p>如何从格式化的数据中获取真正的数据以完成数据绑定,并将处理完成的数据输出为格式化的数据是<code>Spring</code>格式化框架需要解决的问题。<code>Spring</code>从3.0开始引入了格式化转换框架,这个框架位于<code>org.springframework.format</code>包中,其中最重要的是<code>Formatter&lt;T&gt;</code>接口</p>
+<h2 id="Converter和Formatter的区别"><a href="#Converter和Formatter的区别" class="headerlink" title="Converter和Formatter的区别"></a>Converter和Formatter的区别</h2><p><strong><code>Converter</code>完成任意<code>Object</code>与<code>Object</code>之间的类型转换</strong>,<br><strong><code>Formatter</code>完成任意<code>Object</code>与<code>String</code>之间的类型转换,即格式化和解析</strong>,<br>它和<code>PropertyEditor</code>功能类似,可以替代<code>PropertyEditor</code>来进行对象的解析和格式化,而且支持细粒度的字段级别的格式化解析。<br><strong><code>Formatter</code>只能将<code>String</code>转换成另一种<code>Java</code>类型</strong>。例如,将<code>String</code>转换成<code>Date</code>但它不能将<code>Long</code>转换成<code>Date</code>。<br><strong>因此<code>Formatter</code>更适用于<code>Web</code>层的数据转换。而<code>Converter</code>则可以用在任意层中</strong>。<br><strong>因此,在<code>Spring MVC</code>的应用程序当中,如果想<code>转换表单中的用户输入</code>,则建议选择<code>Formatter</code></strong>,而不是<code>Converter</code>.</p>
+<h1 id="Spring-MVC格式化接口"><a href="#Spring-MVC格式化接口" class="headerlink" title="Spring MVC格式化接口"></a>Spring MVC格式化接口</h1><p><code>Formatter</code>格式化转换是<code>Spring</code>通用的,定义在<code>org.springframework.format</code>包中,其不仅仅在<code>Spring Web MVC</code>场景下使用。在<code>org.springframework.format</code>包中定义的接口如下:</p>
+<h2 id="Printer接口"><a href="#Printer接口" class="headerlink" title="Printer接口"></a>Printer接口</h2><p><code>Printer&lt;T&gt;</code>接口。格式化显示接口,其将T类型的对象根据 <code>Locale</code>信息以某种格式进行打印显示(即返回字符串形式)。该接口中定义了一个 <code>print</code>方法,其根据本地化信息<strong>将T类型的对象输出为不同格式的字符串</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">String <span class="title">print</span><span class="params">(T object,Locale locale)</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="Parser接口"><a href="#Parser接口" class="headerlink" title="Parser接口"></a>Parser接口</h2><p><code>Parser&lt;T&gt;</code>接口。解析接口,其根据 <code>Locale</code>信息解析字符串到T类型的对象。该接口中定义了一个 <strong><code>parse</code>方法</strong>,其参考本地化信息<strong>将一个格式化的字符串转换为T类型的对象</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">T <span class="title">parse</span><span class="params">(String text,Locale locale)</span> <span class="keyword">throws</span> ParseException</span></span><br></pre></td></tr></table></figure>
+<h2 id="Formatter接口"><a href="#Formatter接口" class="headerlink" title="Formatter接口"></a>Formatter接口</h2><p><code>Formatter&lt;T&gt;</code>接口。格式化接口,继承自 <code>Printer&lt;T&gt;</code>和 <code>Parser&lt;T&gt;</code>接口,它完成T类型对象的格式化和解析功能。</p>
+<h2 id="FormatterRegistrar接口"><a href="#FormatterRegistrar接口" class="headerlink" title="FormatterRegistrar接口"></a>FormatterRegistrar接口</h2><p><code>FormatterRegistrar</code>接口。注册格式化转换器。该接口中定义<code>registerFormatters</code>方法,其参数就是 <code>FormatterRegistry</code>对象,<strong>用于注册多个格式化转换器</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">registerFormatters</span><span class="params">(FormatterRegistry registry)</span></span></span><br></pre></td></tr></table></figure>
+<h2 id="AnnotationFormatterFactory接口"><a href="#AnnotationFormatterFactory接口" class="headerlink" title="AnnotationFormatterFactory接口"></a>AnnotationFormatterFactory接口</h2><p><code>AnnotationFormatterFactory&lt; A extends Annotation&gt;</code>接口。注解驱动的字段格式化工厂,用于创建带注解的对象字段的 <code>Printer</code>和 <code>Parser</code>,即用于格式化和解析带注解的对象字段。该接口中定义了以下几个方法:</p>
+<ul>
+<li><code>Set&lt;Class&lt;?&gt;&gt; getFieldTypes()</code>。注解A的应用范围,即<strong>哪些属性类可以标注A注解</strong>。</li>
+<li><code>Printer&lt;?&gt; getPrinter( a Annotation, Class&lt;?&gt; fieldType)</code>。**根据注解A获取特定属性类型<code>Printer</code>**。</li>
+<li><code>Parser&lt;?&gt; getParser( A annotation, Class&lt;?&gt; fieldType)。</code>根据注解A获取特定属性类型的<code>Parser</code>。</li>
+</ul>
+<h1 id="示例-使用Formatter格式化数据"><a href="#示例-使用Formatter格式化数据" class="headerlink" title="示例 使用Formatter格式化数据"></a>示例 使用Formatter格式化数据</h1><h2 id="使用自定义的格式化类"><a href="#使用自定义的格式化类" class="headerlink" title="使用自定义的格式化类"></a>使用自定义的格式化类</h2><h3 id="DateFormatter"><a href="#DateFormatter" class="headerlink" title="DateFormatter"></a>DateFormatter</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现Converter&lt;S,T&gt;接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DateFormatter</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Formatter</span>&lt;<span class="title">Date</span>&gt;</span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 日期格式化对象</span></span><br><span class="line">    <span class="keyword">private</span> SimpleDateFormat dateFormat;</span><br><span class="line">    <span class="comment">// 构造器，通过依赖注入的日期类型创建日期格式化对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DateFormatter</span><span class="params">(String datePattern)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.dateFormat = <span class="keyword">new</span> SimpleDateFormat(datePattern);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 显示Formatter&lt;T&gt;的T类型对象</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">print</span><span class="params">(Date date, Locale locale)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;实现的print方法:Date转String&quot;</span>);</span><br><span class="line">        <span class="keyword">return</span> dateFormat.format(date);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 解析文本字符串返回一个Formatter&lt;T&gt;的T类型对象。</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">parse</span><span class="params">(String source, Locale locale)</span> <span class="keyword">throws</span> ParseException</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">try</span></span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;实现的parse方法:String转Date&quot;</span>);</span><br><span class="line">            <span class="keyword">return</span> dateFormat.parse(source);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>DateFormatter</code>类实现了<code>org. springframework. format. Formatter</code>接口。实现了接口中的两个方法:</p>
+<ul>
+<li><code>parse</code>方法,使用指定的 <code>Locale</code>将一个 <code>String</code>解析成目标T类型;</li>
+<li><code>print</code>方法,用于返回T类型的字符串表示形式。</li>
+</ul>
+<p>在 <code>DateFormatter</code>类中使用 <code>SimpleDateFormat</code>对象将 <code>String</code>转换成<code>Date</code>类型,日期类型模板<code>yyy-M-dd</code>会通过配置文件的依赖注入设置。</p>
+<h3 id="springmvc-config-xml"><a href="#springmvc-config-xml" class="headerlink" title="springmvc-config.xml"></a>springmvc-config.xml</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 装配自定义格式化 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mvc:annotation-driven</span> <span class="attr">conversion-service</span>=<span class="string">&quot;conversionService&quot;</span> /&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- 格式化 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">&quot;conversionService&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;org.springframework.format.support.FormattingConversionServiceFactoryBean&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- formatters属性可以注册格式化类Fommatter --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- converters属性可以注册转换器Converter --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;formatters&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 使用自定义格式化类 --&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 指定格式化模板 --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">                <span class="attr">class</span>=<span class="string">&quot;org.fkit.formatter.DateFormatter&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">c:_0</span>=<span class="string">&quot;yyyy-MM-dd&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><code>Spring</code>在格式化模块中定义了一个实现<code>ConversionService</code>接口的<code>FormattingConversionService</code>实现类,该类既具有类型转换功能,又具有格式化的功能<br>而<code>FormattingConversionServiceFactoryBean</code>工厂类用于在 <code>Spring</code>上下文中构造一个<code>FormattingConversionService</code>对象,通过这个工厂类可以注册自定义的格式化转换器</p>
+<p>以上配置使用<code>FormattingConversionServiceFactoryBean</code>对自定义的格式化转换器<code>DateFormatter</code>进行了注册。 <code>FormattingConversionServiceFactoryBean</code>类有一个属性<code>converters</code>,可以用它注册<code>Converter</code>;有一个属性<code>formatters</code>,可以用它注册<code>Formatter</code>。<br>值得注意的是,在<code>mvc:annotation-driven</code>标签内部默认创建的<code>conversionService</code>实例就是一个<code>FormattingConversionServiceFactoryBean</code>,有了<code>FormattingConversionServiceFactoryBean</code>之后, <code>Spring MVC</code>对处理方法的参数就绑定格式化功能了。</p>
+<h3 id="User-java"><a href="#User-java" class="headerlink" title="User.java"></a>User.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 域对象，实现序列化接口</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">Serializable</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">long</span> serialVersionUID = <span class="number">1L</span>;</span><br><span class="line">    <span class="keyword">private</span> String loginname;</span><br><span class="line">    <span class="keyword">private</span> Date birthday;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>();</span><br><span class="line">        <span class="comment">// TODO Auto-generated constructor stub</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 此处省略getter和setter方法,请自己补上</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">toString</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;User [loginname=&quot;</span> + loginname + <span class="string">&quot;, birthday=&quot;</span> + birthday + <span class="string">&quot;]&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="UserController-java"><a href="#UserController-java" class="headerlink" title="UserController.java"></a>UserController.java</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UserController</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GetMapping(value = &quot;/registerForm&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">registerForm</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 跳转到注册页面</span></span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;registerForm&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="meta">@PostMapping(value = &quot;/register&quot;)</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">register</span><span class="params">(<span class="meta">@ModelAttribute</span></span></span></span><br><span class="line"><span class="params"><span class="function">    User user, Model model)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(user);</span><br><span class="line">        model.addAttribute(<span class="string">&quot;user&quot;</span>, user);</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="registerForm-jsp"><a href="#registerForm-jsp" class="headerlink" title="registerForm.jsp"></a>registerForm.jsp</h3><figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;测试Formatter接口&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;h3&gt;注册页面&lt;/h3&gt;</span><br><span class="line">    &lt;form action=<span class="string">&quot;register&quot;</span> method=<span class="string">&quot;post&quot;</span>&gt;</span><br><span class="line">        &lt;table&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;登录名: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;loginname&quot;</span></span><br><span class="line">                    name=<span class="string">&quot;loginname&quot;</span>&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;label&gt;生日: &lt;/label&gt;&lt;/td&gt;</span><br><span class="line">                &lt;td&gt;&lt;input type=<span class="string">&quot;text&quot;</span> id=<span class="string">&quot;birthday&quot;</span></span><br><span class="line">                    name=<span class="string">&quot;birthday&quot;</span>&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">            &lt;tr&gt;</span><br><span class="line">                &lt;td&gt;&lt;input id=<span class="string">&quot;submit&quot;</span> type=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;登录&quot;</span>&gt;&lt;/td&gt;</span><br><span class="line">            &lt;/tr&gt;</span><br><span class="line">        &lt;/table&gt;</span><br><span class="line">    &lt;/form&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="success-jsp"><a href="#success-jsp" class="headerlink" title="success.jsp"></a>success.jsp</h3><figure class="highlight jsp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page language=<span class="string">&quot;java&quot;</span> contentType=<span class="string">&quot;text/html; charset=UTF-8&quot;</span></span><br><span class="line">    pageEncoding=<span class="string">&quot;UTF-8&quot;</span>%&gt;</span><br><span class="line">&lt;%@ taglib uri=<span class="string">&quot;http://java.sun.com/jsp/jstl/fmt&quot;</span> prefix=<span class="string">&quot;fmt&quot;</span>%&gt;</span><br><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=<span class="string">&quot;Content-Type&quot;</span> content=<span class="string">&quot;text/html; charset=UTF-8&quot;</span>&gt;</span><br><span class="line">&lt;title&gt;测试Formatter&lt;/title&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    登录名：$&#123;requestScope.user.loginname &#125;</span><br><span class="line">    &lt;br&gt; 生日：</span><br><span class="line">    &lt;fmt:formatDate value=<span class="string">&quot;$&#123;requestScope.user.birthday&#125;&quot;</span></span><br><span class="line">        pattern=<span class="string">&quot;yyyy年MM月dd日&quot;</span> /&gt;</span><br><span class="line">    &lt;br&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><h4 id="测试链接"><a href="#测试链接" class="headerlink" title="测试链接"></a>测试链接</h4><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">&quot;registerForm&quot;</span>&gt;</span>测试使用格式化类<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h4 id="填写数据"><a href="#填写数据" class="headerlink" title="填写数据"></a>填写数据</h4><p><img data-src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/18.png" alt="这里有一张图片"></p>
+<h4 id="转换效果"><a href="#转换效果" class="headerlink" title="转换效果"></a>转换效果</h4><p><img data-src="https://image-1257720033.cos.ap-shanghai.myqcloud.com/blog/readbooknote/Spring%2BMyBatisQiYeYingYongShiZhan/chapter6/19.png" alt="这里有一张图片"></p>
+<h4 id="控制台输出"><a href="#控制台输出" class="headerlink" title="控制台输出"></a>控制台输出</h4><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">实现的parse方法:String转<span class="built_in">Date</span></span><br><span class="line">User [loginname=xiaoming, birthday=Sat Feb <span class="number">03</span> <span class="number">00</span>:<span class="number">00</span>:<span class="number">00</span> CST <span class="number">2345</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用Spring提供的格式化类"><a href="#使用Spring提供的格式化类" class="headerlink" title="使用Spring提供的格式化类"></a>使用Spring提供的格式化类</h2><p>以上使用实现<code>Formatter&lt;T&gt;</code>接口的方式完成数据转换,而<code>Spring</code>本身提供了很多常用的<code>Formatter</code>实现。在<code>org.springframework.format.datetime</code>包中提供了一个用于时间对象格式化的<code>DateFormatter</code>实现类<br>在<code>org.springframework.format.number</code>包中提供了3个用于数字对象格式化的实现类:</p>
+<ul>
+<li><code>Numberformatter</code>。用于数字类型对象的格式化</li>
+<li><code>CurrencyFormatter</code>。用于货币类型对象的格式化<code>PercentFormatter</code>。用于百分数数字类型对象的格式化</li>
+</ul>
+<p>例如,如果要使用<code>org.springframework.format.datetime</code>包中提供的<code>DateFormatter</code>实现类完成字符串到日期对象的转换,则只需要在配置文件中配置就可以了:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">    <span class="attr">id</span>=<span class="string">&quot;conversionService&quot;</span></span></span><br><span class="line"><span class="tag">    <span class="attr">class</span>=<span class="string">&quot;org.springframework.format.support.FormattingConversionServiceFactoryBean&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- formatters属性可以注册格式化类Fommatter --&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- converters属性可以注册转换器Converter --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;formatters&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">list</span>&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 使用Spring提供的日期格式化类 --&gt;</span></span><br><span class="line">            <span class="comment">&lt;!-- 指定日期格式为yyy-MM-dd --&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">bean</span></span></span><br><span class="line"><span class="tag">                <span class="attr">class</span>=<span class="string">&quot;org.springframework.format.datetime.DateFormatter&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">p:pattern</span>=<span class="string">&quot;yyyy-MM-dd&quot;</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">list</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>运行效果与上面的类似.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/c135e2b/" title="1.使用Formatter格式化数据">https://lanlan2017.github.io/JavaReadingNotes/c135e2b/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/936eae6b/" rel="prev" title="6.2.3 多种转换器的优先顺序">
+                  <i class="fa fa-chevron-left"></i> 6.2.3 多种转换器的优先顺序
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/30e86122/" rel="next" title="2.使用FormatterRegistrar注册Formatter">
+                  2.使用FormatterRegistrar注册Formatter <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/c135e2b/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/c135e2b/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

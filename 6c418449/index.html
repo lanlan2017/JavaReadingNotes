@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="14.3 内存映射文件本节介绍内存映射文件，内存映射文件不是Java引入的概念，而是操作系统提供的一种功能，大部分操作系统都支持。我们先来介绍内存映射文件的基本概念，它是什么，能解决什么问题，然后介绍如何在Java中使用。我们会设计和实现一个简单的、持久化的、跨程序的消息队列来演示内存映射文件的应用。 14.3.1 基本概念所谓内存映射文件，就是将文件映射到内存，文件对应于内存中的一个字节数组，对">
+<meta property="og:type" content="article">
+<meta property="og:title" content="14.3 内存映射文件">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/6c418449/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="14.3 内存映射文件本节介绍内存映射文件，内存映射文件不是Java引入的概念，而是操作系统提供的一种功能，大部分操作系统都支持。我们先来介绍内存映射文件的基本概念，它是什么，能解决什么问题，然后介绍如何在Java中使用。我们会设计和实现一个简单的、持久化的、跨程序的消息队列来演示内存映射文件的应用。 14.3.1 基本概念所谓内存映射文件，就是将文件映射到内存，文件对应于内存中的一个字节数组，对">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210105225.jpeg">
+<meta property="article:published_time" content="2021-12-06T01:19:46.000Z">
+<meta property="article:modified_time" content="2021-12-08T04:34:05.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210105225.jpeg">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/6c418449/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/6c418449/","path":"/6c418449/","title":"14.3 内存映射文件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>14.3 内存映射文件 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#14-3-%E5%86%85%E5%AD%98%E6%98%A0%E5%B0%84%E6%96%87%E4%BB%B6"><span class="nav-text">14.3 内存映射文件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">14.3.1 基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-2-%E7%94%A8%E6%B3%95"><span class="nav-text">14.3.2 用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-3-%E8%AE%BE%E8%AE%A1%E4%B8%80%E4%B8%AA%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97BasicQueue"><span class="nav-text">14.3.3 设计一个消息队列BasicQueue</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%EF%BC%8E%E5%8A%9F%E8%83%BD"><span class="nav-text">1．功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%EF%BC%8E%E7%94%A8%E6%B3%95%E7%A4%BA%E4%BE%8B"><span class="nav-text">2．用法示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%EF%BC%8E%E8%AE%BE%E8%AE%A1"><span class="nav-text">3．设计</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-4-%E5%AE%9E%E7%8E%B0%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97"><span class="nav-text">14.3.4 实现消息队列</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#14-3-5-%E5%B0%8F%E7%BB%93"><span class="nav-text">14.3.5 小结</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/6c418449/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          14.3 内存映射文件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-06 09:19:46" itemprop="dateCreated datePublished" datetime="2021-12-06T09:19:46+08:00">2021-12-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-08 12:34:05" itemprop="dateModified" datetime="2021-12-08T12:34:05+08:00">2021-12-08</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/" itemprop="url" rel="index"><span itemprop="name">4第四部分 文件</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/4%E7%AC%AC%E5%9B%9B%E9%83%A8%E5%88%86-%E6%96%87%E4%BB%B6/%E7%AC%AC14%E7%AB%A0-%E6%96%87%E4%BB%B6%E9%AB%98%E7%BA%A7%E6%8A%80%E6%9C%AF/" itemprop="url" rel="index"><span itemprop="name">第14章 文件高级技术</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/6c418449/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/6c418449/" data-xid="/JavaReadingNotes/6c418449/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>8.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="14-3-内存映射文件"><a href="#14-3-内存映射文件" class="headerlink" title="14.3 内存映射文件"></a>14.3 内存映射文件</h1><p>本节介绍内存映射文件，内存映射文件不是Java引入的概念，而是操作系统提供的一种功能，大部分操作系统都支持。我们先来介绍内存映射文件的基本概念，它是什么，能解决什么问题，然后介绍如何在Java中使用。我们会设计和实现一个简单的、持久化的、跨程序的消息队列来演示内存映射文件的应用。</p>
+<h2 id="14-3-1-基本概念"><a href="#14-3-1-基本概念" class="headerlink" title="14.3.1 基本概念"></a>14.3.1 基本概念</h2><p>所谓内存映射文件，就是将文件映射到内存，文件对应于内存中的一个字节数组，对文件的操作变为对这个字节数组的操作，而字节数组的操作直接映射到文件上。这种映射可以是映射文件全部区域，也可以是只映射一部分区域。</p>
+<p>不过，这种映射是操作系统提供的一种假象，文件一般不会马上加载到内存，操作系统只是记录下了这回事，当实际发生读写时，才会按需加载。操作系统一般是按页加载的，页可以理解为就是一块，页的大小与操作系统和硬件相关，典型的配置可能是4K、8K等，当操作系统发现读写区域不在内存时，就会加载该区域对应的一个页到内存。</p>
+<p>这种按需加载的方式，使得内存映射文件可以<strong>方便高效地处理非常大的文件</strong>，内存放不下整个文件也不要紧，操作系统会自动进行处理，将需要的内容读到内存，将修改的内容保存到硬盘，将不再使用的内存释放。</p>
+<p>在应用程序写的时候，它写的是内存中的字节数组，这个内容什么时候同步到文件上呢？这个时机是不确定的，由操作系统决定，不过，只要操作系统不崩溃，操作系统会保证同步到文件上，即使映射这个文件的应用程序已经退出了。</p>
+<p>在一般的文件读写中，会有两次数据复制，一次是从硬盘复制到操作系统内核，另一次是从操作系统内核复制到用户态的应用程序。而在内存映射文件中，一般情况下，只有一次复制，且内存分配在操作系统内核，应用程序访问的就是操作系统的内核内存空间，这显然要<strong>比普通的读写效率更高</strong>。</p>
+<p>内存映射文件的另一个重要特点是：它可以被多个不同的应用程序共享，多个程序可以映射同一个文件，映射到同一块内存区域，一个程序对内存的修改，可以让其他程序也看到，这使得它<strong>特别适合用于不同应用程序之间的通信</strong>。</p>
+<p>操作系统自身在加载可执行文件的时候，一般都利用了内存映射文件，比如：</p>
+<ul>
+<li>按需加载代码，只有当前运行的代码在内存，其他暂时用不到的代码还在硬盘。</li>
+<li>同时启动多次同一个可执行文件，文件代码在内存也只有一份。</li>
+<li>不同应用程序共享的动态链接库代码在内存也只有一份。</li>
+</ul>
+<p>内存映射文件也有局限性。比如，它不太适合处理小文件，它是按页分配内存的，对于小文件，会浪费空间；另外，映射文件要消耗一定的操作系统资源，初始化比较慢。</p>
+<p>简单总结下，对于一般的文件读写不需要使用内存映射文件，但如果处理的是大文件，要求极高的读写效率，比如数据库系统，或者需要在不同程序间进行共享和通信，那就可以考虑内存映射文件。理解了内存映射文件的基本概念，接下来，我们看怎么在Java中使用它。</p>
+<h2 id="14-3-2-用法"><a href="#14-3-2-用法" class="headerlink" title="14.3.2 用法"></a>14.3.2 用法</h2><p>内存映射文件需要通过FileInputStream/FileOutputStream或RandomAccessFile，它们都有一个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> FileChannel <span class="title">getChannel</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>FileChannel有如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> MappedByteBuffer <span class="title">map</span><span class="params">(MapMode mode, <span class="keyword">long</span> position,</span></span></span><br><span class="line"><span class="params"><span class="function">    <span class="keyword">long</span> size)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>map方法将当前文件映射到内存，映射的结果就是一个MappedByteBuffer对象，它代表内存中的字节数组，待会我们再来详细看它。map有三个参数，mode表示映射模式， positon表示映射的起始位置，size表示长度。mode有三个取值：</p>
+<ul>
+<li>MapMode.READ_ONLY：只读。</li>
+<li>MapMode.READ_WRITE：既读也写。</li>
+<li>MapMode.PRIVATE：私有模式，更改不反映到文件，也不被其他程序看到。</li>
+</ul>
+<p>这个模式受限于背后的流或RandomAccessFile，比如，对于FileInputStream，或者RandomAccessFile但打开模式是”r”, mode就不能设为MapMode.READ_WRITE，否则会抛出异常。如果映射的区域超过了现有文件的范围，则文件会自动扩展，扩展出的区域字节内容为0。映射完成后，文件就可以关闭了，后续对文件的读写可以通过Mapped-ByteBuffer。看段代码，比如以读写模式映射文件”abc.dat”，代码可以为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">RandomAccessFile file = <span class="keyword">new</span> RandomAccessFile(<span class="string">&quot;abc.dat&quot;</span>, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    MappedByteBuffer buf = file.getChannel()</span><br><span class="line">            .map(MapMode.READ_WRITE, <span class="number">0</span>, file.length());</span><br><span class="line">    <span class="comment">//使用buf...</span></span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;<span class="keyword">finally</span>&#123;</span><br><span class="line">    file.close();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>怎么来使用MappedByteBuffer呢？它是ByteBuffer的子类，而ByteBuffer是Buffer的子类。ByteBuffer和Buffer不只是给内存映射文件提供的，它们是JavaNIO中操作数据的一种方式，用于很多地方，方法也比较多，我们只介绍一些主要相关的。</p>
+<p>ByteBuffer可以简单理解为封装了一个字节数组，这个字节数组的长度是不可变的，在内存映射文件中，这个长度由map方法中的参数size决定。ByteBuffer有一个基本属性position，表示当前读写位置，这个位置可以改变，相关方法是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">int</span> <span class="title">position</span><span class="params">()</span> <span class="comment">//获取当前读写位置</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> Buffer <span class="title">position</span><span class="params">(<span class="keyword">int</span> newPosition)</span> <span class="comment">//修改当前读写位置</span></span></span><br></pre></td></tr></table></figure>
+
+<p>ByteBuffer中有很多基于当前位置读写数据的方法，部分方法如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">byte</span> <span class="title">get</span><span class="params">()</span> <span class="comment">//从当前位置获取一个字节</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> ByteBuffer <span class="title">get</span><span class="params">(<span class="keyword">byte</span>[] dst)</span> <span class="comment">//从当前位置复制dst.length长度的字节到dst</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getInt</span><span class="params">()</span> <span class="comment">//从当前位置读取一个int</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> ByteBuffer <span class="title">put</span><span class="params">(<span class="keyword">byte</span>[] src)</span> <span class="comment">//将字节数组src写入当前位置</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ByteBuffer <span class="title">putLong</span><span class="params">(<span class="keyword">long</span> value)</span></span>; <span class="comment">//将value写入当前位置</span></span><br></pre></td></tr></table></figure>
+
+<p>这些方法在读写后，都会自动增加position。与这些方法相对应的，还有一组方法，可以在参数中直接指定position，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">getInt</span><span class="params">(<span class="keyword">int</span> index)</span> <span class="comment">//从index处读取一个int</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getDouble</span><span class="params">(<span class="keyword">int</span> index)</span> <span class="comment">//从index处读取一个double</span></span></span><br><span class="line"><span class="function"><span class="comment">//在index处写入一个double</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ByteBuffer <span class="title">putDouble</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">double</span> value)</span></span></span><br><span class="line"><span class="function"><span class="comment">//在index处写入一个long</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> ByteBuffer <span class="title">putLong</span><span class="params">(<span class="keyword">int</span> index, <span class="keyword">long</span> value)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这些方法在读写时，不会改变当前读写位置position。</p>
+<p>MappedByteBuffer自己还定义了一些方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//检查文件内容是否真实加载到了内存，这个值是一个参考值，不一定精确</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">isLoaded</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> MappedByteBuffer <span class="title">load</span><span class="params">()</span> <span class="comment">//尽量将文件内容加载到内存</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">final</span> MappedByteBuffer <span class="title">force</span><span class="params">()</span> <span class="comment">//将对内存的修改强制同步到硬盘上</span></span></span><br></pre></td></tr></table></figure>
+
+<h2 id="14-3-3-设计一个消息队列BasicQueue"><a href="#14-3-3-设计一个消息队列BasicQueue" class="headerlink" title="14.3.3 设计一个消息队列BasicQueue"></a>14.3.3 设计一个消息队列BasicQueue</h2><p>了解了内存映射文件的用法，接下来，我们来看怎么用它设计和实现一个简单的消息队列，我们称之为BasicQueue。本小节先介绍它的功能、用法和设计，下小节介绍它的具体代码。完整的代码在github上，地址为 <a target="_blank" rel="noopener" href="https://github.com/swiftma/program-logic">https://github.com/swiftma/program-logic</a> ，位于包shuo.laoma.file.c61下。</p>
+<h3 id="1．功能"><a href="#1．功能" class="headerlink" title="1．功能"></a>1．功能</h3><p>BasicQueue是一个先进先出的循环队列，长度固定，接口主要是出队和入队，与之前介绍的容器类的区别是：<br>1）消息持久化保存在文件中，重启程序消息不会丢失。<br>2）可以供不同的程序进行协作。典型场景是，有两个不同的程序，一个是生产者，另一个是消费者，生成者只将消息放入队列，而消费者只从队列中取消息，两个程序通过队列进行协作。这种协作方式更灵活，相互依赖性小，是一种常见的协作方式。</p>
+<p>BasicQueue的构造方法是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BasicQueue</span><span class="params">(String path, String queueName)</span> <span class="keyword">throws</span> IOException</span></span><br></pre></td></tr></table></figure>
+
+<p>path表示队列所在的目录，必须已存在；queueName表示队列名，BasicQueue会使用以queueName开头的两个文件来保存队列信息，一个扩展名是．data，保存实际的消息，另一个扩展名是．meta，保存元数据信息，如果这两个文件存在，则会使用已有的队列，否则会建立新队列。</p>
+<p>BasicQueue主要提供出队和入队两个方法，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(<span class="keyword">byte</span>[] data)</span> <span class="keyword">throws</span> IOException <span class="comment">//入队</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">byte</span>[] <span class="title">dequeue</span><span class="params">()</span> <span class="keyword">throws</span> IOException <span class="comment">//出队</span></span></span><br></pre></td></tr></table></figure>
+
+<p>与上节介绍的BasicDB类似，消息格式也是byte数组。BasicQueue的队列长度是有限的，如果满了，调用enqueue方法会抛出异常；消息的最大长度也是有限的，不能超过1020，如果超了，也会抛出异常。如果队列为空，那么dequeue方法返回null。</p>
+<h3 id="2．用法示例"><a href="#2．用法示例" class="headerlink" title="2．用法示例"></a>2．用法示例</h3><p>BasicQueue的典型用法是生产者和消费者之间的协作，我们来看下简单的示例代码。生产者程序向队列上放消息，每放一条，就随机休息一会儿，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Producer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            BasicQueue queue = <span class="keyword">new</span> BasicQueue(<span class="string">&quot;./&quot;</span>, <span class="string">&quot;task&quot;</span>);</span><br><span class="line">            <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">            Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">            <span class="keyword">while</span>(<span class="keyword">true</span>) &#123;</span><br><span class="line">                String msg = <span class="keyword">new</span> String(<span class="string">&quot;task &quot;</span> + (i++));</span><br><span class="line">                queue.enqueue(msg.getBytes(<span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">                System.out.println(<span class="string">&quot;produce: &quot;</span> + msg);</span><br><span class="line">                Thread.sleep(rnd.nextInt(<span class="number">1000</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>消费者程序从队列中取消息，如果队列为空，也随机休息一会儿，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            BasicQueue queue = <span class="keyword">new</span> BasicQueue(<span class="string">&quot;./&quot;</span>, <span class="string">&quot;task&quot;</span>);</span><br><span class="line">            Random rnd = <span class="keyword">new</span> Random();</span><br><span class="line">            <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = queue.dequeue();</span><br><span class="line">                <span class="keyword">if</span>(bytes == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    Thread.sleep(rnd.nextInt(<span class="number">1000</span>));</span><br><span class="line">                    <span class="keyword">continue</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            System.out.println(<span class="string">&quot;consume: &quot;</span> + <span class="keyword">new</span> String(bytes, <span class="string">&quot;UTF-8&quot;</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假定这两个程序的当前目录一样，它们会使用同样的队列”task”。同时运行这两个程序，会看到它们的输出交替出现。</p>
+<h3 id="3．设计"><a href="#3．设计" class="headerlink" title="3．设计"></a>3．设计</h3><p>我们采用如下简单方式来设计BasicQueue。<br>1）使用两个文件来保存消息队列：一个为数据文件，扩展为．data；一个是元数据文件．meta。<br>2）在．data文件中使用固定长度存储每条信息，长度为1024，前4个字节为实际长度，后面是实际内容，每条消息的最大长度不能超过1020。<br>3）在．meta文件中保存队列头和尾，指向．data文件中的位置，初始都是0，入队增加尾，出队增加头，到结尾时，再从0开始，模拟循环队列。<br>4）为了区分队列满和空的状态，始终留一个位置不保存数据，当队列头和队列尾一样的时候表示队列为空，当队列尾的下一个位置是队列头的时候表示队列满。</p>
+<p>BasicQueue的基本设计如图14-3所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210105225.jpeg" alt="epub_923038_123"></p>
+<center>图14-3 BasicQueue的基本设计</center>
+
+<p>为简化起见，我们暂不考虑由于并发访问等引起的一致性问题。</p>
+<h2 id="14-3-4-实现消息队列"><a href="#14-3-4-实现消息队列" class="headerlink" title="14.3.4 实现消息队列"></a>14.3.4 实现消息队列</h2><p>下面来看BasicQueue的具体实现代码，包括常量定义、内部组成、构造方法、入队、出队等。</p>
+<p>BasicQueue中定义了如下常量，名称和含义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//队列最多消息个数，实际个数还会减1</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_MSG_NUM = <span class="number">1020</span>＊<span class="number">1024</span>;</span><br><span class="line"><span class="comment">//消息体最大长度</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_MSG_BODY_SIZE = <span class="number">1020</span>;</span><br><span class="line"><span class="comment">//每条消息占用的空间</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> MSG_SIZE = MAX_MSG_BODY_SIZE + <span class="number">4</span>;</span><br><span class="line"><span class="comment">//队列消息体数据文件大小</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DATA_FILE_SIZE = MAX_MSG_NUM ＊ MSG_SIZE;</span><br><span class="line"><span class="comment">//队列元数据文件大小 (head + tail)</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> META_SIZE = <span class="number">8</span>;</span><br></pre></td></tr></table></figure>
+
+<p>BasicQueue的内部成员主要就是两个MappedByteBuffer，分别表示数据和元数据：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> MappedByteBuffer dataBuf;</span><br><span class="line"><span class="keyword">private</span> MappedByteBuffer metaBuf;</span><br></pre></td></tr></table></figure>
+
+<p>BasicQueue的构造方法代码是：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">BasicQueue</span><span class="params">(String path, String queueName)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(! path.endsWith(File.separator)) &#123;</span><br><span class="line">        path += File.separator;</span><br><span class="line">    &#125;</span><br><span class="line">    RandomAccessFile dataFile = <span class="keyword">null</span>;</span><br><span class="line">    RandomAccessFile metaFile = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        dataFile = <span class="keyword">new</span> RandomAccessFile(path + queueName + <span class="string">&quot;.data&quot;</span>, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line">        metaFile = <span class="keyword">new</span> RandomAccessFile(path + queueName + <span class="string">&quot;.meta&quot;</span>, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line">        dataBuf = dataFile.getChannel().map(MapMode.READ_WRITE, <span class="number">0</span>,</span><br><span class="line">                DATA_FILE_SIZE);</span><br><span class="line">        metaBuf = metaFile.getChannel().map(MapMode.READ_WRITE, <span class="number">0</span>,</span><br><span class="line">                META_SIZE);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span>(dataFile ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">            dataFile.close();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span>(metaFile ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">            metaFile.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了方便访问和修改队列头尾指针，我们定义了如下辅助方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">head</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> metaBuf.getInt(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">head</span><span class="params">(<span class="keyword">int</span> newHead)</span> </span>&#123;</span><br><span class="line">    metaBuf.putInt(<span class="number">0</span>, newHead);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">tail</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> metaBuf.getInt(<span class="number">4</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">tail</span><span class="params">(<span class="keyword">int</span> newTail)</span> </span>&#123;</span><br><span class="line">    metaBuf.putInt(<span class="number">4</span>, newTail);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了便于判断队列是空还是满，我们定义了如下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isEmpty</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> head() == tail();</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isFull</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (tail() + MSG_SIZE) % DATA_FILE_SIZE) == head();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>入队的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueue</span><span class="params">(<span class="keyword">byte</span>[] data)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(data.length &gt; MAX_MSG_BODY_SIZE) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">&quot;msg size is &quot;</span> + data.length</span><br><span class="line">                + <span class="string">&quot;, while maximum allowed length is &quot;</span> + MAX_MSG_BODY_SIZE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(isFull()) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">&quot;queue is full&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> tail = tail();</span><br><span class="line">    dataBuf.position(tail);</span><br><span class="line">    dataBuf.putInt(data.length);</span><br><span class="line">    dataBuf.put(data);</span><br><span class="line">    <span class="keyword">if</span>(tail + MSG_SIZE &gt;= DATA_FILE_SIZE) &#123;</span><br><span class="line">        tail(<span class="number">0</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        tail(tail + MSG_SIZE);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本逻辑是：<br>1）如果消息太长或队列满，抛出异常；<br>2）找到队列尾，定位到队列尾，写消息长度，写实际数据；<br>3）更新队列尾指针，如果已到文件尾，再从头开始。</p>
+<p>出队的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">byte</span>[] dequeue() <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">    <span class="keyword">if</span>(isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> head = head();</span><br><span class="line">    dataBuf.position(head);</span><br><span class="line">    <span class="keyword">int</span> length = dataBuf.getInt();</span><br><span class="line">    <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[length];</span><br><span class="line">    dataBuf.get(data);</span><br><span class="line">    <span class="keyword">if</span>(head + MSG_SIZE &gt;= DATA_FILE_SIZE) &#123;</span><br><span class="line">        head(<span class="number">0</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        head(head + MSG_SIZE);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> data;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本逻辑是：<br>1）如果队列为空，返回null；<br>2）找到队列头，定位到队列头，读消息长度，读实际数据；<br>3）更新队列头指针，如果已到文件尾，再从头开始；<br>4）最后返回实际数据。</p>
+<h2 id="14-3-5-小结"><a href="#14-3-5-小结" class="headerlink" title="14.3.5 小结"></a>14.3.5 小结</h2><p>本节介绍了内存映射文件的基本概念及在Java中的用法，在日常普通的文件读写中，我们用到得比较少，但<strong>在一些系统程序中，它却是经常被用到的一把利器</strong>，可以高效地读写大文件，且能实现不同程序间的共享和通信。</p>
+<p>利用内存映射文件，我们设计和实现了一个简单的消息队列，消息可以持久化，可以实现跨程序的生产者/消费者通信，我们演示了这个消息队列的功能、用法、设计和实现代码。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/6c418449/" title="14.3 内存映射文件">https://lanlan2017.github.io/JavaReadingNotes/6c418449/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/e526ec6a/" rel="prev" title="14.2 随机读写文件">
+                  <i class="fa fa-chevron-left"></i> 14.2 随机读写文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/b4012b8/" rel="next" title="14.4 标准序列化机制">
+                  14.4 标准序列化机制 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/6c418449/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/6c418449/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>

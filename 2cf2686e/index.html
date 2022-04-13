@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
+<meta name="generator" content="Hexo 5.4.0">
+
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/JavaReadingNotes/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/JavaReadingNotes/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/JavaReadingNotes/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="_Sly-yzHYmALHXzjFpPWsodMrjBSphw7bfRbMUH80Qc">
+  <meta name="msvalidate.01" content="B1CFD346B8DEBBFE0C983C2AF8955531">
+  <meta name="baidu-site-verification" content="vkMTwK56xr">
+
+<link rel="stylesheet" href="/JavaReadingNotes/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
+  <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+<meta name="description" content="9.3.2 简单工厂依赖关系对于一个典型的Java应用而言,应用之中各实例之间存在复杂的调用关系(Spring把这种调用关系称为依赖关系,例如A实例调用B实例的方法,则称为A依赖于B)。 硬编码耦合当A对象需要调用B对象的方法时,许多初学者会选择使用new关键字来创建一个B实例,然后调用B实例的方法。从语法的角度来看,这种做法没有任何问题,这种做法的坏处在于:A类的方法实现直接调用了B类的类名(这">
+<meta property="og:type" content="article">
+<meta property="og:title" content="9.3.2 简单工厂">
+<meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/index.html">
+<meta property="og:site_name" content="蓝蓝站点">
+<meta property="og:description" content="9.3.2 简单工厂依赖关系对于一个典型的Java应用而言,应用之中各实例之间存在复杂的调用关系(Spring把这种调用关系称为依赖关系,例如A实例调用B实例的方法,则称为A依赖于B)。 硬编码耦合当A对象需要调用B对象的方法时,许多初学者会选择使用new关键字来创建一个B实例,然后调用B实例的方法。从语法的角度来看,这种做法没有任何问题,这种做法的坏处在于:A类的方法实现直接调用了B类的类名(这">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-09-09T08:58:22.000Z">
+<meta property="article:modified_time" content="2020-02-06T17:34:58.000Z">
+<meta property="article:author" content="蓝蓝">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/","path":"/2cf2686e/","title":"9.3.2 简单工厂"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>9.3.2 简单工厂 | 蓝蓝站点</title>
+  
+
+  <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
+  <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
+
+<link rel="dns-prefetch" href="https://waline-test-mzjszagu6-lanlan2017.vercel.app">
+  <noscript>
+    <link rel="stylesheet" href="/JavaReadingNotes/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/JavaReadingNotes/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">蓝蓝站点</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Java读书笔记</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
+        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
+        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-3-2-%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82"><span class="nav-text">9.3.2 简单工厂</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB"><span class="nav-text">依赖关系</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E7%BC%96%E7%A0%81%E8%80%A6%E5%90%88"><span class="nav-text">硬编码耦合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E7%A4%BA%E4%BE%8B"><span class="nav-text">程序示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E7%9A%84%E4%BC%98%E5%8A%BF"><span class="nav-text">简单工厂模式的优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A5%E5%8E%82%E6%A8%A1%E5%BC%8F%E7%9A%84%E7%BC%BA%E9%99%B7"><span class="nav-text">工厂模式的缺陷</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E7%AE%80%E5%8D%95%E7%9A%84IoC%E5%AE%B9%E5%99%A8%E5%8A%9F%E8%83%BD"><span class="nav-text">实现简单的IoC容器功能</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="蓝蓝"
+      src="/JavaReadingNotes/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">蓝蓝</p>
+  <div class="site-description" itemprop="description">好好学习，天天向上</div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/JavaReadingNotes/archives/">
+          <span class="site-state-item-count">1871</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/JavaReadingNotes/categories/">
+        <span class="site-state-item-count">626</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/todo/" title="todo → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;todo&#x2F;"><i class="fa fa-check-square fa-fw"></i>todo</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://lanlan2017.github.io/links/" title="links → https:&#x2F;&#x2F;lanlan2017.github.io&#x2F;links&#x2F;"><i class="fa fa-link fa-fw"></i>links</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          9.3.2 简单工厂
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-09-09 16:58:22" itemprop="dateCreated datePublished" datetime="2019-09-09T16:58:22+08:00">2019-09-09</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-02-07 01:34:58" itemprop="dateModified" datetime="2020-02-07T01:34:58+08:00">2020-02-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">2 轻量级Java EE企业应用实战(第5版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC9%E7%AB%A0-%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83%E5%92%8C%E7%AD%96%E7%95%A5/" itemprop="url" rel="index"><span itemprop="name">第9章 企业应用开发的思考和策略</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/2-%E8%BD%BB%E9%87%8F%E7%BA%A7Java-EE%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%AE%9E%E6%88%98-%E7%AC%AC5%E7%89%88/%E7%AC%AC9%E7%AB%A0-%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E7%9A%84%E6%80%9D%E8%80%83%E5%92%8C%E7%AD%96%E7%95%A5/9-3-%E5%B8%B8%E8%A7%81%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E7%B2%BE%E8%AE%B2/" itemprop="url" rel="index"><span itemprop="name">9.3 常见设计模式精讲</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/2cf2686e/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/2cf2686e/" data-xid="/JavaReadingNotes/2cf2686e/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="9-3-2-简单工厂"><a href="#9-3-2-简单工厂" class="headerlink" title="9.3.2 简单工厂"></a>9.3.2 简单工厂</h1><h2 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h2><p>对于一个典型的<code>Java</code>应用而言,应用之中各实例之间存在复杂的调用关系(<code>Spring</code>把这种调用关系称为依赖关系,例如<strong>A实例调用B实例的方法,则称为A依赖于B</strong>)。</p>
+<h2 id="硬编码耦合"><a href="#硬编码耦合" class="headerlink" title="硬编码耦合"></a>硬编码耦合</h2><p>当A对象需要调用B对象的方法时,许多初学者会选择使用<code>new</code>关键字来创建一个B实例,然后调用B实例的方法。从语法的角度来看,这种做法没有任何问题,这种做法的坏处在于:<strong>A类的方法实现直接调用了B类的类名</strong>(这种方式也被称为<code>硬编码耦合</code>),一旦系统需要重构:需要使用C类来代替B类时,程序不得不改写A类代码。如果应用中有100个或10000个类以硬编码方式耦合了B类,则需要重新改写100个、10000个地方……这显然是一种非常可怕的事情。</p>
+<p>换一个角度来看这个问题:对于A对象而言,它只需要调用B对象的方法,并不是关心B对象的实现、创建过程。考虑让B类实现一个IB接口,而A类只需要IB接口耦合。具体做法是:<br>定义一个工厂类:<code>IBFactory</code>,<strong>由<code>IBFactory</code>工厂类来负责创建IB实例;而A类通过调用<code>IBFactory</code>工厂的方法来得到IB的实例</strong>。这样A类就不用直接使用<code>new</code>关键字来创建B实例。</p>
+<p>通过改用上面设计,则A类不但需要与<code>IBFactory</code>耦合,还需要与<code>IB</code>接口耦合;如果系统需要重构:需要使用C类代替B类,则只需要让C类也实现IB接口,并改写<code>IBFactory</code>工厂中创建IB实例的实现代码,让该工厂产生实现了IB接口的C实例即可。由于所有依赖IB实例的对象都是通过工厂来获取IB实例的,所以它们都将改为获得C实例,这就完成了系统重构。</p>
+<p>这种<strong>将多个类对象交给工厂类来生成的设计方式被称为简单工厂模式</strong>。</p>
+<h1 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h1><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">SimpleFactory</span></span></span><br><span class="line"><span class="function">└─<span class="title">src</span>\</span></span><br><span class="line"><span class="function">  ├─<span class="title">BetterPrinter.java</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">Computer.java</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">Output.java</span></span></span><br><span class="line"><span class="function">  ├─<span class="title">OutputFactory.java</span></span></span><br><span class="line"><span class="function">  └─<span class="title">Printer.java</span></span></span><br></pre></td></tr></table></figure>
+<p>下面以一个简单的场景来介绍简单工厂模式。假设程序中有个<code>Computer</code>对象需要依赖一个输出设备,现在有两个选择:直接让<code>Computer</code>对象依赖一个<code>Printer</code>(实现类)对象,或者让<code>Computer</code>依赖<code>Output</code>(接口)属性。<br>在这种应用场景下,使用简单工厂模式可以让系统具有更好的可维护性、可扩展性。根据工厂模式,程序应该让<code>Computer</code>依赖一个<code>Output</code>属性,将<code>Computer</code>类与<code>Printer</code>实现类分离开来。 <code>Computer</code>对象只需面向<code>Output</code>接口编程即可。</p>
+<p>下面是这个<code>Computer</code>类定义的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Computer</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Output out;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Computer</span><span class="params">(Output out)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.out = out;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 定义一个模拟获取字符串输入的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">keyIn</span><span class="params">(String msg)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        out.getData(msg);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 定义一个模拟打印的方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">print</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        out.out();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 创建OutputFactory</span></span><br><span class="line">        OutputFactory of = <span class="keyword">new</span> OutputFactory();</span><br><span class="line">        <span class="comment">// 将Output对象传入，创建Computer对象</span></span><br><span class="line">        Computer c = <span class="keyword">new</span> Computer(of.getOutput());</span><br><span class="line">        c.keyIn(<span class="string">&quot;轻量级Java EE企业应用实战&quot;</span>);</span><br><span class="line">        c.keyIn(<span class="string">&quot;疯狂Java讲义&quot;</span>);</span><br><span class="line">        c.print();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面粗体字代码可以看出,该<code>Computer</code>类已经完全与<code>Output</code>实现类分离了,它只与该接口耦合。而且, <code>Computer</code>不再负责创建<code>Output</code>对象,系统将提供一个<code>Output</code>工厂来负责生成<code>Output</code>对象。这个<code>OutputFactory</code>工厂类代码如下。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OutputFactory</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Output <span class="title">getOutput</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> Printer();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在该<code>OutputFactory</code>类中包含了一个<code>getOutput()</code>方法,该方法返回一个<code>Output</code>实现类的实例。该方法负责创建<code>Output</code>实例,具体创建哪一个实现类的对象由该方法决定,<br><code>Printer</code>类的代码如下:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 让Printer类实现Output</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Printer</span> <span class="keyword">implements</span> <span class="title">Output</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String[] printData = <span class="keyword">new</span> String[MAX_CACHE_LINE];</span><br><span class="line">    <span class="comment">// 用以记录当前需打印的作业数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> dataNum = <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">out</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 只要还有作业，继续打印</span></span><br><span class="line">        <span class="keyword">while</span>(dataNum &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;打印机打印：&quot;</span> + printData[<span class="number">0</span>]);</span><br><span class="line">            <span class="comment">// 把作业队列整体前移一位，并将剩下的作业数减1</span></span><br><span class="line">            System.arraycopy(printData , <span class="number">1</span>, printData, <span class="number">0</span>, --dataNum);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getData</span><span class="params">(String msg)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dataNum &gt;= MAX_CACHE_LINE)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;输出队列已满，添加失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 把打印数据添加到队列里，已保存数据的数量加1。</span></span><br><span class="line">            printData[dataNum++] = msg;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的<code>Printer</code>类模拟了一个简单的打印机,如果系统需要重构,需要使用<code>BetterPrinter</code>来代替<code>Printer</code>类,则只需要让<code>BetterPrinter</code>实现<code>Output</code>接口,并改写<code>OutputFactory</code>类的<code>getOutput()</code>方法即可。<br>下面是<code>BetterPrinter</code>实现类的代码。 <code>BetterPrinter</code>只是对原有的<code>Printer</code>进行简单修改,这里用来模拟系统重构后的改进。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BetterPrinter</span> <span class="keyword">implements</span> <span class="title">Output</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String[] printData = <span class="keyword">new</span> String[MAX_CACHE_LINE * <span class="number">2</span>];</span><br><span class="line">    <span class="comment">// 用以记录当前需打印的作业数</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> dataNum = <span class="number">0</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">out</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 只要还有作业，继续打印</span></span><br><span class="line">        <span class="keyword">while</span>(dataNum &gt; <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;高速打印机正在打印：&quot;</span> + printData[<span class="number">0</span>]);</span><br><span class="line">            <span class="comment">// 把作业队列整体前移一位，并将剩下的作业数减1</span></span><br><span class="line">            System.arraycopy(printData , <span class="number">1</span>, printData, <span class="number">0</span>, --dataNum);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">getData</span><span class="params">(String msg)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (dataNum &gt;= MAX_CACHE_LINE * <span class="number">2</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;输出队列已满，添加失败&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 把打印数据添加到队列里，已保存数据的数量加1。</span></span><br><span class="line">            printData[dataNum++] = msg;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的<code>BetterPrinter</code>类与<code>Printer</code>并无太大区别,仅仅略微改变了<code>Printer</code>实现,且<code>BetterPrinter</code>也实现了<code>Output</code>接口,因此也可当成<code>Output</code>对象使用,因此只要把<code>OutputFactory</code>工厂类的<code>getOutput()</code>方法中改为如下代即可:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OutputFactory</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> Output <span class="title">getOutput</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> BetterPrinter();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>再次运行前面的<code>Computer.java</code>程序,发现<code>Computer</code>所依赖的<code>Output</code>对象已改为<code>Better Printer</code>对象,而不再是原来的<code>Printer</code>对象。</p>
+<p>通过这种方式,可以把所有生成<code>Output</code>对象的逻辑集中在<code>OutputFactory</code>工厂类中管理,而所有需要使用<code>Output</code>对象的类只需与<code>Output</code>接口耦合,而不是与具体的实现类耦合。即使系统中有很多类依赖了<code>Printer</code>对象,只要<code>OutputFactory</code>类的<code>getOutput()</code>方法返回<code>BetterPrinter</code>对象,则它们全部将会改为依赖<code>BetterPrinter</code>对象,而其他程序无须修改,只需要修改<code>OutputFactory</code>工厂的<code>getOutput()</code>的方法实现即可。</p>
+<h2 id="简单工厂模式的优势"><a href="#简单工厂模式的优势" class="headerlink" title="简单工厂模式的优势"></a>简单工厂模式的优势</h2><p>使用简单工厂模式的优势是:让对象的调用者和对象创建过程分离,当对象调用者需要对象时,直接向工厂请求即可;从而避免了对象的调用者与对象的实现类以硬编码方式耦合,以提高系统的可维护性、可扩展性。</p>
+<h2 id="工厂模式的缺陷"><a href="#工厂模式的缺陷" class="headerlink" title="工厂模式的缺陷"></a>工厂模式的缺陷</h2><p>工厂模式也有一个小小的缺陷:当产品修改时,工厂类也要做相应的修改。</p>
+<p>对<code>Spring</code>容器而言,它首先是一个巨大的工厂,它负责创建所有<code>Bean</code>实例,整个应用的所有组件都由<code>Spring</code>容器负责创建。不仅如此, <code>Spring</code>容器扩展了这种简单工厂模式,它还可以管理<code>Bean</code>实例之间的依赖关系;而且,如果容器中<code>Bean</code>实例具有<code>singleton</code>行为特征,则<code>Spring</code>容器还会缓存该<code>Bean</code>实例,从而保证程序通过<code>Spring</code>工厂来获取该<code>Bean</code>实例时, <code>Spring</code>工厂将会返回同一个<code>Bean</code>实例。</p>
+<h1 id="实现简单的IoC容器功能"><a href="#实现简单的IoC容器功能" class="headerlink" title="实现简单的IoC容器功能"></a>实现简单的IoC容器功能</h1><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">E:\<span class="title">workspace_QingLiangJiJavaEEQiYeYingYongShiZhang5</span>\<span class="title">IoC</span></span></span><br><span class="line"><span class="function">├─<span class="title">beans.xml</span></span></span><br><span class="line"><span class="function">└─<span class="title">src</span>\</span></span><br><span class="line"><span class="function">  ├─<span class="title">lee</span>\</span></span><br><span class="line"><span class="function">  │ ├─<span class="title">BetterPrinter.java</span></span></span><br><span class="line"><span class="function">  │ ├─<span class="title">Computer.java</span></span></span><br><span class="line"><span class="function">  │ ├─<span class="title">IoCTest.java</span></span></span><br><span class="line"><span class="function">  │ ├─<span class="title">Output.java</span></span></span><br><span class="line"><span class="function">  │ └─<span class="title">Printer.java</span></span></span><br><span class="line"><span class="function">  └─<span class="title">org</span>\</span></span><br><span class="line"><span class="function">    └─<span class="title">crazyit</span>\</span></span><br><span class="line"><span class="function">      └─<span class="title">ioc</span>\</span></span><br><span class="line"><span class="function">        ├─<span class="title">ApplicationContext.java</span></span></span><br><span class="line"><span class="function">        └─<span class="title">CrazyitXmlApplicationContext.java</span></span></span><br><span class="line"><span class="function"></span></span><br></pre></td></tr></table></figure>
+<p>下面的示例提供一份类似于<code>Spring</code>配置文件的<code>XML</code>文件,程序提供一个扩展的工厂类,该工厂类也可提供类似于<code>Spring loc</code>容器的功能</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;computer&quot;</span> <span class="attr">class</span>=<span class="string">&quot;lee.Computer&quot;</span>&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 为name注入基本类型的值 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;孙悟空的电脑&quot;</span> /&gt;</span></span><br><span class="line">        <span class="comment">&lt;!-- 为out注入容器中其他Bean --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;out&quot;</span> <span class="attr">ref</span>=<span class="string">&quot;betterPrinter&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置两个Bean实例 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;printer&quot;</span> <span class="attr">class</span>=<span class="string">&quot;lee.Printer&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;betterPrinter&quot;</span> <span class="attr">class</span>=<span class="string">&quot;lee.BetterPrinter&quot;</span> /&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 配置一个prototype行为的Bean实例 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;now&quot;</span> <span class="attr">class</span>=<span class="string">&quot;java.util.Date&quot;</span> <span class="attr">scope</span>=<span class="string">&quot;prototype&quot;</span> /&gt;</span> <span class="comment">&lt;!--① --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>细心的读者可能已经发现:该配置文件和<code>Spring</code>配置文件如此相似。实际上这个配置文件只是通过简单修改了<code>Spring</code>配置文件得到的。上面的配置文件一样配置了<code>computer Bean</code>,且为该<code>Bean</code>依赖注入了两个属性:<code>name</code>和<code>out</code>除此之外,上面的配置文件中①号代码处还配置了一个<code>prototype</code>行为的<code>Bean</code>实例。<br>本程序中也提供了一个简化的<code>ApplicationContext</code>接口,该接口仅包含一个<code>getBean()</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.ioc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">ApplicationContext</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 获取指定Bean实例的方法</span></span><br><span class="line">    <span class="function">Object <span class="title">getBean</span><span class="params">(String name)</span> <span class="keyword">throws</span> Exception</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>本示例将为该接口提供一个简单的实现类,该实现类就是一个功能强大的工厂。它使用<code>Dom4j</code>来解析<code>XML</code>配置文件,并根据配置文件来创建工厂中的<code>Bean</code>实例。下面是该实现类的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.crazyit.ioc;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> org.dom4j.*;</span><br><span class="line"><span class="keyword">import</span> org.dom4j.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CrazyitXmlApplicationContext</span> <span class="keyword">implements</span> <span class="title">ApplicationContext</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="comment">// 保存容器中所有单例模式的Bean实例</span></span><br><span class="line">    <span class="keyword">private</span> Map&lt;String, Object&gt; objPool = Collections</span><br><span class="line">            .synchronizedMap(<span class="keyword">new</span> HashMap&lt;String, Object&gt;());</span><br><span class="line">    <span class="comment">// 保存配置文件对应的Document对象</span></span><br><span class="line">    <span class="keyword">private</span> Document doc;</span><br><span class="line">    <span class="comment">// 保存配置文件里的根元素</span></span><br><span class="line">    <span class="keyword">private</span> Element root;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">CrazyitXmlApplicationContext</span><span class="params">(String filePath)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        SAXReader reader = <span class="keyword">new</span> SAXReader();</span><br><span class="line">        doc = reader.read(<span class="keyword">new</span> File(filePath));</span><br><span class="line">        root = doc.getRootElement();</span><br><span class="line">        initPool();</span><br><span class="line">        initProp();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">getBean</span><span class="params">(String name)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        Object target = objPool.get(name);</span><br><span class="line">        <span class="comment">// 对于singleton Bean，容器已经初始化了所有Bean实例，直接返回即可</span></span><br><span class="line">        <span class="keyword">if</span> (target.getClass() != String.class)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> target;</span><br><span class="line">        &#125; <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            String clazz = (String) target;</span><br><span class="line">            <span class="comment">// 对于prototype对象并未注入属性值</span></span><br><span class="line">            <span class="keyword">return</span> Class.forName(clazz).getConstructor().newInstance();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 初始化容器中所有singleton Bean</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initPool</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历配置文件里的每个&lt;bean.../&gt;元素</span></span><br><span class="line">        <span class="keyword">for</span> (Object obj : root.elements())</span><br><span class="line">        &#123;</span><br><span class="line">            Element beanEle = (Element) obj;</span><br><span class="line">            <span class="comment">// 取得&lt;bean.../&gt;元素的id属性</span></span><br><span class="line">            String beanId = beanEle.attributeValue(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">            <span class="comment">// 取得&lt;bean.../&gt;元素的class属性</span></span><br><span class="line">            String beanClazz = beanEle.attributeValue(<span class="string">&quot;class&quot;</span>);</span><br><span class="line">            <span class="comment">// 取得&lt;bean.../&gt;元素的scope属性</span></span><br><span class="line">            String beanScope = beanEle.attributeValue(<span class="string">&quot;scope&quot;</span>);</span><br><span class="line">            <span class="comment">// 如果&lt;bean.../&gt;元素的scope属性不存在，或为singleton</span></span><br><span class="line">            <span class="keyword">if</span> (beanScope == <span class="keyword">null</span> || beanScope.equals(<span class="string">&quot;singleton&quot;</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 以默认构造器创建Bean实例，并将其放入objPool中</span></span><br><span class="line">                objPool.put(beanId, Class.forName(beanClazz).getConstructor()</span><br><span class="line">                        .newInstance());</span><br><span class="line">            &#125; <span class="keyword">else</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 对于非singlton Bean，存放该Bean实现类的类名。</span></span><br><span class="line">                objPool.put(beanId, beanClazz);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 初始化容器中singleton Bean的属性</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initProp</span><span class="params">()</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 遍历配置文件里的每个&lt;bean.../&gt;元素</span></span><br><span class="line">        <span class="keyword">for</span> (Object obj : root.elements())</span><br><span class="line">        &#123;</span><br><span class="line">            Element beanEle = (Element) obj;</span><br><span class="line">            <span class="comment">// 取得&lt;bean.../&gt;元素的id属性</span></span><br><span class="line">            String beanId = beanEle.attributeValue(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">            <span class="comment">// 取得&lt;bean.../&gt;元素的scope属性</span></span><br><span class="line">            String beanScope = beanEle.attributeValue(<span class="string">&quot;scope&quot;</span>);</span><br><span class="line">            <span class="comment">// 如果&lt;bean.../&gt;元素的scope属性不存在，或为singleton</span></span><br><span class="line">            <span class="keyword">if</span> (beanScope == <span class="keyword">null</span> || beanScope.equals(<span class="string">&quot;singleton&quot;</span>))</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">// 取出objPool的指定的Bean实例</span></span><br><span class="line">                Object bean = objPool.get(beanId);</span><br><span class="line">                <span class="comment">// 遍历&lt;bean.../&gt;元素的每个&lt;property.../&gt;子元素</span></span><br><span class="line">                <span class="keyword">for</span> (Object prop : beanEle.elements())</span><br><span class="line">                &#123;</span><br><span class="line">                    Element propEle = (Element) prop;</span><br><span class="line">                    <span class="comment">// 取得&lt;property.../&gt;元素的name属性</span></span><br><span class="line">                    String propName = propEle.attributeValue(<span class="string">&quot;name&quot;</span>);</span><br><span class="line">                    <span class="comment">// 取得&lt;property.../&gt;元素的value属性</span></span><br><span class="line">                    String propValue = propEle.attributeValue(<span class="string">&quot;value&quot;</span>);</span><br><span class="line">                    <span class="comment">// 取得&lt;property.../&gt;元素的ref属性</span></span><br><span class="line">                    String propRef = propEle.attributeValue(<span class="string">&quot;ref&quot;</span>);</span><br><span class="line">                    <span class="comment">// 将属性名的首字母大写</span></span><br><span class="line">                    String propNameCamelize = propName.substring(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">                            .toUpperCase()</span><br><span class="line">                            + propName.substring(<span class="number">1</span>, propName.length());</span><br><span class="line">                    <span class="comment">// 如果&lt;property.../&gt;元素的value属性值存在</span></span><br><span class="line">                    <span class="keyword">if</span> (propValue != <span class="keyword">null</span> &amp;&amp; propValue.length() &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 获取设值注入所需的setter方法</span></span><br><span class="line">                        Method setter = bean.getClass().getMethod(</span><br><span class="line">                                <span class="string">&quot;set&quot;</span> + propNameCamelize, String.class);</span><br><span class="line">                        <span class="comment">// 执行setter注入</span></span><br><span class="line">                        setter.invoke(bean, propValue);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (propRef != <span class="keyword">null</span> &amp;&amp; propRef.length() &gt; <span class="number">0</span>)</span><br><span class="line">                    &#123;</span><br><span class="line">                        <span class="comment">// 取得需要被依赖注入的Bean实例</span></span><br><span class="line">                        Object target = objPool.get(propRef);</span><br><span class="line">                        <span class="comment">// objPool池中不存在指定Bean实例</span></span><br><span class="line">                        <span class="keyword">if</span> (target == <span class="keyword">null</span>)</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="comment">// 此处还应处理Singleton Bean依赖prototype Bean的情形</span></span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 定义设值注入所需的setter方法</span></span><br><span class="line">                        Method setter = <span class="keyword">null</span>;</span><br><span class="line">                        <span class="comment">// 遍历target对象所所实现的所有接口</span></span><br><span class="line">                        <span class="keyword">for</span> (Class&lt;?&gt; superInterface : target.getClass()</span><br><span class="line">                                .getInterfaces())</span><br><span class="line">                        &#123;</span><br><span class="line">                            <span class="keyword">try</span></span><br><span class="line">                            &#123;</span><br><span class="line">                                <span class="comment">// 获取设值注入所需的setter方法</span></span><br><span class="line">                                setter = bean.getClass().getMethod(</span><br><span class="line">                                        <span class="string">&quot;set&quot;</span> + propNameCamelize,</span><br><span class="line">                                        superInterface);</span><br><span class="line">                                <span class="comment">// 如果成功取得该接口对应的方法，直接跳出循环</span></span><br><span class="line">                                <span class="keyword">break</span>;</span><br><span class="line">                            &#125; <span class="keyword">catch</span> (NoSuchMethodException ex)</span><br><span class="line">                            &#123;</span><br><span class="line">                                <span class="comment">// 如果没有找到对应的setter方法，继续下次循环</span></span><br><span class="line">                                <span class="keyword">continue</span>;</span><br><span class="line">                            &#125;</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 如果setter方法依然为null，</span></span><br><span class="line">                        <span class="comment">// 则直接取得target实现类对应的setter方法</span></span><br><span class="line">                        <span class="keyword">if</span> (setter == <span class="keyword">null</span>)</span><br><span class="line">                        &#123;</span><br><span class="line">                            setter = bean.getClass().getMethod(</span><br><span class="line">                                    <span class="string">&quot;set&quot;</span> + propNameCamelize,</span><br><span class="line">                                    target.getClass());</span><br><span class="line">                        &#125;</span><br><span class="line">                        <span class="comment">// 执行setter注入</span></span><br><span class="line">                        setter.invoke(bean, target);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的<code>CrazyitXmlApplicationContext</code>类当然不能与<code>Spring</code>的<code>ApplicationContext</code>实现类相比,该容器类仅仅实现了简单的<code>IoC</code>功能,而且并未为<code>prototype</code>行为的<code>Bean</code>的属性提供依赖注入功能。读者可以通过该工厂类大致了解<code>Spring</code>底层的实现原理。<br>下面是测试该工厂类的主类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> lee;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.crazyit.ioc.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IoCTest</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="comment">// 创建IoC容器</span></span><br><span class="line">        ApplicationContext ctx = <span class="keyword">new</span> CrazyitXmlApplicationContext(<span class="string">&quot;beans.xml&quot;</span>);</span><br><span class="line">        <span class="comment">// 从IoC容器中取出computer Bean</span></span><br><span class="line">        Computer c = (Computer) ctx.getBean(<span class="string">&quot;computer&quot;</span>);</span><br><span class="line">        <span class="comment">// 测试Computer对象</span></span><br><span class="line">        c.keyIn(<span class="string">&quot;轻量级Java EE企业应用实战&quot;</span>);</span><br><span class="line">        c.keyIn(<span class="string">&quot;疯狂Java讲义&quot;</span>);</span><br><span class="line">        c.print();</span><br><span class="line">        System.out.println(ctx.getBean(<span class="string">&quot;now&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面程序中的粗体字代码可以看出,本程序的<code>IoC</code>容器具有和<code>Spring</code>容器类似的功能,同样可以创建并管理容器中所有的<code>Bean</code>实例<br>与简单工厂模式类似的还有工厂方法和抽象工厂模式,下面将进一步讲解工厂方式和抽象工厂模式的设计方式.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div></div>
+  <button>
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/JavaReadingNotes/images/wechatpay.png" alt="蓝蓝 微信">
+        <span>微信</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>蓝蓝
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/" title="9.3.2 简单工厂">https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/3f9c663b/" rel="prev" title="9.3.4 代理模式">
+                  <i class="fa fa-chevron-left"></i> 9.3.4 代理模式
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/JavaReadingNotes/a1d1c75a/" rel="next" title="9.3.5 命令模式">
+                  9.3.5 命令模式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+    <div class="comments" id="waline-comments"></div>
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">蓝蓝</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">5.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">88:01</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@next-theme/pjax@0.5.0/pjax.min.js" integrity="sha256-3NkoLDrmHLTYj7csHIZSr0MHAFTXth7Ua/DDt4MRUAg=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lozad@1.16.0/dist/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pangu@4.0.7/dist/browser/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/comments.js"></script><script src="/JavaReadingNotes/js/utils.js"></script><script src="/JavaReadingNotes/js/motion.js"></script><script src="/JavaReadingNotes/js/next-boot.js"></script><script src="/JavaReadingNotes/js/bookmark.js"></script><script src="/JavaReadingNotes/js/pjax.js"></script>
+
+  
+<script src="https://cdn.jsdelivr.net/npm/hexo-generator-searchdb@1.4.0/dist/search.js" integrity="sha256-vXZMYLEqsROAXkEw93GGIvaB2ab+QW6w3+1ahD9nXXA=" crossorigin="anonymous"></script>
+<script src="/JavaReadingNotes/js/third-party/search/local-search.js"></script>
+
+
+
+  <script src="/JavaReadingNotes/js/third-party/fancybox.js"></script>
+
+  <script src="/JavaReadingNotes/js/third-party/pace.js"></script>
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js","integrity":"sha256-r+3itOMtGGjap0x+10hu6jW/gZCzxHsoKrOd7gyRSGY="}}</script>
+<script src="/JavaReadingNotes/js/third-party/math/mathjax.js"></script>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/quicklink@2.2.0/dist/quicklink.umd.js" integrity="sha256-4kQf9z5ntdQrzsBC3YSHnEz02Z9C1UeW/E9OgnvlzSY=" crossorigin="anonymous"></script>
+  <script class="next-config" data-name="quicklink" type="application/json">{"enable":true,"home":true,"archive":true,"delay":true,"timeout":3000,"priority":true,"url":"https://lanlan2017.github.io/JavaReadingNotes/2cf2686e/"}</script>
+  <script src="/JavaReadingNotes/js/third-party/quicklink.js"></script>
+<script class="next-config" data-name="waline" type="application/json">{"lang":null,"enable":true,"serverURL":"https://waline-test-mzjszagu6-lanlan2017.vercel.app","placeholder":"填写您的邮箱以便接收回复提醒,填写您个人网站地址以便为您增加访问量","avatar":"mm","pageSize":10,"visitor":false,"comment_count":true,"requiredFields":[],"meta":["nick","mail","link"],"libUrl":"https://cdn.jsdelivr.net/npm/@waline/client/dist/Waline.min.js","el":"#waline-comments","path":"/JavaReadingNotes/2cf2686e/"}</script>
+<script>
+document.addEventListener('page:loaded', () => {
+  NexT.utils.loadComments(CONFIG.waline.el).then(() => 
+    NexT.utils.getScript(CONFIG.waline.libUrl, { condition: window.Waline })
+  ).then(() => {
+    new Waline(CONFIG.waline);
+  });
+});
+</script>
+</body>
+</html>
