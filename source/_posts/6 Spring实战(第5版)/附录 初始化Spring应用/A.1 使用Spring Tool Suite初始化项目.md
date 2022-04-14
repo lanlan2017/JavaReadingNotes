@@ -17,7 +17,7 @@ updated: 2022-04-03 01:21:18
 
 接下来，我们将会看到项目创建对话框的第一页（见图A.2）。在这个页面中，我们将会定义项目的基本信息，比如项目名称、坐标（group ID和artifact ID）、版本和基础包名。我们也可以确定项目使用Maven还是Gradle来构建，还可以声明构建生成JAR文件还是WAR文件，以及使用哪个版本的Java，甚至还能使用其他的JVM语言，比如Groovy或Kotlin。
 
-![image-20211022213458149](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022213458.png)
+![image-20211022213458149](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211022213458.png)
 
 <center>图A.2 定义基本的项目信息</center>
 
@@ -25,7 +25,7 @@ updated: 2022-04-03 01:21:18
 
 在定义完项目的基本信息之后，点击Next按钮，会看到项目的依赖页（见图A.3）。
 
-![image-20211022213509034](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022213509.png)
+![image-20211022213509034](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211022213509.png)
 
 <center>图A.3 指定项目的依赖</center>
 
@@ -41,7 +41,7 @@ updated: 2022-04-03 01:21:18
 
 如果你想要使用http://start.spring.io之外的其他Initializr，可以点击Next按钮来设置Initializr的基础URL，如图A.4所示。
 
-![image-20211022213533643](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211022213533.png)
+![image-20211022213533643](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211022213533.png)
 
 <center>图A.4 指定Initializr的基础URL</center>
 

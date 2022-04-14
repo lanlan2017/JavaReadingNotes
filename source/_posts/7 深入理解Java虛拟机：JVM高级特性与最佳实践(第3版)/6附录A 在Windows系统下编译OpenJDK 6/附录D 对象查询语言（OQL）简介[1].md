@@ -155,7 +155,7 @@ SELECT * FROM java.lang.String s
 ```
 使用@符号，OQL可以访问底层Java对象的内存属性。下表列出了一些常用的Java属性。
 
-![image-20211127203831071](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127203831.png)
+![image-20211127203831071](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127203831.png)
 
 ### 3.调用OQLJava方法
 格式为：
@@ -164,7 +164,7 @@ SELECT * FROM java.lang.String s
 ```
 加“()”会将MAT解释为一个OQLJava方法调用。这个方法的调用是通过反射执行的。常见的OQL Java方法如下：
 
-![image-20211127203928619](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127203928.png)
+![image-20211127203928619](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127203928.png)
 
 ### 4.OQL的内建函数
 格式为：
@@ -172,12 +172,12 @@ SELECT * FROM java.lang.String s
 <function>(<parameter>)
 ```
 
-![image-20211127204007219](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127204007.png)
+![image-20211127204007219](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127204007.png)
 
 ### D.5 OQL语言的BNF范式
 
-![image-20211127204029605](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127204029.png)
+![image-20211127204029605](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127204029.png)
 
-![image-20211127204041963](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127204042.png)
+![image-20211127204041963](https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127204042.png)
 
 [^1]: 本文翻译自Eclipse Memory Analyzer Tool（MAT，Eclipse出品的内存分析工具）的OQL帮助文档。
