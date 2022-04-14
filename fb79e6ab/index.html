@@ -34,14 +34,14 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="附录A 在Windows系统下编译OpenJDK 6这是本书第1版中介绍如何在Windows下编译OpenJDK 6的例子，里面的部分内容现在已经过时了 （例如安装Plug部分），但对在Windows上构建安装环境和进行较老版本的OpenJDK编译还是有一定参考意义的，所以笔者并没有把它删除，而是挪到附录之中。 A.1 获取JDK源码首先确定要使用的JDK版本，OpenJDK 6和OpenJDK">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130829.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130853.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127131106.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127130829.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127130853.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127131106.png">
 <meta property="article:published_time" content="2021-11-28T07:46:12.000Z">
 <meta property="article:modified_time" content="2021-11-28T07:46:50.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130829.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127130829.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/fb79e6ab/">
@@ -323,8 +323,8 @@
 <p>CYGWIN安装时的定制包选择界面如图A-1所示。</p>
 <center>表A-1 需要手工选择安装的CYGWIN工具</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130829.png" alt="image-20211127130828423"></p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127130853.png" alt="image-20211127130853102"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127130829.png" alt="image-20211127130828423"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127130853.png" alt="image-20211127130853102"></p>
 <center>图A-1 CYGWIN安装界面</center>
 
 <p>建立编译环境的第二步是安装编译器。JDK中最核心的代码（Java虚拟机及JDK中Native方法的实现等）是使用C++语言及少量的C语言编写的，官方文档中说它们的内部开发环境是在Microsoft Visual Studio C++2003（VS2003）中进行编译的，同时也是在Microsoft Visual Studio C++2010（VS2010）中测试过的，所以最好只选择这两个编译器之一进行编译。如果选择VS2010，那么要求在编译器之中已经包含了Windows SDK v 7.0a，否则可能还要自己去下载这个SDK，并且更新PlatformSDK目录。由于笔者没有购买Visual Studio 2010的IDE，所以仅下载了VS2010 Express中提取出来的C++编译器，这部分是免费的，但单独安装好编译器比较麻烦。建议读者选择使用整套Visual Studio C++2010或Visual Studio C++2010 Express版进行编译。</p>
@@ -334,7 +334,7 @@
 <h2 id="A-4-准备依赖项"><a href="#A-4-准备依赖项" class="headerlink" title="A.4 准备依赖项"></a>A.4 准备依赖项</h2><p>前面说过，OpenJDK中开放的源码并没有达到100%，还有极少量的无法开源的产权代码存在。 OpenJDK承诺日后将逐步使用开源实现来替换掉这部分产权代码，但至少在今天，编译JDK还需要这部分闭源包，官方称之为“JDK Plug”[^2]，它们从前面的Source Releases页面就可以下载到。Windows平台的JDK Plug是以Jar包的形式提供的，通过下面这条命令可以安装它：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java –jar jdk-7-ea-plug-b121-windows-i586-09_dec_2010.jar</span><br></pre></td></tr></table></figure>
 <p>运行后将会显示图A-2所示的协议，点击“ACCEPT”接受协议，然后把Plug安装到指定目录即可。 安装完毕后建立一个环境变量ALT_BINARY_PLUGS_PATH，变量值为此JDK Plug的安装路径，后面编译程序时需要用到它。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127131106.png" alt="image-20211127131106318"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127131106.png" alt="image-20211127131106318"></p>
 <center>图A-2 JDK Plug安装协议</center>
 
 <p>除了要用到JDK Plug外，编译时还需要引用JDK的运行时包，这是编译JDK中用Java代码编写的那部分所需要的，如果仅仅是想编译一个HotSpot虚拟机则可以不用。官方文档把这部分称为Optional Import JDK，可以直接使用前面Bootstrap JDK的运行时包。我们需要建立一个名为ALT_JDK_IMPORT_PATH的环境变量指向JDK的安装目录。</p>

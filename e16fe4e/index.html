@@ -34,14 +34,14 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="7.5.2 模块化下的类加载器为了保证兼容性，JDK 9并没有从根本上动摇从JDK 1.2以来运行了二十年之久的三层类加载器架构以及双亲委派模型。但是为了模块化系统的顺利施行，模块化下的类加载器仍然发生了一些应该被注意到变动，主要包括以下几个方面。 首先，是扩展类加载器（Extension Class Loader）被平台类加载器（Platform Class Loader）取代。 这其实是一个很">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190533.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190628.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190705.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190533.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190628.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190705.png">
 <meta property="article:published_time" content="2021-11-23T11:17:54.000Z">
 <meta property="article:modified_time" content="2021-11-26T17:31:03.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190533.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190533.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/e16fe4e/">
@@ -331,14 +331,14 @@
 <p>首先，是扩展类加载器（Extension Class Loader）被平台类加载器（Platform Class Loader）取代。 这其实是一个很顺理成章的变动，既然整个JDK都基于模块化进行构建（原来的rt.jar和tools.jar被拆分成数十个JMOD文件），其中的Java类库就已天然地满足了可扩展的需求，那自然无须再保留 <code>&lt;JAVA_HOME&gt;\lib\ext</code>目录，此前使用这个目录或者java.ext.dirs系统变量来扩展JDK功能的机制已经没有继续存在的价值了，用来加载这部分类库的扩展类加载器也完成了它的历史使命。类似地，在新版的JDK中也取消了<code>&lt;JAVA_HOME&gt;\jre</code>目录，因为随时可以组合构建出程序运行所需的JRE来，譬如假设我们只使用java.base模块中的类型，那么随时可以通过以下命令打包出一个“JRE”：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jlink -p $JAVA_HOME/jmods --add-modules java.base --output jre</span><br></pre></td></tr></table></figure>
 <p>其次，平台类加载器和应用程序类加载器都不再派生自java.net.URLClassLoader，如果有程序直接依赖了这种继承关系，或者依赖了URLClassLoader类的特定方法，那代码很可能会在JDK 9及更高版本的JDK中崩溃。现在启动类加载器、平台类加载器、应用程序类加载器全都继承于jdk.internal.loader.BuiltinClassLoader，在BuiltinClassLoader中实现了新的模块化架构下类如何从模块中加载的逻辑，以及模块中资源可访问性的处理。两者的前后变化如图7-5和7-6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190533.png" alt="image-20211123190532876"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190533.png" alt="image-20211123190532876"></p>
 <center>图7-5 JDK 9之前的类加载器继承架构</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190628.png" alt="image-20211123190628384"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190628.png" alt="image-20211123190628384"></p>
 <center>图7-6 JDK 9及以后的类加载器继承架构</center>
 
 <p>另外，读者可能已经注意到图7-6中有“BootClassLoader”存在，启动类加载器现在是在Java虚拟机内部和Java类库共同协作实现的类加载器，尽管有了BootClassLoader这样的Java类，但为了与之前的代码保持兼容，所有在获取启动类加载器的场景（譬如Object.class.getClassLoader()）中仍然会返回null来代替，而不会得到BootClassLoader的实例。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190705.png" alt="image-20211123190705739"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190705.png" alt="image-20211123190705739"></p>
 <center>图7-7 JDK 9后的类加载器委派关系</center>
 
 <p>最后，JDK 9中虽然仍然维持着三层类加载器和双亲委派的架构，但类加载的委派关系也发生了变动。当平台及应用程序类加载器收到类加载请求，在委派给父加载器加载前，要先判断该类是否能够归属到某一个系统模块中，如果可以找到这样的归属关系，就要优先委派给负责那个模块的加载器完成加载，也许这可以算是对双亲委派的第四次破坏。在JDK 9以后的三层类加载器的架构如图7-7所示，请读者对照图7-2进行比较。</p>

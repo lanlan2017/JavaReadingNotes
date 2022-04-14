@@ -34,15 +34,15 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="5.3.2 升级JDK版本的性能变化及兼容问题对Eclipse进行调优的第一步就是先对虚拟机的版本进行升级，希望能先从虚拟机版本身上得到一些“免费的”性能提升。 每次JDK的大版本发布时，发行商通常都会宣称虚拟机的运行速度比上一版本有了多少比例的提高，这虽然是个广告性质的宣言，常被使用者从更新列表或者技术白皮书中直接忽略，但技术进步确实会促使性能改进，从国内外的第三方评测数据来看，版本升级至少在某">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919152917.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153051.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153527.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153227.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919152917.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153051.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153527.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153227.png">
 <meta property="article:published_time" content="2021-09-24T02:16:20.000Z">
 <meta property="article:modified_time" content="2021-11-18T02:55:11.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919152917.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919152917.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/8de91e11/">
@@ -332,17 +332,17 @@
 <p>每次JDK的大版本发布时，发行商通常都会宣称虚拟机的运行速度比上一版本有了多少比例的提高，这虽然是个广告性质的宣言，常被使用者从更新列表或者技术白皮书中直接忽略，但技术进步确实会促使性能改进，从国内外的第三方评测数据来看，版本升级至少在某些方面确实带来了一定性能改善<a href="%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E4%B9%9F%E6%9C%89%E4%B8%8D%E5%B0%91%E6%80%A7%E8%83%BD%E5%80%92%E9%80%80%E7%9A%84%E6%A1%88%E4%BE%8B%EF%BC%8C%E5%8F%97%E7%A8%8B%E5%BA%8F%E3%80%81%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85%E5%85%BC%E5%AE%B9%E6%80%A7%E4%BB%A5%E5%8F%8A%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%99%90%E5%88%B6%EF%BC%8C%E5%9C%A8%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E4%B8%AD%E5%8D%87%E7%BA%A7JDK%E7%89%88%E6%9C%AC%E6%98%AF%E4%B8%80%E4%BB%B6%E9%9C%80%E8%A6%81%E6%85%8E%E9%87%8D%E8%80%83%E8%99%91%E7%9A%84%E4%BA%8B%E6%83%85%E3%80%82">^1</a>。以下是一个第三方网站对JDK 5、6、7三个版本做的性能评测，分别测试了以下4个用例[^2]。</p>
 <p>1）生成500万个字符串。<br>2）500万次<code>ArrayList&lt;String&gt;</code>数据插入，使用第一点生成的数据。<br>3）生成500万个<code>HashMap&lt;String，Integer&gt;</code>，每个键-值对通过并发线程计算，测试并发能力。<br>4）打印500万个<code>ArrayList&lt;String&gt;</code>中的值到文件，并重读回内存。</p>
 <p>三个版本的JDK分别运行这4个用例的测试程序，测试结果如图5-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919152917.png" alt="image-20210919152917030"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919152917.png" alt="image-20210919152917030"></p>
 <p>图5-4 JDK横向性能对比 </p>
 <p>从这4个用例的测试结果来看，在每一个测试场景中新版的JDK性能都有改进，譬如JDK 6比JDK 5有大约15%的平均性能提升。尽管对JDK仅测试这四个用例并不能说明什么问题，甚至要通过测试数据来量化描述一个JDK比旧版提升了多少本身就是很难做到特别科学准确的（要做稍微靠谱一点的测试，可以使用SPECjvm 2015[^3]之类的软件来完成，或者把相应版本的TCK[^4]中数万个测试用例的性能数据对比一下可能稍有说服力），但笔者还是选择相信这次“软广告”性质的测试，把JDK版本升级到JDK 6 Update 21，升级没有选择JDK 7或者其他版本的最主要理由是：本书后续故事剧情发展需要。</p>
 <p>与所有小说作者（嗯……知道，本书不是小说）设计的故事情节一样，获得最后的胜利之前总是要经历各种各样的挫折，这次升级到JDK 6之后，性能有什么变化先暂且不谈，在使用几分钟之后， 笔者的Eclipse就和前面几个服务端的案例一样非常“不负众望”地发生了内存溢出，如图5-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153051.png" alt="image-20210919153051781"><br>图5-5 Eclipse OutOfMemoryError</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153051.png" alt="image-20210919153051781"><br>图5-5 Eclipse OutOfMemoryError</p>
 <p>这次内存溢出开始是完全出乎笔者意料的：决定对Eclipse做调优是因为速度慢，但笔者的开发环境一直都很稳定，至少没有出现过内存溢出的问题，而这次升级除了修改了eclipse.ini中的Java虚拟机路径之外，还未进行任何运行参数的调整，Eclipse居然进去主界面之后随便开了几个文件就抛出内存溢出异常了，难道JDK 6 Update21有哪个类库的API出现了严重的泄漏问题吗？</p>
 <p>事实上并不是JDK 6出现了什么问题，否则以Java的影响力，它早就上新闻了。根据前面三章中介绍讲解的原理和工具，我们要查明这个异常的原因并且解决它一点也不困难。打开VisualVM，监视页签中的内存曲线部分如图5-6、图5-7所示。</p>
 <p>在Java堆中监视曲线里，“堆大小”的曲线与“使用的堆”的曲线一直都有很大的间隔距离，每当两条曲线开始出现互相靠近的趋势时，“堆大小”的曲线就会快速向上转向，而“使用的堆”的曲线会向下转向。“堆大小”的曲线向上代表的是虚拟机内部在进行堆扩容，因为运行参数中并没有指定最小堆（-Xms）的值与最大堆（-Xmx）相等，所以堆容量一开始并没有扩展到最大值，而是根据使用情况进行伸缩扩展。“使用的堆”的曲线向下是因为虚拟机内部触发了一次垃圾收集，一些废弃对象的空间被回收后，内存用量相应减少。从图形上看，Java堆运作是完全正常的。但永久代的监视曲线就很明显有问题了，“PermGen大小”的曲线与“使用的PermGen”的曲线几乎完全重合在一起，这说明永久代中已经没有可回收的资源了，所以“使用的PermGen”的曲线不会向下发展，并且永久代中也没有空间可以扩展了，所以“PermGen大小”的曲线不能向上发展，说明这次内存溢出很明显是永久代导致的内存溢出。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153527.png" alt="image-20210919153527309"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153527.png" alt="image-20210919153527309"></p>
 <p>图5-6 Java堆监视曲线</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153227.png" alt="image-20210919153227432"><br>图5-7 永久代监视曲线</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153227.png" alt="image-20210919153227432"><br>图5-7 永久代监视曲线</p>
 <p>再注意到图5-7中永久代的最大容量“67108864字节”，也就是64MB，这恰好是JDK在未使用- XX：MaxPermSize参数明确指定永久代最大容量时的默认值，无论JDK 5还是JDK 6，这个默认值都是64MB。对于Eclipse这种规模的Java程序来说，64MB的永久代内存空间显然是不够的，内存溢出是肯定的，但为何在JDK 5中没有发生过溢出呢？</p>
 <p>在VisualVM的“概述&gt;JVM参数”页签中，分别检查使用JDK 5和JDK 6运行Eclipse时的Java虚拟机启动参数，发现使用JDK 6时，只有三个启动参数，如代码清单5-5所示。</p>
 <p>代码清单5-5 JDK 1.6的Eclipse运行期参数</p>

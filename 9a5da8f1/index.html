@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="19.4 适配器模式的扩展我们刚刚讲的人力资源管理的例子中，其实是一个比较幸运的例子，为什么呢？如果劳动服务公司提供的人员接口不止一个，也就是说，用户基本信息是一个接口，工作信息是一个接口，家庭信息是一个接口，总共有三个接口三个实现类，想想看如何处理呢？不能再使用我们上面的方法了，为什么呢？Java是不支持多继承的，你难道想让OuterUserInfo继承三个实现类？此路不通，再想一个办法，对哦，">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210929163847.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210929164327.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210929163847.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210929164327.png">
 <meta property="article:published_time" content="2021-09-29T08:43:57.000Z">
 <meta property="article:modified_time" content="2021-09-30T07:39:03.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210929163847.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210929163847.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/9a5da8f1/">
@@ -324,7 +324,7 @@
     <div class="post-body" itemprop="articleBody">
         <h1 id="19-4-适配器模式的扩展"><a href="#19-4-适配器模式的扩展" class="headerlink" title="19.4 适配器模式的扩展"></a>19.4 适配器模式的扩展</h1><p>我们刚刚讲的人力资源管理的例子中，其实是一个比较幸运的例子，为什么呢？如果劳动服务公司提供的人员接口不止一个，也就是说，用户基本信息是一个接口，工作信息是一个接口，家庭信息是一个接口，总共有三个接口三个实现类，想想看如何处理呢？不能再使用我们上面的方法了，为什么呢？Java是不支持多继承的，你难道想让OuterUserInfo继承三个实现类？此路不通，再想一个办法，对哦，可以使用类关联的办法嘛！声明一个OuterUserInfo实现类，实现IUserInfo接口，通过再关联其他三个实现类不就可以解决这个问题了吗？是的，是的，好方法，我们先画出类图，如图19-8所示。</p>
 <p>OuterUserInfo通过关联的方式与外界的三个实现类通讯，当然也可以理解为是聚合关系。IUserInfo和UserInfo代码如代码清单19-1和代码清单19-2所示，不再赘述。我们来看看拆分后的三个接口和实现类，用户基本信息接口如代码清单19-13所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210929163847.png" alt="image-20210929163847652"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210929163847.png" alt="image-20210929163847652"></p>
 <center>图19-8 拆分接口后的类图</center>
 
 <p>代码清单19-13 用户基本信息接口</p>
@@ -352,7 +352,7 @@
 <p>代码清单19-20 场景类</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//外系统的人员信息</span></span><br><span class="line">        IOuterUserBaseInfo baseInfo = <span class="keyword">new</span> OuterUserBaseInfo();</span><br><span class="line">        IOuterUserHomeInfo homeInfo = <span class="keyword">new</span> OuterUserHomeInfo();</span><br><span class="line">        IOuterUserOfficeInfo officeInfo = <span class="keyword">new</span> OuterUserOfficeInfo();</span><br><span class="line">        <span class="comment">//传递三个对象</span></span><br><span class="line">        IUserInfo youngGirl = <span class="keyword">new</span> OuterUserInfo(baseInfo,homeInfo,officeInfo);</span><br><span class="line">        <span class="comment">//从数据库中查到101个</span></span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;<span class="number">101</span>;i++)&#123;</span><br><span class="line">            youngGirl.getMobileNumber();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>运行的结果还是相同的。大家想想看，OuterUserInfo变成了委托服务，把IUserInfo接口需要的所有的操作都委托给其他三个接口下的实现类，它的委托是通过对象层次的关联关系进行委托的，而不是继承关系。好了，讲了这么多，我们需要给这种适配器起个名字，就是对象适配器，我们之前讲的通过继承进行的适配，叫做类适配器。对象适配器的通用类图， 如图19-9所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210929164327.png" alt="image-20210929164327675"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210929164327.png" alt="image-20210929164327675"></p>
 <center>图19-9 对象适配器类图</center>
 适配器的通用代码也比较简单，把原有的继承关系变更为关联关系就可以了，不再赘述。对象适配器和类适配器的区别是：类适配器是类间继承，对象适配器是对象的合成关系，也可以说是类的关联关系，这是两者的根本区别。二者在实际项目中都会经常用到，由于对象适配器是通过类间的关联关系进行耦合的，因此在设计时就可以做到比较灵活，比如修补源角色的隐形缺陷，关联其他对象等，而类适配器就只能通过覆写源角色的方法进行扩展，在实际项目中，对象适配器使用到场景相对较多。
 

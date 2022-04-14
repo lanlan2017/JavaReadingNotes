@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="11.4 编译器优化技术经过前面对即时编译、提前编译的讲解，读者应该已经建立起一个认知：编译器的目标虽然是做由程序代码翻译为本地机器码的工作，但其实难点并不在于能不能成功翻译出机器码，输出代码优化质量的高低才是决定编译器优秀与否的关键。在本章之前的内容里出现过许多优化措施的专业名词， 有一些是编译原理中的基础知识，譬如方法内联，只要是计算机专业毕业的读者至少都有初步的概念；但也有一些专业性比较强的">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121316.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121333.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121316.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121333.png">
 <meta property="article:published_time" content="2021-11-26T04:17:16.000Z">
 <meta property="article:modified_time" content="2021-11-28T07:36:14.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121316.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121316.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/fd0e1ab6/">
@@ -330,8 +330,8 @@
 <h1 id="11-4-1-优化技术概览"><a href="#11-4-1-优化技术概览" class="headerlink" title="11.4.1 优化技术概览"></a>11.4.1 优化技术概览</h1><p>OpenJDK的官方Wiki上，HotSpot虚拟机设计团队列出了一个相对比较全面的、即时编译器中采用的优化技术列表<a href="%E5%9C%B0%E5%9D%80%EF%BC%9Ahttps://wiki.openjdk.java.net/display/HotSpot/PerformanceTacticIndex%E3%80%82">^1</a>，如表11-1所示，其中有不少经典编译器的优化手段，也有许多针对Java语言，或者说针对运行在Java虚拟机上的所有语言进行的优化。本节先对这些技术进行概览，在后面几节中， 将挑选若干最重要或最典型的优化，与读者一起看看优化前后的代码发生了怎样的变化。</p>
 <center>表11-1 即时编译器优化技术一览</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121316.png" alt="image-20211126121315790"></p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121333.png" alt="image-20211126121333215"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121316.png" alt="image-20211126121315790"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121333.png" alt="image-20211126121333215"></p>
 <p>上述的优化技术看起来很多，而且名字看起来大多显得有点“高深莫测”，实际上要实现这些优化确实有不小的难度，但大部分优化技术理解起来都并不困难，为了消除读者对这些优化技术的陌生感，笔者举一个最简单的例子：通过大家熟悉的Java代码变化来展示其中几种优化技术是如何发挥作用的。不过首先需要明确一点，即时编译器对这些代码优化变换是建立在代码的中间表示或者是机器码之上的，绝不是直接在Java源码上去做的，这里只是笔者为了方便讲解，使用了Java语言的语法来表示这些优化技术所发挥的作用。</p>
 <p>第一步，从原始代码开始，如代码清单11-6所示[^2]。</p>
 <center>代码清单11-6 优化前的原始代码</center>

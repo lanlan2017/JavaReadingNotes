@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="13.2.2 线程安全的实现方法了解过什么是线程安全之后，紧接着的一个问题就是我们应该如何实现线程安全。这听起来似乎是一件由代码如何编写来决定的事情，不应该出现在讲解Java虚拟机的书里。确实，如何实现线程安全与代码编写有很大的关系，但虚拟机提供的同步和锁机制也起到了至关重要的作用。在本节中，如何编写代码实现线程安全，以及虚拟机如何实现同步与锁这两方面都会涉及，相对而言更偏重后者一些，只要读者明白">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127122809.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127122832.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127122809.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127122832.png">
 <meta property="article:published_time" content="2021-11-27T04:44:42.000Z">
 <meta property="article:modified_time" content="2021-11-28T04:11:55.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127122809.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127122809.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/b6e2db6b/">
@@ -344,10 +344,10 @@
 <li>锁绑定多个条件：是指一个ReentrantLock对象可以同时绑定多个Condition对象。在synchronized 中，锁对象的wait()跟它的notify()或者notifyAll()方法配合可以实现一个隐含的条件，如果要和多于一个的条件关联的时候，就不得不额外添加一个锁；而ReentrantLock则无须这样做，多次调用newCondition()方法即可。</li>
 </ul>
 <p>如果需要使用上述功能，使用ReentrantLock是一个很好的选择，那如果是基于性能考虑呢？ synchronized对性能的影响，尤其在JDK 5之前是很显著的，为此在JDK 6中还专门进行过针对性的优化。以synchronized和ReentrantLock的性能对比为例，Brian Goetz对这两种锁在JDK 5、单核处理器及双Xeon处理器环境下做了一组吞吐量对比的实验[^4]，实验结果如图13-1和图13-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127122809.png" alt="image-20211127122809441"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127122809.png" alt="image-20211127122809441"></p>
 <center>图13-1 JDK 5、单核处理器下两种锁的吞吐量对比</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211127122832.png" alt="image-20211127122832647"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211127122832.png" alt="image-20211127122832647"></p>
 <center>图13-2 JDK 5、双Xeon处理器下两种锁的吞吐量对比</center>
 
 <p>从图13-1和图13-2中可以看出，多线程环境下synchronized的吞吐量下降得非常严重，而ReentrantLock则能基本保持在同一个相对稳定的水平上。但与其说ReentrantLock性能好，倒不如说当时的synchronized有非常大的优化余地，后续的技术发展也证明了这一点。当JDK 6中加入了大量针对synchronized锁的优化措施（下一节我们就会讲解这些优化措施）之后，相同的测试中就发现synchronized与ReentrantLock的性能基本上能够持平。相信现在阅读本书的读者所开发的程序应该都是使用JDK 6或以上版本来部署的，所以性能已经不再是选择synchronized或者ReentrantLock的决定因素。</p>

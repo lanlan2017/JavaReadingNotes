@@ -313,7 +313,7 @@
 <p>Kafka设计为集群运行，从而能够实现很强的可扩展性。通过将主题在集群的所有实例上进行分区（partition），它能够具有更强的弹性。RabbitMQ主要处理Exchange中的队列，而Kafka仅使用主题实现消息的发布/订阅。</p>
 <p>Kafka主题会复制到集群的所有代理上。集群中的每个节点都会担任一个或多个主题的首领（leader），负责该主题的数据并将其复制到集群中的其他节点上。</p>
 <p>更进一步来讲，每个主题可以划分为多个分区。在这种情况下，集群中的每个节点是某个主题一个或多个分区的首领，但并不是整个主题的首领。主题的责任会在所有节点间进行拆分。图8.2阐述了它是如何运行的。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015203530.png" alt="image-20211015203522617"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015203530.png" alt="image-20211015203522617"></p>
 <center>图8.2 Kafka集群是由多个代理组成的，每个代理作为主题分区的首领</center>
 
 <p>关于Kafka的独特架构，我建议你阅读Dylan Scott编写的Kafka in Action（Manning，2017）。就我们来讲，我们将会关注如何通过Spring发送和接收Kafka的消息。</p>
@@ -479,7 +479,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="8-2-使用RabbitMQ和AMQP"><a href="#8-2-使用RabbitMQ和AMQP" class="headerlink" title="8.2 使用RabbitMQ和AMQP"></a>8.2 使用RabbitMQ和AMQP</h1><p>RabbitMQ可以说是AMQP最杰出的实现，它提供了比JMS更高级的消息路由策略。JMS消息使用目的地名称来寻址，接收者要从这里检索消息，而AMQP消息使用Exchange和routing key来寻址，这样消息就与接收者要监听的队列解耦了。Exchange和队列的关系如图8.1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015123625.png" alt="image-20211015123622109"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015123625.png" alt="image-20211015123622109"></p>
 <center>图8.1 发送到RabbitMQ Exchange的消息会基于routing key和binding被路由到一个或多个队列上</center>
 
 <p>当消息抵达RabbitMQ代理的时候，它会进入为其设置的Exchange上。Exchange负责将它路由到一个或多个队列中，这个过程会根据Exchange的类型、Exchange和队列之间的binding以及消息的routing key进行路由。</p>
@@ -502,7 +502,7 @@
 
 <p>添加AMQP starter到构建文件中之后，将会触发自动配置功能，这样会为我们创建一个AMQP连接工厂和RabbitTemplate bean，以及其他的一些支撑组件。我们要使用Spring发送和接收RabbitMQ代理的消息，只需要添加这项依赖就可以了。但是，这里还有一些我们需要掌握的有用属性，如表8.4所示。</p>
 <p>表8.4 配置RabbitMQ代理位置和凭证的属性</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015123808.jpeg" alt="epub_29101559_49"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015123808.jpeg" alt="epub_29101559_49"></p>
 <p>对于开发来说，我们可能会使用不需要认证的RabbitMQ代理，它运行在本地机器上并监听5672端口。在开发阶段，这些属性可能没有太大的用处，但是当应用程序投入生产环境时，它们无疑是非常有用的。</p>
 <p>假设我们要将应用投入生产环境，RabbitMQ代理位于名为rabbit.tacocloud.com服务器上，监听5673端口并且需要认证。在这种情况下，当prod profile处于激活状态时，application.yml文件中的如下配置将会设置这些属性：</p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">profiles:</span> <span class="string">prod</span></span><br><span class="line">  <span class="attr">rabbitmq:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">rabbit.tacocloud.com</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">5673</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">tacoweb</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">l3tm31n</span></span><br></pre></td></tr></table></figure>
@@ -709,14 +709,14 @@
 <p>Artemis是重新实现的下一代ActiveMQ，使ActiveMQ变成了遗留方案。因此，Taco Cloud会选择使用Artemis。但是在编写发送和接收消息的代码方面，选择哪种方案几乎没有什么影响。唯一需要注意的重要差异就是如何配置Spring创建到代理的连接。</p>
 <p>默认情况下，Spring会假定Artemis代理在localhost的61616端口运行。对于开发来说，这样是没有问题的，但是一旦要将应用部署到生产环境，我们就需要设置一些属性来告诉Spring该如何访问代理。最有用的属性如表8.1所示。</p>
 <p>表8.1 配置Artemis代理的位置和凭证信息的属性</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015114540.jpeg" alt="epub_29101559_45"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015114540.jpeg" alt="epub_29101559_45"></p>
 <p>例如，我们看看如下的application.yml文件条目，它可能会用于一个非开发的环境：</p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">artemis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">artemis.tacocloud.com</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">61617</span></span><br><span class="line">    <span class="attr">user:</span> <span class="string">tacoweb</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">l3tm31n</span></span><br></pre></td></tr></table></figure>
 
 <p>这会让Spring创建到Artemis代理的连接，该Artemis代理监听artemis.tacocloud.com的61617端口。它还为应用设置了与代理交互的凭证信息。凭证信息是可选的，但是对于生产环境来说，我们推荐使用它们。</p>
 <p>如果你选择使用ActiveMQ而不是Artemis，那么需要使用ActiveMQ特定的属性，如表8.2所示。</p>
 <p>表8.2 配置ActiveMQ代理的位置和凭证信息的属性</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015114632.jpeg" alt="epub_29101559_46"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015114632.jpeg" alt="epub_29101559_46"></p>
 <p>需要注意，ActiveMQ代理不是分别设置代理的主机和端口，而是使用了一个名为spring.activemq.broker-url的属性来指定代理的地址。URL应该是“tcp://”协议的地址，如下面的YMAL片段所示：</p>
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">activemq:</span></span><br><span class="line">    <span class="attr">broker-url:</span> <span class="string">tcp://activemq.tacocloud.com</span></span><br><span class="line">    <span class="attr">user:</span> <span class="string">tacoweb</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">l3tm31n</span></span><br></pre></td></tr></table></figure>
 
@@ -775,7 +775,7 @@
 
 <p>尽管这个接口实现起来很简单，但我们通常并没有必要创建自定义的实现。Spring已经提供了多个实现，如表8.3所示。</p>
 <p>表8.3 Spring为通用的转换任务提供了多个消息转换器（所有的消息转换器都位于org.springframework.jms.support.converter包中）</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015115056.jpeg" alt="epub_29101559_47"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015115056.jpeg" alt="epub_29101559_47"></p>
 <p>默认情况下，将会使用SimpleMessageConverter，但是它需要被发送的对象实现Serializable。这种办法可能也不错，但有时候我们可能想要使用其他的消息转换器来消除这种限制，比如MappingJackson2MessageConverter。</p>
 <p>为了使用不同的消息转换器，我们必须要做的事情就是将选中的消息转换器实例声明为一个bean。例如，如下的bean声明将会使用MappingJackson2MessageConverter替代SimpleMessageConverter：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Bean</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> MappingJackson2MessageConverter <span class="title">messageConverter</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  MappingJackson2MessageConverter messageConverter =</span><br><span class="line">                          <span class="keyword">new</span> MappingJackson2MessageConverter();</span><br><span class="line">  messageConverter.setTypeIdPropertyName(<span class="string">&quot;_typeId&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> messageConverter;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>

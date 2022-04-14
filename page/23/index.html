@@ -438,7 +438,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="7-2-类加载的时机"><a href="#7-2-类加载的时机" class="headerlink" title="7.2 类加载的时机"></a>7.2 类加载的时机</h1><p>一个类型从被加载到虚拟机内存中开始，到卸载出内存为止，它的整个生命周期将会经历加载 （Loading）、验证（Verification）、准备（Preparation）、解析（Resolution）、初始化 （Initialization）、使用（Using）和卸载（Unloading）七个阶段，其中验证、准备、解析三个部分统称为连接（Linking）。这七个阶段的发生顺序如图7-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211122205305.png" alt="image-20211122205257878"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211122205305.png" alt="image-20211122205257878"></p>
 <center>图7-1 类的生命周期</center>
 
 <p>图7-1中，加载、验证、准备、初始化和卸载这五个阶段的顺序是确定的，类型的加载过程必须按照这种顺序按部就班地开始，而解析阶段则不一定：它在某些情况下可以在初始化阶段之后再开始， 这是为了支持Java语言的运行时绑定特性（也称为动态绑定或晚期绑定）。请注意，这里笔者写的是按部就班地“开始”，而不是按部就班地“进行”或按部就班地“完成”，强调这点是因为这些阶段通常都是互相交叉地混合进行的，会在一个阶段执行的过程中调用、激活另一个阶段。</p>
@@ -827,14 +827,14 @@
 <p>首先，是扩展类加载器（Extension Class Loader）被平台类加载器（Platform Class Loader）取代。 这其实是一个很顺理成章的变动，既然整个JDK都基于模块化进行构建（原来的rt.jar和tools.jar被拆分成数十个JMOD文件），其中的Java类库就已天然地满足了可扩展的需求，那自然无须再保留 <code>&lt;JAVA_HOME&gt;\lib\ext</code>目录，此前使用这个目录或者java.ext.dirs系统变量来扩展JDK功能的机制已经没有继续存在的价值了，用来加载这部分类库的扩展类加载器也完成了它的历史使命。类似地，在新版的JDK中也取消了<code>&lt;JAVA_HOME&gt;\jre</code>目录，因为随时可以组合构建出程序运行所需的JRE来，譬如假设我们只使用java.base模块中的类型，那么随时可以通过以下命令打包出一个“JRE”：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jlink -p $JAVA_HOME/jmods --add-modules java.base --output jre</span><br></pre></td></tr></table></figure>
 <p>其次，平台类加载器和应用程序类加载器都不再派生自java.net.URLClassLoader，如果有程序直接依赖了这种继承关系，或者依赖了URLClassLoader类的特定方法，那代码很可能会在JDK 9及更高版本的JDK中崩溃。现在启动类加载器、平台类加载器、应用程序类加载器全都继承于jdk.internal.loader.BuiltinClassLoader，在BuiltinClassLoader中实现了新的模块化架构下类如何从模块中加载的逻辑，以及模块中资源可访问性的处理。两者的前后变化如图7-5和7-6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190533.png" alt="image-20211123190532876"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190533.png" alt="image-20211123190532876"></p>
 <center>图7-5 JDK 9之前的类加载器继承架构</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190628.png" alt="image-20211123190628384"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190628.png" alt="image-20211123190628384"></p>
 <center>图7-6 JDK 9及以后的类加载器继承架构</center>
 
 <p>另外，读者可能已经注意到图7-6中有“BootClassLoader”存在，启动类加载器现在是在Java虚拟机内部和Java类库共同协作实现的类加载器，尽管有了BootClassLoader这样的Java类，但为了与之前的代码保持兼容，所有在获取启动类加载器的场景（譬如Object.class.getClassLoader()）中仍然会返回null来代替，而不会得到BootClassLoader的实例。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123190705.png" alt="image-20211123190705739"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123190705.png" alt="image-20211123190705739"></p>
 <center>图7-7 JDK 9后的类加载器委派关系</center>
 
 <p>最后，JDK 9中虽然仍然维持着三层类加载器和双亲委派的架构，但类加载的委派关系也发生了变动。当平台及应用程序类加载器收到类加载请求，在委派给父加载器加载前，要先判断该类是否能够归属到某一个系统模块中，如果可以找到这样的归属关系，就要优先委派给负责那个模块的加载器完成加载，也许这可以算是对双亲委派的第四次破坏。在JDK 9以后的三层类加载器的架构如图7-7所示，请读者对照图7-2进行比较。</p>
@@ -982,12 +982,12 @@
 <p>除了向后兼容性外，随着JDK 9模块化系统的引入，更值得关注的是它本身面临的模块间的管理和兼容性问题：如果同一个模块发行了多个不同的版本，那只能由开发者在编译打包时人工选择好正确版本的模块来保证依赖的正确性。Java模块化系统目前不支持在模块定义中加入版本号来管理和约束依赖，本身也不支持多版本号的概念和版本选择功能。前面这句话引来过很多的非议，但它确实是Oracle官方对模块化系统的明确的目标说明<a href="%E6%BA%90%E8%87%AAJigsaw%E6%9C%AC%E8%BA%AB%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%9B%AE%E6%A0%87%E5%AE%9A%E4%B9%89%EF%BC%9Ahttp://openjdk.java.net/projects/jigsaw/goals-reqs/03#versioning%E3%80%82">^1</a>。我们不论是在Java命令、Java类库的API抑或是《Java 虚拟机规范》定义的Class文件格式里都能轻易地找到证据，表明模块版本应是编译、加载、运行期间都可以使用的。譬如输入“java–list-modules”，会得到明确带着版本号的模块列表：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">java.base@12.0.1 </span><br><span class="line">java.compiler@12.0.1 </span><br><span class="line">java.datatransfer@12.0.1 </span><br><span class="line">java.desktop@12.0.1 </span><br><span class="line">java.instrument@12.0.1 </span><br><span class="line">java.logging@12.0.1 </span><br><span class="line">java.management@12.0.1</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
 <p>在JDK 9时加入Class文件格式的Module属性，里面有module_version_index这样的字段，用户可以在编译时使用“javac–module-version”来指定模块版本，在Java类库API中也存在java.lang.module.ModuleDescriptor.Version这样的接口可以在运行时获取到模块的版本号。这一切迹象都证明了Java模块化系统对版本号的支持本可以不局限在编译期。而官方却在Jigsaw的规范文件、 JavaOne大会的宣讲和与专家的讨论列表中，都反复强调“JPMS的目的不是代替OSGi”，“JPMS不支持模块版本”这样的话语，如图7-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163332.png" alt="image-20211123163331805"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163332.png" alt="image-20211123163331805"></p>
 <center>图7-3 JavaOne 2017的演讲《JDK 9 Java Platform Module System》</center>
 
 <p>Oracle给出的理由是希望维持一个足够简单的模块化系统，避免技术过于复杂。但结合JCP执行委 员会关于的Jigsaw投票中Oracle与IBM、RedHat的激烈冲突[^2]，实在很难让人信服这种设计只是单纯地 基于技术原因，而不是厂家之间互相博弈妥协的结果。Jigsaw仿佛在刻意地给OSGi让出一块生存空 间，以换取IBM支持或者说不去反对Jigsaw，其代价就是几乎宣告Java模块化系统不可能拥有像OSGi 那样支持多版本模块并存、支持运行时热替换、热部署模块的能力，可这却往往是一个应用进行模块 化的最大驱动力所在。如果要在JDK 9之后实现这种目的，就只能将OSGi和JPMS混合使用，如图7-4 所示，这无疑带来了更高的复杂度。模块的运行时部署、替换能力没有内置在Java模块化系统和Java虚 拟机之中，仍然必须通过类加载器去实现，实在不得不说是一个缺憾。</p>
 <p>其实Java虚拟机内置的JVMTI接口（java.lang.instrument.Instrumentation）提供了一定程度的运行时修改类的能力（RedefineClass、RetransformClass），但这种修改能力会受到很多限制[^3]，不可能直接用来实现OSGi那样的热替换和多版本并存，用在IntelliJ IDE、Eclipse这些IDE上做HotSwap（是指IDE编辑方法的代码后不需要重启即可生效）倒是非常的合适。也曾经有一个研究性项目Dynamic Code Evolution VM（DECVM）探索过在虚拟机内部支持运行时类型替换的可行性，允许任意修改已加载到内存中的Class，并不损失任何性能，但可惜已经很久没有更新了，最新版只支持到JDK 7。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163441.png" alt="image-20211123163441087"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163441.png" alt="image-20211123163441087"></p>
 <center>图7-4 OSGi与JPMS交互[^4]</center>
 
 <p>[^2]: 具体可参见1.3节对JDK 9期间描述的部分内容。<br>[^3]: 譬如只能修改已有方法的方法体，而不能添加新成员、删除已有成员、修改已有成员的签名等。<br>[^4]: 图片来源：<a target="_blank" rel="noopener" href="https://www.infoq.com/articles/java9-osgi-future-modularity-part-2/%E3%80%82">https://www.infoq.com/articles/java9-osgi-future-modularity-part-2/。</a></p>
@@ -1397,7 +1397,7 @@
 <li><strong>扩展类加载器</strong>（Extension Class Loader）：这个类加载器是在类sun.misc.Launcher$ExtClassLoader 中以Java代码的形式实现的。它负责加载<code>&lt;JAVA_HOME&gt;\lib\ext</code>目录中，或者被java.ext.dirs系统变量所 指定的路径中所有的类库。根据“扩展类加载器”这个名称，就可以推断出这是一种Java系统类库的扩 展机制，JDK的开发团队允许用户将具有通用性的类库放置在ext目录里以扩展Java SE的功能，在JDK 9之后，这种扩展机制被模块化带来的天然的扩展能力所取代。由于扩展类加载器是由Java代码实现 的，开发者可以直接在程序中使用扩展类加载器来加载Class文件。</li>
 <li><strong>应用程序类加载器</strong>（Application Class Loader）：这个类加载器由 sun.misc.Launcher$AppClassLoader来实现。由于应用程序类加载器是ClassLoader类中的getSystem- ClassLoader()方法的返回值，所以有些场合中也称它为“系统类加载器”。它负责加载用户类路径 （ClassPath）上所有的类库，开发者同样可以直接在代码中使用这个类加载器。如果应用程序中没有 自定义过自己的类加载器，一般情况下这个就是程序中默认的类加载器。</li>
 </ul>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123125113.png" alt="image-20211123125112601"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123125113.png" alt="image-20211123125112601"></p>
 <center>图7-2 类加载器双亲委派模型</center>
 
 <p>JDK 9之前的Java应用都是由这三种类加载器互相配合来完成加载的，如果用户认为有必要，还可以加入自定义的类加载器来进行拓展，典型的如增加除了磁盘位置之外的Class文件来源，或者通过类加载器实现类的隔离、重载等功能。这些类加载器之间的协作关系“通常”会如图7-2所示。</p>

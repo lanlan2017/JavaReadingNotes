@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="7.5.1 模块的兼容性为了使可配置的封装隔离机制能够兼容传统的类路径查找机制，JDK 9提出了与“类路径”（ClassPath）相对应的“模块路径”（ModulePath）的概念。简单来说，就是某个类库到底是模块还是传统的JAR包，只取决于它存放在哪种路径上。只要是放在类路径上的JAR文件，无论其中是否包含模块化信息（是否包含了module-info.class文件），它都会被当作传统的JAR包">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163332.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163441.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163332.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163441.png">
 <meta property="article:published_time" content="2021-11-23T08:35:30.000Z">
 <meta property="article:modified_time" content="2021-11-26T17:31:03.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163332.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163332.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/ecd1d717/">
@@ -337,12 +337,12 @@
 <p>除了向后兼容性外，随着JDK 9模块化系统的引入，更值得关注的是它本身面临的模块间的管理和兼容性问题：如果同一个模块发行了多个不同的版本，那只能由开发者在编译打包时人工选择好正确版本的模块来保证依赖的正确性。Java模块化系统目前不支持在模块定义中加入版本号来管理和约束依赖，本身也不支持多版本号的概念和版本选择功能。前面这句话引来过很多的非议，但它确实是Oracle官方对模块化系统的明确的目标说明<a href="%E6%BA%90%E8%87%AAJigsaw%E6%9C%AC%E8%BA%AB%E7%9A%84%E9%A1%B9%E7%9B%AE%E7%9B%AE%E6%A0%87%E5%AE%9A%E4%B9%89%EF%BC%9Ahttp://openjdk.java.net/projects/jigsaw/goals-reqs/03#versioning%E3%80%82">^1</a>。我们不论是在Java命令、Java类库的API抑或是《Java 虚拟机规范》定义的Class文件格式里都能轻易地找到证据，表明模块版本应是编译、加载、运行期间都可以使用的。譬如输入“java–list-modules”，会得到明确带着版本号的模块列表：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">java.base@12.0.1 </span><br><span class="line">java.compiler@12.0.1 </span><br><span class="line">java.datatransfer@12.0.1 </span><br><span class="line">java.desktop@12.0.1 </span><br><span class="line">java.instrument@12.0.1 </span><br><span class="line">java.logging@12.0.1 </span><br><span class="line">java.management@12.0.1</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
 <p>在JDK 9时加入Class文件格式的Module属性，里面有module_version_index这样的字段，用户可以在编译时使用“javac–module-version”来指定模块版本，在Java类库API中也存在java.lang.module.ModuleDescriptor.Version这样的接口可以在运行时获取到模块的版本号。这一切迹象都证明了Java模块化系统对版本号的支持本可以不局限在编译期。而官方却在Jigsaw的规范文件、 JavaOne大会的宣讲和与专家的讨论列表中，都反复强调“JPMS的目的不是代替OSGi”，“JPMS不支持模块版本”这样的话语，如图7-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163332.png" alt="image-20211123163331805"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163332.png" alt="image-20211123163331805"></p>
 <center>图7-3 JavaOne 2017的演讲《JDK 9 Java Platform Module System》</center>
 
 <p>Oracle给出的理由是希望维持一个足够简单的模块化系统，避免技术过于复杂。但结合JCP执行委 员会关于的Jigsaw投票中Oracle与IBM、RedHat的激烈冲突[^2]，实在很难让人信服这种设计只是单纯地 基于技术原因，而不是厂家之间互相博弈妥协的结果。Jigsaw仿佛在刻意地给OSGi让出一块生存空 间，以换取IBM支持或者说不去反对Jigsaw，其代价就是几乎宣告Java模块化系统不可能拥有像OSGi 那样支持多版本模块并存、支持运行时热替换、热部署模块的能力，可这却往往是一个应用进行模块 化的最大驱动力所在。如果要在JDK 9之后实现这种目的，就只能将OSGi和JPMS混合使用，如图7-4 所示，这无疑带来了更高的复杂度。模块的运行时部署、替换能力没有内置在Java模块化系统和Java虚 拟机之中，仍然必须通过类加载器去实现，实在不得不说是一个缺憾。</p>
 <p>其实Java虚拟机内置的JVMTI接口（java.lang.instrument.Instrumentation）提供了一定程度的运行时修改类的能力（RedefineClass、RetransformClass），但这种修改能力会受到很多限制[^3]，不可能直接用来实现OSGi那样的热替换和多版本并存，用在IntelliJ IDE、Eclipse这些IDE上做HotSwap（是指IDE编辑方法的代码后不需要重启即可生效）倒是非常的合适。也曾经有一个研究性项目Dynamic Code Evolution VM（DECVM）探索过在虚拟机内部支持运行时类型替换的可行性，允许任意修改已加载到内存中的Class，并不损失任何性能，但可惜已经很久没有更新了，最新版只支持到JDK 7。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211123163441.png" alt="image-20211123163441087"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211123163441.png" alt="image-20211123163441087"></p>
 <center>图7-4 OSGi与JPMS交互[^4]</center>
 
 <p>[^2]: 具体可参见1.3节对JDK 9期间描述的部分内容。<br>[^3]: 譬如只能修改已有方法的方法体，而不能添加新成员、删除已有成员、修改已有成员的签名等。<br>[^4]: 图片来源：<a target="_blank" rel="noopener" href="https://www.infoq.com/articles/java9-osgi-future-modularity-part-2/%E3%80%82">https://www.infoq.com/articles/java9-osgi-future-modularity-part-2/。</a></p>

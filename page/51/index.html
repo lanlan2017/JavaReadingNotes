@@ -343,7 +343,7 @@
 <p>还有一个问题，一个交易的扣款模式是固定的，根据其交易编号而定，那我们怎样把交易编号与扣款策略对应起来呢？采用状态模式或责任链模式都可以，如果采用状态则认为交易编号就是一个交易对象的状态，对于一笔确定的交易（一个已经生成了的对象），它的状态不会从一个状态过渡到另一个状态，也就是说它的状态只有一个，执行完毕后即结束，不存在多状态的问题；如果采用责任链模式，则可以用交易编码作为链中的判断依据，由每个执行节点进行判断，返回相应的扣款模式。但是在实际中，采用了关系型数据库存储扣款规则与交易编码的对应关系，为了简化该部分的讲义，我们在下面的设计中使用了条件判断语句来代替。</p>
 <p>还有，这么复杂的扣款模块总要进行一个封装吧，不能让上层的业务模块直接深入到模块的内部，于是门面模式又摆在了眼前。</p>
 <p>分析完毕，我们要先画出类图，做设计要遵循这样一个原则：先选最简单的业务，然后画出类图。那我们先定义交易中用到的两个类：IC卡类和交易类，如图35-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001195939.png" alt="image-20211001195939429"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001195939.png" alt="image-20211001195939429"></p>
 <p>图35-1 IC卡类和交易类</p>
 <p>每个IC卡有三个属性，分别是IC卡号码、固定金额、自由金额，然后通过getter/setter方法来访问，如代码清单35-1所示。</p>
 <p>代码清单35-1 IC卡类</p>
@@ -359,7 +359,7 @@
 <p>固定扣款的规则是固定金额和自由金额各扣除交易金额的一半，如代码清单35-4所示。</p>
 <p>代码清单35-4 扣款策略一</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SteadyDeduction</span> <span class="keyword">implements</span> <span class="title">IDeduction</span> </span>&#123;</span><br><span class="line">    <span class="comment">//固定性交易扣款</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">exec</span><span class="params">(Card card, Trade trade)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//固定金额和自由金额各扣除50%</span></span><br><span class="line">        <span class="keyword">int</span> halfMoney = (<span class="keyword">int</span>)Math.rint(trade.getAmount() / <span class="number">2.0</span>);</span><br><span class="line">        card.setFreeMoney(card.getFreeMoney() - halfMoney);</span><br><span class="line">        card.setSteadyMoney(card.getSteadyMoney() - halfMoney);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001200222.png" alt="image-20211001200222415"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001200222.png" alt="image-20211001200222415"></p>
 <center>图35-2 扣款策略类图</center>
 这个具体策略也非常简单，就是两个金额各自减去交易额的一半（注意除数是2.0，可不是2），然后再四舍五入，算法确实简单。该逻辑没有考虑账户余额不足的情况，也没有考虑异常情况，比如并发情况，读者可以想想看，一张卡有两笔消费同时发生时，是不是就发生错误了？一张卡同时有两笔消费会出现这种情况吗？会的，网络阻塞的情况，MQ多通道发送，在网络繁忙的情况下是有可能出现该问题，这里就不多介绍，有兴趣的读者可以看看MQ的资料。我们在这里的讲解实现的是一个快乐路径，认为所有的交易都是在安全可靠的环境中发生的，并且所有的系统环境都满足我们的要求。我们再来看另一个策略，这个策略更简单，如代码清单35-5所示。
 
@@ -369,7 +369,7 @@
 <p>代码清单35-6 扣款策略的封装</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeductionContext</span> </span>&#123;</span><br><span class="line">    <span class="comment">//扣款策略</span></span><br><span class="line">    <span class="keyword">private</span> IDeduction deduction = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">//构造函数传递策略</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DeductionContext</span><span class="params">(IDeduction _deduction)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.deduction = _deduction;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//执行扣款</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">exec</span><span class="params">(Card card,Trade trade)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.deduction.exec(card, trade);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>典型的策略上下文角色。扣款模块的策略已经定义完毕了，然后需要想办法解决策略模式的缺陷：它把所有的策略类都暴露出去，暴露得越多以后的修改风险也就越大。怎么修改呢？增加一个映射配置文件，实现策略类的隐藏。我们使用枚举担当此任，对策略类进行映射处理，避免高层模块直接访问策略类，同时由工厂方法模式根据映射产生策略对象，类图如图35-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001200346.png" alt="image-20211001200346462"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001200346.png" alt="image-20211001200346462"></p>
 <center>图35-3 策略工厂类图</center>
 
 <p>又是一个简单得不能再简单的模式——工厂方法模式，通过StrategyMan负责对具体策略的映射，如代码清单35-7所示。</p>
@@ -384,7 +384,7 @@
 <p>这次为什么要先展示代码而后写类图呢？那是因为这段代码比写类图更能让你理解。读者注意一下getDeductionType方法，这个方法在实际项目中是存在的，但是与上面的写法有天壤之别，因为在实际项目中，数据库中保存了策略代码与交易编码的对应关系，直接通过数据库的SQL语句就可以返回对应的扣款策略。这里我们采用大家最熟悉的条件转移来实现，也是比较清晰和容易理解的。</p>
 <p>可能读者要问了，在门面模式中已经明确地说明，门面类中不允许有业务逻辑存在，但是你这里还是有了一个getDeductionType方法，它可代表的是一个判断逻辑呀，这是为什么呢？是的，该方法完全可以移到其他Hepler类中，由于我们是示例代码，暂没有明确的业务含义，故编写在此处，读者在实际应用中，请把该方法放置到其他类中。</p>
 <p>好，所有用到的模式都介绍完毕了，我们把完整的类图整理一下，如图35-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001201110.png" alt="image-20211001201105393"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001201110.png" alt="image-20211001201105393"></p>
 <center>图35-4 扣款子模块完整类图</center>
 
 <p>真实系统比这复杂得多，有了我们之前的分析，这个图还是比较容易看懂的。我们所有的开发都完成了，是不是应该写一个测试类来展示一下我们的成果，如代码清单35-10所示。</p>
@@ -532,7 +532,7 @@
 <p>我们今天的任务就是来模拟类似触发过程。我们这样分析：有一个产品（不管是Frame 还是Button或者是Radio），它有多个触发事件，它产生的时候触发一个创建事件，修改的时候触发修改事件，删除的时候触发删除事件，这就类似于我们的文本框，初始化（也就是创建）的时候要触发一个onLoad或onCreate事件，修改的时候触发onChange事件，双击(类似于删除)的时候又触发onDbClick事件，我们今天的目标就是来思考怎么实现这样一个架构。</p>
 <p>设计都是先易后难，我们先从最简单的部分入手。首先需要一个产品，并且该产品要有创建、修改、销毁的动作，很明显这就是一个工厂方法模式。同时产品也可以通过克隆方式产生，这与我们在GUI设计中经常使用的复制粘贴操作相类似，要不界面上那么多的文本框，不使用复制粘贴，不累死人才怪呢，那这非常明显就是原型模式。好，分析到这里，我们先把这部分的类图建立起来，如图36-1所示。</p>
 <p>很熟悉的类图，与工厂方法模式的通用类图非常相似，但不完全是。有什么差别呢？注意看产品类的私有属性canChanged和构造函数，它们有特殊的用途。在该类图中，我们使用了工厂方法模式创建产品，使用原型模式让对象可以被拷贝，仅仅这两个模式还不足以解决我们的问题，想想看，产品的产生是有一定的条件的，不是谁想产生就产生，否则怎么能够触发创建事件呢？因此需要限定产品的创建者，所以我们在类图中把产品和工厂的关系定位为组合关系，而不是简单的聚集或依赖关系。换句话说，产品只能由工厂类创建，而不能被其他对象通过new方式创建，因此我们在这里还用到一个单来源调用（Single Call）方法解决该问题。这是一个方法，不是一个设计模式，我马上给大家讲解它是如何工作的。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001202205.png" alt="image-20211001202204935"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001202205.png" alt="image-20211001202204935"></p>
 <center>图36-1 产品创建工厂</center>
 我们先来看产品类的源代码，它比较简单，如代码清单36-1所示。
 
@@ -548,7 +548,7 @@
 <p><strong>注意</strong> 采用单来源调用的两个对象一般是组合关系，两者有相同的生命期，它通常适用于有单例模式和工厂方法模式的场景中。</p>
 <hr>
 <p>我们继续往下分析，一个产品新建要触发事件，那事件是什么？当然也是一个对象了， 需要把它设计出来，仅仅有事件还不行，还要考虑有人去处理这个事件，产生了一个事件不可能没有对象去处理吧？如果是这样那事件还有什么意义呢？既然要去处理，那就需要一个通知渠道了，于是观察者模式准备好了。好，我们把这段分析的类图也画出来，如图36-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001211253.png" alt="image-20211001211253487"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001211253.png" alt="image-20211001211253487"></p>
 <center>图36-2 观察者模式处理事件</center>
 
 <p>在该类图中，观察者为EventDispatch类，它使用了单例模式，避免对象膨胀，但同时也带来了性能及线程安全隐患，这点需要大家在实际应用中注意（想想Spring中的Bean注入， 默认也是单例，在通常的应用中一般不需要修改，除非是较大并发的应用）。我们来看代码，先来看事件类型定义，它是一个枚举类型，如代码清单36-3所示。</p>
@@ -561,7 +561,7 @@
 <p>代码清单36-5 事件的观察者</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventDispatch</span> <span class="keyword">implements</span> <span class="title">Observer</span></span>&#123;</span><br><span class="line">    <span class="comment">//单例模式</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> EventDispatch dispatch = <span class="keyword">new</span> EventDispatch();</span><br><span class="line">    <span class="comment">//不允许生成新的实例</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">EventDispatch</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//获得单例对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> EventDispatch <span class="title">getEventDispatch</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dispatch;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//事件触发</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Observable o, Object arg)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>产品和事件都定义出来了，那我们想想怎么把这两者关联起来，产品和事件是两个独立的对象，两者都可以独立地扩展，用什么来适应它们的扩展呢？桥梁模式！两个不相关的类可以通过桥梁模式组合出稳定、健壮的结构，我们画出类图，如图36-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001211950.png" alt="image-20211001211950545"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001211950.png" alt="image-20211001211950545"></p>
 <center>图36-3 桥梁模式实现产品和事件的组合</center>
 看着不像桥梁模式？看看桥梁模式的通用类图，然后把抽象化角色和实现化角色去掉看看，是不是就是一样了？各位可能要说了，把抽象化角色和实现化角色去掉，那桥梁模式在抽象层次耦合的优点还怎么体现呢？因为我们采用的是单个产品对象，没有必要进行抽象化处理，读者若要按照该框架做扩展开发，该部分是肯定需要抽象出接口或抽象类的，好在也非常简单，只要抽取一下就可以了。这样考虑后，我们的ProductManager类就增加一个功能：组合产品类和事件类，产生有意义的产品事件，如代码清单36-6所示。
 
@@ -570,7 +570,7 @@
 <p>在每个方法中增加了事件的产生机制，在createProduct方法中增加了创建产品事件，在editProduct方法中增加了修改产品事件，在delProduct方法中增加了遗弃产品事件，在clone方法中增加克隆产品事件，而且每个事件都是通过组合产生的，产品和事件的扩展性非常优秀。</p>
 <p>刚刚我们说完了产品和事件的关系处理，现在回到我们事件的观察者，它承担着非常重要的职责。我们知道它要处理事件，但是现在还没有想好怎么实现它处理事件的update方法，暂时保持为空。</p>
 <p>我们继续分析，这么多的事件（现在只有1个产品类，如果产品类很多呢？比如30多个）不可能每个产品事件都写一个处理者吧，对于产品事件来说，它最希望的结果就是我通知了事件处理者（也就是观察者模式的观察者），其他具体怎么处理由观察者来解决，那现在问题是观察者怎么来处理这么多的事件呢？事件的处理者必然有N多个，如何才能通知相应的处理者来处理事件呢？一个事件也可能通知多个处理者来处理，并且一个处理者处理完毕还可能通知其他的处理者，这不可能让每个处理者独自完成这样“不可能完成的任务”，我们把问题的示意图画出来，如图36-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001212114.png" alt="image-20211001212113884"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001212114.png" alt="image-20211001212113884"></p>
 <center>图36-4 事件处理示意图</center>
 
 <p>看到该示意图，你立刻就会想到中介者模式。是的，需要中介者模式上场了，我们把EventDispatch类（嘿嘿，为什么要定义成Dispatch呢？就是分发的意思）作为事件分发的中介者，事件的处理者都是具体的同事类，它们有着相似的行为，都是处理产品事件，但是又有不相同的逻辑，每个同事类对事件都有不同的处理行为。我们来看类图，如图36-5所示。</p>
@@ -587,7 +587,7 @@
 <li>事件处理者的管理员角色</li>
 </ul>
 <p>不是每一个事件的处理者都可以接收事件并进行处理，是需要获得分发者许可后才可以，也就是说只有事件分发者允许它处理，它才能处理。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001212239.png" alt="image-20211001212239626"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001212239.png" alt="image-20211001212239626"></p>
 <center>图36-5 采用中介者模式对事件进行分发</center>
 事件分发者担当了这么多的职责，那是不是与单一职责原则相违背了？确实如此，我们在整个系统的设计中确实需要这样一个角色担任这么多的功能，如果强制细分也可以完成， 但是会加大代码量，同时导致系统的结构复杂，读者可以考虑拆分这3个职责，然后再组合相关的功能，看看代码量是如何翻倍的。
 
@@ -744,7 +744,7 @@
 <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Select</span> <span class="operator">*</span> <span class="keyword">From</span> <span class="keyword">User</span> <span class="keyword">where</span> name <span class="keyword">like</span> <span class="string">&#x27;%国庆%&#x27;</span></span><br></pre></td></tr></table></figure>
 <p>查找出姓名中包含“国庆”两个字的用户，这在关系型数据库中很容易实现，但是在对象群中怎么实现这样的查询呢？好，看似很简单，先设计一个用户类，然后提供一个用户查找工具类，类图非常容易，如图38-1所示。</p>
 <p>很简单的类图，有一个用户类，同时提供了一个操作用户的辅助类，我们先来看User 类，如代码清单38-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001221545.png" alt="image-20211001221545481"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001221545.png" alt="image-20211001221545481"></p>
 <center>图38-1 简单用户查询类图</center>
 
 <p>代码清单38-1 用户类</p>
@@ -767,7 +767,7 @@
 <p>这个接口的设计想法非常好，但是参数condition很难实现，看看findUserByAgeThan、 findUserByNameEqual这两个方法，怎么才能把两者的不同点设置成一个布尔型呢？如果需要在IUserProvider对象外判断后传递进来，那我们的封装就没有任何意义了——目前为止，这个方案有问题了。</p>
 <p>继续考虑，既然不能在封装外运算，那就把整个条件都进行封装，由IUserProvider自己实现运算。好方法！那我们就设计一个这样的类，我们叫它规格类，什么意思呢？它是对一批对象的说明性描述，它依照基准判断候选对象是否满足条件。</p>
 <p>思考后，我们设计出类图，如图38-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001222009.png" alt="image-20211001222008885"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001222009.png" alt="image-20211001222008885"></p>
 <center>图38-2 加入规格后的设计类图</center>
 在该类图中建立了一个规格书接口，它的作用就是定制各种各样的规格，比如名字相等的规格UserByNameEqual、年龄大于基准年龄的规格UserByAgeThan等，然后在用户操作类中采用该规格进行判断。User类没有任何改变，如代码清单38-1所示，不再赘述。
 
@@ -806,7 +806,7 @@
 <p>代码清单38-15 带与或非的规格书接口</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IUserSpecification</span> </span>&#123;</span><br><span class="line">    <span class="comment">//候选者是否满足要求</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">isSatisfiedBy</span><span class="params">(User user)</span></span>;</span><br><span class="line">    <span class="comment">//and操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IUserSpecification <span class="title">and</span><span class="params">(IUserSpecification spec)</span></span>;</span><br><span class="line">    <span class="comment">//or操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IUserSpecification <span class="title">or</span><span class="params">(IUserSpecification spec)</span></span>;</span><br><span class="line">    <span class="comment">//not操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IUserSpecification <span class="title">not</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在规格书接口中增加了与或非的操作，接口修改了，实现类当然也要修改。先全面思考一下业务，与或非是不可扩展的操作，规格书（也就是规格对象）之间的操作只有这三种方法，是不需要扩展也不用预留扩展空间的。如此，我们就可以把与或非的实现放到基类中， 那现在的问题变成了怎么在基类中实现与或非。注意看它们的返回值都需要返回规格书类型，很明显，我们在这里要用到递归调用了。可以这样理解，基类需要子类提供业务逻辑支持，因为基类是一个抽象类，不能实例化后返回，我们把简单类图画出来，如图38-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001222734.png" alt="image-20211001222734100"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001222734.png" alt="image-20211001222734100"></p>
 <center>图38-3 与规格的示意</center>
 
 <p>基类对子类产生了依赖，然后进行递归计算，大家一定会发出这样的疑问：父类怎么可能依赖子类，这还是面向接口编程吗？想想看，我们提出面向接口编程的目的是什么？是为了适应变化，拥抱变化，对于不可能发生变化的部分为什么不能固化呢？与或非操作符号还会增加修改吗？规格书对象之间的操作还有其他吗？思考清楚这些问题后，答案就迎刃而解了。</p>
@@ -818,7 +818,7 @@
 <p>代码清单38-16 组合规格书</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CompositeSpecification</span> <span class="keyword">implements</span> <span class="title">IUserSpecification</span> </span>&#123;</span><br><span class="line">    <span class="comment">//是否满足条件由实现类实现</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">boolean</span> <span class="title">isSatisfiedBy</span><span class="params">(User user)</span></span>;</span><br><span class="line">    <span class="comment">//and操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IUserSpecification <span class="title">and</span><span class="params">(IUserSpecification spec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> AndSpecification(<span class="keyword">this</span>,spec);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//not操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IUserSpecification <span class="title">not</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> NotSpecification(<span class="keyword">this</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//or操作</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IUserSpecification <span class="title">or</span><span class="params">(IUserSpecification spec)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> OrSpecification(<span class="keyword">this</span>,spec);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001222905.png" alt="image-20211001222904900"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001222905.png" alt="image-20211001222904900"></p>
 <center>图38-4 完整规格书类图</center>
 
 <p>候选对象是否满足条件是由isSatisfiedBy方法决定的，它代表的是一个判断逻辑，由各个实现类实现。三个与或非操作在抽象类中实现，它是通过直接new了一个子类，如此设计非常符合单一职责原则，每个子类都有一个独立的职责，要么完成“与”操作，要么完成“或”操作，要么完成“非”操作。我们先来看“与”操作规格书，如代码清单38-17所示。</p>
@@ -842,7 +842,7 @@
 <p>到此为止我们的LINQ已经完成了很大一部分了，SQL语句中的where后面部分已经可以解析了，完全可以再增加年龄相等的规格书、姓名字数规格书等，你在SQL中使用过的条件在这里都能实现了。功臣还是依赖于三个与或非规格书，有了它们三个栋梁才能组合出一个精彩的条件查询世界。</p>
 <h2 id="38-1-2-最佳实践"><a href="#38-1-2-最佳实践" class="headerlink" title="38.1.2 最佳实践"></a>38.1.2 最佳实践</h2><p>我们在例子中多次提到规格两个字，该实现模式就叫做规格模式（Specification Pattern），它不属于23个设计模式，它是其中一个模式的扩展，是哪个模式呢？</p>
 <p>我们用全局的观点思考一下，基类代表的是所有的规格书，它的目的是描述一个完整的、可组合的规格书，它代表的是一个整体，其下的And规格书、Or规格书、Not规格书、年龄大于基准年龄规格书等都是一个真实的实现，也就是一个局部，现在我们又回到了整体和部分的关系了，那这是什么模式？对，组合模式，它是组合模式的一种特殊应用，我们来看它的通用类图，如图38-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001223346.png" alt="image-20211001223346451"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001223346.png" alt="image-20211001223346451"></p>
 <center>图38-5 规格模式通用类图</center>
 
 <p>为什么在通用类图中把方法名称都定义出来呢？是因为只要使用规格模式，方法名称都是这四个，它是把组合模式更加具体化了，放在一个更狭小的应用空间中。我们再仔细看看，还能不能找到其他模式的身影？对，策略模式，每个规格书都是一个策略，它完成了一系列逻辑的封装，用年龄相等的规格书替换年龄大于指定年龄的规格书上层逻辑有什么改变吗？不需要任何改变！</p>
@@ -984,12 +984,12 @@
     <div class="post-body" itemprop="articleBody">
           <h1 id="37-1-MVC框架的实现"><a href="#37-1-MVC框架的实现" class="headerlink" title="37.1 MVC框架的实现"></a>37.1 MVC框架的实现</h1><p>相信这本书的读者对Struts的使用是得心应手了，也明白MVC框架有诸如视图与逻辑解耦、灵活稳定、业务逻辑可重用等优点，而且还对其他的MVC框架（例如JSF、Spring MVC、WebWork）也了解一点。SSH（Struts+Spring+Hibernate）框架是Java项目常用的框架，作为一个Java开发人员，应该对SSH框架很熟悉了！我们今天就学Struts怎么用！我们要讲的是MVC框架如何设计，你可以设计一个新的MVC框架与Struts抗衡。</p>
 <p>在开始设计MVC框架前，首先要对MVC框架做一个简单的介绍。MVC（Model ViewController）的中文名称叫做模型视图控制器模型，就是因为它的英文名字太流行了， 中文名字反而被忽略了。它诞生于20世纪80年代，原本是为桌面应用程序建立起来的一个框架，现在反而在Web应用中大放异彩（其实也可以把B/S认为是C/S的瘦化结构），MVC框架的目的是通过控制器C将模型M（代表的是业务数据和业务逻辑）和视图V（人机交互的界面）实现代码分离，从而使同一个逻辑或行为或数据可以具有不同的表现形式，或者是同样的应用逻辑共享相同、不同视图。比如，可以用IE浏览器访问某应用网站（页面格式遵守HTML标准），也可以用手机通过WAP浏览器访问（页面格式遵守WML格式），对MVC框架来说，后台的程序（也就是模型）不用做任何修改，只是使用的视图不同而已。MVC框架如图37-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213321.png" alt="image-20211001213320931"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213321.png" alt="image-20211001213320931"></p>
 <center>图37-1 MVC框架示意图</center>
 该框架是Model2的结构。MVC框架有两个版本，一个是Model1，也就是MVC的第一个版本，它的视图中存在着大量的流程控制和代码开发，也就是控制器和视图还具有部分的耦合。也有人不认为Model1属于MVC框架，那也说得通，因为在JSP页面中融合了控制器和视图的功能，这其实就是早期的开发模式，开发一堆的JSP页面，然后再开发一堆的JavaBean，JavaBean就是模型了，它只是把JSP和JavaBean拆分开了。Model2版本则提倡视图和模型的彻底分离，视图仅仅负责展示服务，不再参与业务的行为和数据处理。我们举例来说明MVC框架是如何图37-1 MVC框架示意图控制器（Controller）视图（View）模型 （Model）第37章运行的。
 
 <p>在做Web开发时，例如开发一个数据展示界面，从一张表中把数据全部读出，然后展示到页面上，也是一个简单的表格，其中页面展示的格式就是视图V，怎么从数据库中取得数据则是模型M，那控制器C是做什么的呢？它负责把接收的浏览器的请求转发通知模型M处理，然后组合视图V，最终反馈一个带数据的视图到用户端，数据处理流程如图37-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213507.png" alt="image-20211001213507728"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213507.png" alt="image-20211001213507728"></p>
 <center>图37-2 MVC框架的逻辑流</center>
 浏览器通过HTTP协议发出数据请求①，由控制器接收请求，通过路径②委托给数据模型处理，模型通过与逻辑层和持久层的交互（路径③④），把处理结果反馈给控制器（路径 ⑤），控制器根据结果组装视图（路径⑥⑦），并最终反馈给浏览器可以接受的HTML数据 （路径⑧）。整体MVC框架还是比较简单的，但它带来的优点非常多。
 
@@ -1007,7 +1007,7 @@
 <p>模型和视图分离，可以使各个开发人员自由发挥，做视图的人员和开发模型的人员可以制订自己的计划，然后在控制器的协作下实现完整的应用逻辑。</p>
 <p>MVC框架还有很多优点，本章主要不是讲解MVC技术，主要是通过讲解设计MVC框架 来说明设计模式该怎么应用，所以想了解更详细的MVC框架信息请自行查阅资料。</p>
 <h2 id="37-1-1-MVC的系统架构"><a href="#37-1-1-MVC的系统架构" class="headerlink" title="37.1.1 MVC的系统架构"></a>37.1.1 MVC的系统架构</h2><p>我们设计的MVC框架包含以下模块：核心控制器（FilterDispatcher）、拦截器 （Interceptor）、过滤器（Filter）、模型管理器（Model Action）、视图管理器（View Provider）等，基本上一个MVC框架上常用的功能我们都具备了，系统架构如图37-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213719.png" alt="image-20211001213719199"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213719.png" alt="image-20211001213719199"></p>
 <center>图37-3 MVC系统架构</center>
 
 <p>各个模块的职责如下：</p>
@@ -1036,7 +1036,7 @@
 </ul>
 <p>它其实就是一大堆的辅助管理工具，比如文件管理、对象管理等。</p>
 <p>在我们的MVC框架中，核心控制器是最重要的，我们就先从它着手。核心控制器使用了Servlet容器的过滤器技术，需要编写一个过滤器，所有进入MVC框架的请求都需要经过核心控制器的转发，类图如图37-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213950.png" alt="image-20211001213950390"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213950.png" alt="image-20211001213950390"></p>
 <p>图37-4 核心控制器类图</p>
 <p>由于类图中的部分输入参数类型较长，省略了，请读者仔细看代码。首先阅读FilterDispatcher代码，如代码清单37-1所示。</p>
 <p>代码清单37-1 核心控制器</p>
@@ -1078,7 +1078,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Checker</span> </span>&#123;</span><br><span class="line">    <span class="comment">//使用哪一个策略</span></span><br><span class="line">    <span class="keyword">private</span> IXmlValidate validate;</span><br><span class="line">    <span class="comment">//xml配置文件的路径</span></span><br><span class="line">    String xmlPath;</span><br><span class="line">    <span class="comment">//构造函数传递</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Checker</span><span class="params">(IXmlValidate _validate)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.validate = _validate;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setXmlPath</span><span class="params">(String _xmlPath)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">this</span>.xmlPath = _xmlPath;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//检查</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> validate.validate(xmlPath);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>与通用策略模式稍有不同，每个模式在实际应用环境中都有其个性，很少出现完全照搬一个模式的情况，灵活应用设计模式才是关键。</p>
 <p>在FilterDispatcher的init方法中，我们刚刚说它有两个职责：第一个职责是XML文件校验，这个我们完成了；第二个职责是启动监控程序。问题是要监控什么呢？监控XML有没有被修改，如果修改了就立刻通知校验程序对它进行校验。这就又用到了观察者模式：发现文件被修改，它立刻通知检查者处理，该片段的类图如图37-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001215149.png" alt="image-20211001215149343"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001215149.png" alt="image-20211001215149343"></p>
 <center>图37-5 XML文件监控类图</center>
 
 <p>为什么要在这里定义一个Watchable接口呢？它表示所有可以监视的资源，比如数据库、日志文件、磁盘空间等。我们来看代码，监听接口如代码清单37-8所示。</p>
@@ -1106,7 +1106,7 @@
 <p>代码清单37-13 抽象Action</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ActionSupport</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String SUCCESS = <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String FAIL = <span class="string">&quot;fail&quot;</span>;</span><br><span class="line">    <span class="comment">//默认的执行方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">execute</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SUCCESS;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001215608.png" alt="image-20211001215608539"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001215608.png" alt="image-20211001215608539"></p>
 <center>图37-6 模型管理器类图</center>
 抽象的ActionSupport类看起来很简单，其实它可不简单，所有的模型行为都继承该类， 它之所以提供一个默认的execute方法，是因为在xml的配置文件中，可以省略掉method="XXX"这句话，默认就是调用该方法。它还有一个非常重要的行为：对象映射，把HTTP传递过来的字符串映射到一个业务对象上，我们会在值栈中详细讲解。
 
@@ -1171,7 +1171,7 @@
 <p>由模型产生的数据，它对视图来说是结构固定，并可反复加载。</p>
 <p>在这三部分中，静态页面是完全静态的，动态页面元素是稍微有点动感，动态数据完全是多变的（数据结构不发生变化，否则页面无法展现）。把动态数据融入到静态页面中比较容易，已经在配置文件中指定要把模型中的数据放到哪个页面中，现在的问题是怎么把动态页面元素融入到静态页面中。静态页面有很多，语言类型也有很多，怎么融合在一起提供给浏览器访问呢？</p>
 <p>桥梁模式可以解决用什么笔（圆珠笔、铅笔）和画什么图形（圆形、方形）的问题，我们遇到的问题与此场景类似。先看类图，如图37-7所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001220257.png" alt="image-20211001220257520"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001220257.png" alt="image-20211001220257520"></p>
 <center>图37-7 视图与语言类图</center>
 大家还记得Struts是怎么配置多语言的文件吗？我们采用类似的结构，如代码清单37-18 所示。
 
@@ -1600,7 +1600,7 @@
           <h2 id="5-2-2-集群间同步导致的内存溢出"><a href="#5-2-2-集群间同步导致的内存溢出" class="headerlink" title="5.2.2 集群间同步导致的内存溢出"></a>5.2.2 集群间同步导致的内存溢出</h2><p>一个基于B/S的MIS系统，硬件为两台双路处理器、8GB内存的HP小型机，应用中间件是WebLogic 9.2，每台机器启动了3个WebLogic实例，构成一个6个节点的亲合式集群。由于是亲合式集群，节点之间没有进行Session同步，但是有一些需求要实现部分数据在各个节点间共享。最开始这些数据是存放在数据库中的，但由于读写频繁、竞争很激烈，性能影响较大，后面使用JBossCache构建了一个全局缓存。全局缓存启用后，服务正常使用了一段较长的时间。但在最近不定期出现多次的内存溢出问题。</p>
 <p>在内存溢出异常不出现的时候，服务内存回收状况一直正常，每次内存回收后都能恢复到一个稳定的可用空间。开始怀疑是程序某些不常用的代码路径中存在内存泄漏，但管理员反映最近程序并未更新、升级过，也没有进行什么特别操作。只好让服务带着-XX：+HeapDumpOnOutOfMemoryError 参数运行了一段时间。在最近一次溢出之后，管理员发回了堆转储快照，发现里面存在着大量的org.jgroups.protocols.pbcast.NAKACK对象。</p>
 <p>JBossCache是基于自家的JGroups进行集群间的数据通信，JGroups使用协议栈的方式来实现收发数据包的各种所需特性自由组合，数据包接收和发送时要经过每层协议栈的up()和down()方法，其中的NAKACK栈用于保障各个包的有效顺序以及重发。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919110644.png" alt="image-20210919110644451"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919110644.png" alt="image-20210919110644451"></p>
 <p>图5-1 JBossCache协议栈</p>
 <p>由于信息有传输失败需要重发的可能性，在确认所有注册在GMS（Group Membership Service）的节点都收到正确的信息前，发送的信息必须在内存中保留。而此MIS的服务端中有一个负责安全校验的全局过滤器，每当接收到请求时，均会更新一次最后操作时间，并且将这个时间同步到所有的节点中去，使得一个用户在一段时间内不能在多台机器上重复登录。在服务使用过程中，往往一个页面会产生数次乃至数十次的请求，因此这个过滤器导致集群各个节点之间网络交互非常频繁。当网络情况<br>不能满足传输要求时，重发数据在内存中不断堆积，很快就产生了内存溢出。</p>
 <p>这个案例中的问题，既有JBossCache的缺陷，也有MIS系统实现方式上的缺陷。JBoss-Cache官方的邮件讨论组中讨论过很多次类似的内存溢出异常问题，据说后续版本也有了改进。而更重要的缺陷是，这一类被集群共享的数据要使用类似JBossCache这种非集中式的集群缓存来同步的话，可以允许读操作频繁，因为数据在本地内存有一份副本，读取的动作不会耗费多少资源，但不应当有过于频繁的写操作，会带来很大的网络同步的开销。</p>

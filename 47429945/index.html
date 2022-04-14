@@ -34,16 +34,16 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="34.1 搬移UNIX的命令在操作系统的世界里，有两大阵营一直在PK着：*nix（包括UNIX和Linux）和Windows。从目前的统计数据来看，*nix在应用服务器领域占据相对优势，不过Windows也不甘示弱，国内某些小型银行已经在使用PC Server（安装Windows操作系统的服务器）集群来进行银行业务运算，而且稳定性、性能各方面的效果不错；而在个人桌面方面，Windows 是占绝对优">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930214930.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930215126.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930215233.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930215409.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001143359.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930214930.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930215126.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930215233.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930215409.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001143359.png">
 <meta property="article:published_time" content="2021-09-27T11:57:33.000Z">
 <meta property="article:modified_time" content="2021-10-01T07:21:16.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930214930.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930214930.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/47429945/">
@@ -326,7 +326,7 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="34-1-搬移UNIX的命令"><a href="#34-1-搬移UNIX的命令" class="headerlink" title="34.1 搬移UNIX的命令"></a>34.1 搬移UNIX的命令</h1><p>在操作系统的世界里，有两大阵营一直在PK着：<code>*nix</code>（包括UNIX和Linux）和Windows。从目前的统计数据来看，<code>*nix</code>在应用服务器领域占据相对优势，不过Windows也不甘示弱，国内某些小型银行已经在使用PC Server（安装Windows操作系统的服务器）集群来进行银行业务运算，而且稳定性、性能各方面的效果不错；而在个人桌面方面，Windows 是占绝对优势的，大家应该基本上都在用这个操作系统，它的诸多优点这里就不多说了，我们今天就来解决一个习惯问题。如果你负责过UNIX系统维护，你自己的笔记本又是Windows 操作系统的话，我想你肯定有这样的经验，如图34-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930214930.png" alt="image-20210930214930410"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930214930.png" alt="image-20210930214930410"></p>
 <center>图34-1 时常犯的错误</center>
 
 <p>是不是经常把UNIX上的命令敲到Windows系统了？为了避免这种情况发生，可以把UNIX上的命令移植到Windows上，也就是Windows下的shell工具，有很多类似的工具，比如cygwin、GUN Bash等，这些都是非常完美的工具，我们今天的任务就是自己写一个这样的工具。怎么写呢？我们学了这么多的模式，当然要融会贯通了，可以使用命令模式、责任链模式、模板方法模式设计一个方便扩展、稳定的工具。</p>
@@ -352,12 +352,12 @@
 <li>为提高扩展性，ls命令族内的运算应该是对外封闭的，减少外界访问ls命令族内部细 节的可能性。</li>
 </ul>
 <p>针对一个命令族的分析结果，我们可以使用什么模式？责任链模式！对，只要把一个参数传递到链首，就可以立刻获得一个结果，中间是如何传递的以及由哪个逻辑解析都不需要外界（高层）模块关心，该模块的类图如图34-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930215126.png" alt="image-20210930215126398"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930215126.png" alt="image-20210930215126398"></p>
 <center>图34-2 命令族的解析类图</center>
 类图还是比较清晰的，UNIX的命令有上百个，我们定义一个CommandName抽象类，所有的命令都继承于该类，它就是责任链模式的handler类，负责链表控制；每个命令族都有一个独立的抽象类，因为每个命令族都有其独特的个性，比如ls命令和df命令，其后可加的参数是不一样的，这就可以在抽象类AbstractLS中定义，而且它还有标示作用，标示其下的实现类都是实现ls命令的，只是命令的选项不同；Context负责建立一条命令的链表，比如ls命令族、df命令族等，它组装出一个处理一个命令族的责任链，并返回首节点供高层模块调用，这是非常典型的责任链模式。
 
 <p>分析完毕一个具体的命令族，已经确定可以采用责任链模式，我们继续往下分析。 UNIX命令非常多，敲一个命令返回一个结果，每个具体的命令可以由相关的命令族（也就是责任链）来解析，但是如此多的命令还是需要有一个派发的角色，输入一个命令，不管后台谁来解析，返回一个结果就成，这就要用到命令模式。命令模式负责协调各个命令正确地传递到各个责任链的首节点，这就是它的任务，其类图如图34-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930215233.png" alt="image-20210930215233203"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930215233.png" alt="image-20210930215233203"></p>
 <center>图34-3 命令传递类图</center>
 
 <p>是不是典型的命令模式类图？其中Chain是一个标示符，表示的就是我们上面分析的责任链，每一个具体的命令负责调用责任链的首节点，获得返回值，结束命令的执行。两个核心模块都分析完毕了，就可以把类图融合在一起，完整的类图如图34-4所示。</p>
@@ -375,7 +375,7 @@
 </ul>
 <p>CommandEnum是枚举类型，是主要的命令配置文件。为什么需要枚举类型？这是JDK 1.5提供的一个非常好的功能，我们在程序中再讲解如何使用它。</p>
 <p>所有的分析都已经完成了，我们来看看程序。程序不复杂，看看类图，应该先写命令的解释，这是项目的核心。我们先来看CommandName抽象类，如代码清单34-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930215409.png" alt="image-20210930215409230"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930215409.png" alt="image-20210930215409230"></p>
 <center>图34-4 完整类图</center>
 
 <p>代码清单34-1 抽象命令名类</p>
@@ -442,7 +442,7 @@
 <p>Client也很简单，通过一个while循环允许使用者持续输入，然后打印出返回值，运行结 果如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#ls </span><br><span class="line">file1 </span><br><span class="line">file2 </span><br><span class="line">file3 </span><br><span class="line">file4 </span><br><span class="line">#ls -l </span><br><span class="line">drw-rw-rw root system 1024 2009-8-20 10:23 file1 </span><br><span class="line">drw-rw-rw root system 1024 2009-8-20 10:23 file2 </span><br><span class="line">drw-rw-rw root system 1024 2009-8-20 10:23 file3 </span><br><span class="line">#ls -a</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">.</span><br><span class="line">file1 </span><br><span class="line">file2 </span><br><span class="line">file3 </span><br><span class="line">#quit</span><br></pre></td></tr></table></figure>
 <p>我们已经实现了在Windows下操作UNIX命令的功能，但是仅仅一个ls命令族是不够的， 我们要扩展，把一百多个命令都扩展出来，怎么扩展呢？现在增加一个df命令族，显示磁盘的大小，只要增加类图就成，如图34-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001143359.png" alt="image-20211001143359455"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001143359.png" alt="image-20211001143359455"></p>
 <center>图34-5 扩展df命令后的类图</center>
 
 <p>仅仅增加了粗框的部分，也就是增加DFCommand、AbstractDF以及实现类就可以完成扩展功能。先看AbstractDF代码，如代码清单34-14所示。<br>代码清单34-14 df命令的抽象类</p>

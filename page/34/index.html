@@ -322,10 +322,10 @@
 
 <p>实际上，在前面的例子中有3个Mono。其中，just() 操作创建了第一个Mono。当该Mono发送一个值的时候，这个值被传递给了将字母转换为大写的map()操作，据此又创建了另一个Mono。当第二个Mono发布它的数据时，数据被传递给了第二个map()操作，并且会在此进行一些字符串连接操作，而结果将用于创建第三个Mono。最后，对第三个Mono上的subscribe()方法调用时，会接收数据并将数据打印出来。</p>
 <h2 id="10-2-1-绘制反应式流图"><a href="#10-2-1-绘制反应式流图" class="headerlink" title="10.2.1 绘制反应式流图"></a>10.2.1 绘制反应式流图</h2><p>反应式流程通常使用弹珠图（marble diagram）表示，如图10.1所示。弹珠图的展现形式非常简单，在顶部描述了数据流经Flux或者Mono的时间线，在中间描述了要执行的操作，在底部描述了结果形成的Flux或者Mono的时间线。我们将会看到，当数据流经原始的Flux时，某些操作将会对它进行处理，并产生一个新的Flux，已经处理过的数据将会在新Flux中流动。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016111138.png" alt="image-20211016111138194"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016111138.png" alt="image-20211016111138194"></p>
 <p>图10.1 描绘Flux基本流程的弹珠图</p>
 <p>图10.2展示了一个类似的弹珠图，但是针对的是Mono。我们可以看到，这里主要的不同是Mono将会有零个或者一个数据项，或者一个错误。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016111230.png" alt="image-20211016111229961"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016111230.png" alt="image-20211016111229961"></p>
 <p>图10.2 描绘Mono基本流程的弹珠图</p>
 <h2 id="10-2-2-添加Reactor依赖"><a href="#10-2-2-添加Reactor依赖" class="headerlink" title="10.2.2 添加Reactor依赖"></a>10.2.2 添加Reactor依赖</h2><p>要开始使用Reactor，请将下面的依赖项添加到项目的构建文件中：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.projectreactor<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>reactor-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
@@ -697,7 +697,7 @@
 <p>这样带来的后果就是阻塞式Web框架在大量请求下无法有效地扩展。缓慢的工作者线程所带来的延迟会使情况变得更糟，因为它将花费更长的时间才能将工作者线程送回池中，准备处理另一个请求。在某些场景中，这种设计完全可以接受。事实上，在很大程度上这就是十多年来大多数Web应用程序的开发方式，但是时代在改变。</p>
 <p>这些Web应用程序的客户端以前是偶尔浏览网站的人们，而现在这些人会频繁消费内容而且会使用与HTTP API协作的应用程序。如今，物联网（甚至不需要人类）产生了汽车、喷气式发动机和其他非传统的客户端，它们会持续地和Web API交换数据。随着消费Web应用的客户端越来越多，可扩展性比以往任何时候都更加重要。</p>
 <p>异步的Web框架能够以更少的线程获得更高的可扩展性，通常它们只需要与CPU核心数量相同的线程。通过使用所谓的事件轮询（event looping）机制（如图11.1所示），这些框架能够用一个线程处理很多请求，这样每次连接的成本会更低。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016212143.png" alt="image-20211016212143634"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016212143.png" alt="image-20211016212143634"></p>
 <center>图11.1 异步Web框架借助事件轮询机制能够以更少的线程处理更多的请求</center>
 
 <p>在事件轮询中，所有事情都是以事件的方式来进行处理的，包括请求以及密集型操作（如数据库和网络操作）的回调。当需要执行成本高昂的操作时，事件轮询会为该操作注册一个回调，这样操作可以并行执行，而事件轮询则会继续处理其他的事件。</p>
@@ -705,7 +705,7 @@
 <p>Spring 5引入了一个非阻塞、异步的Web框架，该框架在很大程度上是基于Reactor项目的，能够解决Web应用和API中对更好的可扩展性的需求。接下来我们看一下Spring WebFlux：面向Spring的反应式Web框架。</p>
 <h2 id="11-1-1-Spring-WebFlux简介"><a href="#11-1-1-Spring-WebFlux简介" class="headerlink" title="11.1.1 Spring WebFlux简介"></a>11.1.1 Spring WebFlux简介</h2><p>当Spring团队思考如何向Web层添加反应式编程模型时，如果不在Spring MVC中做大量工作，显然很难实现这一点。这会在代码中产生分支以决定是否要以反应式的方式来处理请求。如果这样做，本质上就是将两个Web框架打包成一个，依靠if语句来区分反应式和非反应式。</p>
 <p>与其将反应式编程模型硬塞进Spring MVC中，还不如创建一个单独的反应式Web框架，并尽可能多地借鉴Spring MVC。这样，Spring WebFlux就应运而生了。Spring 5定义的完整Web开发技术栈如图11.2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016212213.png" alt="image-20211016212213773"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016212213.png" alt="image-20211016212213773"></p>
 <center>图11.2 Spring 5通过名为WebFlux的新Web框架来支持反应式Web应用</center>
 
 <p>在图11.2的左侧，我们会看到Spring MVC技术栈，这是Spring框架2.5版本就引入的。Spring MVC（在第2章和第6章已经进行了讨论）建立在Java Servlet API之上，因此需要Servlet容器（比如Tomcat）才能执行。</p>
@@ -736,7 +736,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@GetMapping(&quot;/recent&quot;)</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Flux&lt;Taco&gt; <span class="title">recentTacos</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  <span class="keyword">return</span> tacoRepo.findAll().take(<span class="number">12</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这样就更好了！在理想情况下，反应式控制器将会位于反应式端到端栈的顶部，这个栈包括了控制器、repository、数据库以及在它们之间可能还会包含的服务。这样的端到端反应式栈如图11.3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016212402.png" alt="image-20211016212402176"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016212402.png" alt="image-20211016212402176"></p>
 <center>图11.3 它应该成为完整的端到端反应式栈的一部分（为了最大化反应式Web框架的收益）</center>
 
 <p>这样的端到端技术栈要求repository返回Flux，而不是Iterable。在第12章中，我们将会详细研究如何编写反应式repository，但是反应式TacoRepository大致会如下所示：</p>
@@ -1051,7 +1051,7 @@
 <h2 id="11-3-2-测试POST请求"><a href="#11-3-2-测试POST请求" class="headerlink" title="11.3.2 测试POST请求"></a>11.3.2 测试POST请求</h2><p>WebTestClient不仅能对控制器发送GET请求，还能用来测试各种HTTP方法，包括GET、POST、PUT、PATCH、DELETE和HEAD方法。表11.1将HTTP方法与WebTestClient的方法进行了映射。</p>
 <center>表11.1 WebTestClient能够测试针对Spring WebFlux控制器的各种请求</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016222158.jpeg" alt="epub_29101559_89"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016222158.jpeg" alt="epub_29101559_89"></p>
 <p>作为测试Spring WebFlux控制器其他HTTP请求方法的样例，我们看一下针对DesignTacoController的另一个测试。这一次，我们会编写一个对taco创建API的测试，也就是提交POST请求到“/design”：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shouldSaveATaco</span><span class="params">()</span> </span>&#123;</span><br><span class="line">  TacoRepository tacoRepo = Mockito.mock(</span><br><span class="line">              TacoRepository.class);             ⇽--- 搭建测试数据</span><br><span class="line">  Mono&lt;Taco&gt; unsavedTacoMono = Mono.just(testTaco(<span class="keyword">null</span>));</span><br><span class="line">  Taco savedTaco = testTaco(<span class="keyword">null</span>);</span><br><span class="line">  savedTaco.setId(<span class="number">1L</span>);</span><br><span class="line">  Mono&lt;Taco&gt; savedTacoMono = Mono.just(savedTaco);</span><br><span class="line">  when(tacoRepo.save(any())).thenReturn(savedTacoMono);     ⇽--- mock TacoRepository</span><br><span class="line">  WebTestClient testClient = WebTestClient.bindToController(    ⇽--- 创建<span class="function">WebTestClient</span></span><br><span class="line"><span class="function">      new <span class="title">DesignTacoController</span><span class="params">(tacoRepo)</span>).<span class="title">build</span><span class="params">()</span></span>;</span><br><span class="line">  testClient.post()                 ⇽--- POST taco</span><br><span class="line">      .uri(<span class="string">&quot;/design&quot;</span>)</span><br><span class="line">      .contentType(MediaType.APPLICATION_JSON)</span><br><span class="line">      .body(unsavedTacoMono, Taco.class)</span><br><span class="line">    .exchange()</span><br><span class="line">    .expectStatus().isCreated()        ⇽--- 校验响应</span><br><span class="line">    .expectBody(Taco.class)</span><br><span class="line">      .isEqualTo(savedTaco);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1190,7 +1190,7 @@
 </ul>
 <p>在定义文件写入集成流的时候，我们已经看到过其中的一些组件了。FileWriterGateway是一个网关，通过它，应用可以提交要写入文件的文本。我们还定义了一个转换器，将给定的文本转换成大写的形式，随后，我们定义一个出站通道适配器，它执行将文本写入文件的任务。这个流有两个通道，textInChannel和fileWriterChannel，它们将应用中的其他组件连接在了一起。现在，我们按照承诺快速看一下这些集成流组件。</p>
 <h2 id="9-2-1-消息通道"><a href="#9-2-1-消息通道" class="headerlink" title="9.2.1 消息通道"></a>9.2.1 消息通道</h2><p>消息通道是消息穿行集成通道的一种方式（参见图9.2）。它们是连接SpringIntegration其他组成部分的管道。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015211632.png" alt="image-20211015211632575"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015211632.png" alt="image-20211015211632575"></p>
 <center>图9.2 消息通道是集成流中数据在其他组件之间流动的管道</center>
 
 <p>Spring Integration提供了多种通道实现。</p>
@@ -1220,7 +1220,7 @@
 
 <p>在本例中，服务激活器每秒（或者说每1000毫秒）都会轮询名为orderChannel的通道。</p>
 <h2 id="9-2-2-过滤器"><a href="#9-2-2-过滤器" class="headerlink" title="9.2.2 过滤器"></a>9.2.2 过滤器</h2><p>过滤器放置于集成管道的中间，它能够根据断言允许或拒绝消息进入流程的下一步（见图9.3）。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015211913.png" alt="image-20211015211913017"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015211913.png" alt="image-20211015211913017"></p>
 <center>图9.3 过滤器会基于某个断言允许或拒绝消息在管道中进行处理</center>
 
 <p>例如，假设消息包含了整型的值，它们要通过名为numberChannel的通道进行发布，但是我们只想让偶数进入名为evenNumberChannel的通道。在这种情况下，我们可以使用<code>@Filter</code>注解定义一个过滤器：</p>
@@ -1231,7 +1231,7 @@
 
 <p>在本例中，我们使用lambda表达式来实现过滤器。实际上，filter()方法接受GenericSelector作为参数。这意味着，如果我们的过滤器过于复杂，不适合放到一个简单的lambda表达式中，那么我们可以实现GenericSelector接口作为替代方案。</p>
 <h2 id="9-2-3-转换器"><a href="#9-2-3-转换器" class="headerlink" title="9.2.3 转换器"></a>9.2.3 转换器</h2><p>转换器会对消息执行一些操作，一般会形成不同的消息，有可能还会产生不同的载荷类型（见图9.4）。转换过程可能非常简单，比如执行数字的数学运算或者操作String值。转换也可能会很复杂，比如根据代表ISBN的String值查询并返回对应图书的详细信息。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016093245.png" alt="image-20211016093244978"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016093245.png" alt="image-20211016093244978"></p>
 <center>图9.4 转换器会改变流经集成流的消息</center>
 
 <p>例如，假设整型值会通过名为numberChannel的通道进行发布，我们希望将这些数字转换成它们的罗马数字形式，以String类型来表示。在这种情况下，我们可以声明一个GenericTransformer类型的bean并为其添加<code>@Transformer</code>注解，如下所示：</p>
@@ -1246,7 +1246,7 @@
 
 <p>在这里，我们声明了RomanNumberTransformer类型的bean，它本身是SpringIntegration Transformer或GenericTransformer接口的实现。这个bean注入到了transformerFlow()方法中，并且在定义集成流的时候传递给了transform()方法。</p>
 <h2 id="9-2-4-路由器"><a href="#9-2-4-路由器" class="headerlink" title="9.2.4 路由器"></a>9.2.4 路由器</h2><p>路由器能够基于某个路由断言，实现集成流的分支，从而将消息发送至不同的通道上（见图9.5）。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016093412.png" alt="image-20211016093412464"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016093412.png" alt="image-20211016093412464"></p>
 <center>图9.5 路由器会根据应用于消息的断言将消息定向至不同的通道</center>
 
 <p>例如，假设我们有一个名为numberChannel的通道，它会传输整型值。我们想要将带有偶数的消息定向到名为evenChannel的通道，将带有奇数的消息定向到名为oddChannel的通道。要在集成流中创建这样一个路由器，我们可以声明一个AbstractMessageRouter类型的bean，并为其添加<code>@Router</code>注解：</p>
@@ -1258,7 +1258,7 @@
 
 <p>尽管我们依然可以定义AbstractMessageRouter并将其传递到route()，但是在这个样例中使用了lambda来确定消息载荷是偶数还是奇数。如果是偶数，就会返回值为EVEN的字符串；如果是奇数，就会返回值为ODD的字符串。然后这些值会用来确定该使用哪个子映射处理消息。</p>
 <h2 id="9-2-5-切分器"><a href="#9-2-5-切分器" class="headerlink" title="9.2.5 切分器"></a>9.2.5 切分器</h2><p>在集成流中，有时候将一个消息切分为多个消息独立处理可能会非常有用。切分器将会负责切分并处理这些消息，如图9.6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016093513.png" alt="image-20211016093512699"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016093513.png" alt="image-20211016093512699"></p>
 <center>图9.6 切分器会将消息拆分为两个或更多独立的消息，它们可以由独立的子流分别进行处理</center>
 
 <p>在很多场景中，切分器都非常有用，但是有两种基本的使用场景我们可以使用切分器。</p>
@@ -1286,7 +1286,7 @@
 
 <p>DSL所组成的流定义相当简洁，但是可能会有点难以理解。它使用与Java配置样例相同的OrderSplitter来切分订单。在订单切分之后，它根据类型将其路由至两个独立的子流。</p>
 <h2 id="9-2-6-服务激活器"><a href="#9-2-6-服务激活器" class="headerlink" title="9.2.6 服务激活器"></a>9.2.6 服务激活器</h2><p>服务激活器接收来自输入通道的消息并将这些消息发送至一个MessageHandler的实现，如图9.7所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016093710.png" alt="image-20211016093710409"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016093710.png" alt="image-20211016093710409"></p>
 <center>图9.7 在接收到消息时，服务激活器会通过MessageHandler调用某个服务</center>
 
 <p>Spring Integration提供了多个开箱即用的MessageHandler（PayloadTypeRouter甚至就是MessageHandler的一个实现），但是我们通常会需要提供一些自定义的实现作为服务激活器。作为样例，如下的代码展现了如何声明MessageHandler bean并将其配置为服务激活器：</p>
@@ -1306,7 +1306,7 @@
 
 <p>在使用GenericHandler的时候，lambda表达式或方法引用会接受消息负载和头信息作为参数。如果你选择使用GenericHandler作为流的终点，就需要返回null；否则，出现错误，提示没有指定输出通道。</p>
 <h2 id="9-2-7-网关"><a href="#9-2-7-网关" class="headerlink" title="9.2.7 网关"></a>9.2.7 网关</h2><p>通过网关，应用可以提交数据到集成流中，并且能够可选地接收流的结果作为响应。网关会声明为接口，借助Spring Integration的实现，应用可以调用它来发送消息到集成流中（见图9.8）。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016093824.png" alt="image-20211016093824376"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016093824.png" alt="image-20211016093824376"></p>
 <center>图9.8 服务网关是接口</center>
 
 <p>我们已经见过了消息网关的样例，也就是FileWriterGateway。FileWriterGateway是一个单向的网关，它有一个接受String类型的方法，该方法会将文本写入到文件中，返回void。编写双向的网关同样简单。在编写网关接口的时候，只需确保方法要返回某个值，以便于推送到集成流中。</p>
@@ -1320,7 +1320,7 @@
 
 <p>按照定义，这个流会从进入inChannel通道的数据开始。消息载荷会由转换器进行处理，也就是执行大写操作（通过lambda表达式来定义）。结果形成的消息会被发送到名为outChannel的通道，也就是我们在UpperCaseGateway中声明的答复通道。</p>
 <h2 id="9-2-8-通道适配器"><a href="#9-2-8-通道适配器" class="headerlink" title="9.2.8 通道适配器"></a>9.2.8 通道适配器</h2><p>通道适配器代表了集成流的入口和出口。数据通过入站通道适配器（inboundchannel adapter）进入一个集成流，通过出站通道适配器离开一个集成流，如图9.9所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211016093919.png" alt="image-20211016093919555"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211016093919.png" alt="image-20211016093919555"></p>
 <center>图9.9 通道适配器是集成流的入口和出口</center>
 
 <p>根据要将什么数据源引入集成流，入站通道适配器可以有很多种形式。例如，我们可以声明一个入站通道适配器，将来自AtomicInteger不断递增的数字引入到流中。如果使用Java配置，如下所示：</p>
@@ -1492,7 +1492,7 @@
 <li>最后，我们使用int-file命名空间配置了出站通道适配器。这个XML命名空间是由Spring Integration的文件模块提供的，实现文件写入的功能。按照我们的配置，它从fileWriterChannel接收消息，并将消息的载荷写入到一个文件中，这个文件的名称是由消息头信息中的file_name属性指定的，而存入的目录则是由这里的directory属性指定的。如果文件已经存在，那么文件内容会以新行的方式进行追加，而不是覆盖该文件。</li>
 </ul>
 <p>图9.1使用《企业集成模式》中的图形元素样式阐述了这个流。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211015210915.png" alt="image-20211015210914944"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211015210915.png" alt="image-20211015210914944"></p>
 <center>图9.1 文件写入器的集成流</center>
 
 <p>如果想要在Spring Boot应用中使用XML配置，那么我们需要将XML作为资源导入到Spring应用中。最简单的实现方式就是在应用的某个Java配置类上使用Spring的<code>@ImportResource</code>注解：</p>

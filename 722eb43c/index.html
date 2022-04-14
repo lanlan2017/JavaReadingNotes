@@ -34,15 +34,15 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="35.1 迷你版的交易系统大家可能对银行的交易系统充满敬畏之情，一听说是银行的IT人员，立马想当然地认为这是个很厉害的人物，那我们今天就来对银行的交易系统做一个初步探讨。国内一家大型集团（全球500强之一）计划建立全国“一卡通”计划，每个员工配备一张IC卡，该卡基本上就是万能的，门禁系统用它，办公系统用它，你想打开自己的邮箱，没有它就甭想了，它还可以用来进行消费，比如到食堂吃饭，到园区内的商店消费">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001195939.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001200222.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001200346.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001201110.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001195939.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001200222.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001200346.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001201110.png">
 <meta property="article:published_time" content="2021-09-27T11:57:33.000Z">
 <meta property="article:modified_time" content="2021-10-01T12:15:57.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001195939.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001195939.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/722eb43c/">
@@ -352,7 +352,7 @@
 <p>还有一个问题，一个交易的扣款模式是固定的，根据其交易编号而定，那我们怎样把交易编号与扣款策略对应起来呢？采用状态模式或责任链模式都可以，如果采用状态则认为交易编号就是一个交易对象的状态，对于一笔确定的交易（一个已经生成了的对象），它的状态不会从一个状态过渡到另一个状态，也就是说它的状态只有一个，执行完毕后即结束，不存在多状态的问题；如果采用责任链模式，则可以用交易编码作为链中的判断依据，由每个执行节点进行判断，返回相应的扣款模式。但是在实际中，采用了关系型数据库存储扣款规则与交易编码的对应关系，为了简化该部分的讲义，我们在下面的设计中使用了条件判断语句来代替。</p>
 <p>还有，这么复杂的扣款模块总要进行一个封装吧，不能让上层的业务模块直接深入到模块的内部，于是门面模式又摆在了眼前。</p>
 <p>分析完毕，我们要先画出类图，做设计要遵循这样一个原则：先选最简单的业务，然后画出类图。那我们先定义交易中用到的两个类：IC卡类和交易类，如图35-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001195939.png" alt="image-20211001195939429"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001195939.png" alt="image-20211001195939429"></p>
 <p>图35-1 IC卡类和交易类</p>
 <p>每个IC卡有三个属性，分别是IC卡号码、固定金额、自由金额，然后通过getter/setter方法来访问，如代码清单35-1所示。</p>
 <p>代码清单35-1 IC卡类</p>
@@ -368,7 +368,7 @@
 <p>固定扣款的规则是固定金额和自由金额各扣除交易金额的一半，如代码清单35-4所示。</p>
 <p>代码清单35-4 扣款策略一</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SteadyDeduction</span> <span class="keyword">implements</span> <span class="title">IDeduction</span> </span>&#123;</span><br><span class="line">    <span class="comment">//固定性交易扣款</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">exec</span><span class="params">(Card card, Trade trade)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//固定金额和自由金额各扣除50%</span></span><br><span class="line">        <span class="keyword">int</span> halfMoney = (<span class="keyword">int</span>)Math.rint(trade.getAmount() / <span class="number">2.0</span>);</span><br><span class="line">        card.setFreeMoney(card.getFreeMoney() - halfMoney);</span><br><span class="line">        card.setSteadyMoney(card.getSteadyMoney() - halfMoney);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001200222.png" alt="image-20211001200222415"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001200222.png" alt="image-20211001200222415"></p>
 <center>图35-2 扣款策略类图</center>
 这个具体策略也非常简单，就是两个金额各自减去交易额的一半（注意除数是2.0，可不是2），然后再四舍五入，算法确实简单。该逻辑没有考虑账户余额不足的情况，也没有考虑异常情况，比如并发情况，读者可以想想看，一张卡有两笔消费同时发生时，是不是就发生错误了？一张卡同时有两笔消费会出现这种情况吗？会的，网络阻塞的情况，MQ多通道发送，在网络繁忙的情况下是有可能出现该问题，这里就不多介绍，有兴趣的读者可以看看MQ的资料。我们在这里的讲解实现的是一个快乐路径，认为所有的交易都是在安全可靠的环境中发生的，并且所有的系统环境都满足我们的要求。我们再来看另一个策略，这个策略更简单，如代码清单35-5所示。
 
@@ -378,7 +378,7 @@
 <p>代码清单35-6 扣款策略的封装</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DeductionContext</span> </span>&#123;</span><br><span class="line">    <span class="comment">//扣款策略</span></span><br><span class="line">    <span class="keyword">private</span> IDeduction deduction = <span class="keyword">null</span>;</span><br><span class="line">    <span class="comment">//构造函数传递策略</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">DeductionContext</span><span class="params">(IDeduction _deduction)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.deduction = _deduction;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//执行扣款</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">exec</span><span class="params">(Card card,Trade trade)</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.deduction.exec(card, trade);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>典型的策略上下文角色。扣款模块的策略已经定义完毕了，然后需要想办法解决策略模式的缺陷：它把所有的策略类都暴露出去，暴露得越多以后的修改风险也就越大。怎么修改呢？增加一个映射配置文件，实现策略类的隐藏。我们使用枚举担当此任，对策略类进行映射处理，避免高层模块直接访问策略类，同时由工厂方法模式根据映射产生策略对象，类图如图35-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001200346.png" alt="image-20211001200346462"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001200346.png" alt="image-20211001200346462"></p>
 <center>图35-3 策略工厂类图</center>
 
 <p>又是一个简单得不能再简单的模式——工厂方法模式，通过StrategyMan负责对具体策略的映射，如代码清单35-7所示。</p>
@@ -393,7 +393,7 @@
 <p>这次为什么要先展示代码而后写类图呢？那是因为这段代码比写类图更能让你理解。读者注意一下getDeductionType方法，这个方法在实际项目中是存在的，但是与上面的写法有天壤之别，因为在实际项目中，数据库中保存了策略代码与交易编码的对应关系，直接通过数据库的SQL语句就可以返回对应的扣款策略。这里我们采用大家最熟悉的条件转移来实现，也是比较清晰和容易理解的。</p>
 <p>可能读者要问了，在门面模式中已经明确地说明，门面类中不允许有业务逻辑存在，但是你这里还是有了一个getDeductionType方法，它可代表的是一个判断逻辑呀，这是为什么呢？是的，该方法完全可以移到其他Hepler类中，由于我们是示例代码，暂没有明确的业务含义，故编写在此处，读者在实际应用中，请把该方法放置到其他类中。</p>
 <p>好，所有用到的模式都介绍完毕了，我们把完整的类图整理一下，如图35-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001201110.png" alt="image-20211001201105393"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001201110.png" alt="image-20211001201105393"></p>
 <center>图35-4 扣款子模块完整类图</center>
 
 <p>真实系统比这复杂得多，有了我们之前的分析，这个图还是比较容易看懂的。我们所有的开发都完成了，是不是应该写一个测试类来展示一下我们的成果，如代码清单35-10所示。</p>

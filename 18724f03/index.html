@@ -34,18 +34,18 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="4.3.1 JHSDB：基于服务性代理的调试工具JDK中提供了JCMD和JHSDB两个集成式的多功能工具箱，它们不仅整合了上一节介绍到的所有基础工具所能提供的专项功能，而且由于有着“后发优势”，能够做得往往比之前的老工具们更好、更强大，表4-15所示是JCMD、JHSDB与原基础工具实现相同功能的简要对比。 表4-15 JCMD、JHSDB和基础工具的对比  本节的主题是可视化的故障处理，所以JC">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154256.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154711.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154807.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155035.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155220.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155347.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155449.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154256.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154711.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154807.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155035.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155220.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155347.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155449.png">
 <meta property="article:published_time" content="2021-09-17T06:47:16.000Z">
 <meta property="article:modified_time" content="2021-11-18T02:55:11.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154256.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154256.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/18724f03/">
@@ -333,7 +333,7 @@
     <div class="post-body" itemprop="articleBody">
         <h2 id="4-3-1-JHSDB：基于服务性代理的调试工具"><a href="#4-3-1-JHSDB：基于服务性代理的调试工具" class="headerlink" title="4.3.1 JHSDB：基于服务性代理的调试工具"></a>4.3.1 JHSDB：基于服务性代理的调试工具</h2><p>JDK中提供了JCMD和JHSDB两个集成式的多功能工具箱，它们不仅整合了上一节介绍到的所有基础工具所能提供的专项功能，而且由于有着“后发优势”，能够做得往往比之前的老工具们更好、更强大，表4-15所示是JCMD、JHSDB与原基础工具实现相同功能的简要对比。</p>
 <p>表4-15 JCMD、JHSDB和基础工具的对比</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154256.png" alt="image-20210917154255849"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154256.png" alt="image-20210917154255849"></p>
 <p>本节的主题是可视化的故障处理，所以JCMD及JHSDB的命令行模式就不再作重点讲解了，读者可参考上一节的基础命令，再借助它们在JCMD和JHSDB中的help去使用，相信是很容易举一反三、 触类旁通的。接下来笔者要通过一个实验来讲解JHSDB的图形模式下的功能。</p>
 <p>JHSDB是一款基于服务性代理（Serviceability Agent，SA）实现的进程外调试工具。服务性代理是HotSpot虚拟机中一组用于映射Java虚拟机运行信息的、主要基于Java语言（含少量JNI代码）实现的API集合。服务性代理以HotSpot内部的数据结构为参照物进行设计，把这些C++的数据抽象出Java模型对象，相当于HotSpot的C++代码的一个镜像。通过服务性代理的API，可以在一个独立的Java虚拟机的进程里分析其他HotSpot虚拟机的内部数据，或者从HotSpot虚拟机进程内存中dump出来的转储快照里还原出它的运行状态细节。服务性代理的工作原理跟Linux上的GDB或者Windows上的Windbg是相似的。本次，我们要借助JHSDB来分析一下代码清单4-6中的代码<a href="%E6%9C%AC%E5%B0%8F%E8%8A%82%E7%9A%84%E5%8E%9F%E5%A7%8B%E6%A1%88%E4%BE%8B%E6%9D%A5%E8%87%AARednaxelaFX%E7%9A%84%E5%8D%9A%E5%AE%A2https://rednaxelafx.iteye.com/blog/1847971%E3%80%82">^1</a>，并通过实验来回答一个简单问题：staticObj、instanceObj、localObj这三个变量本身（而不是它们所指向的对象）存放在哪里？</p>
 <p>代码清单4-6 JHSDB测试代码</p>
@@ -346,33 +346,33 @@
 <p>使用以下命令进入JHSDB的图形化模式，并使其附加进程11180：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jhsdb hsdb --pid 11180</span><br></pre></td></tr></table></figure>
 <p>命令打开的JHSDB的界面如图4-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154711.png" alt="image-20210917154711828"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154711.png" alt="image-20210917154711828"></p>
 <p>图4-4 JHSDB的界面</p>
 <p>阅读代码清单4-6可知，运行至断点位置一共会创建三个ObjectHolder对象的实例，只要是对象实例必然会在Java堆中分配，既然我们要查找引用这三个对象的指针存放在哪里，不妨从这三个对象开始着手，先把它们从Java堆中找出来。<br>首先点击菜单中的Tools-&gt;Heap Parameters[^2]，结果如图4-5所示，因为笔者的运行参数中指定了使用的是Serial收集器，图中我们看到了典型的Serial的分代内存布局，Heap Parameters窗口中清楚列出了新生代的Eden、S1、S2和老年代的容量（单位为字节）以及它们的虚拟内存地址起止范围。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917154807.png" alt="image-20210917154807066"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917154807.png" alt="image-20210917154807066"></p>
 <p>图4-5 Serial收集器的堆布局 </p>
 <p>如果读者实践时不指定收集器，即使用JDK默认的G1的话，得到的信息应该类似如下所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Heap Parameters: </span><br><span class="line">garbage-first heap [0x00007f32c7800000, 0x00007f32c8200000] region size 1024K</span><br></pre></td></tr></table></figure>
 <p>请读者注意一下图中各个区域的内存地址范围，后面还要用到它们。打开Windows-&gt;Console窗口，使用scanoops命令在Java堆的新生代（从Eden起始地址到To Survivor结束地址）范围内查找ObjectHolder的实例，结果如下所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hsdb&gt;scanoops 0x00007f32c7800000 0x00007f32c7b50000 JHSDB_TestCase$ObjectHolder </span><br><span class="line">0x00007f32c7a7c458 JHSDB_TestCase$ObjectHolder </span><br><span class="line">0x00007f32c7a7c480 JHSDB_TestCase$ObjectHolder </span><br><span class="line">0x00007f32c7a7c490 JHSDB_TestCase$ObjectHolder</span><br></pre></td></tr></table></figure>
 <p>果然找出了三个实例的地址，而且它们的地址都落到了Eden的范围之内，算是顺带验证了一般情况下新对象在Eden中创建的分配规则。再使用Tools-&gt;Inspector功能确认一下这三个地址中存放的对象，结果如图4-6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155035.png" alt="image-20210917155035683"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155035.png" alt="image-20210917155035683"></p>
 <p>图4-6 查看对象实例数据</p>
 <p>Inspector为我们展示了对象头和指向对象元数据的指针，里面包括了Java类型的名字、继承关系、实现接口关系，字段信息、方法信息、运行时常量池的指针、内嵌的虚方法表（vtable）以及接口方法表（itable）等。由于我们的确没有在ObjectHolder上定义过任何字段，所以图中并没有看到任何实例字段数据，读者在做实验时不妨定义一些不同数据类型的字段，观察它们在HotSpot虚拟机里面是如何存储的。</p>
 <p>接下来要根据堆中对象实例地址找出引用它们的指针，原本JHSDB的Tools菜单中有Compute Reverse Ptrs来完成这个功能，但在笔者的运行环境中一点击它就出现Swing的界面异常，看后台日志是报了个空指针，这个问题只是界面层的异常，跟虚拟机关系不大，所以笔者没有继续去深究，改为使用命令来做也很简单，先拿第一个对象来试试看：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hsdb&gt; revptrs 0x00007f32c7a7c458 </span><br><span class="line">Computing reverse pointers... </span><br><span class="line">Done. </span><br><span class="line">Oop for java/lang/Class @ 0x00007f32c7a7b180</span><br></pre></td></tr></table></figure>
 <p>果然找到了一个引用该对象的地方，是在一个java.lang.Class的实例里，并且给出了这个实例的地址，通过Inspector查看该对象实例，可以清楚看到这确实是一个java.lang.Class类型的对象实例，里面有一个名为staticObj的实例字段，如图4-7所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155220.png" alt="image-20210917155219896"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155220.png" alt="image-20210917155219896"></p>
 <p>图4-7 Class对象 </p>
 <p>从《Java虚拟机规范》所定义的概念模型来看，所有Class相关的信息都应该存放在方法区之中， 但方法区该如何实现，《Java虚拟机规范》并未做出规定，这就成了一件允许不同虚拟机自己灵活把握的事情。JDK 7及其以后版本的HotSpot虚拟机选择把静态变量与类型在Java语言一端的映射Class对象存放在一起，存储于Java堆之中，从我们的实验中也明确验证了这一点[^3]。接下来继续查找第二个对象实例：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">hsdb&gt;revptrs 0x00007f32c7a7c480 </span><br><span class="line">Computing reverse pointers... </span><br><span class="line">Done. </span><br><span class="line">Oop for JHSDB_TestCase$Test @ 0x00007f32c7a7c468</span><br></pre></td></tr></table></figure>
 <p>这次找到一个类型为JHSDB_TestCase$Test的对象实例，在Inspector中该对象实例显示如图4-8所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155347.png" alt="image-20210917155347804"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155347.png" alt="image-20210917155347804"></p>
 <p>图4-8 JHSDB_TestCase$Test对象</p>
 <p>这个结果完全符合我们的预期，第二个ObjectHolder的指针是在Java堆中JHSDB_TestCase$Test对象的instanceObj字段上。但是我们采用相同方法查找第三个ObjectHolder实例时，JHSDB返回了一个null，表示未查找到任何结果：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hsdb&gt; revptrs 0x00007f32c7a7c490 </span><br><span class="line">null</span><br></pre></td></tr></table></figure>
 <p>看来revptrs命令并不支持查找栈上的指针引用，不过没有关系，得益于我们测试代码足够简洁， 人工也可以来完成这件事情。在Java Thread窗口选中main线程后点击Stack Memory按钮查看该线程的栈内存，如图4-9所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210917155449.png" alt="image-20210917155449430"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210917155449.png" alt="image-20210917155449430"></p>
 <p>图4-9 main线程的栈内存</p>
 <p>这个线程只有两个方法栈帧，尽管没有查找功能，但通过肉眼观察在地址0x00007f32e771c998上的值正好就是0x00007f32c7a7c490，而且JHSDB在旁边已经自动生成注释，说明这里确实是引用了一个来自新生代的JHSDB_TestCase$ObjectHolder对象。至此，本次实验中三个对象均已找到，并成功追溯到引用它们的地方，也就实践验证了开篇中提出的这些对象的引用是存储在什么地方的问题。</p>
 <p>JHSDB提供了非常强大且灵活的命令和功能，本节的例子只是其中一个很小的应用，读者在实际开发、学习时，可以用它来调试虚拟机进程或者dump出来的内存转储快照，以积累更多的实际经验。</p>

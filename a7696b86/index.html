@@ -34,14 +34,14 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="第27章 解释器模式27.1 四则运算你会吗在银行、证券类项目中，经常会有一些模型运算，通过对现有数据的统计、分析而预测不可知或未来可能发生的商业行为。模型运算大部分是针对海量数据的，例如建立一个模型公式，分析一个城市的消费倾向，进而影响银行的营销和业务扩张方向。一般的模型运算都有一个或多个运算公式，通常是加、减、乘、除四则运算，偶尔也有指数、开方等复杂运算。具体到一个金融业务中，模型公式是非常复">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111518.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111633.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111653.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111518.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111633.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111653.png">
 <meta property="article:published_time" content="2021-09-27T11:57:33.000Z">
 <meta property="article:modified_time" content="2021-09-30T07:39:03.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111518.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111518.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/a7696b86/">
@@ -339,7 +339,7 @@
 <p>其中，a、b、c、d、e、f参数的值都可以取得，如果使用直接计算数值的方法需要为每个品种写一个算法，目前仅仅是3个业务种类，那上百个品种呢？歇菜了吧！建立公式，然后通过公式运算才是王道。</p>
 <p>我们以实现加、减算法（由于篇幅所限，乘、除法的运算读者可以自行扩展）的公式为例，讲解如何解析一个固定语法逻辑。由于使用语法解析的场景比较少，而且一些商业公司 （如SAS、SPSS等统计分析软件）都支持类似的规则运算，亲自编写语法解析的工作已经非常少，以下例程采用逐步分析方法，带领大家了解这一实现过程。</p>
 <p>想想公式中有什么？仅有两类元素：运算元素和运算符号，运算元素就是指a、b、c等符号，需要具体赋值的对象，也叫做终结符号，为什么叫终结符号呢？因为这些元素除了需要赋值外，不需要做任何处理，所有运算元素都对应一个具体的业务参数，这是语法中最小的单元逻辑，不可再拆分；运算符号就是加减符号，需要我们编写算法进行处理，每个运算符号都要对应处理单元，否则公式无法运行，运算符号也叫做非终结符号。两类元素的共同点是都要被解析，不同点是所有的运算元素具有相同的功能，可以用一个类表示，而运算符号则是需要分别进行解释，加法需要加法解析器，减法需要减法解析器。分析到这里，我们就可以先画一个简单的类图，如图27-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111518.png" alt="image-20210930111518583"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111518.png" alt="image-20210930111518583"></p>
 <center>图27-1 初步分析加减法类图</center>
 
 <p>这是一个很简单的类图，VarExpression用来解析运算元素，各个公式能运算元素的数量是不同的，但每个运算元素都对应一个VarExpression对象。SybmolExpression负责解析符号，由两个子类AddExpression（负责加法运算）和SubExpression（负责减法运算）来实现。 解析的工作完成了，我们还需要把安排运行的先后顺序（加减法不用考虑，但是乘除法呢？ 注意扩展性），并且还要返回结果，因此我们需要增加一个封装类来进行封装处理，由于我们只做运算，暂时还不与业务有关联，定义为Calculator类。分析到这里，思路就比较清晰了，优化后加减法类图如图27-2所示。</p>
@@ -348,10 +348,10 @@
 <p>代码清单27-1 抽象表达式类</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Expression</span> </span>&#123;</span><br><span class="line">    <span class="comment">//解析公式和数值，其中var中的key值是公式中的参数，value值是具体的数字</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String,Integer&gt; <span class="keyword">var</span>)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111633.png" alt="image-20210930111633860"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111633.png" alt="image-20210930111633860"></p>
 <center>图27-2 优化后加减法类图</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111653.png" alt="image-20210930111653467"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111653.png" alt="image-20210930111653467"></p>
 <center>图27-3 完整加减法类图</center>
 
 <p>抽象类非常简单，仅一个方法interpreter负责对传递进来的参数和值进行解析和匹配，其中输入参数为HashMap类型，key值为模型中的参数，如a、b、c等，value为运算时取得的具体数字。</p>

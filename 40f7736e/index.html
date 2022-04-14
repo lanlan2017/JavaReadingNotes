@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="11.5.3 JVMCI编译器接口 图11-11 手动关闭其他版本的工程  现在请读者来思考一下，如果让您来设计JVMCI编译器接口，它应该是怎样的？既然JVMCI面向的是Java语言的编译器接口，那它至少在形式上是与我们已经见过无数次的Java接口是一样的。我们来考虑即时编译器的输入是什么。答案当然是要编译的方法的字节码。既然叫字节码，顾名思义它就应该是“用一个字节数组表示的代码”。那接下来它输">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123752.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123919.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123752.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123919.png">
 <meta property="article:published_time" content="2021-11-26T04:46:19.000Z">
 <meta property="article:modified_time" content="2021-11-28T07:37:40.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123752.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123752.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/40f7736e/">
@@ -326,7 +326,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="11-5-3-JVMCI编译器接口"><a href="#11-5-3-JVMCI编译器接口" class="headerlink" title="11.5.3 JVMCI编译器接口"></a>11.5.3 JVMCI编译器接口</h1><p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123752.png" alt="image-20211126123752046"></p>
+        <h1 id="11-5-3-JVMCI编译器接口"><a href="#11-5-3-JVMCI编译器接口" class="headerlink" title="11.5.3 JVMCI编译器接口"></a>11.5.3 JVMCI编译器接口</h1><p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123752.png" alt="image-20211126123752046"></p>
 <center>图11-11 手动关闭其他版本的工程</center>
 
 <p>现在请读者来思考一下，如果让您来设计JVMCI编译器接口，它应该是怎样的？既然JVMCI面向的是Java语言的编译器接口，那它至少在形式上是与我们已经见过无数次的Java接口是一样的。我们来考虑即时编译器的输入是什么。答案当然是要编译的方法的字节码。既然叫字节码，顾名思义它就应该是“用一个字节数组表示的代码”。那接下来它输出什么？这也很简单，即时编译器应该输出与方法对应的二进制机器码，二进制机器码也应该是“用一个字节数组表示的代码”。这样的话，JVMCI接口就应该看起来类似于下面这种样子：</p>
@@ -336,7 +336,7 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">JVMCICompiler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">compileMethod</span><span class="params">(CompilationRequest request)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">CompilationRequest</span> </span>&#123;</span><br><span class="line">    <span class="function">JavaMethod <span class="title">getMethod</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">JavaMethod</span> </span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] getCode();</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getMaxLocals</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getMaxStackSize</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">ProfilingInfo <span class="title">getProfilingInfo</span><span class="params">()</span></span>;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 省略其他方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们在Eclipse中找到JVMCICompiler接口，通过继承关系分析，可以清楚地看到有一个实现类HotSpotGraalCompiler实现了JVMCI，如图11-12所示，这个就是我们要分析的代码的入口。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123919.png" alt="image-20211126123918694"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123919.png" alt="image-20211126123918694"></p>
 <center>图11-12 JVMCI接口的继承关系</center>
 
 <p>为了后续调试方便，我们先准备一段简单的代码，并让它触发HotSpot的即时编译，以便我们跟踪观察编译器是如何工作对的。具体代码如清单11-14所示。</p>

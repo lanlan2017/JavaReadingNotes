@@ -321,15 +321,15 @@
     <div class="post-body" itemprop="articleBody">
           <h1 id="11-5-5-代码优化与生成"><a href="#11-5-5-代码优化与生成" class="headerlink" title="11.5.5 代码优化与生成"></a>11.5.5 代码优化与生成</h1><p>相信读者现在已经能够基本看明白Graal理想图的中间表示了，那对应到代码上，Graal编译器是如何从字节码生成理想图？又如何在理想图基础上进行代码优化的呢？这时候就充分体现出了Graal编译器在使用Java编写时对普通Java程序员来说具有的便捷性了，在Outline视图中找到创建理想图的方法是greateGraph()，我们可以从Call Hierarchy视图中轻易地找到从JVMCI的入口方法compileMethod()到greateGraph()之间的调用关系，如图11-18所示。</p>
 <p>greateGraph()方法的代码也很清晰，里面调用了StructuredGraph::Builder()构造器来创建理想图。这 里要关注的关键点有两个：</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126192126.png" alt="image-20211126192125635"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126192126.png" alt="image-20211126192125635"></p>
 <center>图11-18 构造理想图的方法</center>
 
 <p>第一是理想图本身的数据结构。它是一组不为空的节点的集合，它的节点都是用ValueNode的不同类型的子类节点来表示的。仍然以x+y表达式为例，譬如其中的加法操作，就由AddNode节点来表示， 从图11-19所示的Type Hierarchy视图中可以清楚地看到加法操作是二元算术操作节点 （<code>BinaryArithmeticNode&lt;OP&gt;</code>）的一种，而二元算术操作节点又是二元操作符（BinaryNode）的一种，以此类推直到所有操作符的共同父类ValueNode（表示可以返回数据的节点）。</p>
 <p>第二就是如何从字节码转换到理想图。该过程被封装在BytecodeParser类中，这个解析器我们可以按照字节码解释器的思路去理解它。如果这真的是一个字节码解释器，执行一个整数加法操作，按照 《Java虚拟机规范》所定义的iadd操作码的规则，应该从栈帧中出栈两个操作数，然后相加，再将结果入栈。而从BytecodeParser::genArithmeticOp()方法上我们可以看到，其实现与规则描述没有什么差异， 如图11-20所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126192231.png" alt="image-20211126192231390"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126192231.png" alt="image-20211126192231390"></p>
 <center>图11-19 节点继承关系</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126192301.png" alt="image-20211126192300732"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126192301.png" alt="image-20211126192300732"></p>
 <center>图11-20 字节码解析器实现的iadd操作码</center>
 
 <p>其中，genIntegerAdd()方法中就只有一行代码，即调用AddNode节点的create()方法，将两个操作数作为参数传入，创建出AddNode节点，如下所示：</p>
@@ -342,7 +342,7 @@
 <p>对理想图的规范化并不局限于单个操作码的局部范围之内，很多的优化都是要立足于全局来进行的，这类操作在CanonicalizerPhase类中完成。仍然以上一节的公共子表达式消除为例，这就是一个全局性的优化，实现在CanonicalizerPhase::tryGlobalValueNumbering()方法中，其逻辑看起来已经非常清晰了：如果理想图中发现了可以进行消除的算术子表达式，那就找出重复的节点，然后替换、删除。具体代码如下所示：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">tryGlobalValueNumbering</span><span class="params">(Node node, NodeClass&lt;?&gt; nodeClass)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (nodeClass.valueNumberable()) &#123;</span><br><span class="line">        Node newNode = node.graph().findDuplicate(node);</span><br><span class="line">        <span class="keyword">if</span> (newNode != <span class="keyword">null</span>) &#123;</span><br><span class="line">            <span class="keyword">assert</span> !(node <span class="keyword">instanceof</span> FixedNode || newNode <span class="keyword">instanceof</span> FixedNode);</span><br><span class="line">            node.replaceAtUsagesAndDelete(newNode);</span><br><span class="line">            COUNTER_GLOBAL_VALUE_NUMBERING_HITS.increment(debug);</span><br><span class="line">            debug.log(<span class="string">&quot;GVN applied and new node is %1s&quot;</span>, newNode);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>至于代码生成，Graal并不是直接由理想图转换到机器码，而是和其他编译器一样，会先生成低级中间表示（LIR，与具体机器指令集相关的中间表示），然后再由HotSpot统一后端来产生机器码。譬如涉及算术运算加法的操作，就在ArithmeticLIRGeneratorTool接口的emitAdd()方法里完成。从低级中间表示的实现类上，我们可以看到Graal编译器能够支持的目标平台，目前它只提供了三种目标平台的指令集（SPARC、x86-AMD64、ARMv8-AArch64）的低级中间表示，所以现在Graal编译器也就只能支持这几种目标平台，如图11-21所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126192557.png" alt="image-20211126192556614"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126192557.png" alt="image-20211126192556614"></p>
 <center>图11-21 Graal支持的目标平台生成器</center>
 
 <p>为了验证代码阅读的成果，现在我们来对AddNode的代码生成做一些小改动，将原本生成加法汇编指令修改为生成减法汇编指令，即按如下方式修改AddNode::generate()方法：</p>
@@ -474,11 +474,11 @@
     <div class="post-body" itemprop="articleBody">
           <h1 id="11-5-4-代码中间表示"><a href="#11-5-4-代码中间表示" class="headerlink" title="11.5.4 代码中间表示"></a>11.5.4 代码中间表示</h1><p>Graal编译器在设计之初就刻意采用了与HotSpot服务端编译器一致（略有差异但已经非常接近） 的中间表示形式，也即是被称为Sea-of-Nodes的中间表示，或者与其等价的被称为理想图（Ideal Graph，在代码中称为Structured Graph）的程序依赖图（Program Dependence Graph，PDG）形式。在11.2节即时编译器的实战中，我们已经通过可视化工具Ideal Graph Visualizer看到过在理想图上翻译和优化输入代码的整体过程，从编译器内部来看即：字节码→理想图→优化→机器码（以Mach Node Graph表示）的转变过程。在那个实战里面，我们着重分析的是理想图转换优化的整体过程，对于多数读者，尤其是不熟悉编译原理与编译器设计的读者，可能会不太容易读懂每个阶段所要做的工作。 在本节里面，我们以例子和对照Graal源码的形式，详细讲解输入代码与理想图的转化对应关系，以便读者理解Graal是如何基于理想图去优化代码的。</p>
 <p>理想图是一种有向图，用节点来表示程序中的元素，譬如变量、操作符、方法、字段等，而用边来表示数据或者控制流。我们先从最简单的例子出发。譬如有一个表达式：x+y，在理想图中可以表示为x、y两个节点的数据流流入加法操作符，表示相加操作读取了x、y的值，流出的便则表示数据流的流向，即相加的结果会在哪里被使用，如图11-13所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126190533.png" alt="image-20211126190533817"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126190533.png" alt="image-20211126190533817"></p>
 <center>图11-13 构造理想图（1）</center>
 
 <p>这很容易接受吧？那我们把例子稍微复杂化一些，把表达式x+y变为getX()+getY()，仍是用理想图表达其计算过程，这时候除了数据流向之外，还必须要考虑方法调用的顺序。在理想图中用另外一条边来表示方法的调用（为了便于区分，数据流笔者使用蓝色线（以虚线表示），控制流使用红色线 （以实线表示）），说明代码的执行顺序是先调用getX()方法，再调用getY()方法，如图11-14所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126191158.png" alt="image-20211126191158391"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126191158.png" alt="image-20211126191158391"></p>
 <center>图11-14 构造理想图（2）</center>
 
 <p>以上这些简单的前置知识就已经足以支撑我们本次实战的进行了，理想图本质上就是这种将数据流图和控制流图以某种方式合并到一起，用一种边来表示数据流向，另一种边来表示控制流向的图形表示。</p>
@@ -487,7 +487,7 @@
 <p>我们可以使用mx igv命令来获得能够支持Graal编译器生成的理想图格式的新版本的Ideal Graph Visualizer工具<a href="%E5%9C%A8%E4%BB%A5%E4%B8%8B%E5%9C%B0%E5%9D%80%E5%8F%AF%E4%BB%A5%E4%B8%8B%E8%BD%BD%EF%BC%9Ahttps://www.oracle.com/technetwork/graalvm/downloads/index.html%E3%80%82">^1</a>，我们以下面这段简单代码的理想图的表示为例子：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">average</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (a + b) / <span class="number">2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在Ideal Graph Visualizer工具中，将显示图11-15所示的样式的理想图。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126191403.png" alt="image-20211126191403447"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126191403.png" alt="image-20211126191403447"></p>
 <center>图11-15 构造理想图（3）</center>
 
 <p>与图11-11和图11-12所示相比，虽然没有了箭头，但是节点上列明了代表执行顺序的序号，仍然是蓝色线表示数据流、红色线表示控制流。从图中可以看到参数0（记作P(0)）和参数1（记作P(1)）是如何送入加法操作的，然后结果是如何和常量2（记作C(2)）一起送入除法操作的。</p>
@@ -497,11 +497,11 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 以下代码的公共子表达式能够被消除</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">workload</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (a + b) * (a + b);</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 以下代码的公共子表达式是不可以被消除的</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">workload</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (getA() + getB()) * (getA() + getB());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>对于第一段代码，a+b是公共子表达式，可以通过优化使其只计算一次而不会有任何的副作用。但是对于第二段代码，由于getA()和getB()方法内部所蕴含的操作是不确定的，它是否被调用、调用次数的不同都可能会产生不同返回值或者其他影响程序状态的副作用（譬如改变某个全局的状态变量）， 这种代码只能内联了getA()和getB()方法之后才能考虑更进一步的优化措施，仍然保持函数调用的情况下是无法做公共子表达式消除的。我们可以从Graal生成的理想图中清晰地看到这一点，对于第一段代码，生成的理想图如图11-16所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126191539.png" alt="image-20211126191539336"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126191539.png" alt="image-20211126191539336"></p>
 <center>图11-16 构造理想图（4）</center>
 
 <p>从图11-16所示中可以看到，参数1、2的加法操作只进行了一次，然后同时流出了两条数据流指向乘法操作的输入中。而如果是第二段代码，则生成的理想图如图11-17所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126191950.png" alt="image-20211126191949939"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126191950.png" alt="image-20211126191949939"></p>
 <center>图11-17 构造理想图（5）</center>
 
 <p>从图中代表控制流的红色边（以实线表示）可以看出，四次方法调用全部执行了，代表数据流的蓝色边（以虚线表示）也明确看到了两个独立加法操作节点，由此看出这个版本是不会把它当作公共子表达式来消除的。</p>
@@ -625,7 +625,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="11-5-3-JVMCI编译器接口"><a href="#11-5-3-JVMCI编译器接口" class="headerlink" title="11.5.3 JVMCI编译器接口"></a>11.5.3 JVMCI编译器接口</h1><p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123752.png" alt="image-20211126123752046"></p>
+          <h1 id="11-5-3-JVMCI编译器接口"><a href="#11-5-3-JVMCI编译器接口" class="headerlink" title="11.5.3 JVMCI编译器接口"></a>11.5.3 JVMCI编译器接口</h1><p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123752.png" alt="image-20211126123752046"></p>
 <center>图11-11 手动关闭其他版本的工程</center>
 
 <p>现在请读者来思考一下，如果让您来设计JVMCI编译器接口，它应该是怎样的？既然JVMCI面向的是Java语言的编译器接口，那它至少在形式上是与我们已经见过无数次的Java接口是一样的。我们来考虑即时编译器的输入是什么。答案当然是要编译的方法的字节码。既然叫字节码，顾名思义它就应该是“用一个字节数组表示的代码”。那接下来它输出什么？这也很简单，即时编译器应该输出与方法对应的二进制机器码，二进制机器码也应该是“用一个字节数组表示的代码”。这样的话，JVMCI接口就应该看起来类似于下面这种样子：</p>
@@ -635,7 +635,7 @@
 
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">JVMCICompiler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">compileMethod</span><span class="params">(CompilationRequest request)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">CompilationRequest</span> </span>&#123;</span><br><span class="line">    <span class="function">JavaMethod <span class="title">getMethod</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">JavaMethod</span> </span>&#123;</span><br><span class="line">    <span class="keyword">byte</span>[] getCode();</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getMaxLocals</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">getMaxStackSize</span><span class="params">()</span></span>;</span><br><span class="line">    <span class="function">ProfilingInfo <span class="title">getProfilingInfo</span><span class="params">()</span></span>;</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 省略其他方法</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们在Eclipse中找到JVMCICompiler接口，通过继承关系分析，可以清楚地看到有一个实现类HotSpotGraalCompiler实现了JVMCI，如图11-12所示，这个就是我们要分析的代码的入口。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123919.png" alt="image-20211126123918694"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123919.png" alt="image-20211126123918694"></p>
 <center>图11-12 JVMCI接口的继承关系</center>
 
 <p>为了后续调试方便，我们先准备一段简单的代码，并让它触发HotSpot的即时编译，以便我们跟踪观察编译器是如何工作对的。具体代码如清单11-14所示。</p>
@@ -792,7 +792,7 @@
 <p>由于整个构建过程需要的依赖项都可以自动处理，需要手动处理的只有OpenJDK一个，所以编译一般不会出现什么问题，大概两三分钟编译即可完成。此时其实已经可以修改、调试Graal编译器了， 但写Java代码不同于C、C++，应该没有人会直接用VIM去做Java开发调试，我们还是需要一个IDE来支持本次实战的。mx工具能够支持Eclipse、Intellij IDEA和NetBeans三种主流的Java IDE项目的创建， 由于Graal团队中使用Eclipse占多数，支持也最好，所以笔者也选择Eclipse来进行本次实战，创建Eclipse项目的操作如下：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd graal/compiler </span><br><span class="line">$ mx eclipseinit</span><br></pre></td></tr></table></figure>
 <p>无论使用哪种IDE，都需要把IDE配置中使用的Java堆修改到2GB或以上，才能保证Graal在IDE中的编译构建能够顺利进行，譬如Eclipse默认配置（eclipse.ini文件）下的Java堆最大为1GB，这是不够的。设置完成后，在Eclipse中选择File-&gt;Open Projects from File System，再选择Graal项目的根目录，将会导入整个Graal VM，导入的工程如图11-10所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126123629.png" alt="image-20211126123628899"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126123629.png" alt="image-20211126123628899"></p>
 <center>图11-10 Graal VM项目（部分工程）</center>
 
 <p>如果你与笔者一样采用的是JDK 8，那么要记得在Eclipse中也必须将那个带有JVMCI功能的特殊JDK 8用作Eclipse里面“Java SE-1.8”的环境配置（Windows-&gt;Preferences-&gt;Java-&gt;Install JREs-&gt;ExecutionEnvironments-&gt;Java SE-1.8），此外，还需要手工将以其他版本号结尾的工程关闭，譬如图11-11所示。 这对于采用其他版本JDK来编译的读者也是一样的。</p>
@@ -1590,8 +1590,8 @@
 <h1 id="11-4-1-优化技术概览"><a href="#11-4-1-优化技术概览" class="headerlink" title="11.4.1 优化技术概览"></a>11.4.1 优化技术概览</h1><p>OpenJDK的官方Wiki上，HotSpot虚拟机设计团队列出了一个相对比较全面的、即时编译器中采用的优化技术列表<a href="%E5%9C%B0%E5%9D%80%EF%BC%9Ahttps://wiki.openjdk.java.net/display/HotSpot/PerformanceTacticIndex%E3%80%82">^1</a>，如表11-1所示，其中有不少经典编译器的优化手段，也有许多针对Java语言，或者说针对运行在Java虚拟机上的所有语言进行的优化。本节先对这些技术进行概览，在后面几节中， 将挑选若干最重要或最典型的优化，与读者一起看看优化前后的代码发生了怎样的变化。</p>
 <center>表11-1 即时编译器优化技术一览</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121316.png" alt="image-20211126121315790"></p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211126121333.png" alt="image-20211126121333215"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121316.png" alt="image-20211126121315790"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211126121333.png" alt="image-20211126121333215"></p>
 <p>上述的优化技术看起来很多，而且名字看起来大多显得有点“高深莫测”，实际上要实现这些优化确实有不小的难度，但大部分优化技术理解起来都并不困难，为了消除读者对这些优化技术的陌生感，笔者举一个最简单的例子：通过大家熟悉的Java代码变化来展示其中几种优化技术是如何发挥作用的。不过首先需要明确一点，即时编译器对这些代码优化变换是建立在代码的中间表示或者是机器码之上的，绝不是直接在Java源码上去做的，这里只是笔者为了方便讲解，使用了Java语言的语法来表示这些优化技术所发挥的作用。</p>
 <p>第一步，从原始代码开始，如代码清单11-6所示[^2]。</p>
 <center>代码清单11-6 优化前的原始代码</center>

@@ -34,18 +34,18 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="37.1 MVC框架的实现相信这本书的读者对Struts的使用是得心应手了，也明白MVC框架有诸如视图与逻辑解耦、灵活稳定、业务逻辑可重用等优点，而且还对其他的MVC框架（例如JSF、Spring MVC、WebWork）也了解一点。SSH（Struts+Spring+Hibernate）框架是Java项目常用的框架，作为一个Java开发人员，应该对SSH框架很熟悉了！我们今天就学Struts怎么">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213321.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213507.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213719.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213950.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001215149.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001215608.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001220257.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213321.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213507.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213719.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213950.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001215149.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001215608.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001220257.png">
 <meta property="article:published_time" content="2021-09-27T11:57:33.000Z">
 <meta property="article:modified_time" content="2021-10-01T16:22:46.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213321.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213321.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/c57845b6/">
@@ -329,12 +329,12 @@
     <div class="post-body" itemprop="articleBody">
         <h1 id="37-1-MVC框架的实现"><a href="#37-1-MVC框架的实现" class="headerlink" title="37.1 MVC框架的实现"></a>37.1 MVC框架的实现</h1><p>相信这本书的读者对Struts的使用是得心应手了，也明白MVC框架有诸如视图与逻辑解耦、灵活稳定、业务逻辑可重用等优点，而且还对其他的MVC框架（例如JSF、Spring MVC、WebWork）也了解一点。SSH（Struts+Spring+Hibernate）框架是Java项目常用的框架，作为一个Java开发人员，应该对SSH框架很熟悉了！我们今天就学Struts怎么用！我们要讲的是MVC框架如何设计，你可以设计一个新的MVC框架与Struts抗衡。</p>
 <p>在开始设计MVC框架前，首先要对MVC框架做一个简单的介绍。MVC（Model ViewController）的中文名称叫做模型视图控制器模型，就是因为它的英文名字太流行了， 中文名字反而被忽略了。它诞生于20世纪80年代，原本是为桌面应用程序建立起来的一个框架，现在反而在Web应用中大放异彩（其实也可以把B/S认为是C/S的瘦化结构），MVC框架的目的是通过控制器C将模型M（代表的是业务数据和业务逻辑）和视图V（人机交互的界面）实现代码分离，从而使同一个逻辑或行为或数据可以具有不同的表现形式，或者是同样的应用逻辑共享相同、不同视图。比如，可以用IE浏览器访问某应用网站（页面格式遵守HTML标准），也可以用手机通过WAP浏览器访问（页面格式遵守WML格式），对MVC框架来说，后台的程序（也就是模型）不用做任何修改，只是使用的视图不同而已。MVC框架如图37-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213321.png" alt="image-20211001213320931"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213321.png" alt="image-20211001213320931"></p>
 <center>图37-1 MVC框架示意图</center>
 该框架是Model2的结构。MVC框架有两个版本，一个是Model1，也就是MVC的第一个版本，它的视图中存在着大量的流程控制和代码开发，也就是控制器和视图还具有部分的耦合。也有人不认为Model1属于MVC框架，那也说得通，因为在JSP页面中融合了控制器和视图的功能，这其实就是早期的开发模式，开发一堆的JSP页面，然后再开发一堆的JavaBean，JavaBean就是模型了，它只是把JSP和JavaBean拆分开了。Model2版本则提倡视图和模型的彻底分离，视图仅仅负责展示服务，不再参与业务的行为和数据处理。我们举例来说明MVC框架是如何图37-1 MVC框架示意图控制器（Controller）视图（View）模型 （Model）第37章运行的。
 
 <p>在做Web开发时，例如开发一个数据展示界面，从一张表中把数据全部读出，然后展示到页面上，也是一个简单的表格，其中页面展示的格式就是视图V，怎么从数据库中取得数据则是模型M，那控制器C是做什么的呢？它负责把接收的浏览器的请求转发通知模型M处理，然后组合视图V，最终反馈一个带数据的视图到用户端，数据处理流程如图37-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213507.png" alt="image-20211001213507728"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213507.png" alt="image-20211001213507728"></p>
 <center>图37-2 MVC框架的逻辑流</center>
 浏览器通过HTTP协议发出数据请求①，由控制器接收请求，通过路径②委托给数据模型处理，模型通过与逻辑层和持久层的交互（路径③④），把处理结果反馈给控制器（路径 ⑤），控制器根据结果组装视图（路径⑥⑦），并最终反馈给浏览器可以接受的HTML数据 （路径⑧）。整体MVC框架还是比较简单的，但它带来的优点非常多。
 
@@ -352,7 +352,7 @@
 <p>模型和视图分离，可以使各个开发人员自由发挥，做视图的人员和开发模型的人员可以制订自己的计划，然后在控制器的协作下实现完整的应用逻辑。</p>
 <p>MVC框架还有很多优点，本章主要不是讲解MVC技术，主要是通过讲解设计MVC框架 来说明设计模式该怎么应用，所以想了解更详细的MVC框架信息请自行查阅资料。</p>
 <h2 id="37-1-1-MVC的系统架构"><a href="#37-1-1-MVC的系统架构" class="headerlink" title="37.1.1 MVC的系统架构"></a>37.1.1 MVC的系统架构</h2><p>我们设计的MVC框架包含以下模块：核心控制器（FilterDispatcher）、拦截器 （Interceptor）、过滤器（Filter）、模型管理器（Model Action）、视图管理器（View Provider）等，基本上一个MVC框架上常用的功能我们都具备了，系统架构如图37-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213719.png" alt="image-20211001213719199"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213719.png" alt="image-20211001213719199"></p>
 <center>图37-3 MVC系统架构</center>
 
 <p>各个模块的职责如下：</p>
@@ -381,7 +381,7 @@
 </ul>
 <p>它其实就是一大堆的辅助管理工具，比如文件管理、对象管理等。</p>
 <p>在我们的MVC框架中，核心控制器是最重要的，我们就先从它着手。核心控制器使用了Servlet容器的过滤器技术，需要编写一个过滤器，所有进入MVC框架的请求都需要经过核心控制器的转发，类图如图37-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001213950.png" alt="image-20211001213950390"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001213950.png" alt="image-20211001213950390"></p>
 <p>图37-4 核心控制器类图</p>
 <p>由于类图中的部分输入参数类型较长，省略了，请读者仔细看代码。首先阅读FilterDispatcher代码，如代码清单37-1所示。</p>
 <p>代码清单37-1 核心控制器</p>
@@ -423,7 +423,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Checker</span> </span>&#123;</span><br><span class="line">    <span class="comment">//使用哪一个策略</span></span><br><span class="line">    <span class="keyword">private</span> IXmlValidate validate;</span><br><span class="line">    <span class="comment">//xml配置文件的路径</span></span><br><span class="line">    String xmlPath;</span><br><span class="line">    <span class="comment">//构造函数传递</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Checker</span><span class="params">(IXmlValidate _validate)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.validate = _validate;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setXmlPath</span><span class="params">(String _xmlPath)</span></span>&#123;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">this</span>.xmlPath = _xmlPath;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//检查</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">check</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> validate.validate(xmlPath);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>与通用策略模式稍有不同，每个模式在实际应用环境中都有其个性，很少出现完全照搬一个模式的情况，灵活应用设计模式才是关键。</p>
 <p>在FilterDispatcher的init方法中，我们刚刚说它有两个职责：第一个职责是XML文件校验，这个我们完成了；第二个职责是启动监控程序。问题是要监控什么呢？监控XML有没有被修改，如果修改了就立刻通知校验程序对它进行校验。这就又用到了观察者模式：发现文件被修改，它立刻通知检查者处理，该片段的类图如图37-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001215149.png" alt="image-20211001215149343"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001215149.png" alt="image-20211001215149343"></p>
 <center>图37-5 XML文件监控类图</center>
 
 <p>为什么要在这里定义一个Watchable接口呢？它表示所有可以监视的资源，比如数据库、日志文件、磁盘空间等。我们来看代码，监听接口如代码清单37-8所示。</p>
@@ -451,7 +451,7 @@
 <p>代码清单37-13 抽象Action</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ActionSupport</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String SUCCESS = <span class="string">&quot;success&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">final</span> <span class="keyword">static</span> String FAIL = <span class="string">&quot;fail&quot;</span>;</span><br><span class="line">    <span class="comment">//默认的执行方法</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">execute</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SUCCESS;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001215608.png" alt="image-20211001215608539"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001215608.png" alt="image-20211001215608539"></p>
 <center>图37-6 模型管理器类图</center>
 抽象的ActionSupport类看起来很简单，其实它可不简单，所有的模型行为都继承该类， 它之所以提供一个默认的execute方法，是因为在xml的配置文件中，可以省略掉method="XXX"这句话，默认就是调用该方法。它还有一个非常重要的行为：对象映射，把HTTP传递过来的字符串映射到一个业务对象上，我们会在值栈中详细讲解。
 
@@ -516,7 +516,7 @@
 <p>由模型产生的数据，它对视图来说是结构固定，并可反复加载。</p>
 <p>在这三部分中，静态页面是完全静态的，动态页面元素是稍微有点动感，动态数据完全是多变的（数据结构不发生变化，否则页面无法展现）。把动态数据融入到静态页面中比较容易，已经在配置文件中指定要把模型中的数据放到哪个页面中，现在的问题是怎么把动态页面元素融入到静态页面中。静态页面有很多，语言类型也有很多，怎么融合在一起提供给浏览器访问呢？</p>
 <p>桥梁模式可以解决用什么笔（圆珠笔、铅笔）和画什么图形（圆形、方形）的问题，我们遇到的问题与此场景类似。先看类图，如图37-7所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001220257.png" alt="image-20211001220257520"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001220257.png" alt="image-20211001220257520"></p>
 <center>图37-7 视图与语言类图</center>
 大家还记得Struts是怎么配置多语言的文件吗？我们采用类似的结构，如代码清单37-18 所示。
 

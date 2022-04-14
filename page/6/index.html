@@ -1241,7 +1241,7 @@
 <p>运行后aThread和bThread陷入了相互等待。怎么解决呢？首先，<strong>应该尽量避免在持有一个锁的同时去申请另一个锁，如果确实需要多个锁，所有代码都应该按照相同的顺序去申请锁</strong>。比如，对于上面的例子，可以约定都先申请lockA，再申请lockB。</p>
 <p>不过，在复杂的项目代码中，这种约定可能难以做到。还有一种方法是使用后续章节介绍的显式锁接口Lock，它支持尝试获取锁（tryLock）和带时间限制的获取锁方法，使用这些方法可以在获取不到锁的时候释放已经持有的锁，然后再次尝试获取锁或干脆放弃，以避免死锁。</p>
 <p>如果还是出现了死锁，怎么办呢？Java不会主动处理，不过，借助一些工具，我们可以发现运行中的死锁，比如，Java自带的jstack命令会报告发现的死锁。对于上面的程序，在笔者的计算机中，jstack会生成图15-1所示的报告。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210121056.jpeg" alt="epub_923038_127"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211210121056.jpeg" alt="epub_923038_127"></p>
 <center>图15-1 jstack的死锁检测</center>
 
 <h2 id="15-2-3-同步容器及其注意事项"><a href="#15-2-3-同步容器及其注意事项" class="headerlink" title="15.2.3 同步容器及其注意事项"></a>15.2.3 同步容器及其注意事项</h2><p>我们知道，类Collection中有一些方法，可以返回线程安全的同步容器，比如：</p>
@@ -1444,7 +1444,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Student student = <span class="keyword">new</span> Student(<span class="string">&quot;张三&quot;</span>, <span class="number">18</span>, <span class="number">80.9d</span>);</span><br><span class="line">ObjectMapper mapper = <span class="keyword">new</span> ObjectMapper(<span class="keyword">new</span> MessagePackFactory());</span><br><span class="line"><span class="keyword">byte</span>[] bytes = mapper.writeValueAsBytes(student);</span><br><span class="line">mapper.writeValue(<span class="keyword">new</span> File(<span class="string">&quot;student.bson&quot;</span>), student);</span><br></pre></td></tr></table></figure>
 
 <p>序列后的字节如图14-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210112515.jpeg" alt="epub_923038_124"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211210112515.jpeg" alt="epub_923038_124"></p>
 <center>图14-4 MessagePack序列化示例</center>
 
 <p>反序列化代码为：</p>
@@ -1993,7 +1993,7 @@
 <p>假定这两个程序的当前目录一样，它们会使用同样的队列”task”。同时运行这两个程序，会看到它们的输出交替出现。</p>
 <h3 id="3．设计"><a href="#3．设计" class="headerlink" title="3．设计"></a>3．设计</h3><p>我们采用如下简单方式来设计BasicQueue。<br>1）使用两个文件来保存消息队列：一个为数据文件，扩展为．data；一个是元数据文件．meta。<br>2）在．data文件中使用固定长度存储每条信息，长度为1024，前4个字节为实际长度，后面是实际内容，每条消息的最大长度不能超过1020。<br>3）在．meta文件中保存队列头和尾，指向．data文件中的位置，初始都是0，入队增加尾，出队增加头，到结尾时，再从0开始，模拟循环队列。<br>4）为了区分队列满和空的状态，始终留一个位置不保存数据，当队列头和队列尾一样的时候表示队列为空，当队列尾的下一个位置是队列头的时候表示队列满。</p>
 <p>BasicQueue的基本设计如图14-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210105225.jpeg" alt="epub_923038_123"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211210105225.jpeg" alt="epub_923038_123"></p>
 <center>图14-3 BasicQueue的基本设计</center>
 
 <p>为简化起见，我们暂不考虑由于并发访问等引起的一致性问题。</p>
@@ -2468,11 +2468,11 @@
 
 <p>以上只是介绍了基本用法，如果需要更多信息，如配置单元格的格式、颜色、字体，可参看<a target="_blank" rel="noopener" href="http://poi.apache.org/spreadsheet/quick-guide.html">http://poi.apache.org/spreadsheet/quick-guide.html</a> 。</p>
 <h2 id="14-1-4-HTML"><a href="#14-1-4-HTML" class="headerlink" title="14.1.4 HTML"></a>14.1.4 HTML</h2><p>HTML是网页的格式，如果不熟悉，可以参看 <a target="_blank" rel="noopener" href="http://www.w3school.com.cn/html/html_intro.asp">http://www.w3school.com.cn/html/html_intro.asp</a> 。在日常工作中，可能需要分析HTML页面，抽取其中感兴趣的信息。有很多HTML分析器，我们简要介绍一种：jsoup，其官网地址为<a target="_blank" rel="noopener" href="https://jsoup.org/">https://jsoup.org/</a> 。本节使用其1.10.2版本。我们通过一个简单例子来看jsoup的使用，我们要分析的网页地址是 <a target="_blank" rel="noopener" href="http://www.cnblogs.com/swiftma/p/5631311.html">http://www.cnblogs.com/swiftma/p/5631311.html</a> 。浏览器中看起来的样子（部分截图）如图14-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210101401.jpeg" alt="epub_923038_121"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211210101401.jpeg" alt="epub_923038_121"></p>
 <center>图14-1 HTML网页示例</center>
 
 <p>将网页保存下来，其HTML代码（部分截图）看上去如图14-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211210101430.jpeg"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211210101430.jpeg"></p>
 <center>图14-2 HTML网页代码示例</center>
 
 

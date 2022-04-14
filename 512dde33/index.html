@@ -34,16 +34,16 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="10.2 Javac编译器分析源码是了解一项技术的实现内幕最彻底的手段，Javac编译器不像HotSpot虚拟机那样使用C++语言（包含少量C语言）实现，它本身就是一个由Java语言编写的程序，这为纯Java的程序员了解它的编译过程带来了很大的便利。 10.2.1 Javac的源码与调试在JDK 6以前，Javac并不属于标准Java SE API的一部分，它实现代码单独存放在tools.jar中">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203015.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203043.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203119.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203323.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203357.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203015.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203043.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203119.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203323.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203357.png">
 <meta property="article:published_time" content="2021-11-25T12:34:49.000Z">
 <meta property="article:modified_time" content="2021-11-28T07:25:57.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203015.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203015.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/512dde33/">
@@ -332,15 +332,15 @@
         <h1 id="10-2-Javac编译器"><a href="#10-2-Javac编译器" class="headerlink" title="10.2 Javac编译器"></a>10.2 Javac编译器</h1><p>分析源码是了解一项技术的实现内幕最彻底的手段，Javac编译器不像HotSpot虚拟机那样使用C++语言（包含少量C语言）实现，它本身就是一个由Java语言编写的程序，这为纯Java的程序员了解它的编译过程带来了很大的便利。</p>
 <h1 id="10-2-1-Javac的源码与调试"><a href="#10-2-1-Javac的源码与调试" class="headerlink" title="10.2.1 Javac的源码与调试"></a>10.2.1 Javac的源码与调试</h1><p>在JDK 6以前，Javac并不属于标准Java SE API的一部分，它实现代码单独存放在tools.jar中，要在程序中使用的话就必须把这个库放到类路径上。在JDK 6发布时通过了JSR 199编译器API的提案，使得Javac编译器的实现代码晋升成为标准Java类库之一，它的源码就改为放在JDK_SRC_HOME/langtools/src/share/classes/com/sun/tools/javac中<a href="%E5%A6%82%E4%BD%95%E8%8E%B7%E5%8F%96OpenJDK%E6%BA%90%E7%A0%81%E8%AF%B7%E5%8F%82%E8%80%83%E6%9C%AC%E4%B9%A6%E7%AC%AC1%E7%AB%A0%E7%9A%84%E7%9B%B8%E5%85%B3%E5%86%85%E5%AE%B9%E3%80%82">^1</a>。到了JDK 9时，整个JDK所有的Java类库都采用模块化进行重构划分，Javac编译器就被挪到了jdk.compiler模块（路径为： JDK_SRC_HOME/src/jdk.compiler/share/classes/com/sun/tools/javac）里面。虽然程序代码的内容基本没有变化，但由于本节的主题是源码解析，不可避免地会涉及大量的路径和包名，这就要选定JDK版本来讨论了，本次笔者将会以JDK 9之前的代码结构来进行讲解。</p>
 <p>Javac编译器除了JDK自身的标准类库外，就只引用了<code>JDK_SRC_HOME/langtools/src/share/classes/com/sun/*</code>里面的代码，所以我们的代码编译环境建立时基本无须处理依赖关系，相当简单便捷。以Eclipse IDE作为开发工具为例，先建立一个名为“Compiler_javac”的Java工程，然后把<code>JDK_SRC_HOME/langtools/src/share/classes/com/sun/*</code>目录下的源文件全部复制到工程的源码目录中，如图10-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203015.png" alt="image-20211125203014895"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203015.png" alt="image-20211125203014895"></p>
 <center>图10-1 Eclipse中的Javac工程</center>
 
 <p>导入代码期间，源码文件“AnnotationProxyMaker.java”可能会提示“Access Restriction”，被Eclipse 拒绝编译，如图10-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203043.png" alt="image-20211125203043397"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203043.png" alt="image-20211125203043397"></p>
 <center>图10-2 AnnotationProxyMaker被拒绝编译</center>
 
 <p>这是由于Eclipse为了避免开发人员引用非标准Java类库可能导致的兼容性问题，在“JRE System Library”设置中默认包含了一系列的代码访问规则（Access Rules），如果代码中引用了这些访问规则所禁止引用的类，就会提示这个错误。我们可以通过添加一条允许访问JAR包中所有类的访问规则来解决该问题，如图10-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203119.png" alt="image-20211125203119383"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203119.png" alt="image-20211125203119383"></p>
 <center>图10-3 设置访问规则</center>
 
 <p>导入了Javac的源码后，就可以运行com.sun.tools.javac.Main的main()方法来执行编译了，可以使用的参数与命令行中使用的Javac命令没有任何区别，编译的文件与参数在Eclipse的“Debug Configurations”面板中的“Arguments”页签中指定。</p>
@@ -359,11 +359,11 @@
 <li>字节码生成。将前面各个步骤所生成的信息转化成字节码。</li>
 </ul>
 <p>上述3个处理过程里，执行插入式注解时又可能会产生新的符号，如果有新的符号产生，就必须转回到之前的解析、填充符号表的过程中重新处理这些新符号，从总体来看，三者之间的关系与交互顺序如图10-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203323.png" alt="image-20211125203323693"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203323.png" alt="image-20211125203323693"></p>
 <center>图10-4 Javac的编译过程[^2]</center>
 
 <p>我们可以把上述处理过程对应到代码中，Javac编译动作的入口是com.sun.tools.javac.main.JavaCompiler类，上述3个过程的代码逻辑集中在这个类的compile()和compile2() 方法里，其中主体代码如图10-5所示，整个编译过程主要的处理由图中标注的8个方法来完成。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125203357.png" alt="image-20211125203356944"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125203357.png" alt="image-20211125203356944"></p>
 <center>图10-5 Javac编译过程的主体代码</center>
 
 <p>接下来，我们将对照Javac的源代码，逐项讲解上述过程。</p>

@@ -316,13 +316,13 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="33-1-策略模式VS桥梁模式"><a href="#33-1-策略模式VS桥梁模式" class="headerlink" title="33.1 策略模式VS桥梁模式"></a>33.1 策略模式VS桥梁模式</h1><p>这对冤家终于碰头了，策略模式与桥梁模式是如此相似，简直就是孪生兄弟，要把它们两个分开可不太容易。我们来看看两者的通用类图，如图33-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930184916.png" alt="image-20210930184916250"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930184916.png" alt="image-20210930184916250"></p>
 <center>图33-1 策略模式（左）和桥梁模式（右）通用类图</center>
 两者之间确实很相似。如果把策略模式的环境角色变更为一个抽象类加一个实现类，或者桥梁模式的抽象角色未实现，只有修正抽象化角色，想想看，这两个类图有什么地方不一样？完全一样！正是由于类似场景的存在才导致了两者在实际应用中经常混淆的情况发生， 我们来举例说明两者有何差别。
 
 <p>大家都知道邮件有两种格式：文本邮件（Text Mail）和超文本邮件（HTML MaiL）,在文本邮件中只能有简单的文字信息，而在超文本邮件中可以有复杂文字（带有颜色、字体等属性）、图片、视频等，如果你使用Foxmail邮件客户端的话就应该有深刻体验，看到一份邮件，怎么没内容？原来是你忘记点击那个“HTML邮件”标签了。下面我们就来讲解如何发送这两种不同格式的邮件，研究一下这两种模式如何处理这样的场景。</p>
 <h2 id="33-1-1-策略模式实现邮件发送"><a href="#33-1-1-策略模式实现邮件发送" class="headerlink" title="33.1.1 策略模式实现邮件发送"></a>33.1.1 策略模式实现邮件发送</h2><p>使用策略模式发送邮件，我们认为这两种邮件是两种不同的封装格式，给定了发件人、 收件人、标题、内容的一封邮件，按照两种不同的格式分别进行封装，然后发送之。按照这样的分析，我们发现邮件的两种不同封装格式就是两种不同的算法，具体到策略模式就是两种不同策略，这样看已经很简单了，我们可以直接套用策略模式来实现。先看类图，如图33-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930200945.png" alt="image-20210930200945323"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930200945.png" alt="image-20210930200945323"></p>
 <center>图33-2 策略模式实现邮件发送的类图</center>
 
 <p>我们定义了一个邮件模板，它有两个实现类：TextMail（文本邮件）和HtmlMail（超文本邮件），分别实现两种不同格式的邮件封装。MailServer是一个环境角色，它接收一个MailTemplate对象，然后通过sendMail方法发送出去。我们来看具体的代码，先看抽象邮件，如代码清单33-1所示。</p>
@@ -346,7 +346,7 @@
 <p>当然，如果想产生一封文本格式的邮件，只要稍稍修改一下场景类就可以了：new HtmlMail修改为new TextMail，读者可以自行实现，非常简单。在该场景中，我们使用策略模式实现两种算法的自由切换，它提供了这样的保证：封装邮件的两种行为是可选择的，至于选择哪个算法是由上层模块决定的。策略模式要完成的任务就是提供两种可以替换的算法。</p>
 <h2 id="33-1-2-桥梁模式实现邮件发送"><a href="#33-1-2-桥梁模式实现邮件发送" class="headerlink" title="33.1.2 桥梁模式实现邮件发送"></a>33.1.2 桥梁模式实现邮件发送</h2><p>桥梁模式关注的是抽象和实现的分离，它是结构型模式，结构型模式研究的是如何建立一个软件架构，下面我们就来看看桥梁模式是如何构件一套发送邮件的架构的，如图33-3所示。</p>
 <p>类图中我们增加了SendMail和Postfix两个邮件服务器来实现类，在邮件模板中允许增加发送者标记，其他与策略模式都相同。我们在这里已经完成了一个独立的架构，邮件有了， 发送邮件的服务器也具备了，是一个完整的邮件发送程序。需要读者注意的是，SendMail类不是一个动词行为（发送邮件），它指的是一款开源邮件服务器产品，一般*nix系统的默认邮件服务器就是SendMail；Postfix也是一款开源的邮件服务器产品，其性能、稳定性都在逐步赶超SendMail。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930202529.png" alt="image-20210930202528940"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930202529.png" alt="image-20210930202528940"></p>
 <center>图33-3 桥梁模式实现邮件发送的类图</center>
 
 <p>我们来看代码实现，邮件模板仅仅增加了一个add方法，如代码清单33-6所示。</p>
@@ -1053,7 +1053,7 @@
 <h2 id="38-2-2-对象池模式的意图"><a href="#38-2-2-对象池模式的意图" class="headerlink" title="38.2.2 对象池模式的意图"></a>38.2.2 对象池模式的意图</h2><p>对象池模式，或者称为对象池服务，其意图如下：<br>通过循环使用对象，减少资源在初始化和释放时的昂贵损耗[^1]。</p>
 <p>注意这里的“昂贵”可能是时间效益（如性能），也可能是空间效益（如并行处理），在大多的情况下，“昂贵”指性能。</p>
 <p>简单地说，在需要时，从池中提取；不用时，放回池中，等待下一个请求。典型例子是连接池和线程池，这是我们开发中经常接触到的。类图如图38-6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001233332.png" alt="image-20211001233332624"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001233332.png" alt="image-20211001233332624"></p>
 <center>图38-6 对象池模式通用类图</center>
 
 <p>对象池提供两个公共的方法：checkOut负责从池中提取对象，checkIn负责把回收对象 （当然，很多时候checkIn已经自动化处理，不需要显式声明,如连接池），对象池代码如代码清单38-31所示。</p>
@@ -1196,7 +1196,7 @@
 <h2 id="38-3-2-雇工模式的意图"><a href="#38-3-2-雇工模式的意图" class="headerlink" title="38.3.2 雇工模式的意图"></a>38.3.2 雇工模式的意图</h2><p>雇工模式也叫做仆人模式（Servant Design Pattern），其意图是：</p>
 <p>雇工模式是行为模式的一种，它为一组类提供通用的功能，而不需要类实现这些功能， 它是命令模式的一种扩展[^1]。</p>
 <p>看看我们的例子，厨师、裁缝、园丁是一组类，都具有清洁的能力，但是我们却没实现，而是采用一种更优雅的方式来实现，这就是雇工模式。雇工模式的类图如图38-7所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001235152.png" alt="image-20211001235152512"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001235152.png" alt="image-20211001235152512"></p>
 <center>图38-7 雇工模式通用类图</center>
 在类图中，IServiced是用于定义“一组类”所具有的功能，其示例代码如代码清单38-35所示。
 
@@ -1330,7 +1330,7 @@
           <h1 id="38-4-黑板模式"><a href="#38-4-黑板模式" class="headerlink" title="38.4 黑板模式"></a>38.4 黑板模式</h1><h2 id="38-4-1-黑板模式的意图"><a href="#38-4-1-黑板模式的意图" class="headerlink" title="38.4.1 黑板模式的意图"></a>38.4.1 黑板模式的意图</h2><p>黑板模式（Blackboard Design Pattern）是观察者模式的一个扩展，知名度并不高，但是我们使用的范围却非常广。黑板模式的意图如下：</p>
 <p>允许消息的读写同时进行，广泛地交互消息[^1]。</p>
 <p>简单地说，黑板模式允许多个消息读写者同时存在，消息的生产者和消费者完全分开。 这就像一个黑板，任何一个教授（消息的生产者）都可以在其上书写消息，任何一个学生 （消息的消费者）都可以从黑板上读取消息，两者在空间和时间上可以解耦，并且互不干扰。示意图如图38-8所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001235608.png" alt="image-20211001235608017"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001235608.png" alt="image-20211001235608017"></p>
 <center>图38-8 黑板模式示意图</center>
 
 <p>看到这个图大家可能会说：这不是一个简单的消息广播吗？是的，确实如此，黑板模式确实是消息的广播，主要解决的问题是消息的生产者和消费者之间的耦合问题，它的核心是消息存储（黑板），它存储所有消息，并可以随时被读取。当消息生产者把消息写入到消息仓库后，其他消费者就可以从仓库中读取。当然，此时消息的写入者也可以变身为消息的阅读者，读写者在时间上解耦。对于这些消息，消费者只需要关注特定消息，不处理与自己不相关的消息，这一点通常通过过滤器来实现。</p>
@@ -1594,7 +1594,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <h2 id="14-1-进销存管理是这个样子的吗"><a href="#14-1-进销存管理是这个样子的吗" class="headerlink" title="14.1 进销存管理是这个样子的吗"></a>14.1 进销存管理是这个样子的吗</h2><p>大家都来自五湖四海，都要生存，于是都找了个靠山——公司，就是给你发薪水的地方。公司要想尽办法赢利赚钱，赢利方法则不尽相同，但是各个公司都有相同的三个环节： 采购、销售和库存。这个怎么说呢？比如一个软件公司，要开发软件，就需要购买开发环境，如Windows操作系统、数据库产品等，这就是采购；开发完产品还要把产品推销出去； 有产品就必然有库存，软件产品也有库存，虽然不需要占用库房空间，但也要占用光盘或硬盘，这也是库存。再比如做咨询服务的公司，它要采购什么？采购知识，采购经验，这是这类企业的生存之本，销售的也是知识和经验，库存同样是知识和经验。既然进销存是如此重要，我们今天就来讲讲它的原理和设计，我相信很多人都已经开发过这种类型的软件，基本上都形成了固定套路，不管是单机版还是网络版，一般的做法都是通过数据库来完成相关产品的管理，相对来说这还是比较简单的项目，三个模块的示意图如图14-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210928193515.png" alt="image-20210928193515742"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210928193515.png" alt="image-20210928193515742"></p>
 <center>图14-1 进销存示意图</center>
 
 <p>我们从这个示意图上可以看出，三个模块是相互依赖的。我们就以一个终端销售商（以服务最终客户为目标的企业，比如某某超市、某某商店等）为例，采购部门要采购IBM的电脑，它根据以下两个要素来决定采购数量。</p>
@@ -1617,7 +1617,7 @@
 <p>在特殊情况下，比如一个企业客户要一次性购买100台电脑，库存只有80台，这时需要催促采购部门赶快采购！</p>
 <p>同样地，库存管理也对其他两个模块有影响。库房是有容积限制的，不可能无限大，所以就有了清仓处理，那就要求采购部门停止采购，同时销售部门进行打折销售。</p>
 <p>从以上分析来看，这三个模块都有自己的行为，并且与其他模块之间的行为产生关联， 类似于我们办公室的同事，大家各干各的活，但是彼此之间还是有交叉的，于是彼此之间就产生紧耦合，也就是一个团队。我们先来实现这个进销存，类图如图14-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210928193834.png" alt="image-20210928193834540"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210928193834.png" alt="image-20210928193834540"></p>
 <center>图14-2 简单的进销存类图</center>
 
 <p>Purchase负责采购管理，buyIBMComputer指定了采购IBM电脑，refuseBuyIBM是指不再采购IBM了，源代码如代码清单14-1所示。</p>
@@ -1635,20 +1635,20 @@
 <p>我们在场景类中模拟了三种人员的活动：采购人员采购电脑，销售人员销售电脑，库管员管理库存。运行结果如下所示：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">------采购人员采购电脑-------- </span><br><span class="line">IBM电脑的销售情况为：95 </span><br><span class="line">采购IBM电脑:100台 </span><br><span class="line">库存数量为：200 </span><br><span class="line">------销售人员销售电脑-------- </span><br><span class="line">销售IBM电脑1台 </span><br><span class="line">库存数量为：199 </span><br><span class="line">------库房管理人员清库处理-------- </span><br><span class="line">清理存货数量为：199 </span><br><span class="line">折价销售IBM电脑199台 </span><br><span class="line">不再采购IBM电脑</span><br></pre></td></tr></table></figure>
 <p>运行结果也是我们期望的，三个不同类型的参与者完成了各自的活动。你有没有发现这三个类是彼此关联的？每个类都与其他两个类产生了关联关系。迪米特法则认为“每个类只和朋友类交流”，这个朋友类并非越多越好，朋友类越多，耦合性越大，要想修改一个就得修改一片，这不是面向对象设计所期望的，况且这还是仅三个模块的情况，属于比较简单的一个小项目。我们把进销存扩展一下，如图14-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210928194905.png" alt="image-20210928194905819"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210928194905.png" alt="image-20210928194905819"></p>
 <center>图14-3 扩展后的进销存示意图</center>
 
 <p>这是一个蜘蛛网的结构，别说是编写程序了，就是给人看估计也能让一大批人昏倒！每个对象都需要和其他几个对象交流，对象越多，每个对象要交流的成本也就越大了，只是维护这些对象的交流就能让一大批程序员望而却步！从这方面来说，我们已经发现设计的缺陷了，作为一个架构师，发现缺陷就要想办法修改。</p>
 <p>大家都学过网络的基本知识，网络拓扑有三种类型：总线型、环型、星型。星型网络拓扑如图14-4所示。</p>
 <p>在星型网络拓扑中，每个计算机通过交换机和其他计算机进行数据交换，各个计算机之间并没有直接出现交互的情况。这种结构简单，而且稳定，只要中间那个交换机不瘫痪，整个网络就不会发生大的故障。公司和网吧一般都采用星型网络。我们是不是可以把这种星型结构引入到我们的设计中呢？我们先画一个示意图，如图14-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210928195030.png" alt="image-20210928195030758"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210928195030.png" alt="image-20210928195030758"></p>
 <center>图14-4 星型网络拓扑</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210928195112.png" alt="image-20210928195111870"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210928195112.png" alt="image-20210928195111870"></p>
 <center>图14-5 修改后的进销存示意图</center>
 
 <p>加入了一个中介者作为三个模块的交流核心，每个模块之间不再相互交流，要交流就通过中介者进行。每个模块只负责自己的业务逻辑，不属于自己的则丢给中介者来处理，简化了各模块之间的耦合关系，类图如图14-6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210928195223.png" alt="image-20210928195223281"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210928195223.png" alt="image-20210928195223281"></p>
 <center>图14-6 修改后的进销存类图</center>
 
 <p>建立了两个抽象类AbstractMediator和AbstractColeague，每个对象只是与中介者Mediator 之间产生依赖，与其他对象之间没有直接关系，AbstractMediator的作用是实现中介者的抽象定义，定义了一个抽象方法execute，如代码清单14-5所示。</p>

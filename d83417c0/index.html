@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="5.3.4 调整内存设置控制垃圾收集频率三大块非用户程序时间中，还剩下“GC时间”没有调整，而“GC时间”却又是其中最重要的一块， 并不单单因为它是耗时最长的一块，更因为它是一个稳定持续的消耗。由于我们做的测试是在测程序的启动时间，类加载和编译时间的影响力在这项测试里被大幅放大了。在绝大多数的应用中，都不可能出现持续不断的类被加载和卸载。在程序运行一段时间后，随着热点方法被不断编译，新的热点方法数">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160201.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160511.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160201.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160511.png">
 <meta property="article:published_time" content="2021-09-24T02:16:20.000Z">
 <meta property="article:modified_time" content="2021-11-18T02:55:11.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160201.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160201.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/d83417c0/">
@@ -343,13 +343,13 @@
 <p>代码清单5-10 内存调整后的Eclipse配置文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-vm </span><br><span class="line">D:/_DevSpace/jdk1.6.0_21/bin/javaw.exe </span><br><span class="line">-startup </span><br><span class="line">plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line">--launcher.library plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.200.v20090519 </span><br><span class="line">-product org.eclipse.epp.package.jee.product </span><br><span class="line">-showsplash org.eclipse.platform </span><br><span class="line">-vmargs </span><br><span class="line">-Dosgi.requiredJavaVersion=1.5 </span><br><span class="line">-Xverify:none </span><br><span class="line">-Xmx512m </span><br><span class="line">-Xms512m </span><br><span class="line">-Xmn128m </span><br><span class="line">-XX:PermSize=96m </span><br><span class="line">-XX:MaxPermSize=96m</span><br></pre></td></tr></table></figure>
 <p>现在这个配置之下，垃圾收集的次数已经大幅度降低，图5-9是Eclipse启动后一分钟的监视曲线， 只发生了8次Minor GC和4次Full GC，总耗时为1.928秒。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160201.png" alt="image-20210919160200884"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160201.png" alt="image-20210919160200884"></p>
 <p>图5-9 GC调整后的运行数据 </p>
 <p>这个结果已经算是基本正常，但是还存在一点瑕疵：从Old Gen的曲线上看，老年代直接固定在384MB，而内存使用量只有66MB，并且一直很平滑，完全不应该发生Full GC才对，那4次Full GC是怎么来的？使用jstat-gccause查询一下最近一次GC的原因，见代码清单5-11。</p>
 <p>代码清单5-11 查询GC原因</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\IcyFenix&gt;jps </span><br><span class="line">9772 Jps </span><br><span class="line">4068 org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line"></span><br><span class="line">C:\Users\IcyFenix&gt;jstat -gccause 4068 </span><br><span class="line">S0    S1    E     O      P      YGC  YGCT   FGC FGCT  GCT   LGCC        GCC </span><br><span class="line">0.00  0.00  1.00  14.81  39.29  6    0.422  20  5.992 6.414 System.gc() No GC</span><br></pre></td></tr></table></figure>
 <p>从LGCC（Last GC Cause）中看到原来是代码调用System.gc()显式触发的垃圾收集，在内存设置调整后，这种显式垃圾收集不符合我们的期望，因此在eclipse.ini中加入参数-XX：+DisableExplicitGC屏蔽掉System.gc()。再次测试发现启动期间的Full GC已经完全没有了，只发生了6次Minor GC，总共耗时417毫秒，与调优前4.149秒的测试结果相比，正好是十分之一。进行GC调优后Eclipse的启动时间下降非常明显，比整个垃圾收集时间降低的绝对值还大，现在启动只需要7秒多，如图5-10所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160511.png" alt="image-20210919160511532"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160511.png" alt="image-20210919160511532"></p>
 <p>图5-10 Eclipse启动时间</p>
 
     </div>

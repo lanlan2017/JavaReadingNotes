@@ -34,14 +34,14 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="1.2 绝杀技 打破你的传统思维解释到这里，估计你已经很不屑了，“切！这么简单的东西还要讲？！”好，我们来讲点 复杂的。SRP的原话解释是：  There should never be more than one reason for a class to change.  这句话初中生都能看懂，不多说，但是看懂是一码事，实施就是另外一码事了。上面讲的例子很好理解，在实际项目中大家都已经这么做了">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926111027.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926170037.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926170113.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926111027.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926170037.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926170113.png">
 <meta property="article:published_time" content="2019-09-16T01:43:52.000Z">
 <meta property="article:modified_time" content="2021-10-02T11:36:48.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926111027.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926111027.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/5116627/">
@@ -328,7 +328,7 @@
 <p>There should never be more than one reason for a class to change.</p>
 </blockquote>
 <p>这句话初中生都能看懂，不多说，但是看懂是一码事，实施就是另外一码事了。上面讲的例子很好理解，在实际项目中大家都已经这么做了，那我们再来看看下面这个例子是否好理解。电话这玩意，是现代人都离不了，电话通话的时候有4个过程发生：拨号、通话、回应、挂机，那我们写一个接口，其类图如图1-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926111027.png" alt="image-20210926111027255"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926111027.png" alt="image-20210926111027255"></p>
 <center>图1-4 电话类图</center>
 
 <p>我不是有意要冒犯IPhone的，同名纯属巧合，我们来看一个这个过程的代码，如代码清单1-2所示。</p>
@@ -336,10 +336,10 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IPhone</span> </span>&#123; </span><br><span class="line">    <span class="comment">//拨通电话 </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">dial</span><span class="params">(String phoneNumber)</span></span>; </span><br><span class="line">    <span class="comment">//通话 </span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">chat</span><span class="params">(Object o)</span></span>; </span><br><span class="line">    <span class="comment">//通话完毕，挂电话</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">hangup</span><span class="params">()</span></span>; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>实现类也比较简单，我就不再写了，大家看看这个接口有没有问题？我相信大部分的读者都会说这个没有问题呀，以前我就是这么做的呀，某某书上也是这么写的呀，还有什么什么的源码也是这么写的！是的，这个接口接近于完美，看清楚了，是“接近”！单一职责原则要求一个接口或类只有一个原因引起变化，也就是一个接口或类只有一个职责，它就负责一件事情，看看上面的接口只负责一件事情吗？是只有一个原因引起变化吗？好像不是！</p>
 <p>IPhone这个接口可不是只有一个职责，它包含了两个职责：一个是协议管理，一个是数据传送。dial()和hangup()两个方法实现的是协议管理，分别负责拨号接通和挂机；chat()实现的是数据的传送，把我们说的话转换成模拟信号或数字信号传递到对方，然后再把对方传递过来的信号还原成我们听得懂的语言。我们可以这样考虑这个问题，协议接通的变化会引起这个接口或实现类的变化吗？会的！那数据传送（想想看，电话不仅仅可以通话，还可以上网）的变化会引起这个接口或实现类的变化吗？会的！那就很简单了，这里有两个原因都引起了类的变化。这两个职责会相互影响吗？电话拨号，我只要能接通就成，甭管是电信的还是网通的协议；电话连接后还关心传递的是什么数据吗？通过这样的分析，我们发现类图上的IPhone接口包含了两个职责，而且这两个职责的变化不相互影响，那就考虑拆分成两个接口，其类图如图1-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926170037.png" alt="image-20210926170035881"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926170037.png" alt="image-20210926170035881"></p>
 <center>图1-5 职责分明的电话类图</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210926170113.png" alt="image-20210926170112993"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210926170113.png" alt="image-20210926170112993"></p>
 <center>图1-6 简洁清晰、职责分明的电话类图</center>
 
 <p>这个类图看上去有点复杂了，完全满足了单一职责原则的要求，每个接口职责分明，结构清晰，但是我相信你在设计的时候肯定不会采用这种方式，一个手机类要把ConnectionManager和DataTransfer组合在一块才能使用。组合是一种强耦合关系，你和我都有共同的生命期，这样的强耦合关系还不如使用接口实现的方式呢，而且还增加了类的复杂性，多了两个类。经过这样的思考后，我们再修改一下类图，如图1-6所示。</p>

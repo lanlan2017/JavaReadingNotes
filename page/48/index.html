@@ -331,7 +331,7 @@
 <p>其中，a、b、c、d、e、f参数的值都可以取得，如果使用直接计算数值的方法需要为每个品种写一个算法，目前仅仅是3个业务种类，那上百个品种呢？歇菜了吧！建立公式，然后通过公式运算才是王道。</p>
 <p>我们以实现加、减算法（由于篇幅所限，乘、除法的运算读者可以自行扩展）的公式为例，讲解如何解析一个固定语法逻辑。由于使用语法解析的场景比较少，而且一些商业公司 （如SAS、SPSS等统计分析软件）都支持类似的规则运算，亲自编写语法解析的工作已经非常少，以下例程采用逐步分析方法，带领大家了解这一实现过程。</p>
 <p>想想公式中有什么？仅有两类元素：运算元素和运算符号，运算元素就是指a、b、c等符号，需要具体赋值的对象，也叫做终结符号，为什么叫终结符号呢？因为这些元素除了需要赋值外，不需要做任何处理，所有运算元素都对应一个具体的业务参数，这是语法中最小的单元逻辑，不可再拆分；运算符号就是加减符号，需要我们编写算法进行处理，每个运算符号都要对应处理单元，否则公式无法运行，运算符号也叫做非终结符号。两类元素的共同点是都要被解析，不同点是所有的运算元素具有相同的功能，可以用一个类表示，而运算符号则是需要分别进行解释，加法需要加法解析器，减法需要减法解析器。分析到这里，我们就可以先画一个简单的类图，如图27-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111518.png" alt="image-20210930111518583"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111518.png" alt="image-20210930111518583"></p>
 <center>图27-1 初步分析加减法类图</center>
 
 <p>这是一个很简单的类图，VarExpression用来解析运算元素，各个公式能运算元素的数量是不同的，但每个运算元素都对应一个VarExpression对象。SybmolExpression负责解析符号，由两个子类AddExpression（负责加法运算）和SubExpression（负责减法运算）来实现。 解析的工作完成了，我们还需要把安排运行的先后顺序（加减法不用考虑，但是乘除法呢？ 注意扩展性），并且还要返回结果，因此我们需要增加一个封装类来进行封装处理，由于我们只做运算，暂时还不与业务有关联，定义为Calculator类。分析到这里，思路就比较清晰了，优化后加减法类图如图27-2所示。</p>
@@ -340,10 +340,10 @@
 <p>代码清单27-1 抽象表达式类</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Expression</span> </span>&#123;</span><br><span class="line">    <span class="comment">//解析公式和数值，其中var中的key值是公式中的参数，value值是具体的数字</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">int</span> <span class="title">interpreter</span><span class="params">(HashMap&lt;String,Integer&gt; <span class="keyword">var</span>)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111633.png" alt="image-20210930111633860"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111633.png" alt="image-20210930111633860"></p>
 <center>图27-2 优化后加减法类图</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930111653.png" alt="image-20210930111653467"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930111653.png" alt="image-20210930111653467"></p>
 <center>图27-3 完整加减法类图</center>
 
 <p>抽象类非常简单，仅一个方法interpreter负责对传递进来的参数和值进行解析和匹配，其中输入参数为HashMap类型，key值为模型中的参数，如a、b、c等，value为运算时取得的具体数字。</p>
@@ -502,7 +502,7 @@
 <p>Given a language, define a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.（给定一门语言，定义它的文法的一种表示，并定义一个解释器，该解释器使用该表示来解释语言中的句子。）</p>
 </blockquote>
 <p>解释器模式的通用类图如图27-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930112248.png" alt="image-20210930112248422"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930112248.png" alt="image-20210930112248422"></p>
 <center>图27-4 解释器模式通用类图</center>
 
 <ul>
@@ -676,7 +676,7 @@
 </ul>
 <p>还有其他一堆信息，我们以这三者作为代表来讲解。信息填写完毕后，点击确认，报名就结束了。简单程序的业务逻辑也确实是这样，为什么出现Crash情况呢？那肯定是和压力有关系！</p>
 <p>我们先把这个过程的静态类图画出来，如图28-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930113627.png" alt="image-20210930113627220"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930113627.png" alt="image-20210930113627220"></p>
 <center>图28-1 报考系统类图</center>
 
 <p>很简单的工厂方法模式，表现层通过工厂方法模式创建对象，然后传递给业务层和持久层，最终保存到数据库中，为什么要使用工厂方法模式而不用直接new一个对象呢？因为是在框架下编程，必须有一个对象工厂（ObjectFactory,Spring也有对象工厂）。我们先来看报考信息，如代码清单28-1所示。</p>
@@ -702,7 +702,7 @@
 </ul>
 <p>我们要提供一个接口供客户端访问，池中有可用对象时，可以直接从池中获得，否则建立一个新的对象，并放置到池中。</p>
 <p>设计思路有了，那我们池中对象的标准是什么呢？你想想看，如果你把所有的对象都放到池中，那还有什么意义？内存早就给你撑爆了！这么多对象，必然有一些相同的属性值，如几十万SignInfo对象中，考试科目就4个，考试地点也就是30多个，其他的属性则是每个对象都不相同的，我们把对象的相同属性提取出来，不同的属性在系统内进行赋值处理，是不是就可以建立一个池了？话无须多说，我们以类图来表示，如图28-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930113941.png" alt="image-20210930113940991"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930113941.png" alt="image-20210930113940991"></p>
 <center>图28-2 增加对象池的类图</center>
 做一个很小的改动，增加了一个子类，实现带缓冲池的对象建立，同时在工厂类上增加了一个容器对象HashMap，保存池中的所有对象。我们先来看产品子类，如代码清单28-4所示。
 
@@ -728,7 +728,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">科目3考试地点25----建立对象，并放置到池中 </span><br><span class="line">科目3考试地点26----建立对象，并放置到池中 </span><br><span class="line">科目3考试地点27----建立对象，并放置到池中 </span><br><span class="line">科目3考试地点28----建立对象，并放置到池中 </span><br><span class="line">科目3考试地点29----建立对象，并放置到池中 </span><br><span class="line">科目1考试地点1---直接从池中取得</span><br></pre></td></tr></table></figure>
 <p>前面还有很多的对象创建提示语句，不再复制。通过这样的改造后，我们想想内存中有多少个SignInfo对象？是的，最多120个对象，相比之前几万个SignInfo对象优化了非常多。细心的读者可能注意到了SignInfo4Pool类基本上没有跑出我们的视线范围，仅仅在工厂方法中使用到了，尽量缩小变更引起的风险，想想看我们的改动是不是很小，只要在展示层中拼一个字符串，然后传递到工厂方法中就可以了。</p>
 <p>通过这样的改造后，第三天系统运行得非常稳定，CPU占用率也下降了，而且以后再也没有出现类似问题，这就是享元模式的功劳。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930114537.png" alt="image-20210930114537654"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930114537.png" alt="image-20210930114537654"></p>
 
       
     </div>
@@ -1006,7 +1006,7 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="29-1-我有一个梦想……"><a href="#29-1-我有一个梦想……" class="headerlink" title="29.1 我有一个梦想……"></a>29.1 我有一个梦想……</h1><p>我们每个人都有理想，但不要只是空想，理想是要靠今天的拼搏来实现的。今天咱们就来谈谈自己的理想，如希望成为一个富翁，身价过亿，有两家大公司，一家是房地产公司， 另一家是服装制造公司。这两家公司都很赚钱，天天帮你累积财富。其实你并不关心公司的类型，你关心的是它们是不是在赚钱，赚了多少，这才是你关注的。商人嘛，唯利是图是其本性，偷税漏税是方法，欺上瞒下、压榨员工血汗是常用的手段，先用类图表示一下这两个公司，如图29-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930145552.png" alt="image-20210930145552835"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930145552.png" alt="image-20210930145552835"></p>
 <center>图29-1 盈利模式的类图</center>
 类图很简单，声明了一个Corp抽象类，定义一个公司的抽象模型，公司首要是赚钱的，做义务或善举那也是有背后利益支撑的，还是赞成这句话“天下熙熙，皆为利来；天下攘攘，皆为利往”。我们先看Corp类的源代码，如代码清单29-1所示。
 
@@ -1025,7 +1025,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-------房地产公司是这样运行的------- </span><br><span class="line">房地产公司盖房子...</span><br><span class="line">房地产公司出售房子... </span><br><span class="line">房地产公司赚大钱了... </span><br><span class="line">-------服装公司是这样运行的------- </span><br><span class="line">服装公司生产衣服... </span><br><span class="line">服装公司出售衣服... </span><br><span class="line">服装公司赚小钱...</span><br></pre></td></tr></table></figure>
 <p>上述代码完全可以描述我现在的公司，但是你要知道万物都是运动的，你要用运动的眼光看问题，公司才会发展……终于有一天你觉得赚钱速度太慢，于是你上下疏通，左右打关系，终于开辟了一条赚钱的“康庄大道”：生产山寨产品！什么产品呢？即市场上什么牌子的东西火爆我生产什么牌子的东西，不管是打火机还是电脑，只要它火爆，我就生产，赚过了高峰期就换个产品，打一枪换一个牌子，不承担售后成本、也不担心销路问题，我只要正品的十分之一的价格，你买不买？哈哈，赚钱啊！</p>
 <p>企业的方向定下来了，通过调查，苹果公司的iPod系列产品比较火爆，那咱就生产这个，把服装厂改成iPod生产厂，看类图的变化，如图29-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930145947.png" alt="image-20210930145947637"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930145947.png" alt="image-20210930145947637"></p>
 <center>图29-2 服装公司改头换面后的类图</center>
 好，我的企业改头换面了，开始生产iPod产品了，看我IPodCorp类的实现，如代码清单29-5所示。
 
@@ -1036,7 +1036,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Client</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;-------房地产公司是按这样运行的-------&quot;</span>);</span><br><span class="line">        <span class="comment">//先找到我的公司</span></span><br><span class="line">        HouseCorp houseCorp =<span class="keyword">new</span> HouseCorp();</span><br><span class="line">        <span class="comment">//看我怎么挣钱</span></span><br><span class="line">        houseCorp.makeMoney();</span><br><span class="line">        System.out.println(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;-------山寨公司是按这样运行的-------&quot;</span>);</span><br><span class="line">        IPodCorp iPodCorp = <span class="keyword">new</span> IPodCorp();</span><br><span class="line">        iPodCorp.makeMoney();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>确实，只用修改了黑色字体这几句话，服装厂就开始变成山寨iPod生产车间，然后你就看着你的财富在积累。山寨的东西不需要特别的销售渠道（正品到哪里我就到哪里），不需要维修成本（大不了给你换个，你还想怎么样，过了高峰期我就改头换面了，你找谁维修去？投诉？投诉谁呢？），不承担广告成本（正品在打广告，我还需要吗？需要吗？），但是也有犯愁的时候，这是一个山寨工厂，要及时地生产出市场上流行的产品，转型要快，要灵活，今天从生产iPod转为生产MP4,明天再转为生产上网本，这都需要灵活的变化，不要限制得太死！那问题来了，每次我的厂房，我的工人，我的设备都在，不可能每次我换个山寨产品厂子就彻底不要了。这不行，成本忒高了点，那怎么办？</p>
 <p>Thinking,Thinking…I got an idea!（跳跳虎语），既然产品和工厂绑得太死，那我就给你来 松松，改变设计，如图29-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930150200.png" alt="image-20210930150200692"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930150200.png" alt="image-20210930150200692"></p>
 <center>图29-3 使用快速变化的类图</center>
 公司和产品之间建立关联关系，可以彻底解决以后山寨公司生产产品的问题，工厂想换产品？太容易了！看程序说话，先看Product抽象类，如代码清单29-7所示。
 
@@ -1198,7 +1198,7 @@
 <p>Decouple an abstraction from its implementation so that the two can vary independently.（将抽象和实现解耦，使得两者可以独立地变化。）</p>
 </blockquote>
 <p>桥梁模式的重点是在“解耦”上，如何让它们两者解耦是我们要了解的重点，我们先来看桥梁模式的通用类，如图29-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930150840.png" alt="image-20210930150840802"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930150840.png" alt="image-20210930150840802"></p>
 <center>图29-4 桥梁模式通用类图</center>
 
 <p>我们先来看桥梁模式中的4个角色。</p>
@@ -1352,7 +1352,7 @@
     <div class="post-body" itemprop="articleBody">
           <h1 id="30-1-工厂方法模式VS建造者模式"><a href="#30-1-工厂方法模式VS建造者模式" class="headerlink" title="30.1 工厂方法模式VS建造者模式"></a>30.1 工厂方法模式VS建造者模式</h1><p>工厂方法模式注重的是整体对象的创建方法，而建造者模式注重的是部件构建的过程， 旨在通过一步一步地精确构造创建出一个复杂的对象。我们举个简单例子来说明两者的差异，如要制造一个超人，如果使用工厂方法模式，直接产生出来的就是一个力大无穷、能够飞翔、内裤外穿的超人；而如果使用建造者模式，则需要组装手、头、脚、躯干等部分，然后再把内裤外穿，于是一个超人就诞生了。纯粹使用文字来描述比较枯燥，我们还是通过程序来更加清晰地认识两者的差别。</p>
 <h2 id="30-1-1-按工厂方法建造超人"><a href="#30-1-1-按工厂方法建造超人" class="headerlink" title="30.1.1 按工厂方法建造超人"></a>30.1.1 按工厂方法建造超人</h2><p>首先，按照工厂方法模式创建出一个超人，类图如图30-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930154828.png" alt="image-20210930154828157"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930154828.png" alt="image-20210930154828157"></p>
 <center>图30-1 按工厂方法建造超人</center>
 
 <p>类图中我们按照年龄段把超人分为两种类型：成年超人（如克拉克、超能先生）和未成年超人（如Dash、Jack）。这是一个非常正宗的工厂方法模式，定义一个产品的接口，然后再定义两个实现，通过超人制造工厂制造超人。想想看我们对超人最大印象是什么？当然是他的超能力，我们以specialTalent（特殊天赋）方法来代表，先看抽象产品类，如代码清单30-1所示。</p>
@@ -1375,7 +1375,7 @@
 <p><strong>注意</strong> 通过工厂方法模式生产出对象，然后由客户端进行对象的其他操作，但是并不代 表所有生产出的对象都必须具有相同的状态和行为，它是由产品所决定。</p>
 <hr>
 <h2 id="30-1-2-按建造者模式建造超人"><a href="#30-1-2-按建造者模式建造超人" class="headerlink" title="30.1.2 按建造者模式建造超人"></a>30.1.2 按建造者模式建造超人</h2><p>我们再来看看建造者模式是如何生产超人的,如图30-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930155136.png" alt="image-20210930155136413"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930155136.png" alt="image-20210930155136413"></p>
 <center>图30-2 按建造者模式生产超人</center>
 又是一个典型的建造者模式！哎，不对呀！通用模式上抽象建造者与产品类没有关系呀！是的，我们当然可以加强了，我们在抽象建造者上使用了模板方法模式，每一个建造者都必须返回一个产品，但是产品是如何制造的，则由各个建造者自己负责。我们来看看程序，先看产品类，如代码清单30-6所示。
 
@@ -1526,7 +1526,7 @@
     <div class="post-body" itemprop="articleBody">
           <h1 id="31-1-代理模式VS装饰模式"><a href="#31-1-代理模式VS装饰模式" class="headerlink" title="31.1 代理模式VS装饰模式"></a>31.1 代理模式VS装饰模式</h1><p>对于两个模式，首先要说的是，装饰模式就是代理模式的一个特殊应用，两者的共同点是都具有相同的接口，不同点则是代理模式着重对代理过程的控制，而装饰模式则是对类的功能进行加强或减弱，它着重类的功能变化，我们举例来说明它们的区别。</p>
 <h2 id="31-1-1-代理模式"><a href="#31-1-1-代理模式" class="headerlink" title="31.1.1 代理模式"></a>31.1.1 代理模式</h2><p>一个著名的短跑运动员有自己的代理人。如果你很仰慕他，你找运动员说“你跑个我看看”，运动员肯定不搭理你，不过你找到他的代理人就不一样了，你可能和代理人比较熟， 可以称兄道弟，这个忙代理人还是可以帮的，于是代理人同意让你欣赏运动员的练习赛，这对你来说已经是莫大的荣耀了。我们来看类图，如图31-1所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930161729.png" alt="image-20210930161729112"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930161729.png" alt="image-20210930161729112"></p>
 <center>图31-1 运动员跑步</center>
 这是一个套用代理模式的简单应用，非常简单！一个对象，然后再是自己的代理。我们先来看一下代码，先看抽象主题类，如代码清单31-1所示。
 
@@ -1545,7 +1545,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">====客人找到运动员的代理要求其去跑步=== </span><br><span class="line">代理人同意安排运动员跑步 </span><br><span class="line">运动员跑步：动作很潇洒 </span><br><span class="line">运行结果的第二种情况如下所示： </span><br><span class="line">====客人找到运动员的代理要求其去跑步=== </span><br><span class="line">代理人心情不好，不安排运动员跑步</span><br></pre></td></tr></table></figure>
 <p>不管是哪种情况，我们都证实了代理的一个功能：在不改变接口的前提下，对过程进行控制。在我们例子中，运动员要不要跑步是由代理人决定的，代理人说跑步就跑步，说不跑就不跑，它有绝对判断权。</p>
 <h2 id="31-1-2-装饰模式"><a href="#31-1-2-装饰模式" class="headerlink" title="31.1.2 装饰模式"></a>31.1.2 装饰模式</h2><p>如果使用装饰模式，我们该怎么实现这个过程呢？装饰模式是对类功能的加强，怎么加强呢？增强跑步速度！在屁股后面安装一个喷气动力装置，类似火箭的喷气装置，那速度变得很快，《蜘蛛侠》中的那个反面角色不就是这样的吗？好，我们来看类图，如图31-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930162043.png" alt="image-20210930162043387"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930162043.png" alt="image-20210930162043387"></p>
 <center>图31-2 增强运动员的功能</center>
 很惊讶？这个代理模式完全一样的类图？是的，完全一样！不过其实现的意图却不同， 我们先来看代码，IRunner和Runner与代理模式相同，详见代码清单31-1和代码清单31-2所示，在此不再赘述。我们来看装饰类RunnerWithJet，如代码清单31-5所示。
 
@@ -1676,7 +1676,7 @@
           <h1 id="31-2-装饰模式VS适配器模式"><a href="#31-2-装饰模式VS适配器模式" class="headerlink" title="31.2 装饰模式VS适配器模式"></a>31.2 装饰模式VS适配器模式</h1><p>装饰模式和适配器模式在通用类图上没有太多的相似点，差别比较大，但是它们的功能有相似的地方：都是包装作用，都是通过委托方式实现其功能。不同点是：装饰模式包装的是自己的兄弟类，隶属于同一个家族（相同接口或父类），适配器模式则修饰非血缘关系类，把一个非本家族的对象伪装成本家族的对象，注意是伪装，因此它的本质还是非相同接口的对象。</p>
 <p>大家都应该听过丑小鸭的故事吧，我们今天就用这两种模式分别讲述丑小鸭的故事。话说鸭妈妈有5个孩子，其中4个孩子都是黄白相间的颜色，而最小的那只也就是叫做丑小鸭的那只，是纯白色的，与兄弟姐妹不相同，在遭受了诸多的嘲讽和讥笑后，最终丑小鸭变成了一只美丽的天鹅。那我们如何用两种不同模式来描述这一故事呢？</p>
 <h2 id="31-2-1-用装饰模式描述丑小鸭"><a href="#31-2-1-用装饰模式描述丑小鸭" class="headerlink" title="31.2.1 用装饰模式描述丑小鸭"></a>31.2.1 用装饰模式描述丑小鸭</h2><p>用装饰模式来描述丑小鸭，首先就要肯定丑小鸭是一只天鹅，只是因为她小或者是鸭妈妈的无知才没有被认出是天鹅，经过一段时间后，它逐步变成一个漂亮、自信、优美的白天鹅。根据分析我们可以这样设计，先设计一个丑小鸭，然后根据时间先后来进行不同的美化处理，怎么美化呢？先长出漂亮的羽毛，然后逐步展现出异于鸭子的不同行为，如飞行，最终在具备了所有的行为后，它就成为一只纯粹的白天鹅了，我们来看类图，如图31-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930162553.png" alt="image-20210930162553626"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930162553.png" alt="image-20210930162553626"></p>
 <center>图31-3 装饰模式实现丑小鸭</center>
 
 <p>类图比较简单，非常标准的装饰模式。我们按照故事的情节发展一步一步地实现程序。 初期的时候，丑小鸭表现得很另类，叫声不同，外形不同，致使周围的亲戚、朋友都对她鄙视，那我们来建立这个过程，由于丑小鸭的本质就是一个天鹅，我们就先生成一个天鹅的接口，如代码清单31-7所示。</p>
@@ -1700,7 +1700,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">===很久很久以前，这里有一只丑陋的小鸭子=== </span><br><span class="line">外形是脏兮兮的白色，毛茸茸的大脑袋 </span><br><span class="line">叫声是克噜——克噜——克噜 </span><br><span class="line">不能飞行 </span><br><span class="line">===小鸭子终于发现自己是一只天鹅==== </span><br><span class="line">外表是纯白色的，非常惹人喜爱！ </span><br><span class="line">叫声是克噜——克噜——克噜 </span><br><span class="line">会飞行了！</span><br></pre></td></tr></table></figure>
 <p>使用装饰模式描述丑小鸭蜕变的过程是如此简单，它关注了对象功能的强化，是对原始对象的行为和属性的修正和加强，把原本被人歧视、冷落的丑小鸭通过两次强化处理最终转变为受人喜爱、羡慕的白天鹅。</p>
 <h2 id="31-2-2-用适配器模式实现丑小鸭"><a href="#31-2-2-用适配器模式实现丑小鸭" class="headerlink" title="31.2.2 用适配器模式实现丑小鸭"></a>31.2.2 用适配器模式实现丑小鸭</h2><p>采用适配器模式实现丑小鸭变成白天鹅的过程要从鸭妈妈的角度来分析，鸭妈妈有5个孩子，它认为这5个孩子都是她的后代，都是鸭类，但是实际上是有一只（也就是丑小鸭） 不是真正的鸭类，她是一只小白天鹅，就像《木兰辞》中说的“雄兔脚扑朔，雌兔眼迷离。 双兔傍地走，安能辨我是雄雌？”同样，因为太小，差别太细微，很难分辨，导致鸭妈妈认为她是一只鸭子，从鸭子的审美观来看，丑小鸭是丑陋的。通过分析，我们要做的就是要设计两个对象：鸭和天鹅，然后鸭妈妈把一只天鹅看成了小鸭子，最终时间到来的时候丑小鸭变成了白天鹅。我们来看类图，如图31-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930163243.png" alt="image-20210930163243263"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930163243.png" alt="image-20210930163243263"></p>
 <center>图31-4 适配器模式实现丑小鸭</center>
 
 <p>类图非常简单，我们定义了两个接口：鸭类接口和天鹅类接口，然后建立了一个适配器UglyDuckling，把一只白天鹅封装成了小鸭子。我们来看代码，先看鸭类接口，如代码清单31-13所示。</p>
@@ -1855,14 +1855,14 @@
     
     <div class="post-body" itemprop="articleBody">
           <h1 id="32-2-策略模式VS状态模式"><a href="#32-2-策略模式VS状态模式" class="headerlink" title="32.2 策略模式VS状态模式"></a>32.2 策略模式VS状态模式</h1><p>在行为类设计模式中，状态模式和策略模式是亲兄弟，两者非常相似，我们先看看两者的通用类图，把两者放在一起比较一下，如图32-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930171107.png" alt="image-20210930171106992"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930171107.png" alt="image-20210930171106992"></p>
 <center>图32-3 策略模式（左）和状态模式（右）的通用类图</center>
 
 <p>两个类图非常相似，都是通过Context类封装一个具体的行为，都提供了一个封装的方法，是高扩展性的设计模式。但根据两者的定义，我们发现两者的区别还是很明显的：策略模式封装的是不同的算法，算法之间没有交互，以达到算法可以自由切换的目的；而状态模式封装的是不同的状态，以达到状态切换行为随之发生改变的目的。这两种模式虽然都有变换的行为，但是两者的目标却是不同的。我们举例来说明两者的不同点。</p>
 <p>人只要生下来就有工作可做，人在孩童时期的主要工作就是玩耍（学习只是在人类具有了精神意识行为后才产生的）；成人时期的主要工作是养活自己，然后为社会做贡献；老年时期的主要工作就是享受天伦之乐。按照策略模式来分析，这三种不同的工作方式就是三个不同的具体算法，随着时光的推移工作内容随之更替，这和对一堆数组的冒泡排序、快速排序、插入排序一样，都是一系列的算法；而按照状态模式进行设计，则认为人的状态（孩童、成人、老人）产生了不同的行为结果，这里的行为都相同，都是工作，但是它们的实现方式确实不同，也就是产生的结果不同，看起来就像是类改变了。</p>
 <h2 id="32-2-1-策略模式实现人生"><a href="#32-2-1-策略模式实现人生" class="headerlink" title="32.2.1 策略模式实现人生"></a>32.2.1 策略模式实现人生</h2><p>下面按照策略模式进行设计，先来看类图，如图32-4所示。</p>
 <p>这是非常典型的策略模式，没有太多的玄机，它定义了一个工作算法，然后有三个实现类：孩童工作、成年人工作和老年人工作。我们来看代码，首先看抽象工作算法，如代码清单32-19所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930171228.png" alt="image-20210930171228691"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930171228.png" alt="image-20210930171228691"></p>
 <center>图32-4 策略模式实现人生的类图</center>
 
 <p>代码清单32-19 抽象工作算法</p>
@@ -1884,7 +1884,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">====儿童的主要工作===== </span><br><span class="line">儿童的工作是玩耍！ </span><br><span class="line">====成年人的主要工作===== </span><br><span class="line">成年人的工作就是先养活自己，然后为社会做贡献！ </span><br><span class="line">====老年人的主要工作===== </span><br><span class="line">老年人的工作就是享受天伦之乐！</span><br></pre></td></tr></table></figure>
 <p>通过采用策略模式我们实现了“工作”这个策略的三种不同算法，算法可以自由切换，到底用哪个算法由调用者（高层模块）决定。策略模式的使用重点是算法的自由切换——老的算法退休，新的算法上台，对模块的整体功能没有非常大的改变，非常灵活。而如果想要增加一个新的算法，比如未出生婴儿的工作，只要继承WorkAlgorithm就可以了。</p>
 <h2 id="32-2-2-状态模式实现人生"><a href="#32-2-2-状态模式实现人生" class="headerlink" title="32.2.2 状态模式实现人生"></a>32.2.2 状态模式实现人生</h2><p>我们再来看看使用状态模式是如何实现该需求的。随着时间的变化，人的状态变化了， 同时引起了人的工作行为改变，完全符合状态模式。我们来看类图，如图32-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210930171554.png" alt="image-20210930171554473"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210930171554.png" alt="image-20210930171554473"></p>
 <center>图32-5 状态模式实现人生的类图</center>
 这与策略模式非常相似，基本上就是几个类名称的修改而已，但是其中蕴藏的玄机就大了，看看代码你就会明白。我们先来看抽象状态类，如代码清单32-25所示。
 

@@ -34,14 +34,14 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="6.3.6 方法表集合如果理解了上一节关于字段表的内容，那本节关于方法表的内容将会变得很简单。Class文件存储 格式中对方法的描述与对字段的描述采用了几乎完全一致的方式，方法表的结构如同字段表一样，依 次包括访问标志（access_flags）、名称索引（name_index）、描述符索引（descriptor_index）、属性表 集合（attributes）几项，如表6-11所示。这些数据项">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204129.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204244.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204542.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204129.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204244.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204542.png">
 <meta property="article:published_time" content="2021-11-20T13:02:21.000Z">
 <meta property="article:modified_time" content="2021-11-23T11:21:35.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204129.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204129.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/977f538b/">
@@ -330,14 +330,14 @@
         <h1 id="6-3-6-方法表集合"><a href="#6-3-6-方法表集合" class="headerlink" title="6.3.6 方法表集合"></a>6.3.6 方法表集合</h1><p>如果理解了上一节关于字段表的内容，那本节关于方法表的内容将会变得很简单。Class文件存储 格式中对方法的描述与对字段的描述采用了几乎完全一致的方式，方法表的结构如同字段表一样，依 次包括访问标志（access_flags）、名称索引（name_index）、描述符索引（descriptor_index）、属性表 集合（attributes）几项，如表6-11所示。这些数据项目的含义也与字段表中的非常类似，仅在访问标 志和属性表集合的可选项中有所区别。</p>
 <center>表6-11 方法表结构</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204129.png" alt="image-20211118204129254"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204129.png" alt="image-20211118204129254"></p>
 <p>因为volatile关键字和transient关键字不能修饰方法，所以方法表的访问标志中没有了ACC_VOLATILE标志和ACC_TRANSIENT标志。与之相对，synchronized、native、strictfp和abstract 关键字可以修饰方法，方法表的访问标志中也相应地增加了ACC_SYNCHRONIZED、 ACC_NATIVE、ACC_STRICTFP和ACC_ABSTRACT标志。对于方法表，所有标志位及其取值可参见表6-12。</p>
 <center>表6-12 方法访问标志</center>
 
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204244.png" alt="image-20211118204244209"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204244.png" alt="image-20211118204244209"></p>
 <p>行文至此，也许有的读者会产生疑问，方法的定义可以通过访问标志、名称索引、描述符索引来表达清楚，但方法里面的代码去哪里了？方法里的Java代码，经过Javac编译器编译成字节码指令之后，存放在方法属性表集合中一个名为“Code”的属性里面，属性表作为Class文件格式中最具扩展性的一种数据项目，将在下一节中详细讲解。</p>
 <p>我们继续以代码清单6-1中的Class文件为例对方法表集合进行分析。如图6-9所示，方法表集合的入口地址为0x00000101，第一个u2类型的数据（即计数器容量）的值为0x0002，代表集合中有两个方法，这两个方法为编译器添加的实例构造器<code>&lt;init&gt;</code>和源码中定义的方法inc()。第一个方法的访问标志值为0x0001，也就是只有ACC_PUBLIC标志为真，名称索引值为0x0007，查代码清单6-2的常量池得方法名为“<code>&lt;init&gt;</code>”，描述符索引值为0x0008，对应常量为“()V”，属性表计数器attributes_count的值为0x0001，表示此方法的属性表集合有1项属性，属性名称的索引值为0x0009，对应常量为“Code”，说明此属性是方法的字节码描述。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211118204542.png" alt="image-20211118204542279"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211118204542.png" alt="image-20211118204542279"></p>
 <center>图6-9 方法表结构实例</center>
 
 <p>与字段表集合相对应地，如果父类方法在子类中没有被重写（Override），方法表集合中就不会出 现来自父类的方法信息。但同样地，有可能会出现由编译器自动添加的方法，最常见的便是类构造 器“<code>&lt;clinit&gt;()</code>”方法和实例构造器“<code>&lt;init&gt;()</code>”方法<a href="%EF%BC%9Cinit%EF%BC%9E()%E5%92%8C%EF%BC%9Cclinit%EF%BC%9E()%E7%9A%84%E8%AF%A6%E7%BB%86%E5%86%85%E5%AE%B9%E8%A7%81%E6%9C%AC%E4%B9%A6%E7%9A%84%E4%B8%8B%E4%B8%80%E9%83%A8%E5%88%86%E2%80%9C%E5%89%8D%E7%AB%AF%E7%BC%96%E8%AF%91%E4%B8%8E%E4%BC%98%E5%8C%96%E2%80%9D%E3%80%82">^1</a>。</p>

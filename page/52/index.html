@@ -835,7 +835,7 @@
 <p>代码清单5-3 Eclipse 3.5初始配置</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">D:/_DevSpace/jdk1.5.0/bin/javaw.exe </span><br><span class="line">-startup </span><br><span class="line">plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line">--launcher.library </span><br><span class="line">plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.200.v20090519 </span><br><span class="line">-product </span><br><span class="line">org.eclipse.epp.package.jee.product </span><br><span class="line">--launcher.XXMaxPermSize </span><br><span class="line">256M </span><br><span class="line">-showsplash </span><br><span class="line">org.eclipse.platform </span><br><span class="line">-vmargs </span><br><span class="line">-Dosgi.requiredJavaVersion=1.5 </span><br><span class="line">-Xmx512m </span><br><span class="line">-Dcom.sun.management.jmxremote</span><br></pre></td></tr></table></figure>
 <p>为了与调优后的结果进行量化对比，调优开始前笔者先做了一次初始数据测试。测试用例很简单，就是收集从Eclipse启动开始，直到所有插件加载完成为止的总耗时以及运行状态数据，虚拟机的运行数据通过VisualVM及其扩展插件VisualGC进行采集。测试过程中反复启动数次Eclipse直到测试结果稳定后，取最后一次运行的结果作为数据样本（为了避免操作系统未能及时进行磁盘缓存而产生的影响），数据样本如图5-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919112606.png" alt="image-20210919112606221"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919112606.png" alt="image-20210919112606221"></p>
 <p>图5-2 Eclipse原始运行数据 </p>
 <p>Eclipse启动的总耗时没有办法从监控工具中直接获得，因为VisualVM不可能知道Eclipse运行到什么阶段算是启动完成。为了测试的准确性，笔者写了一个简单的Eclipse插件，用于统计Eclipse的启动耗时。由于代码十分简单，且本书并不是Eclipse RCP的开发教程，所以只列出代码清单5-4供读者参考，不再延伸。如果读者需要这个插件，可以使用下面的代码自己编译即可。</p>
 <p>代码清单5-4 Eclipse启动耗时统计插件</p>
@@ -844,7 +844,7 @@
 <p>plugin.xml代码：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span> &lt;?eclipse version=&quot;3.4&quot;?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">extension</span> <span class="attr">point</span>=<span class="string">&quot;org.eclipse.ui.startup&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">startup</span> <span class="attr">class</span>=<span class="string">&quot;eclipsestarttime.actions.ShowTime&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>上述代码打包成JAR后放到Eclipse的plugins目录，反复启动几次后，插件显示的平均时间稳定在 15秒左右，如图5-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919113033.png" alt="image-20210919113033359"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919113033.png" alt="image-20210919113033359"></p>
 <p>图5-3 耗时统计插件运行效果<br>根据VisualGC和Eclipse插件收集到的信息，总结原始配置下的测试结果如下：</p>
 <ul>
 <li>整个启动过程平均耗时约15秒。</li>
@@ -982,17 +982,17 @@
 <p>每次JDK的大版本发布时，发行商通常都会宣称虚拟机的运行速度比上一版本有了多少比例的提高，这虽然是个广告性质的宣言，常被使用者从更新列表或者技术白皮书中直接忽略，但技术进步确实会促使性能改进，从国内外的第三方评测数据来看，版本升级至少在某些方面确实带来了一定性能改善<a href="%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7%E4%B9%9F%E6%9C%89%E4%B8%8D%E5%B0%91%E6%80%A7%E8%83%BD%E5%80%92%E9%80%80%E7%9A%84%E6%A1%88%E4%BE%8B%EF%BC%8C%E5%8F%97%E7%A8%8B%E5%BA%8F%E3%80%81%E7%AC%AC%E4%B8%89%E6%96%B9%E5%8C%85%E5%85%BC%E5%AE%B9%E6%80%A7%E4%BB%A5%E5%8F%8A%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%99%90%E5%88%B6%EF%BC%8C%E5%9C%A8%E4%BC%81%E4%B8%9A%E5%BA%94%E7%94%A8%E4%B8%AD%E5%8D%87%E7%BA%A7JDK%E7%89%88%E6%9C%AC%E6%98%AF%E4%B8%80%E4%BB%B6%E9%9C%80%E8%A6%81%E6%85%8E%E9%87%8D%E8%80%83%E8%99%91%E7%9A%84%E4%BA%8B%E6%83%85%E3%80%82">^1</a>。以下是一个第三方网站对JDK 5、6、7三个版本做的性能评测，分别测试了以下4个用例[^2]。</p>
 <p>1）生成500万个字符串。<br>2）500万次<code>ArrayList&lt;String&gt;</code>数据插入，使用第一点生成的数据。<br>3）生成500万个<code>HashMap&lt;String，Integer&gt;</code>，每个键-值对通过并发线程计算，测试并发能力。<br>4）打印500万个<code>ArrayList&lt;String&gt;</code>中的值到文件，并重读回内存。</p>
 <p>三个版本的JDK分别运行这4个用例的测试程序，测试结果如图5-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919152917.png" alt="image-20210919152917030"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919152917.png" alt="image-20210919152917030"></p>
 <p>图5-4 JDK横向性能对比 </p>
 <p>从这4个用例的测试结果来看，在每一个测试场景中新版的JDK性能都有改进，譬如JDK 6比JDK 5有大约15%的平均性能提升。尽管对JDK仅测试这四个用例并不能说明什么问题，甚至要通过测试数据来量化描述一个JDK比旧版提升了多少本身就是很难做到特别科学准确的（要做稍微靠谱一点的测试，可以使用SPECjvm 2015[^3]之类的软件来完成，或者把相应版本的TCK[^4]中数万个测试用例的性能数据对比一下可能稍有说服力），但笔者还是选择相信这次“软广告”性质的测试，把JDK版本升级到JDK 6 Update 21，升级没有选择JDK 7或者其他版本的最主要理由是：本书后续故事剧情发展需要。</p>
 <p>与所有小说作者（嗯……知道，本书不是小说）设计的故事情节一样，获得最后的胜利之前总是要经历各种各样的挫折，这次升级到JDK 6之后，性能有什么变化先暂且不谈，在使用几分钟之后， 笔者的Eclipse就和前面几个服务端的案例一样非常“不负众望”地发生了内存溢出，如图5-5所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153051.png" alt="image-20210919153051781"><br>图5-5 Eclipse OutOfMemoryError</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153051.png" alt="image-20210919153051781"><br>图5-5 Eclipse OutOfMemoryError</p>
 <p>这次内存溢出开始是完全出乎笔者意料的：决定对Eclipse做调优是因为速度慢，但笔者的开发环境一直都很稳定，至少没有出现过内存溢出的问题，而这次升级除了修改了eclipse.ini中的Java虚拟机路径之外，还未进行任何运行参数的调整，Eclipse居然进去主界面之后随便开了几个文件就抛出内存溢出异常了，难道JDK 6 Update21有哪个类库的API出现了严重的泄漏问题吗？</p>
 <p>事实上并不是JDK 6出现了什么问题，否则以Java的影响力，它早就上新闻了。根据前面三章中介绍讲解的原理和工具，我们要查明这个异常的原因并且解决它一点也不困难。打开VisualVM，监视页签中的内存曲线部分如图5-6、图5-7所示。</p>
 <p>在Java堆中监视曲线里，“堆大小”的曲线与“使用的堆”的曲线一直都有很大的间隔距离，每当两条曲线开始出现互相靠近的趋势时，“堆大小”的曲线就会快速向上转向，而“使用的堆”的曲线会向下转向。“堆大小”的曲线向上代表的是虚拟机内部在进行堆扩容，因为运行参数中并没有指定最小堆（-Xms）的值与最大堆（-Xmx）相等，所以堆容量一开始并没有扩展到最大值，而是根据使用情况进行伸缩扩展。“使用的堆”的曲线向下是因为虚拟机内部触发了一次垃圾收集，一些废弃对象的空间被回收后，内存用量相应减少。从图形上看，Java堆运作是完全正常的。但永久代的监视曲线就很明显有问题了，“PermGen大小”的曲线与“使用的PermGen”的曲线几乎完全重合在一起，这说明永久代中已经没有可回收的资源了，所以“使用的PermGen”的曲线不会向下发展，并且永久代中也没有空间可以扩展了，所以“PermGen大小”的曲线不能向上发展，说明这次内存溢出很明显是永久代导致的内存溢出。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153527.png" alt="image-20210919153527309"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153527.png" alt="image-20210919153527309"></p>
 <p>图5-6 Java堆监视曲线</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919153227.png" alt="image-20210919153227432"><br>图5-7 永久代监视曲线</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919153227.png" alt="image-20210919153227432"><br>图5-7 永久代监视曲线</p>
 <p>再注意到图5-7中永久代的最大容量“67108864字节”，也就是64MB，这恰好是JDK在未使用- XX：MaxPermSize参数明确指定永久代最大容量时的默认值，无论JDK 5还是JDK 6，这个默认值都是64MB。对于Eclipse这种规模的Java程序来说，64MB的永久代内存空间显然是不够的，内存溢出是肯定的，但为何在JDK 5中没有发生过溢出呢？</p>
 <p>在VisualVM的“概述&gt;JVM参数”页签中，分别检查使用JDK 5和JDK 6运行Eclipse时的Java虚拟机启动参数，发现使用JDK 6时，只有三个启动参数，如代码清单5-5所示。</p>
 <p>代码清单5-5 JDK 1.6的Eclipse运行期参数</p>
@@ -1138,7 +1138,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\IcyFenix&gt;jps </span><br><span class="line">4724 org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line">5412 Jps </span><br><span class="line"></span><br><span class="line">C:\Users\IcyFenix&gt;jstat -class 4724 </span><br><span class="line">Loaded   Bytes  Unloaded  Bytes  Time </span><br><span class="line">  6885  9109.7         3    2.6  3.10</span><br></pre></td></tr></table></figure>
 <p>关于类与类加载的话题，譬如刚刚提到的字节码验证是怎么回事，本书专门规划了两个章节进行详细讲解，在此暂不再展开了。</p>
 <p>在取消字节码验证之后，JDK 5的平均启动下降到了13秒，而在JDK 6的测试数据平均比JDK 5快了1秒左右，下降到平均12秒，如图5-8所示。在类加载时间仍然落后的情况下，依然可以看到JDK 6在性能上确实比JDK 5略有优势，说明至少在Eclipse启动这个测试用例上，升级JDK版本确实能带来一些“免费的”性能提升。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919154912.png" alt="image-20210919154912188"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919154912.png" alt="image-20210919154912188"></p>
 <p>图5-8 运行在JDK 6下取消字节码验证的启动时间</p>
 <p>前面提到过，除了类加载时间以外，在VisualGC中监视曲线中显示了两项很大的非用户程序耗时：编译时间（Compile Time）和垃圾收集时间（GC Time）。垃圾收集时间读者应该非常清楚了，而编译时间是什么东西？程序在运行之前不是已经编译了吗？</p>
 <p>虚拟机的即时编译与垃圾收集一样，是本书的一个重点部分，后面有专门章节讲解，这里先简要介绍一下：编译时间是指虚拟机的即时编译器（Just In Time Compiler）编译热点代码（Hot Spot Code）的耗时。我们知道Java语言为了实现跨平台的特性，Java代码编译出来后形成Class文件中储存的是字节码（Byte Code），虚拟机通过解释方式执行字节码命令，比起C/C++编译成本地二进制代码来说，速度要慢不少。为了解决程序解释执行的速度问题，JDK 1.2以后，HotSpot虚拟机内置了两个即时编译器[^4]，如果一段Java方法被调用次数到达一定程度，就会被判定为热代码交给即时编译器即时编译为本地代码，提高运行速度（这就是HotSpot虚拟机名字的来由）。而且完全有可能在运行期动态编译比C/C++的编译期静态编译出来的结果要更加优秀，因为运行期的编译器可以收集很多静态编译器无法得知的信息，也可以采用一些激进的优化手段，针对“大多数情况”而忽略“极端情况”进行假<br>设优化，当优化条件不成立的时候再逆优化退回到解释状态或者重新编译执行。所以Java程序只要代码编写没有问题（典型的是各种泄漏问题，如内存泄漏、连接泄漏），随着运行时间增长，代码被编译得越来越彻底，运行速度应当是越运行越快的。不过，Java的运行期编译的一大缺点就是它进行编译需要消耗机器的计算资源，影响程序正常的运行时间，这也就是上面所说的“编译时间”。</p>
@@ -1282,13 +1282,13 @@
 <p>代码清单5-10 内存调整后的Eclipse配置文件</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">-vm </span><br><span class="line">D:/_DevSpace/jdk1.6.0_21/bin/javaw.exe </span><br><span class="line">-startup </span><br><span class="line">plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line">--launcher.library plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.200.v20090519 </span><br><span class="line">-product org.eclipse.epp.package.jee.product </span><br><span class="line">-showsplash org.eclipse.platform </span><br><span class="line">-vmargs </span><br><span class="line">-Dosgi.requiredJavaVersion=1.5 </span><br><span class="line">-Xverify:none </span><br><span class="line">-Xmx512m </span><br><span class="line">-Xms512m </span><br><span class="line">-Xmn128m </span><br><span class="line">-XX:PermSize=96m </span><br><span class="line">-XX:MaxPermSize=96m</span><br></pre></td></tr></table></figure>
 <p>现在这个配置之下，垃圾收集的次数已经大幅度降低，图5-9是Eclipse启动后一分钟的监视曲线， 只发生了8次Minor GC和4次Full GC，总耗时为1.928秒。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160201.png" alt="image-20210919160200884"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160201.png" alt="image-20210919160200884"></p>
 <p>图5-9 GC调整后的运行数据 </p>
 <p>这个结果已经算是基本正常，但是还存在一点瑕疵：从Old Gen的曲线上看，老年代直接固定在384MB，而内存使用量只有66MB，并且一直很平滑，完全不应该发生Full GC才对，那4次Full GC是怎么来的？使用jstat-gccause查询一下最近一次GC的原因，见代码清单5-11。</p>
 <p>代码清单5-11 查询GC原因</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">C:\Users\IcyFenix&gt;jps </span><br><span class="line">9772 Jps </span><br><span class="line">4068 org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line"></span><br><span class="line">C:\Users\IcyFenix&gt;jstat -gccause 4068 </span><br><span class="line">S0    S1    E     O      P      YGC  YGCT   FGC FGCT  GCT   LGCC        GCC </span><br><span class="line">0.00  0.00  1.00  14.81  39.29  6    0.422  20  5.992 6.414 System.gc() No GC</span><br></pre></td></tr></table></figure>
 <p>从LGCC（Last GC Cause）中看到原来是代码调用System.gc()显式触发的垃圾收集，在内存设置调整后，这种显式垃圾收集不符合我们的期望，因此在eclipse.ini中加入参数-XX：+DisableExplicitGC屏蔽掉System.gc()。再次测试发现启动期间的Full GC已经完全没有了，只发生了6次Minor GC，总共耗时417毫秒，与调优前4.149秒的测试结果相比，正好是十分之一。进行GC调优后Eclipse的启动时间下降非常明显，比整个垃圾收集时间降低的绝对值还大，现在启动只需要7秒多，如图5-10所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160511.png" alt="image-20210919160511532"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160511.png" alt="image-20210919160511532"></p>
 <p>图5-10 Eclipse启动时间</p>
 
       
@@ -1412,13 +1412,13 @@
     <div class="post-body" itemprop="articleBody">
           <h2 id="5-3-5-选择收集器降低延迟"><a href="#5-3-5-选择收集器降低延迟" class="headerlink" title="5.3.5 选择收集器降低延迟"></a>5.3.5 选择收集器降低延迟</h2><p>现在Eclipse启动已经比较迅速了，但我们的调优实战还没有结束，毕竟Eclipse是拿来写程序用的，不是拿来测试启动速度的。我们不妨再在Eclipse中进行一个非常常用但又比较耗时的操作：代码编译。图5-11是当前配置下，Eclipse进行代码编译时的运行数据，从图中可以看到，新生代每次回收耗时约65毫秒，老年代每次回收耗时约725毫秒。对于用户来说，新生代垃圾收集的耗时也还好，65毫秒的停顿在使用中基本无法察觉到，而老年代每次垃圾收集要停顿接近1秒钟，虽然较长时间才会出现一次，但这样的停顿已经是可以被人感知了，会影响到体验。</p>
 <p>再注意看一下编译期间的处理器资源使用状况，图5-12是Eclipse在编译期间的处理器使用率曲线图，整个编译过程中平均只使用了不到30%的处理器资源，垃圾收集的处理器使用率曲线更是几乎与坐标横轴紧贴在一起，这说明处理器资源还有很多可利用的余地。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160657.png" alt="image-20210919160657099"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160657.png" alt="image-20210919160657099"></p>
 <p>图5-11 编译期间运行数据</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160721.png" alt="image-20210919160720782"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160721.png" alt="image-20210919160720782"></p>
 <p>图5-12 编译期间CPU曲线</p>
 <p>列举垃圾收集的停顿时间、处理器资源富余的目的，都是为了给接下来替换掉客户端模式的虚拟机中默认的新生代、老年代串行收集器做个铺垫。</p>
 <p>Eclipse应当算是与使用者交互非常频繁的应用程序，由于代码太多，笔者习惯在做全量编译或者清理动作的时候，使用“Run in Background”功能一边编译一边继续工作。回顾一下在第3章提到的几种收集器，很容易想到在JDK 6版本下提供的收集器里，CMS是最符合这类场景的选择。我们在eclipse.ini中再加入这两个参数，-XX：+UseConc-MarkSweepGC和-XX：+UseParNewGC（ParNew是使用CMS收集器后的默认新生代收集器，写上仅是为了配置更加清晰），要求虚拟机在新生代和老年代分别使用ParNew和CMS收集器进行垃圾回收。指定收集器之后，再次测试的结果如图5-13所示，与原来使用串行收集器对比，新生代停顿从每次65毫秒下降到了每次53毫秒，而老年代的停顿时间更是从725毫秒大幅下降到了36毫秒。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919160806.png" alt="image-20210919160805841"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919160806.png" alt="image-20210919160805841"></p>
 <p>图5-13 指定ParNew和CMS收集器后的GC数据 </p>
 <p>当然，由于CMS的停顿时间只是整个收集过程中的一小部分，大部分收集行为是与用户程序并发进行的，所以并不是真的把垃圾收集时间从725毫秒直接缩短到36毫秒了。在收集器日志中可以看到CMS与程序并发的时间约为400毫秒，这样收集器的运行结果就比较令人满意了。</p>
 <p>到这里为止，对于虚拟机内存的调优基本就结束了，这次实战可以看作一次简化的服务端调优过程，服务端调优有可能还会在更多方面，如数据库、资源池、磁盘I/O等，但对于虚拟机内存部分的优化，与这次实战中的思路没有什么太大差别。即使读者实际工作中不接触到服务器，根据自己工作环境做一些试验，总结几个参数让自己日常工作环境速度有较大幅度提升也是很能提升工作幸福感的。 最终eclipse.ini的配置如代码清单5-12所示。</p>

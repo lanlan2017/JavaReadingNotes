@@ -34,15 +34,15 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="15.3 监控失败每当断路器保护的方法被调用时，它都会收集一些调用相关的数据，并将其发布到一个HTTP流中，这些数据可以实时监控正在运行中的应用的健康状况。在每个断路器收集的数据中，Hystrix流包括如下内容：  方法被调用了多少次； 调用成功了多少次； 后备方法调用了多少次； 方法超时了多少次。  Hystrix流是由Actuator端点提供的。在第16章中，我们会更详细地讨论Actuator">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023222933.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023222949.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023223003.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023223028.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023222933.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023222949.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023223003.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023223028.png">
 <meta property="article:published_time" content="2021-10-21T10:32:59.000Z">
 <meta property="article:modified_time" content="2021-10-23T14:30:29.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023222933.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023222933.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/7f42df6f/">
@@ -349,17 +349,17 @@
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">port:</span> <span class="number">7979</span></span><br></pre></td></tr></table></figure>
 
 <p>现在，我们就可以启动Hystrix Dashboard并查看其效果了。运行之后，打开浏览器并访问<a target="_blank" rel="noopener" href="http://localhost:7979/hystrix">http://localhost:7979/hystrix</a> ，我们将会看到如图15.2所示的HystrixDashboard主页。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023222933.png" alt="image-20211023222932777"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023222933.png" alt="image-20211023222932777"></p>
 <center>图15.2 Hystrix Dashboard主页</center>
 
 <p>在Hystrix流监视器中，我们可以设置延迟和标题。延迟的默认值是2秒，指的是轮询周期的间隔，它实际上会延缓流。标题输入域的值会以标题的形式显示在监控页中。对于我们的需求来说，默认值就可以了。</p>
 <p>点击Monitor Stream按钮，我们就可以进入Hystrix流的监视器页面了，如图15.3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023222949.png" alt="image-20211023222949317"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023222949.png" alt="image-20211023222949317"></p>
 <center>图15.3 Hystrix流监控页面会显示每个应用的断路器指标</center>
 
 <p>每个断路器都会显示为一个图表并且还带有一些有用的指标数据。图15.3中只显示了getAllIngredients()的断路器，因为到目前为止我们只定义了这一个断路器。</p>
 <p>如果看不到断路器的任何图表，只是看到一个单词“Loading”，那么可能是断路器方法都还没有被调用。我们必须向服务发送一个请求，触发断路器保护该方法，这样方法的断路器指标才会显示在Dashboard上。我近距离观察了一个断路器的监视器（见图15.4），并对其中显示的所有数据都进行了标注。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023223003.png" alt="image-20211023223003422"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023223003.png" alt="image-20211023223003422"></p>
 <center>图15.4 每个断路器的监视器都提供了该断路器当前状态的有用信息</center>
 
 <p>在监视器中，最引人注目的是左上角的图表。折线图代表了指定方法过去两分钟的流量，简要显示了该方法的繁忙情况。</p>
@@ -370,7 +370,7 @@
 <p>如果这个方法执行时与调用者在同一个线程上下文中，那么调用者将会一直在这个长时间运行的方法上进行等待。另外，如果被阻塞的线程来自一组数量有限的线程集，比如Tomcat的请求处理线程，而且这种情况一直持续，那么当所有线程耗尽并全部等待响应时，就会影响到可扩展性。</p>
 <p>为了避免这种现象，Hystrix会为每项依赖（比如，带有一个或多个Hystrix命令方法的每个Spring bean）指派一个线程池。当Hystrix命令调用时，它将会在来自Hystrix托管的线程池的某个线程中执行，这样会将其与调用者线程隔离开。如果被调用的方法要执行较长时间，就能够允许调用线程不用一直等待，将潜在的线程耗尽隔离在Hystrix托管的线程池中。</p>
 <p>你可能会发现在图15.3中除了断路器的监视器外，在页面底部还有另一个监视器，位于“Thread Pools”标题之下。这个区域是Hystrix托管的每个线程池的监视器。图15.5展示了一个线程池监视器，并对其中的数据进行了标注。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211023223028.png" alt="image-20211023223028828"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211023223028.png" alt="image-20211023223028828"></p>
 <center>图15.5 线程池监视器显示Hystrix托管的线程池的重要统计信息</center>
 
 <p>与断路器的监视器类似，每个线程池监视器在左上角都含有一个圆圈。圆圈的大小和颜色代表了线程池的活跃状态以及它的健康状况。与断路器的监视器不同的是，线程池的监视器没有显示过去几分钟线程池活动的折线图。</p>

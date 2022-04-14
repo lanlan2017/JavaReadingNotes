@@ -34,16 +34,16 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="36.1 事件触发器的开发大家都应该做过桌面程序的开发吧，比如编写一个EXE文件，或者使用Java Swing编写一个应用程序，或者是用Delphi、C编写C&#x2F;S结构的应用系统，即使这些都没有做过，那也总编写过B&#x2F;S结构的页面吧？回忆一下开发过程，大家是不是经常使用文本框和按钮这两个控件？比如设计一个按钮，那总要编写鼠标点击处理，你是不是这样开发：在按钮的onClick函数中编写自己的逻辑代码，然">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001202205.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001211253.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001211950.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001212114.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001212239.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001202205.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001211253.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001211950.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001212114.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001212239.png">
 <meta property="article:published_time" content="2021-09-27T11:57:33.000Z">
 <meta property="article:modified_time" content="2021-10-01T13:29:42.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001202205.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001202205.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/d7d38d5/">
@@ -329,7 +329,7 @@
 <p>我们今天的任务就是来模拟类似触发过程。我们这样分析：有一个产品（不管是Frame 还是Button或者是Radio），它有多个触发事件，它产生的时候触发一个创建事件，修改的时候触发修改事件，删除的时候触发删除事件，这就类似于我们的文本框，初始化（也就是创建）的时候要触发一个onLoad或onCreate事件，修改的时候触发onChange事件，双击(类似于删除)的时候又触发onDbClick事件，我们今天的目标就是来思考怎么实现这样一个架构。</p>
 <p>设计都是先易后难，我们先从最简单的部分入手。首先需要一个产品，并且该产品要有创建、修改、销毁的动作，很明显这就是一个工厂方法模式。同时产品也可以通过克隆方式产生，这与我们在GUI设计中经常使用的复制粘贴操作相类似，要不界面上那么多的文本框，不使用复制粘贴，不累死人才怪呢，那这非常明显就是原型模式。好，分析到这里，我们先把这部分的类图建立起来，如图36-1所示。</p>
 <p>很熟悉的类图，与工厂方法模式的通用类图非常相似，但不完全是。有什么差别呢？注意看产品类的私有属性canChanged和构造函数，它们有特殊的用途。在该类图中，我们使用了工厂方法模式创建产品，使用原型模式让对象可以被拷贝，仅仅这两个模式还不足以解决我们的问题，想想看，产品的产生是有一定的条件的，不是谁想产生就产生，否则怎么能够触发创建事件呢？因此需要限定产品的创建者，所以我们在类图中把产品和工厂的关系定位为组合关系，而不是简单的聚集或依赖关系。换句话说，产品只能由工厂类创建，而不能被其他对象通过new方式创建，因此我们在这里还用到一个单来源调用（Single Call）方法解决该问题。这是一个方法，不是一个设计模式，我马上给大家讲解它是如何工作的。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001202205.png" alt="image-20211001202204935"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001202205.png" alt="image-20211001202204935"></p>
 <center>图36-1 产品创建工厂</center>
 我们先来看产品类的源代码，它比较简单，如代码清单36-1所示。
 
@@ -345,7 +345,7 @@
 <p><strong>注意</strong> 采用单来源调用的两个对象一般是组合关系，两者有相同的生命期，它通常适用于有单例模式和工厂方法模式的场景中。</p>
 <hr>
 <p>我们继续往下分析，一个产品新建要触发事件，那事件是什么？当然也是一个对象了， 需要把它设计出来，仅仅有事件还不行，还要考虑有人去处理这个事件，产生了一个事件不可能没有对象去处理吧？如果是这样那事件还有什么意义呢？既然要去处理，那就需要一个通知渠道了，于是观察者模式准备好了。好，我们把这段分析的类图也画出来，如图36-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001211253.png" alt="image-20211001211253487"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001211253.png" alt="image-20211001211253487"></p>
 <center>图36-2 观察者模式处理事件</center>
 
 <p>在该类图中，观察者为EventDispatch类，它使用了单例模式，避免对象膨胀，但同时也带来了性能及线程安全隐患，这点需要大家在实际应用中注意（想想Spring中的Bean注入， 默认也是单例，在通常的应用中一般不需要修改，除非是较大并发的应用）。我们来看代码，先来看事件类型定义，它是一个枚举类型，如代码清单36-3所示。</p>
@@ -358,7 +358,7 @@
 <p>代码清单36-5 事件的观察者</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">EventDispatch</span> <span class="keyword">implements</span> <span class="title">Observer</span></span>&#123;</span><br><span class="line">    <span class="comment">//单例模式</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> EventDispatch dispatch = <span class="keyword">new</span> EventDispatch();</span><br><span class="line">    <span class="comment">//不允许生成新的实例</span></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">EventDispatch</span><span class="params">()</span></span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//获得单例对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> EventDispatch <span class="title">getEventDispatch</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dispatch;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//事件触发</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(Observable o, Object arg)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>产品和事件都定义出来了，那我们想想怎么把这两者关联起来，产品和事件是两个独立的对象，两者都可以独立地扩展，用什么来适应它们的扩展呢？桥梁模式！两个不相关的类可以通过桥梁模式组合出稳定、健壮的结构，我们画出类图，如图36-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001211950.png" alt="image-20211001211950545"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001211950.png" alt="image-20211001211950545"></p>
 <center>图36-3 桥梁模式实现产品和事件的组合</center>
 看着不像桥梁模式？看看桥梁模式的通用类图，然后把抽象化角色和实现化角色去掉看看，是不是就是一样了？各位可能要说了，把抽象化角色和实现化角色去掉，那桥梁模式在抽象层次耦合的优点还怎么体现呢？因为我们采用的是单个产品对象，没有必要进行抽象化处理，读者若要按照该框架做扩展开发，该部分是肯定需要抽象出接口或抽象类的，好在也非常简单，只要抽取一下就可以了。这样考虑后，我们的ProductManager类就增加一个功能：组合产品类和事件类，产生有意义的产品事件，如代码清单36-6所示。
 
@@ -367,7 +367,7 @@
 <p>在每个方法中增加了事件的产生机制，在createProduct方法中增加了创建产品事件，在editProduct方法中增加了修改产品事件，在delProduct方法中增加了遗弃产品事件，在clone方法中增加克隆产品事件，而且每个事件都是通过组合产生的，产品和事件的扩展性非常优秀。</p>
 <p>刚刚我们说完了产品和事件的关系处理，现在回到我们事件的观察者，它承担着非常重要的职责。我们知道它要处理事件，但是现在还没有想好怎么实现它处理事件的update方法，暂时保持为空。</p>
 <p>我们继续分析，这么多的事件（现在只有1个产品类，如果产品类很多呢？比如30多个）不可能每个产品事件都写一个处理者吧，对于产品事件来说，它最希望的结果就是我通知了事件处理者（也就是观察者模式的观察者），其他具体怎么处理由观察者来解决，那现在问题是观察者怎么来处理这么多的事件呢？事件的处理者必然有N多个，如何才能通知相应的处理者来处理事件呢？一个事件也可能通知多个处理者来处理，并且一个处理者处理完毕还可能通知其他的处理者，这不可能让每个处理者独自完成这样“不可能完成的任务”，我们把问题的示意图画出来，如图36-4所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001212114.png" alt="image-20211001212113884"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001212114.png" alt="image-20211001212113884"></p>
 <center>图36-4 事件处理示意图</center>
 
 <p>看到该示意图，你立刻就会想到中介者模式。是的，需要中介者模式上场了，我们把EventDispatch类（嘿嘿，为什么要定义成Dispatch呢？就是分发的意思）作为事件分发的中介者，事件的处理者都是具体的同事类，它们有着相似的行为，都是处理产品事件，但是又有不相同的逻辑，每个同事类对事件都有不同的处理行为。我们来看类图，如图36-5所示。</p>
@@ -384,7 +384,7 @@
 <li>事件处理者的管理员角色</li>
 </ul>
 <p>不是每一个事件的处理者都可以接收事件并进行处理，是需要获得分发者许可后才可以，也就是说只有事件分发者允许它处理，它才能处理。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211001212239.png" alt="image-20211001212239626"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001212239.png" alt="image-20211001212239626"></p>
 <center>图36-5 采用中介者模式对事件进行分发</center>
 事件分发者担当了这么多的职责，那是不是与单一职责原则相违背了？确实如此，我们在整个系统的设计中确实需要这样一个角色担任这么多的功能，如果强制细分也可以完成， 但是会加大代码量，同时导致系统的结构复杂，读者可以考虑拆分这3个职责，然后再组合相关的功能，看看代码量是如何翻倍的。
 

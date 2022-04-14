@@ -34,13 +34,13 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="5.3.1 调优前的程序运行状态笔者使用Eclipse作为日常工作中的主要IDE工具，由于安装的插件比较大（如Kloc-work、 ClearCase LT等）、代码也很多，启动Eclipse直到所有项目编译完成需要四五分钟。一直对开发环境的速度感觉到不满意，趁着编写这本书的机会，决定对Eclipse进行“动刀”调优。 笔者机器的Eclipse运行平台是32位Windows 7系统，虚拟机为Hot">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919112606.png">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919113033.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919112606.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919113033.png">
 <meta property="article:published_time" content="2021-09-24T02:16:20.000Z">
 <meta property="article:modified_time" content="2021-11-18T02:55:11.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919112606.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919112606.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/15b18ae3/">
@@ -331,7 +331,7 @@
 <p>代码清单5-3 Eclipse 3.5初始配置</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">D:/_DevSpace/jdk1.5.0/bin/javaw.exe </span><br><span class="line">-startup </span><br><span class="line">plugins/org.eclipse.equinox.launcher_1.0.201.R35x_v20090715.jar </span><br><span class="line">--launcher.library </span><br><span class="line">plugins/org.eclipse.equinox.launcher.win32.win32.x86_1.0.200.v20090519 </span><br><span class="line">-product </span><br><span class="line">org.eclipse.epp.package.jee.product </span><br><span class="line">--launcher.XXMaxPermSize </span><br><span class="line">256M </span><br><span class="line">-showsplash </span><br><span class="line">org.eclipse.platform </span><br><span class="line">-vmargs </span><br><span class="line">-Dosgi.requiredJavaVersion=1.5 </span><br><span class="line">-Xmx512m </span><br><span class="line">-Dcom.sun.management.jmxremote</span><br></pre></td></tr></table></figure>
 <p>为了与调优后的结果进行量化对比，调优开始前笔者先做了一次初始数据测试。测试用例很简单，就是收集从Eclipse启动开始，直到所有插件加载完成为止的总耗时以及运行状态数据，虚拟机的运行数据通过VisualVM及其扩展插件VisualGC进行采集。测试过程中反复启动数次Eclipse直到测试结果稳定后，取最后一次运行的结果作为数据样本（为了避免操作系统未能及时进行磁盘缓存而产生的影响），数据样本如图5-2所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919112606.png" alt="image-20210919112606221"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919112606.png" alt="image-20210919112606221"></p>
 <p>图5-2 Eclipse原始运行数据 </p>
 <p>Eclipse启动的总耗时没有办法从监控工具中直接获得，因为VisualVM不可能知道Eclipse运行到什么阶段算是启动完成。为了测试的准确性，笔者写了一个简单的Eclipse插件，用于统计Eclipse的启动耗时。由于代码十分简单，且本书并不是Eclipse RCP的开发教程，所以只列出代码清单5-4供读者参考，不再延伸。如果读者需要这个插件，可以使用下面的代码自己编译即可。</p>
 <p>代码清单5-4 Eclipse启动耗时统计插件</p>
@@ -340,7 +340,7 @@
 <p>plugin.xml代码：</p>
 <figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span> &lt;?eclipse version=&quot;3.4&quot;?&gt;</span><br><span class="line"><span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">extension</span> <span class="attr">point</span>=<span class="string">&quot;org.eclipse.ui.startup&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">startup</span> <span class="attr">class</span>=<span class="string">&quot;eclipsestarttime.actions.ShowTime&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br></pre></td></tr></table></figure>
 <p>上述代码打包成JAR后放到Eclipse的plugins目录，反复启动几次后，插件显示的平均时间稳定在 15秒左右，如图5-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20210919113033.png" alt="image-20210919113033359"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/09/20210919113033.png" alt="image-20210919113033359"></p>
 <p>图5-3 耗时统计插件运行效果<br>根据VisualGC和Eclipse插件收集到的信息，总结原始配置下的测试结果如下：</p>
 <ul>
 <li>整个启动过程平均耗时约15秒。</li>

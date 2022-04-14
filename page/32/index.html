@@ -1015,7 +1015,7 @@
 <p>在微服务应用中，Eureka会担当所有服务的注册中心。Eureka本身也可以视为一个微服务，只不过在整体应用中它的目的是让其他的服务能够互相发现。</p>
 <p>鉴于它在微服务应用中的角色，在创建需要注册的服务之前，我们最好搭建一个Eureka服务注册中心。为了理解Eureka的运行原理，我们可以参见图13.1所述的流动过程。</p>
 <p>当服务实例启动的时候，它会按照名称将自己注册到Eureka中。在图13.1中，服务的名称为“some-service”。“some-service”可能会有多个完全等价的实例，但是在Eureka注册时，它们的名称是相同的。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211020204019.png" alt="image-20211020204011914"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211020204019.png" alt="image-20211020204011914"></p>
 <center>图13.1 服务使用Eureka服务注册中心进行注册（这样其他的服务就能发现并消费它们了）</center>
 
 <p>在某个时间点，另一个服务（图13.1中名为“other-service”）需要使用“some-service”的端点。在这里，“other-service”没有使用特定的主机和端口信息对“some-service”进行硬编码，而是根据名字从Eureka查找“some-service”。Eureka的回应中将会包含它所知道的“some-service”的所有实例。</p>
@@ -1035,7 +1035,7 @@
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@EnableEurekaServer</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceRegistryApplication</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    SpringApplication.run(ServiceRegistryApplication.class, args);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>好的，这样就可以了！如果此时启动应用，Eureka服务注册中心就会运行起来并监听8080端口。如果此时在浏览器上访问<a target="_blank" rel="noopener" href="http://localhost:8080/">http://localhost:8080</a> ，将会看到如图13.2所示的Web界面。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211020204747.png" alt="image-20211020204747659"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211020204747.png" alt="image-20211020204747659"></p>
 <center>图13.2 Eureka基于Web的dashboard</center>
 
 <p>Eureka还对外暴露了REST API，借助它们服务可以自行进行注册，也可以发现其他的服务。你可能不会直接使用REST API，但是你会发现“/eureka/apps”端点非常有意思。它会列出注册中心所有服务实例的细节。此时，我们没有注册任何服务，它的响应如下所示。在注册完服务之后，我们还会研究这个端点：</p>
@@ -1056,7 +1056,7 @@
 
 <p>在这里，我们将端口设置成了8761，这是Eureka客户端（我们将会在13.3节中进行讨论）默认监听的端口。</p>
 <h3 id="禁用自我保护模式"><a href="#禁用自我保护模式" class="headerlink" title="禁用自我保护模式"></a>禁用自我保护模式</h3><p>另外一个我们需要考虑设置的属性是eureka.server.enable-self-preservation。如果我们启动Eureka服务器并让它空闲一分钟以上，可能就会在Eureka UI上看到一个非常吓人的错误信息，如图13.3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211020205004.png" alt="image-20211020205004645"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211020205004.png" alt="image-20211020205004645"></p>
 <center>图13.3 在自我保护模式下，Eureka会在dashboard显示信息</center>
 
 <p>尽管这里使用了红色字体和大写字母，但是这条信息并不像看上去那么严重。Eureka希望服务实例能够注册上来，并且每隔30秒向它发送一次注册更新的请求。通常，如果Eureka在3个更新周期（或者说90秒）内没有收到服务的更新请求，就会将该服务注销。在本例中，Eureka假定出现了网络问题，进入自我保护模式，所以不会注销服务实例。</p>
@@ -1064,7 +1064,7 @@
 <figure class="highlight yml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">eureka:</span></span><br><span class="line">  <span class="string">...</span></span><br><span class="line">  <span class="attr">server:</span></span><br><span class="line">    <span class="attr">enable-self-preservation:</span> <span class="literal">false</span></span><br></pre></td></tr></table></figure>
 
 <p>这个属性在开发环境中是非常有用的。在开发环境中，基于各种原因，Eureka可能会收不到更新请求。在这种环境下，我们可能会频繁地启动或关闭服务实例，自我保护模式会将已停止服务的注册项保留下来，另一个服务访问已经不可用的服务时就会产生问题。禁用自动保护模式将会防止这种诡异的问题。然而，我们付出的代价就是会看到另一条恐怖的红色信息（见图13.4）。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211020205040.png" alt="image-20211020205040204"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211020205040.png" alt="image-20211020205040204"></p>
 <center>图13.4 禁用自我保护模式时，提示自我保护模式已禁用</center>
 
 <p>虽然我们在开发环境可以禁用自我保护模式，但是在投入生产环境时需要将其启用。</p>
@@ -1617,7 +1617,7 @@ other:
 <p>尽管IngredientUDT和Ingredient看上去非常相似，但是它的映射需求要简单得多。它使用了<code>@UserDefinedType</code>注解，表明这是Cassandra中的用户定义类型。但是就其他方面来讲，它就是有几个属性的简单类。</p>
 <p>我们会发现，IngredientUDT类没有包含id属性。尽管它也可以包含源Ingredient中id属性的副本，但是这样没有太大必要。实际上，用户定义类型可以包含任何想要的属性，它没有必要与表定义一一对应。</p>
 <p>我发现，可视化用户定义类型与表中的持久化数据之间的关联关系是很困难的。图12.1展现了整个Taco Cloud数据库的数据模型，包含了用户定义类型。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211017213044.png" alt="image-20211017213043765"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211017213044.png" alt="image-20211017213043765"></p>
 <center>图12.1 在这里不再使用外键和连接，Cassandra表是非规范化的，用户定义类型包含从关联表复制的数据</center>
 
 <p>具体到我们刚刚创建的用户定义类型，需要注意Taco有一个IngredientUDT列表，其中包含了从Ingredient复制而来的数据。当Taco持久化的时候，Taco对象以及IngredientUDT列表都会持久化到tacos表中。IngredientUDT列表会完整地持久化到ingredients列中。</p>

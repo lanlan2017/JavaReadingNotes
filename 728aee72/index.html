@@ -34,12 +34,12 @@
 <meta property="og:site_name" content="蓝蓝站点">
 <meta property="og:description" content="8.3.2 分派众所周知，Java是一门面向对象的程序语言，因为Java具备面向对象的3个基本特征：继承、封装和多态。本节讲解的分派调用过程将会揭示多态性特征的一些最基本的体现，如“重载”和“重写”在Java虚拟机之中是如何实现的，这里的实现当然不是语法上该如何写，我们关心的依然是虚拟机如何确定正确的目标方法。 1.静态分派在开始讲解静态分派^1前，笔者先声明一点，“分派”（Dispatch）这个">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125103635.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125103635.png">
 <meta property="article:published_time" content="2021-11-24T14:03:55.000Z">
 <meta property="article:modified_time" content="2021-11-28T05:57:14.000Z">
 <meta property="article:author" content="蓝蓝">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125103635.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125103635.png">
 
 
 <link rel="canonical" href="https://lanlan2017.github.io/JavaReadingNotes/728aee72/">
@@ -399,7 +399,7 @@
 <p>按照目前Java语言的发展趋势，它并没有直接变为动态语言的迹象，而是通过内置动态语言（如JavaScript）执行引擎、加强与其他Java虚拟机上动态语言交互能力的方式来间接地满足动态性的需求。但是作为多种语言共同执行平台的Java虚拟机层面上则不是如此，早在JDK 7中实现的JSR-292[^7]里面就已经开始提供对动态语言的方法调用支持了，JDK 7中新增的invokedynamic指令也成为最复杂的一条方法调用的字节码指令，稍后笔者将在本章中专门开一节来讲解这个与Java调用动态语言密切相关的特性。</p>
 <h2 id="4-虚拟机动态分派的实现"><a href="#4-虚拟机动态分派的实现" class="headerlink" title="4.虚拟机动态分派的实现"></a>4.虚拟机动态分派的实现</h2><p>前面介绍的分派过程，作为对Java虚拟机概念模型的解释基本上已经足够了，它已经解决了虚拟机在分派中“会做什么”这个问题。但如果问Java虚拟机“具体如何做到”的，答案则可能因各种虚拟机的实现不同会有些差别。</p>
 <p>动态分派是执行非常频繁的动作，而且动态分派的方法版本选择过程需要运行时在接收者类型的方法元数据中搜索合适的目标方法，因此，Java虚拟机实现基于执行性能的考虑，真正运行时一般不会如此频繁地去反复搜索类型元数据。面对这种情况，一种基础而且常见的优化手段是为类型在方法区中建立一个虚方法表（Virtual Method Table，也称为vtable，与此对应的，在invokeinterface执行时也会用到接口方法表——Interface Method Table，简称itable），使用虚方法表索引来代替元数据查找以提高性能[^8]。我们先看看代码清单8-11所对应的虚方法表结构示例，如图8-3所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/Sum/20211125103635.png" alt="image-20211125103635065"></p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/11/20211125103635.png" alt="image-20211125103635065"></p>
 <center>图8-3 方法表结构</center>
 
 <p>虚方法表中存放着各个方法的实际入口地址。如果某个方法在子类中没有被重写，那子类的虚方 法表中的地址入口和父类相同方法的地址入口是一致的，都指向父类的实现入口。如果子类中重写了 这个方法，子类虚方法表中的地址也会被替换为指向子类实现版本的入口地址。在图8-3中，Son重写 了来自Father的全部方法，因此Son的方法表没有指向Father类型数据的箭头。但是Son和Father都没有 重写来自Object的方法，所以它们的方法表中所有从Object继承来的方法都指向了Object的数据类型。</p>
