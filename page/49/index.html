@@ -950,6 +950,146 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/b29e0ad3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/b29e0ad3/" class="post-title-link" itemprop="url">38.2 对象池模式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-09-27 19:57:33" itemprop="dateCreated datePublished" datetime="2021-09-27T19:57:33+08:00">2021-09-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-10-03 09:19:24" itemprop="dateModified" datetime="2021-10-03T09:19:24+08:00">2021-10-03</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/8-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">8 设计模式之禅(第2版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/8-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85-%E7%AC%AC2%E7%89%88/5-%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E6%89%A9%E5%B1%95%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">5 第五部分 扩展篇</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/8-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85-%E7%AC%AC2%E7%89%88/5-%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E6%89%A9%E5%B1%95%E7%AF%87/%E7%AC%AC38%E7%AB%A0-%E6%96%B0%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">第38章 新模式</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/b29e0ad3/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/b29e0ad3/" data-xid="/JavaReadingNotes/b29e0ad3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="38-2-对象池模式"><a href="#38-2-对象池模式" class="headerlink" title="38.2 对象池模式"></a>38.2 对象池模式</h1><p>上周二，师兄过来找我，他负责运维一个大型新闻网站，说是网站出现性能，让我帮忙分析调优。我这几天正好闲得手痒，同时又卖个人情，何乐而不为呢。于是我们俩就到机房蹲点，追查问题。</p>
+<h2 id="38-2-1-正确的池化"><a href="#38-2-1-正确的池化" class="headerlink" title="38.2.1 正确的池化"></a>38.2.1 正确的池化</h2><p>简单说明一下该系统的场景，这是一个专业的新闻追踪网站，关注的是专业新闻的深度，在行业内具有相当大的影响力。最近一段时间内出现偶发性缓慢，从监控情况上看，响应时间在2秒以上，由于最近软硬件环境都没有变更过，因此直觉判断：最快捷、直观的解决方案就是增加DB硬件设备。但由于东家是穷惯了，不同意在没有彻查问题之前而依靠增强硬件来解决问题，于是我们这些软件工程师就忙活起来了。</p>
+<p>网站首页内容基本都是静态的（轮询生成），唯一的动态部分是网站的激励语，比如“积一时之跬步，臻千里之遥程”、“业精于勤，荒于嬉；行成于思，毁于随”等励志语句， 这是一个简单的SQL随机查询结果，表中的数量在5000条左右，而且结构简单，查询性能不是问题。示例代码如代码清单38-29所示。</p>
+<p>代码清单38-29 无缓存的SQL随机读取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WisdomProvider</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowire</span></span><br><span class="line">    <span class="keyword">private</span> WisdomDao wisdomDao;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOneWord</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> wisdomDao.randomOneWisdom();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于代码中的@Service、@Autowire注解，做过Spring开发的都懂，这是一个典型的三层架构，WisdomDao的randomOneWisdom方法是通过数据库随机函数查询一条记录。在跟踪过程中，发现高峰期数据库连接偶尔出现占满情况，而且都是查询该表（顺便说下，该数据库的随机查询算法有缺陷），问题找到了：每一次访问都会直接查询数据库，没有缓存。通常情况下，这没有问题，但是在高并发的情况下，例如在10万PV的压力下服务器基本就垮掉了，这是非常严重的问题。</p>
+<p>怎么解决呢？好办，引入一个对象池，把这5000条记录（根据评估最多不超过20000条记录）在启动时直接加载到内存中，在需要时再从内存中取得，以后查询不再与数据库交互。示例代码如代码清单38-30所示。</p>
+<p>代码清单38-30 增加缓存后的随机读取</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WisdomProvider</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowire</span></span><br><span class="line">    <span class="keyword">private</span> WisdomDao wisdomDao;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; wisdoms = <span class="keyword">null</span>;</span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        wisdoms = wisdomDao.getAll();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOneWord</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RandomUtils.getOne(wisdoms);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>@PostConstruct注解的作用是Spring容器在启动完毕后，直接执行init方法，一次性读取 所有的数据，然后在应用运行期间不再与数据库交互，直接从List列表中获取数据。通过这 样的修正，系统性能有了大幅提升，在不增加硬件的情况下，彻底解决了性能问题。这就是 对象池模式。</p>
+<h2 id="38-2-2-对象池模式的意图"><a href="#38-2-2-对象池模式的意图" class="headerlink" title="38.2.2 对象池模式的意图"></a>38.2.2 对象池模式的意图</h2><p>对象池模式，或者称为对象池服务，其意图如下：<br>通过循环使用对象，减少资源在初始化和释放时的昂贵损耗[^1]。</p>
+<p>注意这里的“昂贵”可能是时间效益（如性能），也可能是空间效益（如并行处理），在大多的情况下，“昂贵”指性能。</p>
+<p>简单地说，在需要时，从池中提取；不用时，放回池中，等待下一个请求。典型例子是连接池和线程池，这是我们开发中经常接触到的。类图如图38-6所示。</p>
+<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001233332.png" alt="image-20211001233332624"></p>
+<center>图38-6 对象池模式通用类图</center>
+
+<p>对象池提供两个公共的方法：checkOut负责从池中提取对象，checkIn负责把回收对象 （当然，很多时候checkIn已经自动化处理，不需要显式声明,如连接池），对象池代码如代码清单38-31所示。</p>
+<p>代码清单38-31 对象池示例代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectPool</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">//容器，容纳对象</span></span><br><span class="line">    <span class="keyword">private</span> Hashtable&lt;T, ObjectStatus&gt; pool = <span class="keyword">new</span> Hashtable&lt;T, ObjectStatus&gt;();</span><br><span class="line">    <span class="comment">//初始化时创建对象，并放入到池中</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObjectPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        pool.put(create(), <span class="keyword">new</span> ObjectStatus());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//从Hashtable中取出空闲元素</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> T <span class="title">checkOut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//这是最简单的策略</span></span><br><span class="line">        <span class="keyword">for</span> (T t : pool.keySet()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (pool.get(t).validate()) &#123;</span><br><span class="line">                pool.get(t).setUsing();</span><br><span class="line">                <span class="keyword">return</span> t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//归还对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">checkIn</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">        pool.get(t).setFree();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ObjectStatus</span> </span>&#123;</span><br><span class="line">        <span class="comment">//占用</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//释放</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFree</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//注意：若T是有状态，则需要回归到初始化状态</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//检查是否可用</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">validate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//创建池化对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> T <span class="title">create</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是一个简单的对象池实现，在实际应用中还需要考虑池的最小值、最大值、池化对象状态（若有的话，需要重点考虑）、异常处理（如满池情况）等方面，特别是池化对象状态，若是有状态的业务对象则需要重点关注。</p>
+<h2 id="38-2-3-最佳实践"><a href="#38-2-3-最佳实践" class="headerlink" title="38.2.3 最佳实践"></a>38.2.3 最佳实践</h2><p>把对象池化的本意是期望一次性初始化所有对象，减少对象在初始化上的昂贵性能开销，从而提高系统整体性能。然而池化处理本身也要付出代价，因此，并非任何情况下都适合采用对象池化。</p>
+<p>通常情况下，在重复生成对象的操作成为影响性能的关键因素时，才适合进行对象池化。但是若池化所能带来的性能提高并不显著或重要的话，建议放弃对象池化技术，以保持代码的简明，转而使用更好的硬件来提高性能为佳。</p>
+<p>对象池技术在Java领域已经非常成熟，只要做过企业级开发的人员，基本都用过C3P0、 DBCP、Proxool等连接池，也配置过minPoolSize、maxPoolSize等参数，这是对象池模式的典型应用。在实际开发中若需要对象池，建议使用common-pool工具包来实现，简单、快捷、 高效。</p>
+<p>[^1]: 原文是Avoid expensive acquisition and release of resources by recycling objects that are no longer in use。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/5de25247/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1071,146 +1211,6 @@
 <p>在整个雇工模式中，所有具有IServiced功能的类可以实现该接口，然后由雇工类Servant 进行集合，完成一组类不用实现通用功能而具有相应职能的目的。</p>
 <h2 id="38-3-3-最佳实践"><a href="#38-3-3-最佳实践" class="headerlink" title="38.3.3 最佳实践"></a>38.3.3 最佳实践</h2><p>在日常的开发过程中，我们可能已经接触过雇工模式，只是我们没有把它抽取出来，也没有汇编成册。或许大家已经看出这与命令模式非常相似，读者可以回顾第15章，会发现雇工模式是命令模式的一种简化，但它更符合我们实际的需要，更容易引入开发场景中。</p>
 <p>[^1]: 原文是A behavioral pattern used to offer some functionality to a group of classes without defining that functionality in each of them。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/b29e0ad3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/b29e0ad3/" class="post-title-link" itemprop="url">38.2 对象池模式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-09-27 19:57:33" itemprop="dateCreated datePublished" datetime="2021-09-27T19:57:33+08:00">2021-09-27</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-10-03 09:19:24" itemprop="dateModified" datetime="2021-10-03T09:19:24+08:00">2021-10-03</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/8-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85-%E7%AC%AC2%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">8 设计模式之禅(第2版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/8-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85-%E7%AC%AC2%E7%89%88/5-%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E6%89%A9%E5%B1%95%E7%AF%87/" itemprop="url" rel="index"><span itemprop="name">5 第五部分 扩展篇</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/8-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E4%B9%8B%E7%A6%85-%E7%AC%AC2%E7%89%88/5-%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E6%89%A9%E5%B1%95%E7%AF%87/%E7%AC%AC38%E7%AB%A0-%E6%96%B0%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">第38章 新模式</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/b29e0ad3/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/b29e0ad3/" data-xid="/JavaReadingNotes/b29e0ad3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="38-2-对象池模式"><a href="#38-2-对象池模式" class="headerlink" title="38.2 对象池模式"></a>38.2 对象池模式</h1><p>上周二，师兄过来找我，他负责运维一个大型新闻网站，说是网站出现性能，让我帮忙分析调优。我这几天正好闲得手痒，同时又卖个人情，何乐而不为呢。于是我们俩就到机房蹲点，追查问题。</p>
-<h2 id="38-2-1-正确的池化"><a href="#38-2-1-正确的池化" class="headerlink" title="38.2.1 正确的池化"></a>38.2.1 正确的池化</h2><p>简单说明一下该系统的场景，这是一个专业的新闻追踪网站，关注的是专业新闻的深度，在行业内具有相当大的影响力。最近一段时间内出现偶发性缓慢，从监控情况上看，响应时间在2秒以上，由于最近软硬件环境都没有变更过，因此直觉判断：最快捷、直观的解决方案就是增加DB硬件设备。但由于东家是穷惯了，不同意在没有彻查问题之前而依靠增强硬件来解决问题，于是我们这些软件工程师就忙活起来了。</p>
-<p>网站首页内容基本都是静态的（轮询生成），唯一的动态部分是网站的激励语，比如“积一时之跬步，臻千里之遥程”、“业精于勤，荒于嬉；行成于思，毁于随”等励志语句， 这是一个简单的SQL随机查询结果，表中的数量在5000条左右，而且结构简单，查询性能不是问题。示例代码如代码清单38-29所示。</p>
-<p>代码清单38-29 无缓存的SQL随机读取</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WisdomProvider</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowire</span></span><br><span class="line">    <span class="keyword">private</span> WisdomDao wisdomDao;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOneWord</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> wisdomDao.randomOneWisdom();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对于代码中的@Service、@Autowire注解，做过Spring开发的都懂，这是一个典型的三层架构，WisdomDao的randomOneWisdom方法是通过数据库随机函数查询一条记录。在跟踪过程中，发现高峰期数据库连接偶尔出现占满情况，而且都是查询该表（顺便说下，该数据库的随机查询算法有缺陷），问题找到了：每一次访问都会直接查询数据库，没有缓存。通常情况下，这没有问题，但是在高并发的情况下，例如在10万PV的压力下服务器基本就垮掉了，这是非常严重的问题。</p>
-<p>怎么解决呢？好办，引入一个对象池，把这5000条记录（根据评估最多不超过20000条记录）在启动时直接加载到内存中，在需要时再从内存中取得，以后查询不再与数据库交互。示例代码如代码清单38-30所示。</p>
-<p>代码清单38-30 增加缓存后的随机读取</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WisdomProvider</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Autowire</span></span><br><span class="line">    <span class="keyword">private</span> WisdomDao wisdomDao;</span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; wisdoms = <span class="keyword">null</span>;</span><br><span class="line">    <span class="meta">@PostConstruct</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        wisdoms = wisdomDao.getAll();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOneWord</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> RandomUtils.getOne(wisdoms);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>@PostConstruct注解的作用是Spring容器在启动完毕后，直接执行init方法，一次性读取 所有的数据，然后在应用运行期间不再与数据库交互，直接从List列表中获取数据。通过这 样的修正，系统性能有了大幅提升，在不增加硬件的情况下，彻底解决了性能问题。这就是 对象池模式。</p>
-<h2 id="38-2-2-对象池模式的意图"><a href="#38-2-2-对象池模式的意图" class="headerlink" title="38.2.2 对象池模式的意图"></a>38.2.2 对象池模式的意图</h2><p>对象池模式，或者称为对象池服务，其意图如下：<br>通过循环使用对象，减少资源在初始化和释放时的昂贵损耗[^1]。</p>
-<p>注意这里的“昂贵”可能是时间效益（如性能），也可能是空间效益（如并行处理），在大多的情况下，“昂贵”指性能。</p>
-<p>简单地说，在需要时，从池中提取；不用时，放回池中，等待下一个请求。典型例子是连接池和线程池，这是我们开发中经常接触到的。类图如图38-6所示。</p>
-<p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/10/20211001233332.png" alt="image-20211001233332624"></p>
-<center>图38-6 对象池模式通用类图</center>
-
-<p>对象池提供两个公共的方法：checkOut负责从池中提取对象，checkIn负责把回收对象 （当然，很多时候checkIn已经自动化处理，不需要显式声明,如连接池），对象池代码如代码清单38-31所示。</p>
-<p>代码清单38-31 对象池示例代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">ObjectPool</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="comment">//容器，容纳对象</span></span><br><span class="line">    <span class="keyword">private</span> Hashtable&lt;T, ObjectStatus&gt; pool = <span class="keyword">new</span> Hashtable&lt;T, ObjectStatus&gt;();</span><br><span class="line">    <span class="comment">//初始化时创建对象，并放入到池中</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ObjectPool</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        pool.put(create(), <span class="keyword">new</span> ObjectStatus());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//从Hashtable中取出空闲元素</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> T <span class="title">checkOut</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">//这是最简单的策略</span></span><br><span class="line">        <span class="keyword">for</span> (T t : pool.keySet()) &#123;</span><br><span class="line">            <span class="keyword">if</span> (pool.get(t).validate()) &#123;</span><br><span class="line">                pool.get(t).setUsing();</span><br><span class="line">                <span class="keyword">return</span> t;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//归还对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">checkIn</span><span class="params">(T t)</span> </span>&#123;</span><br><span class="line">        pool.get(t).setFree();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ObjectStatus</span> </span>&#123;</span><br><span class="line">        <span class="comment">//占用</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setUsing</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//释放</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFree</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="comment">//注意：若T是有状态，则需要回归到初始化状态</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//检查是否可用</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">validate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//创建池化对象</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> T <span class="title">create</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这是一个简单的对象池实现，在实际应用中还需要考虑池的最小值、最大值、池化对象状态（若有的话，需要重点考虑）、异常处理（如满池情况）等方面，特别是池化对象状态，若是有状态的业务对象则需要重点关注。</p>
-<h2 id="38-2-3-最佳实践"><a href="#38-2-3-最佳实践" class="headerlink" title="38.2.3 最佳实践"></a>38.2.3 最佳实践</h2><p>把对象池化的本意是期望一次性初始化所有对象，减少对象在初始化上的昂贵性能开销，从而提高系统整体性能。然而池化处理本身也要付出代价，因此，并非任何情况下都适合采用对象池化。</p>
-<p>通常情况下，在重复生成对象的操作成为影响性能的关键因素时，才适合进行对象池化。但是若池化所能带来的性能提高并不显著或重要的话，建议放弃对象池化技术，以保持代码的简明，转而使用更好的硬件来提高性能为佳。</p>
-<p>对象池技术在Java领域已经非常成熟，只要做过企业级开发的人员，基本都用过C3P0、 DBCP、Proxool等连接池，也配置过minPoolSize、maxPoolSize等参数，这是对象池模式的典型应用。在实际开发中若需要对象池，建议使用common-pool工具包来实现，简单、快捷、 高效。</p>
-<p>[^1]: 原文是Avoid expensive acquisition and release of resources by recycling objects that are no longer in use。</p>
 
       
     </div>

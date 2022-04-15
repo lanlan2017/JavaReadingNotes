@@ -861,6 +861,180 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/b15f41e5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/b15f41e5/" class="post-title-link" itemprop="url">19.5 理解ThreadLocal</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-08 12:34:35" itemprop="dateCreated datePublished" datetime="2021-12-08T12:34:35+08:00">2021-12-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/5%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%B9%B6%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">5第五部分 并发</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/5%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%B9%B6%E5%8F%91/%E7%AC%AC19%E7%AB%A0-%E5%90%8C%E6%AD%A5%E5%92%8C%E5%8D%8F%E4%BD%9C%E5%B7%A5%E5%85%B7%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">第19章 同步和协作工具类</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/b15f41e5/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/b15f41e5/" data-xid="/JavaReadingNotes/b15f41e5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="19-5-理解ThreadLocal"><a href="#19-5-理解ThreadLocal" class="headerlink" title="19.5 理解ThreadLocal"></a>19.5 理解ThreadLocal</h1><p>本节，我们来探讨一个特殊的概念：线程本地变量。在Java中的实现是类ThreadLocal，它是什么？有什么用？实现原理是什么？让我们接下来逐步探讨。</p>
+<h2 id="19-5-1-基本概念和用法"><a href="#19-5-1-基本概念和用法" class="headerlink" title="19.5.1 基本概念和用法"></a>19.5.1 基本概念和用法</h2><p>线程本地变量是说，<strong>每个线程都有同一个变量的独有拷贝</strong>。这个概念听上去比较难以理解，我们先直接来看类TheadLocal的用法。ThreadLocal是一个泛型类，接受一个类型参数T，它只有一个空的构造方法，有两个主要的public方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>set就是设置值，get就是获取值，如果没有值，返回null，看上去，ThreadLocal就是一个单一对象的容器，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    local.set(<span class="number">100</span>);</span><br><span class="line">    System.out.println(local.get());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出为100。那ThreadLocal有什么特殊的呢？特殊发生在有多个线程的时候，看个例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalBasic</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Thread child = <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;child thread initial: &quot;</span> + local.get());</span><br><span class="line">                local.set(<span class="number">200</span>);</span><br><span class="line">                System.out.println(<span class="string">&quot;child thread final: &quot;</span> + local.get());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        local.set(<span class="number">100</span>);</span><br><span class="line">        child.start();</span><br><span class="line">        child.join();</span><br><span class="line">        System.out.println(<span class="string">&quot;main thread final: &quot;</span> + local.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>local是一个静态变量，main方法创建了一个子线程child, main和child都访问了local，程序的输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">child thread initial: null</span><br><span class="line">child thread final: 200</span><br><span class="line">main thread final: 100</span><br></pre></td></tr></table></figure>
+
+<p>这说明，main线程对local变量的设置对child线程不起作用，child线程对local变量的改变也不会影响main线程，<strong>它们访问的虽然是同一个变量local，但每个线程都有自己的独立的值，这就是线程本地变量的含义</strong>。</p>
+<p>除了get/set, ThreadLocal还有两个方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> T <span class="title">initialValue</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
+
+<p>initialValue用于提供初始值，这是一个受保护方法，可以通过匿名内部类的方式提供，当调用get方法时，如果之前没有设置过，会调用该方法获取初始值，默认实现是返回null。remove删掉当前线程对应的值，如果删掉后，再次调用get，会再调用initialValue获取初始值。看个简单的例子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalInit</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;()&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Integer <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">100</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(local.get());</span><br><span class="line">        local.set(<span class="number">200</span>);</span><br><span class="line">        local.remove();</span><br><span class="line">        System.out.println(local.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出值都是100。</p>
+<h2 id="19-5-2-使用场景"><a href="#19-5-2-使用场景" class="headerlink" title="19.5.2 使用场景"></a>19.5.2 使用场景</h2><p>ThreadLocal有什么用呢？我们来看三个例子：日期处理、随机数和上下文信息。</p>
+<h3 id="1．日期处理"><a href="#1．日期处理" class="headerlink" title="1．日期处理"></a>1．日期处理</h3><p>ThreadLocal是实现线程安全的一种方案，比如对于DateFormat/SimpleDateFormat，我们在介绍日期和时间操作的时候，提到它们是非线程安全的，实现安全的一种方式是使用锁，另一种方式是每次都创建一个新的对象，更好的方式就是使用ThreadLocal，每个线程使用自己的DateFormat，就不存在安全问题了，在线程的整个使用过程中，只需要创建一次，又避免了频繁创建的开销，示例代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalDateFormat</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> ThreadLocal&lt;DateFormat&gt; sdf = <span class="keyword">new</span> ThreadLocal&lt;DateFormat&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> DateFormat <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">date2String</span><span class="params">(Date date)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sdf.get().format(date);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">string2Date</span><span class="params">(String str)</span> <span class="keyword">throws</span> ParseException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sdf.get().parse(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>需要说明的是，ThreadLocal对象一般都定义为static，以便于引用。</p>
+<h3 id="2．随机数"><a href="#2．随机数" class="headerlink" title="2．随机数"></a>2．随机数</h3><p>即使对象是线程安全的，使用ThreadLocal也可以减少竞争，比如，我们在介绍Random类的时候提到，Random是线程安全的，但如果并发访问竞争激烈的话，性能会下降，所以Java并发包提供了类ThreadLocalRandom，它是Random的子类，利用了ThreadLocal，它没有public的构造方法，通过静态方法current获取对象，比如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ThreadLocalRandom rnd = ThreadLocalRandom.current();</span><br><span class="line">    System.out.println(rnd.nextInt());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>current方法的实现为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ThreadLocalRandom <span class="title">current</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> localRandom.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>localRandom就是一个ThreadLocal变量：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;ThreadLocalRandom&gt; localRandom =</span><br><span class="line">    <span class="keyword">new</span> ThreadLocal&lt;ThreadLocalRandom&gt;() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">protected</span> ThreadLocalRandom <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ThreadLocalRandom();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3．上下文信息"><a href="#3．上下文信息" class="headerlink" title="3．上下文信息"></a>3．上下文信息</h3><p>ThreadLocal的典型用途是提供上下文信息，比如在一个Web服务器中，一个线程执行用户的请求，在执行过程中，很多代码都会访问一些共同的信息，比如请求信息、用户身份信息、数据库连接、当前事务等，它们是线程执行过程中的全局信息，如果作为参数在不同代码间传递，代码会很烦琐，这时，使用ThreadLocal就很方便，所以它被用于各种框架如Spring中。我们看个简单的示例，如代码清单19-6所示。</p>
+<center>代码清单19-6 使用ThreadLocal保存上下文信息</center>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestContext</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123; <span class="comment">//...</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;String&gt; localUserId = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;Request&gt; localRequest = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getCurrentUserId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> localUserId.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setCurrentUserId</span><span class="params">(String userId)</span> </span>&#123;</span><br><span class="line">        localUserId.set(userId);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Request <span class="title">getCurrentRequest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> localRequest.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setCurrentRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        localRequest.set(request);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在首次获取到信息时，调用set方法如setCurrentRequest/setCurrentUserId进行设置，然后就可以在代码的任意其他地方调用get相关方法进行获取了。</p>
+<h2 id="19-5-3-基本实现原理"><a href="#19-5-3-基本实现原理" class="headerlink" title="19.5.3 基本实现原理"></a>19.5.3 基本实现原理</h2><p>ThreadLocal是怎么实现的呢？为什么对同一个对象的get/set，每个线程都能有自己独立的值呢？我们直接来看代码（基于Java<br>7）。set方法的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span>(map ! = <span class="keyword">null</span>)</span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>它调用了getMap, getMap的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ThreadLocalMap <span class="title">getMap</span><span class="params">(Thread t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> t.threadLocals;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>返回线程的实例变量threadLocals，它的初始值为null，在null时，set调用createMap初始化，代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">createMap</span><span class="params">(Thread t, T firstValue)</span> </span>&#123;</span><br><span class="line">    t.threadLocals = <span class="keyword">new</span> ThreadLocalMap(<span class="keyword">this</span>, firstValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从以上代码可以看出，每个线程都有一个Map，类型为ThreadLocalMap，调用set实际上是在线程自己的Map里设置了一个条目，键为当前的ThreadLocal对象，值为value。ThreadLocalMap是一个内部类，它是专门用于ThreadLocal的，与一般的Map不同，它的键类型为<code>WeakReference&lt;ThreadLocal&gt;</code>。我们没有提过WeakReference，它与Java的垃圾回收机制有关，使用它，便于回收内存，具体我们就不探讨了。</p>
+<p>get方法的代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span>(map ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">        ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">        <span class="keyword">if</span>(e ! = <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> (T)e.value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> setInitialValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过线程访问到Map，以ThreadLocal对象为键从Map中获取到条目，取其value，如果Map中没有，则调用setInitialValue，其代码为：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> T <span class="title">setInitialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    T value = initialValue();</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span>(map ! = <span class="keyword">null</span>)</span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>initialValue()就是之前提到的提供初始值的方法，默认实现就是返回null。</p>
+<p>remove方法的代码也很直接，如下所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ThreadLocalMap m = getMap(Thread.currentThread());</span><br><span class="line">    <span class="keyword">if</span>(m ! = <span class="keyword">null</span>)</span><br><span class="line">        m.remove(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简单总结下，<strong>每个线程都有一个Map，对于每个ThreadLocal对象，调用其get/set实际上就是以ThreadLocal对象为键读写当前线程的Map</strong>，这样，就实现了每个线程都有自己的独立副本的效果。</p>
+<p>本章介绍了Java并发包中的一些同步协作工具：<br>1）在读多写少的场景中使用ReentrantReadWriteLock替代ReentrantLock，以提高性能。<br>2）使用Semaphore限制对资源的并发访问数。<br>3）使用CountDownLatch实现不同角色线程间的同步。<br>4）使用CyclicBarrier实现同一角色线程间的协调一致。</p>
+<p>关于ThreadLocal，本章介绍了它的基本概念、用法用途和实现原理，简单总结来说：<br>1）ThreadLocal使得每个线程对同一个变量有自己的独立副本，是实现线程安全、减少竞争的一种方案。<br>2）ThreadLocal经常用于存储上下文信息，避免在不同代码间来回传递，简化代码。<br>3）每个线程都有一个Map，调用ThreadLocal对象的get/set实际就是以ThreadLocal对象为键读写当前线程的该Map。</p>
+<p>至此，关于并发就介绍完了，下一章，让我们一起回顾总结一下。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/aadb0488/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1123,7 +1297,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/b15f41e5/">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/887090a8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
@@ -1136,7 +1310,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/b15f41e5/" class="post-title-link" itemprop="url">19.5 理解ThreadLocal</a>
+          <a href="/JavaReadingNotes/887090a8/" class="post-title-link" itemprop="url">20.0 第20章 并发总结 20.1 线程安全的机制</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1163,7 +1337,7 @@
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/5%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%B9%B6%E5%8F%91/%E7%AC%AC19%E7%AB%A0-%E5%90%8C%E6%AD%A5%E5%92%8C%E5%8D%8F%E4%BD%9C%E5%B7%A5%E5%85%B7%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">第19章 同步和协作工具类</span></a>
+          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/5%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%B9%B6%E5%8F%91/%E7%AC%AC20%E7%AB%A0-%E5%B9%B6%E5%8F%91%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">第20章 并发总结</span></a>
         </span>
     </span>
 
@@ -1176,8 +1350,8 @@
     </span>
     <span class="post-meta-item-text">Waline：</span>
   
-    <a title="waline" href="/JavaReadingNotes/b15f41e5/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/b15f41e5/" data-xid="/JavaReadingNotes/b15f41e5/" itemprop="commentCount"></span>
+    <a title="waline" href="/JavaReadingNotes/887090a8/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/887090a8/" data-xid="/JavaReadingNotes/887090a8/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -1188,14 +1362,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6k</span>
+      <span>1.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>2 分钟</span>
     </span>
 </div>
 
@@ -1206,71 +1380,34 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="19-5-理解ThreadLocal"><a href="#19-5-理解ThreadLocal" class="headerlink" title="19.5 理解ThreadLocal"></a>19.5 理解ThreadLocal</h1><p>本节，我们来探讨一个特殊的概念：线程本地变量。在Java中的实现是类ThreadLocal，它是什么？有什么用？实现原理是什么？让我们接下来逐步探讨。</p>
-<h2 id="19-5-1-基本概念和用法"><a href="#19-5-1-基本概念和用法" class="headerlink" title="19.5.1 基本概念和用法"></a>19.5.1 基本概念和用法</h2><p>线程本地变量是说，<strong>每个线程都有同一个变量的独有拷贝</strong>。这个概念听上去比较难以理解，我们先直接来看类TheadLocal的用法。ThreadLocal是一个泛型类，接受一个类型参数T，它只有一个空的构造方法，有两个主要的public方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span></span></span><br></pre></td></tr></table></figure>
-
-<p>set就是设置值，get就是获取值，如果没有值，返回null，看上去，ThreadLocal就是一个单一对象的容器，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    local.set(<span class="number">100</span>);</span><br><span class="line">    System.out.println(local.get());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出为100。那ThreadLocal有什么特殊的呢？特殊发生在有多个线程的时候，看个例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalBasic</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Thread child = <span class="keyword">new</span> Thread() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;child thread initial: &quot;</span> + local.get());</span><br><span class="line">                local.set(<span class="number">200</span>);</span><br><span class="line">                System.out.println(<span class="string">&quot;child thread final: &quot;</span> + local.get());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        local.set(<span class="number">100</span>);</span><br><span class="line">        child.start();</span><br><span class="line">        child.join();</span><br><span class="line">        System.out.println(<span class="string">&quot;main thread final: &quot;</span> + local.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>local是一个静态变量，main方法创建了一个子线程child, main和child都访问了local，程序的输出为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">child thread initial: null</span><br><span class="line">child thread final: 200</span><br><span class="line">main thread final: 100</span><br></pre></td></tr></table></figure>
-
-<p>这说明，main线程对local变量的设置对child线程不起作用，child线程对local变量的改变也不会影响main线程，<strong>它们访问的虽然是同一个变量local，但每个线程都有自己的独立的值，这就是线程本地变量的含义</strong>。</p>
-<p>除了get/set, ThreadLocal还有两个方法：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> T <span class="title">initialValue</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span></span></span><br></pre></td></tr></table></figure>
-
-<p>initialValue用于提供初始值，这是一个受保护方法，可以通过匿名内部类的方式提供，当调用get方法时，如果之前没有设置过，会调用该方法获取初始值，默认实现是返回null。remove删掉当前线程对应的值，如果删掉后，再次调用get，会再调用initialValue获取初始值。看个简单的例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalInit</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> ThreadLocal&lt;Integer&gt; local = <span class="keyword">new</span> ThreadLocal&lt;Integer&gt;()&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> Integer <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">100</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(local.get());</span><br><span class="line">        local.set(<span class="number">200</span>);</span><br><span class="line">        local.remove();</span><br><span class="line">        System.out.println(local.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>输出值都是100。</p>
-<h2 id="19-5-2-使用场景"><a href="#19-5-2-使用场景" class="headerlink" title="19.5.2 使用场景"></a>19.5.2 使用场景</h2><p>ThreadLocal有什么用呢？我们来看三个例子：日期处理、随机数和上下文信息。</p>
-<h3 id="1．日期处理"><a href="#1．日期处理" class="headerlink" title="1．日期处理"></a>1．日期处理</h3><p>ThreadLocal是实现线程安全的一种方案，比如对于DateFormat/SimpleDateFormat，我们在介绍日期和时间操作的时候，提到它们是非线程安全的，实现安全的一种方式是使用锁，另一种方式是每次都创建一个新的对象，更好的方式就是使用ThreadLocal，每个线程使用自己的DateFormat，就不存在安全问题了，在线程的整个使用过程中，只需要创建一次，又避免了频繁创建的开销，示例代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadLocalDateFormat</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> ThreadLocal&lt;DateFormat&gt; sdf = <span class="keyword">new</span> ThreadLocal&lt;DateFormat&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">protected</span> DateFormat <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> SimpleDateFormat(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">date2String</span><span class="params">(Date date)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sdf.get().format(date);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Date <span class="title">string2Date</span><span class="params">(String str)</span> <span class="keyword">throws</span> ParseException </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> sdf.get().parse(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>需要说明的是，ThreadLocal对象一般都定义为static，以便于引用。</p>
-<h3 id="2．随机数"><a href="#2．随机数" class="headerlink" title="2．随机数"></a>2．随机数</h3><p>即使对象是线程安全的，使用ThreadLocal也可以减少竞争，比如，我们在介绍Random类的时候提到，Random是线程安全的，但如果并发访问竞争激烈的话，性能会下降，所以Java并发包提供了类ThreadLocalRandom，它是Random的子类，利用了ThreadLocal，它没有public的构造方法，通过静态方法current获取对象，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    ThreadLocalRandom rnd = ThreadLocalRandom.current();</span><br><span class="line">    System.out.println(rnd.nextInt());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>current方法的实现为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> ThreadLocalRandom <span class="title">current</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> localRandom.get();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>localRandom就是一个ThreadLocal变量：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> ThreadLocal&lt;ThreadLocalRandom&gt; localRandom =</span><br><span class="line">    <span class="keyword">new</span> ThreadLocal&lt;ThreadLocalRandom&gt;() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">protected</span> ThreadLocalRandom <span class="title">initialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> ThreadLocalRandom();</span><br><span class="line">        &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<h3 id="3．上下文信息"><a href="#3．上下文信息" class="headerlink" title="3．上下文信息"></a>3．上下文信息</h3><p>ThreadLocal的典型用途是提供上下文信息，比如在一个Web服务器中，一个线程执行用户的请求，在执行过程中，很多代码都会访问一些共同的信息，比如请求信息、用户身份信息、数据库连接、当前事务等，它们是线程执行过程中的全局信息，如果作为参数在不同代码间传递，代码会很烦琐，这时，使用ThreadLocal就很方便，所以它被用于各种框架如Spring中。我们看个简单的示例，如代码清单19-6所示。</p>
-<center>代码清单19-6 使用ThreadLocal保存上下文信息</center>
-
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RequestContext</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Request</span> </span>&#123; <span class="comment">//...</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;String&gt; localUserId = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;Request&gt; localRequest = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">getCurrentUserId</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> localUserId.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setCurrentUserId</span><span class="params">(String userId)</span> </span>&#123;</span><br><span class="line">        localUserId.set(userId);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Request <span class="title">getCurrentRequest</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> localRequest.get();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">setCurrentRequest</span><span class="params">(Request request)</span> </span>&#123;</span><br><span class="line">        localRequest.set(request);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>在首次获取到信息时，调用set方法如setCurrentRequest/setCurrentUserId进行设置，然后就可以在代码的任意其他地方调用get相关方法进行获取了。</p>
-<h2 id="19-5-3-基本实现原理"><a href="#19-5-3-基本实现原理" class="headerlink" title="19.5.3 基本实现原理"></a>19.5.3 基本实现原理</h2><p>ThreadLocal是怎么实现的呢？为什么对同一个对象的get/set，每个线程都能有自己独立的值呢？我们直接来看代码（基于Java<br>7）。set方法的代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">set</span><span class="params">(T value)</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span>(map ! = <span class="keyword">null</span>)</span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>它调用了getMap, getMap的代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ThreadLocalMap <span class="title">getMap</span><span class="params">(Thread t)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> t.threadLocals;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>返回线程的实例变量threadLocals，它的初始值为null，在null时，set调用createMap初始化，代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">createMap</span><span class="params">(Thread t, T firstValue)</span> </span>&#123;</span><br><span class="line">    t.threadLocals = <span class="keyword">new</span> ThreadLocalMap(<span class="keyword">this</span>, firstValue);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>从以上代码可以看出，每个线程都有一个Map，类型为ThreadLocalMap，调用set实际上是在线程自己的Map里设置了一个条目，键为当前的ThreadLocal对象，值为value。ThreadLocalMap是一个内部类，它是专门用于ThreadLocal的，与一般的Map不同，它的键类型为<code>WeakReference&lt;ThreadLocal&gt;</code>。我们没有提过WeakReference，它与Java的垃圾回收机制有关，使用它，便于回收内存，具体我们就不探讨了。</p>
-<p>get方法的代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span>(map ! = <span class="keyword">null</span>) &#123;</span><br><span class="line">        ThreadLocalMap.Entry e = map.getEntry(<span class="keyword">this</span>);</span><br><span class="line">        <span class="keyword">if</span>(e ! = <span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">return</span> (T)e.value;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> setInitialValue();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>通过线程访问到Map，以ThreadLocal对象为键从Map中获取到条目，取其value，如果Map中没有，则调用setInitialValue，其代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> T <span class="title">setInitialValue</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    T value = initialValue();</span><br><span class="line">    Thread t = Thread.currentThread();</span><br><span class="line">    ThreadLocalMap map = getMap(t);</span><br><span class="line">    <span class="keyword">if</span>(map ! = <span class="keyword">null</span>)</span><br><span class="line">        map.set(<span class="keyword">this</span>, value);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        createMap(t, value);</span><br><span class="line">    <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>initialValue()就是之前提到的提供初始值的方法，默认实现就是返回null。</p>
-<p>remove方法的代码也很直接，如下所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">remove</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ThreadLocalMap m = getMap(Thread.currentThread());</span><br><span class="line">    <span class="keyword">if</span>(m ! = <span class="keyword">null</span>)</span><br><span class="line">        m.remove(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>简单总结下，<strong>每个线程都有一个Map，对于每个ThreadLocal对象，调用其get/set实际上就是以ThreadLocal对象为键读写当前线程的Map</strong>，这样，就实现了每个线程都有自己的独立副本的效果。</p>
-<p>本章介绍了Java并发包中的一些同步协作工具：<br>1）在读多写少的场景中使用ReentrantReadWriteLock替代ReentrantLock，以提高性能。<br>2）使用Semaphore限制对资源的并发访问数。<br>3）使用CountDownLatch实现不同角色线程间的同步。<br>4）使用CyclicBarrier实现同一角色线程间的协调一致。</p>
-<p>关于ThreadLocal，本章介绍了它的基本概念、用法用途和实现原理，简单总结来说：<br>1）ThreadLocal使得每个线程对同一个变量有自己的独立副本，是实现线程安全、减少竞争的一种方案。<br>2）ThreadLocal经常用于存储上下文信息，避免在不同代码间来回传递，简化代码。<br>3）每个线程都有一个Map，调用ThreadLocal对象的get/set实际就是以ThreadLocal对象为键读写当前线程的该Map。</p>
-<p>至此，关于并发就介绍完了，下一章，让我们一起回顾总结一下。</p>
+          <h1 id="第20章-并发总结"><a href="#第20章-并发总结" class="headerlink" title="第20章 并发总结"></a>第20章 并发总结</h1><p>从第15章到第19章，我们一直在讨论并发，本章进行简要总结。多线程开发有两个核心问题：一个是竞争，另一个是协作。竞争会出现线程安全问题，所以，本章首先总结线程安全的机制，然后是协作的机制。管理竞争和协作是复杂的，所以Java提供了更高层次的服务，比如并发容器类和异步任务执行服务，我们也会进行总结。本章纲要如下：</p>
+<ul>
+<li>线程安全的机制；</li>
+<li>线程的协作机制；</li>
+<li>容器类；</li>
+<li>任务执行服务。</li>
+</ul>
+<h1 id="20-1-线程安全的机制"><a href="#20-1-线程安全的机制" class="headerlink" title="20.1 线程安全的机制"></a>20.1 线程安全的机制</h1><p>线程表示一条单独的执行流，每个线程有自己的执行计数器，有自己的栈，但可以共享内存，共享内存是实现线程协作的基础，但共享内存有两个问题，竞态条件和内存可见性，之前章节探讨了解决这些问题的多种思路：</p>
+<ul>
+<li>使用synchronized；</li>
+<li>使用显式锁；</li>
+<li>使用volatile；</li>
+<li>使用原子变量和CAS；</li>
+<li>写时复制；</li>
+<li>使用ThreadLocal。</li>
+</ul>
+<h2 id="（1）synchronized"><a href="#（1）synchronized" class="headerlink" title="（1）synchronized"></a>（1）synchronized</h2><p>synchronized简单易用，它只是一个关键字，大部分情况下，放到类的方法声明上就可以了，既可以解决竞态条件问题，也可以解决内存可见性问题。</p>
+<p>需要理解的是，它保护的是对象，而不是代码，只有对同一个对象的synchronized方法调用，synchronized才能保证它们被顺序调用。对于实例方法，这个对象是this；对于静态方法，这个对象是类对象；对于代码块，需要指定哪个对象。</p>
+<p>另外，需要注意，它不能尝试获取锁，也不响应中断，还可能会死锁。不过，相比显式锁，synchronized简单易用，JVM也可以不断优化它的实现，应该被优先使用。</p>
+<h2 id="（2）显式锁"><a href="#（2）显式锁" class="headerlink" title="（2）显式锁"></a>（2）显式锁</h2><p>显式锁是相对于synchronized隐式锁而言的，它可以实现synchronized同样的功能，但需要程序员自己创建锁，调用锁相关的接口，主要接口是Lock，主要实现类是Reen-trantLock。</p>
+<p>相比synchronized，显式锁支持以非阻塞方式获取锁，可以响应中断，可以限时，可以指定公平性，可以解决死锁问题，这使得它灵活得多。</p>
+<p>在读多写少、读操作可以完全并行的场景中，可以使用读写锁以提高并发度，读写锁的接口是ReadWriteLock，实现类是ReentrantReadWriteLock。</p>
+<h2 id="（3）volatile"><a href="#（3）volatile" class="headerlink" title="（3）volatile"></a>（3）volatile</h2><p>synchronized和显式锁都是锁，使用锁可以实现安全，但使用锁是有成本的，获取不到锁的线程还需要等待，会有线程的上下文切换开销等。保证安全不一定需要锁。如果共享的对象只有一个，操作也只是进行最简单的get/set操作，set也不依赖于之前的值，那就不存在竞态条件问题，而只有内存可见性问题，这时，在变量的声明上加上volatile就可以了。</p>
+<h2 id="（4）原子变量和CAS"><a href="#（4）原子变量和CAS" class="headerlink" title="（4）原子变量和CAS"></a>（4）原子变量和CAS</h2><p>使用volatile, set的新值不能依赖于旧值，但很多时候，set的新值与原来的值有关，这时，也不一定需要锁，如果需要同步的代码比较简单，可以考虑原子变量，它们包含了一些以原子方式实现组合操作的方法，对于并发环境中的计数、产生序列号等需求，考虑使用原子变量而非锁。</p>
+<p>原子变量的基础是CAS，一般的计算机系统都在硬件层次上直接支持CAS指令。通过循环CAS的方式实现原子更新是一种重要的思维。相比synchronized，它是乐观的，而synchronized是悲观的；它是非阻塞式的，而synchronized是阻塞式的。CAS是Java并发包的基础，基于它可以实现高效的、乐观、非阻塞式数据结构和算法，它也是并发包中锁、同步工具和各种容器的基础。</p>
+<h2 id="（5）写时复制"><a href="#（5）写时复制" class="headerlink" title="（5）写时复制"></a>（5）写时复制</h2><p>之所以会有线程安全的问题，是因为多个线程并发读写同一个对象，如果每个线程读写的对象都是不同的，或者，如果共享访问的对象是只读的，不能修改，那也就不存在线程安全问题了。</p>
+<p>我们在介绍容器类CopyOnWriteArrayList和CopyOnWriteArraySet时介绍了写时复制技术，写时复制就是将共享访问的对象变为只读的，写的时候，再使用锁，保证只有一个线程写，写的线程不是直接修改原对象，而是新创建一个对象，对该对象修改完毕后，再原子性地修改共享访问的变量，让它指向新的对象。</p>
+<h2 id="（6）ThreadLocal"><a href="#（6）ThreadLocal" class="headerlink" title="（6）ThreadLocal"></a>（6）ThreadLocal</h2><p>ThreadLocal就是让每个线程，对同一个变量，都有自己的独有副本，每个线程实际访问的对象都是自己的，自然也就不存在线程安全问题了。</p>
 
       
     </div>
@@ -1402,143 +1539,6 @@
 <p>阻塞队列有普通的先进先出队列，包括基于数组的ArrayBlockingQueue和基于链表的LinkedBlockingQueue/LinkedBlockingDeque，也有基于堆的优先级阻塞队列PriorityBlock-ingQueue，还有可用于定时任务的延时阻塞队列DelayQueue，以及用于特殊场景的阻塞队列SynchronousQueue和LinkedTransferQueue。</p>
 <h3 id="（6）Future-FutureTask"><a href="#（6）Future-FutureTask" class="headerlink" title="（6）Future/FutureTask"></a>（6）Future/FutureTask</h3><p>在常见的主从协作模式中，主线程往往是让子线程异步执行一项任务，获取其结果。手工创建子线程的写法往往比较麻烦，常见的模式是使用异步任务执行服务，不再手工创建线程，而只是提交任务，提交后马上得到一个结果，但这个结果不是最终结果，而是一个Future。Future是一个接口，主要实现类是FutureTask。</p>
 <p>Future封装了主线程和执行线程关于执行状态和结果的同步，对于主线程而言，它只需要通过Future就可以查询异步任务的状态、获取最终结果、取消任务等，不需要再考虑同步和协作问题。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/887090a8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/887090a8/" class="post-title-link" itemprop="url">20.0 第20章 并发总结 20.1 线程安全的机制</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2021-12-08 12:34:35" itemprop="dateCreated datePublished" datetime="2021-12-08T12:34:35+08:00">2021-12-08</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/" itemprop="url" rel="index"><span itemprop="name">9 Java编程的逻辑</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/5%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%B9%B6%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">5第五部分 并发</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/9-Java%E7%BC%96%E7%A8%8B%E7%9A%84%E9%80%BB%E8%BE%91/5%E7%AC%AC%E4%BA%94%E9%83%A8%E5%88%86-%E5%B9%B6%E5%8F%91/%E7%AC%AC20%E7%AB%A0-%E5%B9%B6%E5%8F%91%E6%80%BB%E7%BB%93/" itemprop="url" rel="index"><span itemprop="name">第20章 并发总结</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/887090a8/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/887090a8/" data-xid="/JavaReadingNotes/887090a8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="第20章-并发总结"><a href="#第20章-并发总结" class="headerlink" title="第20章 并发总结"></a>第20章 并发总结</h1><p>从第15章到第19章，我们一直在讨论并发，本章进行简要总结。多线程开发有两个核心问题：一个是竞争，另一个是协作。竞争会出现线程安全问题，所以，本章首先总结线程安全的机制，然后是协作的机制。管理竞争和协作是复杂的，所以Java提供了更高层次的服务，比如并发容器类和异步任务执行服务，我们也会进行总结。本章纲要如下：</p>
-<ul>
-<li>线程安全的机制；</li>
-<li>线程的协作机制；</li>
-<li>容器类；</li>
-<li>任务执行服务。</li>
-</ul>
-<h1 id="20-1-线程安全的机制"><a href="#20-1-线程安全的机制" class="headerlink" title="20.1 线程安全的机制"></a>20.1 线程安全的机制</h1><p>线程表示一条单独的执行流，每个线程有自己的执行计数器，有自己的栈，但可以共享内存，共享内存是实现线程协作的基础，但共享内存有两个问题，竞态条件和内存可见性，之前章节探讨了解决这些问题的多种思路：</p>
-<ul>
-<li>使用synchronized；</li>
-<li>使用显式锁；</li>
-<li>使用volatile；</li>
-<li>使用原子变量和CAS；</li>
-<li>写时复制；</li>
-<li>使用ThreadLocal。</li>
-</ul>
-<h2 id="（1）synchronized"><a href="#（1）synchronized" class="headerlink" title="（1）synchronized"></a>（1）synchronized</h2><p>synchronized简单易用，它只是一个关键字，大部分情况下，放到类的方法声明上就可以了，既可以解决竞态条件问题，也可以解决内存可见性问题。</p>
-<p>需要理解的是，它保护的是对象，而不是代码，只有对同一个对象的synchronized方法调用，synchronized才能保证它们被顺序调用。对于实例方法，这个对象是this；对于静态方法，这个对象是类对象；对于代码块，需要指定哪个对象。</p>
-<p>另外，需要注意，它不能尝试获取锁，也不响应中断，还可能会死锁。不过，相比显式锁，synchronized简单易用，JVM也可以不断优化它的实现，应该被优先使用。</p>
-<h2 id="（2）显式锁"><a href="#（2）显式锁" class="headerlink" title="（2）显式锁"></a>（2）显式锁</h2><p>显式锁是相对于synchronized隐式锁而言的，它可以实现synchronized同样的功能，但需要程序员自己创建锁，调用锁相关的接口，主要接口是Lock，主要实现类是Reen-trantLock。</p>
-<p>相比synchronized，显式锁支持以非阻塞方式获取锁，可以响应中断，可以限时，可以指定公平性，可以解决死锁问题，这使得它灵活得多。</p>
-<p>在读多写少、读操作可以完全并行的场景中，可以使用读写锁以提高并发度，读写锁的接口是ReadWriteLock，实现类是ReentrantReadWriteLock。</p>
-<h2 id="（3）volatile"><a href="#（3）volatile" class="headerlink" title="（3）volatile"></a>（3）volatile</h2><p>synchronized和显式锁都是锁，使用锁可以实现安全，但使用锁是有成本的，获取不到锁的线程还需要等待，会有线程的上下文切换开销等。保证安全不一定需要锁。如果共享的对象只有一个，操作也只是进行最简单的get/set操作，set也不依赖于之前的值，那就不存在竞态条件问题，而只有内存可见性问题，这时，在变量的声明上加上volatile就可以了。</p>
-<h2 id="（4）原子变量和CAS"><a href="#（4）原子变量和CAS" class="headerlink" title="（4）原子变量和CAS"></a>（4）原子变量和CAS</h2><p>使用volatile, set的新值不能依赖于旧值，但很多时候，set的新值与原来的值有关，这时，也不一定需要锁，如果需要同步的代码比较简单，可以考虑原子变量，它们包含了一些以原子方式实现组合操作的方法，对于并发环境中的计数、产生序列号等需求，考虑使用原子变量而非锁。</p>
-<p>原子变量的基础是CAS，一般的计算机系统都在硬件层次上直接支持CAS指令。通过循环CAS的方式实现原子更新是一种重要的思维。相比synchronized，它是乐观的，而synchronized是悲观的；它是非阻塞式的，而synchronized是阻塞式的。CAS是Java并发包的基础，基于它可以实现高效的、乐观、非阻塞式数据结构和算法，它也是并发包中锁、同步工具和各种容器的基础。</p>
-<h2 id="（5）写时复制"><a href="#（5）写时复制" class="headerlink" title="（5）写时复制"></a>（5）写时复制</h2><p>之所以会有线程安全的问题，是因为多个线程并发读写同一个对象，如果每个线程读写的对象都是不同的，或者，如果共享访问的对象是只读的，不能修改，那也就不存在线程安全问题了。</p>
-<p>我们在介绍容器类CopyOnWriteArrayList和CopyOnWriteArraySet时介绍了写时复制技术，写时复制就是将共享访问的对象变为只读的，写的时候，再使用锁，保证只有一个线程写，写的线程不是直接修改原对象，而是新创建一个对象，对该对象修改完毕后，再原子性地修改共享访问的变量，让它指向新的对象。</p>
-<h2 id="（6）ThreadLocal"><a href="#（6）ThreadLocal" class="headerlink" title="（6）ThreadLocal"></a>（6）ThreadLocal</h2><p>ThreadLocal就是让每个线程，对同一个变量，都有自己的独有副本，每个线程实际访问的对象都是自己的，自然也就不存在线程安全问题了。</p>
 
       
     </div>
