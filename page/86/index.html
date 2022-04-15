@@ -225,498 +225,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/5795df74/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/5795df74/" class="post-title-link" itemprop="url">16.7 线程组和未处理的异常</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-09 08:40:26" itemprop="dateCreated datePublished" datetime="2020-01-09T08:40:26+08:00">2020-01-09</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-03-26 04:10:29" itemprop="dateModified" datetime="2020-03-26T04:10:29+08:00">2020-03-26</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第16章 多线程</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/16-7-%E7%BA%BF%E7%A8%8B%E7%BB%84%E5%92%8C%E6%9C%AA%E5%A4%84%E7%90%86%E7%9A%84%E5%BC%82%E5%B8%B8/" itemprop="url" rel="index"><span itemprop="name">16.7 线程组和未处理的异常</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/5795df74/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/5795df74/" data-xid="/JavaReadingNotes/5795df74/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="16-7-线程组和未处理的异常"><a href="#16-7-线程组和未处理的异常" class="headerlink" title="16.7 线程组和未处理的异常"></a>16.7 线程组和未处理的异常</h1><h2 id="线程组"><a href="#线程组" class="headerlink" title="线程组"></a>线程组</h2><p><code>Java</code>使用<code>ThreadGroup</code>来表示线程组,它可以对一批线程进行分类管理,<code>Java</code>允许程序直接对线程组进行控制。<strong>对线程组的控制相当于同时控制这批线程</strong>。<br>用户创建的所有线程都属于指定线程组,如果程序没有显式指定线程属于哪个线程组,则该线程属于<strong>默认线程组</strong>。</p>
-<h3 id="子线程默认和父线程同组"><a href="#子线程默认和父线程同组" class="headerlink" title="子线程默认和父线程同组"></a>子线程默认和父线程同组</h3><p><strong>在默认情况下,子线程和创建它的父线程处于同一个线程组内</strong>,例如A线程创建了B线程,并且没有指定B线程的线程组,则B线程属于A线程所在的线程组。</p>
-<h3 id="一天是不良人一辈子都是不良人"><a href="#一天是不良人一辈子都是不良人" class="headerlink" title="一天是不良人一辈子都是不良人"></a>一天是不良人一辈子都是不良人</h3><p>一旦某个线程加入了指定线程组之后,该线程将一直属于该线程组,直到该线程死亡,线程运行中途不能改变它所属的线程组。</p>
-<h3 id="Thread类线程组构造器"><a href="#Thread类线程组构造器" class="headerlink" title="Thread类线程组构造器"></a>Thread类线程组构造器</h3><p><code>Thread</code>类提供了如下几个构造器来设置新创建的线程属于哪个线程组。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>Thread(ThreadGroup group, Runnable target)</code></td>
-<td align="left">以<code>target</code>的<code>run()</code>方法作为线程执行体创建新线程,该线程属于<code>group</code>线程组。</td>
-</tr>
-<tr>
-<td align="left"><code>Thread(ThreadGroup group, Runnable target, String name)</code></td>
-<td align="left">以<code>target</code>的<code>run()</code>方法作为线程执行体创建新线程,该线程属于<code>group</code>线程组,且线程名为<code>name</code>。</td>
-</tr>
-<tr>
-<td align="left"><code>Thread(ThreadGroup group, String name)</code></td>
-<td align="left">创建新线程,新线程名为<code>name</code>,属于<code>group</code>线程组。</td>
-</tr>
-<tr>
-<td align="left"><code>Thread(ThreadGroup group, Runnable target, String name, long stackSize)</code></td>
-<td align="left">Allocates a new Thread object so that it has target as its run object, has the specified name as its name, and belongs to the thread group referred to by group, and has the specified stack size.</td>
-</tr>
-<tr>
-<td align="left"><code>Thread(ThreadGroup group, Runnable target, String name, long stackSize, boolean inheritThreadLocals)</code></td>
-<td align="left">Allocates a new Thread object so that it has target as its run object, has the specified name as its name, belongs to the thread group referred to by group, has the specified stackSize, and inherits initial values for inheritable thread-local variables if inheritThreadLocals is true.</td>
-</tr>
-</tbody></table>
-<h3 id="获取当前线程的线程组"><a href="#获取当前线程的线程组" class="headerlink" title="获取当前线程的线程组"></a>获取当前线程的线程组</h3><p>因为<strong>中途不可改变线程所属的线程组</strong>,所以<code>Thread</code>类没有提供<code>setThreadGroup()</code>方法来改变线程所属的线程组,但提供了一个<code>getThreadGroup()</code>方法来返回该线程所属的线程组,<code>getThreadGroup()</code>方法的返回值是<code>ThreadGroup</code>对象,表示一个线程组。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>ThreadGroup getThreadGroup()</code></td>
-<td align="left">Returns the thread group to which this thread belongs.</td>
-</tr>
-</tbody></table>
-<h3 id="ThreadGroup构造器"><a href="#ThreadGroup构造器" class="headerlink" title="ThreadGroup构造器"></a>ThreadGroup构造器</h3><p><code>ThreadGroup</code>类提供了如下两个简单的构造器来创建实例。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>ThreadGroup(String name)</code></td>
-<td align="left">以指定的线程组名字来创建新的线程组。</td>
-</tr>
-<tr>
-<td align="left"><code>ThreadGroup(ThreadGroup parent, String name)</code></td>
-<td align="left">以指定的名字、指定的父线程组创建一个新线程组。</td>
-</tr>
-</tbody></table>
-<p>上面两个构造器在创建线程组实例时都必须为其指定一个名字,也就是说,线程组总会具有一个字符串类型的名字,该名字可通过调用<code>ThreadGroup</code>的<code>getName()</code>方法来获取,但<strong>不允许改变线程组的名字</strong>。</p>
-<h3 id="ThreadGroup方法"><a href="#ThreadGroup方法" class="headerlink" title="ThreadGroup方法"></a>ThreadGroup方法</h3><p><code>ThreadGroup</code>类提供了如下几个常用的方法来操作整个线程组里的所有线程。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>int activeCount()</code></td>
-<td align="left">返回此线程组中活动线程的数目</td>
-</tr>
-<tr>
-<td align="left"><code>void interrupt()</code></td>
-<td align="left">中断此线程组中的所有线程</td>
-</tr>
-<tr>
-<td align="left"><code>boolean isDaemon()</code></td>
-<td align="left">判断该线程组是否是后台线程组</td>
-</tr>
-<tr>
-<td align="left"><code>void setDaemon(boolean daemon)</code></td>
-<td align="left">把该线程组设置成后台线程组。<br>后台线程组具有一个特征:<br><strong>当后台线程组的最后一个线程执行结束或最后一个线程被销毁后,后台线程组将自动销毁</strong>。</td>
-</tr>
-<tr>
-<td align="left"><code>void setMaxPriority(int pri)</code></td>
-<td align="left">设置线程组的最高优先级</td>
-</tr>
-</tbody></table>
-<h3 id="程序-线程组"><a href="#程序-线程组" class="headerlink" title="程序 线程组"></a>程序 线程组</h3><p>下面程序创建了几个线程,它们分别属于不同的线程组,程序还将一个线程组设置成后台线程组。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyThread</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 提供指定线程名的构造器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyThread</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 提供指定线程名、线程组的构造器</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MyThread</span><span class="params">(ThreadGroup group, String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>(group, name);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">20</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot; 线程的i变量&quot;</span> + i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadGroupTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 获取主线程所在的线程组，这是所有线程默认的线程组</span></span><br><span class="line">        ThreadGroup mainGroup = Thread.currentThread().getThreadGroup();</span><br><span class="line">        System.out.println(<span class="string">&quot;主线程组的名字：&quot;</span> + mainGroup.getName());</span><br><span class="line">        System.out.println(<span class="string">&quot;主线程组是否是后台线程组：&quot;</span> + mainGroup.isDaemon());</span><br><span class="line">        <span class="keyword">new</span> MyThread(<span class="string">&quot;主线程组的线程&quot;</span>).start();</span><br><span class="line">        ThreadGroup tg = <span class="keyword">new</span> ThreadGroup(<span class="string">&quot;新线程组&quot;</span>);</span><br><span class="line">        <span class="comment">// 设为后台线程</span></span><br><span class="line">        tg.setDaemon(<span class="keyword">true</span>);</span><br><span class="line">        System.out.println(<span class="string">&quot;tg线程组是否是后台线程组：&quot;</span> + tg.isDaemon());</span><br><span class="line">        MyThread tt = <span class="keyword">new</span> MyThread(tg, <span class="string">&quot;tg组的线程甲&quot;</span>);</span><br><span class="line">        tt.start();</span><br><span class="line">        <span class="keyword">new</span> MyThread(tg, <span class="string">&quot;tg组的线程乙&quot;</span>).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>运行效果:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">主线程组的名字：main</span><br><span class="line">主线程组是否是后台线程组：false</span><br><span class="line">tg线程组是否是后台线程组：true </span><br><span class="line">主线程组的线程 线程的i变量0    </span><br><span class="line">主线程组的线程 线程的i变量1    </span><br><span class="line">tg组的线程甲 线程的i变量0      </span><br><span class="line">tg组的线程乙 线程的i变量0      </span><br><span class="line">主线程组的线程 线程的i变量2    </span><br><span class="line">...</span><br><span class="line">tg组的线程乙 线程的i变量19</span><br><span class="line">tg组的线程甲 线程的i变量10</span><br><span class="line">...</span><br><span class="line">主线程组的线程 线程的i变量19</span><br><span class="line">tg组的线程甲 线程的i变量18</span><br><span class="line">tg组的线程甲 线程的i变量19</span><br></pre></td></tr></table></figure>
-<h2 id="线程组异常处理"><a href="#线程组异常处理" class="headerlink" title="线程组异常处理"></a>线程组异常处理</h2><h3 id="处理线程组内抛出的异常"><a href="#处理线程组内抛出的异常" class="headerlink" title="处理线程组内抛出的异常"></a>处理线程组内抛出的异常</h3><p><code>ThreadGroup</code>内还定义了一个很有用的<code>uncaughtException</code>方法:</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>void uncaughtException(Thread t, Throwable e)</code></td>
-<td align="left">该方法可以<strong>处理该线程组内的任意线程所抛出的未处理异常</strong></td>
-</tr>
-</tbody></table>
-<p>从<code>Java5</code>开始,<code>Java</code>加强了线程的异常处理,如果线程执行过程中抛出了一个未处理异常,<code>JVM</code>在结束该线程之前会自动查找是否有对应的<code>Thread.UncaughtExceptionHandler</code>对象,如果找到该处理器对象,则会调用该对象的<code>uncaughtException(Thread t, Throwable e)</code>方法来处理该异常。</p>
-<p><code>Thread.UncaughtExceptionHandler</code>是<code>Thread</code>类的一个静态内部接口,该接口内只有一个方法:<code>void uncaughtException(Thread t, Throwable e)</code>,该方法中的t代表出现异常的线程,而e代表该线程抛出的异常。</p>
-<h3 id="设置线程异常处理器"><a href="#设置线程异常处理器" class="headerlink" title="设置线程异常处理器"></a>设置线程异常处理器</h3><p><code>Thread</code>类提供了如下两个方法来<strong>设置异常处理器</strong>。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>static setDefaultUncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh)</code></td>
-<td align="left">为该线程类的所有线程实例设置默认的异常处理器。</td>
-</tr>
-<tr>
-<td align="left"><code>set UncaughtExceptionHandler(Thread.UncaughtExceptionHandler eh)</code></td>
-<td align="left">为指定的线程实例设置异常处理器</td>
-</tr>
-</tbody></table>
-<p><code>ThreadGroup</code>类实现了<code>ThreadUncaughtHandler</code>接口,所以每个线程所属的<strong>线程组将会作为默认的异常处理器</strong>。当一个线程抛出未处理异常时,</p>
-<ul>
-<li>首先,<code>JVM</code>会査找该异常对应的异常处理器(<code>setUncaughtExceptionHandler</code>方法设置的异常处理器),如果找到该异常处理器,则将调用该异常处理器处理该异常;</li>
-<li>否则,<code>JVM</code>将会调用该线程所属的线程组对象的<code>uncaughtException</code>方法来处理该异常线程组处理异常的默认流程如下。<ul>
-<li>如果该线程组有父线程组,则调用父线程组的<code>uncaughtException()</code>方法来处理该异常</li>
-<li>如果该线程实例所属的线程类有默认的异常处理器(由<code>setDefaultUncaughtExceptionHandler</code>方法设置的异常处理器),那么就调用该异常处理器来处理该异常。</li>
-<li>如果该异常对象是<code>ThreadDeath</code>的对象,则不做任何处理;否则,将异常跟踪栈的信息打印到<code>System.Err</code>错误输出流,并结束该线程。</li>
-</ul>
-</li>
-</ul>
-<h3 id="程序-为线程设置异常处理器"><a href="#程序-为线程设置异常处理器" class="headerlink" title="程序 为线程设置异常处理器"></a>程序 为线程设置异常处理器</h3><p>下面程序为主线程设置了异常处理器,当主线程运行抛出未处理异常时,该异常处理器将会起作用</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义自己的异常处理器</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyExHandler</span> <span class="keyword">implements</span> <span class="title">Thread</span>.<span class="title">UncaughtExceptionHandler</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 实现uncaughtException方法，该方法将处理线程的未处理异常</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">uncaughtException</span><span class="params">(Thread t, Throwable e)</span> </span>&#123;</span><br><span class="line">        System.out.println(t + <span class="string">&quot; 线程出现了异常：&quot;</span> + e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ExHandler</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 设置主线程的异常处理器</span></span><br><span class="line">        Thread.currentThread().setUncaughtExceptionHandler(<span class="keyword">new</span> MyExHandler());</span><br><span class="line">        <span class="keyword">int</span> a = <span class="number">5</span> / <span class="number">0</span>; <span class="comment">// ①</span></span><br><span class="line">        System.out.println(<span class="string">&quot;程序正常结束！&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面程序的主方法中为主线程设置了异常处理器,而①号代码处将引发一个未处理异常,则该异常处理器会负责处理该异常。运行该程序,会看到如下输出:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Thread[main,5,main] 线程出现了异常：java.lang.ArithmeticException: / by zero</span><br></pre></td></tr></table></figure>
-<h3 id="异常处理器与通过catch捕获异常的不同"><a href="#异常处理器与通过catch捕获异常的不同" class="headerlink" title="异常处理器与通过catch捕获异常的不同"></a>异常处理器与通过<code>catch</code>捕获异常的不同</h3><p>从上面程序的执行结果来看,虽然程序中粗体字代码指定了异常处理器对未捕获的异常进行处理,而且该异常处理器也确实起作用了,但程序依然不会正常结束。这说明异常处理器与通过<code>catch</code>捕获异常是不同的:</p>
-<ul>
-<li>当使用<code>catch</code>捕获异常时,异常不会向上传播给上一级调用者;</li>
-<li>但<strong>使用异常处理器对异常进行处理之后,异常依然会传播给上一级调用者</strong></li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/f2e9e8d2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/f2e9e8d2/" class="post-title-link" itemprop="url">16.6.3 使用阻塞队列(BlockingQueue)控制线程通信</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-08 09:12:14" itemprop="dateCreated datePublished" datetime="2020-01-08T09:12:14+08:00">2020-01-08</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-03-26 03:48:11" itemprop="dateModified" datetime="2020-03-26T03:48:11+08:00">2020-03-26</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第16章 多线程</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC16%E7%AB%A0-%E5%A4%9A%E7%BA%BF%E7%A8%8B/16-6-%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1/" itemprop="url" rel="index"><span itemprop="name">16.6 线程通信</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/f2e9e8d2/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/f2e9e8d2/" data-xid="/JavaReadingNotes/f2e9e8d2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="16-6-3-使用阻塞队列-BlockingQueue-控制线程通信"><a href="#16-6-3-使用阻塞队列-BlockingQueue-控制线程通信" class="headerlink" title="16.6.3 使用阻塞队列(BlockingQueue)控制线程通信"></a>16.6.3 使用阻塞队列(BlockingQueue)控制线程通信</h1><p><code>Java5</code>提供了一个<code>BlockingQueue</code>接口,虽然<code>BlockingQueue</code>也是<code>Queue</code>的子接口,但<code>BlockingQueue</code>的主要用途并不是作为容器,而是作为线程同步的工具。</p>
-<h2 id="BlockingQueue特征"><a href="#BlockingQueue特征" class="headerlink" title="BlockingQueue特征"></a>BlockingQueue特征</h2><p><code>BlockingQueue</code>具有一个特征:</p>
-<ul>
-<li>当生产者线程试图向<code>BlockingQueue</code>中放入元素时,如果该队列已满,则该生产者线程被阻塞;</li>
-<li>当消费者线程试图从<code>BlockingQueue</code>中取出元素时,如果该队列已空,则该消费者线程被阻塞</li>
-</ul>
-<p>程序的两个线程通过交替向<code>BlockingQueue</code>中放入元素、取出元素,即可很好地控制线程的通信。</p>
-<h2 id="BlockingQueue阻塞方法"><a href="#BlockingQueue阻塞方法" class="headerlink" title="BlockingQueue阻塞方法"></a>BlockingQueue阻塞方法</h2><p><code>BlockingQueue</code>提供如下两个支持阻塞的方法。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>void put(E e)</code></td>
-<td align="left">尝试把<code>E</code>元素放入<code>BlockingQueue</code>中,如果该队列的元素已满,则阻塞该线程。</td>
-</tr>
-<tr>
-<td align="left"><code>E take()</code></td>
-<td align="left">尝试从<code>BlockingQueue</code>的头部取出元素,如果该队列的元素已空,则阻塞该线程。</td>
-</tr>
-</tbody></table>
-<h2 id="Queue接口方法"><a href="#Queue接口方法" class="headerlink" title="Queue接口方法"></a>Queue接口方法</h2><p><code>BlockingQueue</code>继承了<code>Queue</code>接口,当然也可使用<code>Queue</code>接口中的方法。这些方法归纳起来可分为如下三组。</p>
-<ol>
-<li>在队列尾部插入元素。包括<code>add(E e)</code>、<code>offer(E e)</code>和<code>put(E e)</code>方法,当该队列已满时,这三个方法分别会抛出异常、返回<code>false</code>、<strong>阻塞队列</strong>。</li>
-<li>在队列头部删除并返回删除的元素。包括<code>remove</code>、<code>poll()</code>和<code>take()</code>方法。当该队列已空时,这三个方法分别会抛出异常、返回<code>false</code>、阻塞队列。</li>
-<li>在队列头部取出但不删除元素。包括<code>element()</code>和<code>pek()</code>方法,当队列已空时,这两个方法分别抛出异常、返回<code>false</code></li>
-</ol>
-<h2 id="BlockingQueue方法分类"><a href="#BlockingQueue方法分类" class="headerlink" title="BlockingQueue方法分类"></a>BlockingQueue方法分类</h2><p><code>BlockingQueue</code>包含的方法之间的对应关系如表16.1所示。</p>
-<table>
-<thead>
-<tr>
-<th align="left">功能</th>
-<th align="left">抛出异常</th>
-<th align="left">不同返回值</th>
-<th align="left">阻塞线程</th>
-<th align="left">指定超时时长</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">队尾插入元素</td>
-<td align="left"><code>add(e)</code></td>
-<td align="left"><code>offer(e)</code></td>
-<td align="left"><code>put(e)</code></td>
-<td align="left"><code>offer(e,time,unit)</code></td>
-</tr>
-<tr>
-<td align="left">队头删除元素</td>
-<td align="left"><code>remove()</code></td>
-<td align="left"><code>poll()</code></td>
-<td align="left"><code>take()</code></td>
-<td align="left"><code>poll(time,unit)</code></td>
-</tr>
-<tr>
-<td align="left">获取、不删除元素</td>
-<td align="left"><code>element()</code></td>
-<td align="left"><code>peek()</code></td>
-<td align="left">无</td>
-<td align="left">无</td>
-</tr>
-</tbody></table>
-<h2 id="BlockingQueue实现类"><a href="#BlockingQueue实现类" class="headerlink" title="BlockingQueue实现类"></a>BlockingQueue实现类</h2><p><code>BlockingQueue</code>与其实现类之间的类图如图16.11所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter16/16.6.3/1.png" alt="图片"></p>
-<!-- CrazyJavaHandout4/Chapter16/16.6.3/1 -->
-<p>图16.11中以黑色方框框出的都是<code>Java7</code>新增的阻塞队列。从图16.11可以看到,<code>BlockingQueue</code>包含如下5个实现类。</p>
-<table>
-<thead>
-<tr>
-<th align="left"><code>BlockingQueue</code>实现类</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>ArrayBlockingQueue</code></td>
-<td align="left">基于数组实现的<code>BlockingQueue</code>队列。</td>
-</tr>
-<tr>
-<td align="left"><code>LinkedBlockingQueue</code></td>
-<td align="left">基于链表实现的<code>BlockingQueue</code>队列。</td>
-</tr>
-<tr>
-<td align="left"><code>SynchronousQueue</code></td>
-<td align="left">同步队列。对该队列的存、取操作必须交替进行。</td>
-</tr>
-<tr>
-<td align="left"><code>PriorityBlockingQueue</code></td>
-<td align="left">它并不是标准的阻塞队列。<br>与前面介绍的<code>PriorityQueue</code>类似,该队列调用<code>remove()</code>、<code>poll()</code>、<code>take()</code>等方法取出元素时,并不是取出队列中存在时间最长的元素,而是<strong>队列中最小的元素</strong>。<br><code>PriorityBlockingQueue</code>判断元素的大小即可根据元素(实现<code>Comparable</code>接口)的本身大小来自然排序,也可使用<code>Comparator</code>进行定制排序。</td>
-</tr>
-<tr>
-<td align="left"><code>DelayQueue</code></td>
-<td align="left">它是一个特殊的<code>BlockingQueue</code>,底层基于<code>PriorityBlockingQueue</code>实现。不过,<code>DelayQueue</code>要求集合元素都实现<code>Delay</code>接口(该接口里只有一个<code>longGetDelay()</code>方法),<code>DelayQueue</code>根据集合元素的<code>getDalay()</code>方法的返回值进行排序</td>
-</tr>
-</tbody></table>
-<h2 id="程序示例-ArrayBlockingQueue阻塞队列"><a href="#程序示例-ArrayBlockingQueue阻塞队列" class="headerlink" title="程序示例 ArrayBlockingQueue阻塞队列"></a>程序示例 ArrayBlockingQueue阻塞队列</h2><p>下面以<code>ArrayBlockingQueue</code>为例介绍阻塞队列的功能和用法。下面先用一个最简单的程序来测试<code>BlockingQueue</code>的<code>put()</code>方法。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockingQueueTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 定义一个长度为2的阻塞队列</span></span><br><span class="line">        BlockingQueue&lt;String&gt; bq = <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">2</span>);</span><br><span class="line">        bq.put(<span class="string">&quot;Java&quot;</span>); <span class="comment">// 与bq.add(&quot;Java&quot;、bq.offer(&quot;Java&quot;)相同</span></span><br><span class="line">        bq.put(<span class="string">&quot;Java&quot;</span>); <span class="comment">// 与bq.add(&quot;Java&quot;、bq.offer(&quot;Java&quot;)相同</span></span><br><span class="line">        bq.put(<span class="string">&quot;Java&quot;</span>); <span class="comment">// ① 阻塞线程。</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面程序先定义一个大小为2的<code>BlockingQueue</code>,程序先向该队列中放入两个元素,此时队列还没有满,两个元素都可以放入,因此使用<code>put()</code>、<code>add()</code>和<code>offer()</code>方法效果完全一样。当程序试图放入第三个元素时,</p>
-<ul>
-<li>如果使用<code>put()</code>方法尝试放入元素将会阻塞线程,如上面程序①号代码所示。</li>
-<li>此时,如果使用<code>add()</code>方法尝试放入元素将会引发异常;</li>
-<li>此时,如果使用<code>offer()</code>方法尝试放入元素则会返回<code>false</code>,元素不会被放入</li>
-</ul>
-<p>与此类似的是,在<code>BlockingQueue</code>已空的情况下,程序</p>
-<ul>
-<li>使用<code>take()</code>方法尝试取出元素将会<strong>阻塞线程</strong>;</li>
-<li>使用<code>remove()</code>方法尝试取出元素将<strong>引发异常</strong>;</li>
-<li>使用<code>poll()</code>方法尝试取出元素将<strong>返回<code>false</code>,元素不会被删除</strong>.</li>
-</ul>
-<h2 id="程序-使用BlockingQueue实现线程通信"><a href="#程序-使用BlockingQueue实现线程通信" class="headerlink" title="程序 使用BlockingQueue实现线程通信"></a>程序 使用BlockingQueue实现线程通信</h2><p>掌握了<code>BlockingQueue</code>阻塞队列的特性之后,下面程序就可以利用<code>BlockingQueue</code>来实现线程通信了。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.*;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 生产者线程</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Producer</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BlockingQueue&lt;String&gt; bq;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Producer</span><span class="params">(BlockingQueue&lt;String&gt; bq)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bq = bq;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        String[] strArr = <span class="keyword">new</span> String[] &#123; <span class="string">&quot;Java&quot;</span>, <span class="string">&quot;Struts&quot;</span>, <span class="string">&quot;Spring&quot;</span> &#125;;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">999999999</span>; i++) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot;生产者准备生产集合元素！&quot;</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">200</span>);</span><br><span class="line">                <span class="comment">// 尝试放入元素，如果队列已满，线程被阻塞</span></span><br><span class="line">                bq.put(strArr[i % <span class="number">3</span>]);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot;生产完成：&quot;</span> + bq);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// 消费者线程</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Consumer</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> BlockingQueue&lt;String&gt; bq;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">Consumer</span><span class="params">(BlockingQueue&lt;String&gt; bq)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.bq = bq;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot;消费者准备消费集合元素！&quot;</span>);</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">200</span>);</span><br><span class="line">                <span class="comment">// 尝试取出元素，如果队列已空，线程被阻塞</span></span><br><span class="line">                bq.take();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception ex) &#123;</span><br><span class="line">                ex.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">            System.out.println(getName() + <span class="string">&quot;消费完成：&quot;</span> + bq);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BlockingQueueTest2</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建一个容量为1的BlockingQueue</span></span><br><span class="line">        BlockingQueue&lt;String&gt; bq = <span class="keyword">new</span> ArrayBlockingQueue&lt;&gt;(<span class="number">1</span>);</span><br><span class="line">        <span class="comment">// 启动3条生产者线程</span></span><br><span class="line">        <span class="keyword">new</span> Producer(bq).start();</span><br><span class="line">        <span class="keyword">new</span> Producer(bq).start();</span><br><span class="line">        <span class="keyword">new</span> Producer(bq).start();</span><br><span class="line">        <span class="comment">// 启动一条消费者线程</span></span><br><span class="line">        <span class="keyword">new</span> Consumer(bq).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面程序启动了3个生产者线程向<code>BlockingQueue</code>集合放入元素,启动了1个消费者线程从<code>BlockingQueue</code>集合取出元素。<br>本程序的<code>BlockingQueue</code>集合容量为1,因此3个生产者线程无法连续放入元素,必须等待消费者线程取出一个元素后,3个生产者线程的其中之一才能放入一个元素。运行该程序,会看到如下所示的结果</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Thread-1生产者准备生产集合元素！</span><br><span class="line">Thread-0生产者准备生产集合元素！</span><br><span class="line">Thread-2生产者准备生产集合元素！</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br><span class="line">Thread-0生产完成：[Java]</span><br><span class="line">Thread-0生产者准备生产集合元素！</span><br><span class="line">Thread-3消费完成：[]</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br><span class="line">Thread-2生产完成：[Java]</span><br><span class="line">Thread-2生产者准备生产集合元素！</span><br><span class="line">Thread-1生产完成：[Java]</span><br><span class="line">Thread-1生产者准备生产集合元素！</span><br><span class="line">Thread-3消费完成：[Java]</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br><span class="line">Thread-3消费完成：[]</span><br><span class="line">Thread-3消费者准备消费集合元素！</span><br></pre></td></tr></table></figure>
-<p>3个生产者线程都想向<code>BlockingQueue</code>中放入元素,但只要其中一个线程向该队列中放入元素之后,其他生产者线程就必须等待,等待消费者线程取出<code>BlockingQueue</code>队列里的元素。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/7ee502ff/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2825,6 +2333,625 @@
 <p>也就是说,获取了<code>Charset</code>对象后,如果仅仅需要进行简单的编码、解码操作,其实无须创建<code>CharsetEncoder</code>和<code>CharsetDecoder</code>对象,直接调用<code>Charset</code>的<code>encode()</code>和<code>decode()</code>方法进行编码、解码即可。</p>
 <h2 id="String类-字符串-转-字节序列-编码"><a href="#String类-字符串-转-字节序列-编码" class="headerlink" title="String类 字符串 转 字节序列(编码)"></a>String类 字符串 转 字节序列(编码)</h2><p>在<code>String</code>类里也提供了一个<code>getBytes(String charset)</code>方法,该方法返回**<code>byte</code>数组**,该方法也是使用指定的字符集将<strong>字符串</strong>转换成<strong>字节序列</strong></p>
 <!-- CrazyJavaHandout4/Chapter/15/15.9.4/ -->
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/233df632/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/233df632/" class="post-title-link" itemprop="url">15.9.3 使用Channel</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-06 08:07:48" itemprop="dateCreated datePublished" datetime="2020-01-06T08:07:48+08:00">2020-01-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-9-NIO/" itemprop="url" rel="index"><span itemprop="name">15.9 NIO</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/233df632/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/233df632/" data-xid="/JavaReadingNotes/233df632/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="15-9-3-使用Channel"><a href="#15-9-3-使用Channel" class="headerlink" title="15.9.3 使用Channel"></a>15.9.3 使用Channel</h1><h2 id="Channel与流对象的区别"><a href="#Channel与流对象的区别" class="headerlink" title="Channel与流对象的区别"></a>Channel与流对象的区别</h2><p><strong><code>Channel</code>类似于传统的流对象</strong>,但与传统的流对象有两个主要区别。</p>
+<ol>
+<li><strong><code>Channel</code>可以直接将指定文件的部分或全部直接映射成<code>Buffer</code></strong></li>
+<li><strong>程序不能直接访问<code>Channel</code>中的数据</strong>,包括读取、写入都不行,<strong><code>Channel</code>只能与<code>Buffer</code>进行交互</strong>。也就是说:<ul>
+<li><strong>如果要从<code>Channel</code>中取得数据,必须先用<code>Buffer</code>从<code>Channel</code>中取出一些数据,然后让程序从<code>Buffer</code>中取出这些数据</strong>;</li>
+<li><strong>如果要将程序中的数据写入<code>Channel</code>,一样先让程序将数据放入<code>Buffer</code>中,程序再将<code>Buffer</code>里的数据写入<code>Channe</code>中</strong>。</li>
+</ul>
+</li>
+</ol>
+<h2 id="Channel分类"><a href="#Channel分类" class="headerlink" title="Channel分类"></a>Channel分类</h2><p><code>Java</code>为<code>Channel</code>接口提供了<code>DatagramChannel</code>、<code>FileChannel</code>、<code>Pipe.SinkChannel</code>、<code>Pipe.SourceChannel</code>、<code>SelectableChannel</code>、<code>ServerSocketChannel</code>、<code>SocketChannel</code>等实现类,本节主要介绍<code>FileChannel</code>的用法。<br><strong>根据这些<code>Channel</code>的名字不难发现,新<code>IO</code>里的<code>Channel</code>是按功能来划分的</strong>,例如</p>
+<ul>
+<li><code>Pipe.SinkChannel</code>、<code>Pipe.SourceChannel</code>是用于支持<strong>线程之间通信</strong>的管道<code>Channel</code>;</li>
+<li><code>ServerSocketChannel</code>、<code>SocketChannel</code>是用于支持**<code>TCP</code>网络通信**的<code>Channel</code>;</li>
+<li><code>DatagramChannel</code>则是用于支持**<code>UDP</code>网络通信**的<code>Channel</code></li>
+</ul>
+<p>本书将会在第17章介绍网络通信编程的详细内容,如果需要掌握<code>ServerSocketChannel</code>,<code>SocketChannel</code>等<code>Channel</code>的用法,可以参考本书第17章。</p>
+<h2 id="如何创建Channel"><a href="#如何创建Channel" class="headerlink" title="如何创建Channel"></a>如何创建Channel</h2><p><strong>所有的<code>Channel</code>都不应该通过构造器来直接创建,而是通过传统的节点<code>InputStream</code>、<code>OutputStream</code>的<code>getChannel()</code>方法来返回对应的<code>Channel</code></strong>,不同的节点流获得的<code>Channel</code>不一样。例如:</p>
+<ul>
+<li><code>FileInputStream</code>、<code>FileOutputStream</code>的<code>getChannel()</code>方法返回的是<code>FileChannel</code>,</li>
+<li><code>PipedInputStream</code>和<code>PipedOutputStream</code>的<code>getChannel()</code>方法返回的是<code>Pipe.SinkChannel</code>、<code>Pipe.SourceChannel</code></li>
+</ul>
+<h2 id="Channel常用方法"><a href="#Channel常用方法" class="headerlink" title="Channel常用方法"></a>Channel常用方法</h2><p><code>Channel</code>中最常用的三类方法是<code>map()</code>、<code>read()</code>和<code>write()</code>,其中</p>
+<ul>
+<li><code>map()</code>方法用于将<code>Channel</code>对应的部分或全部数据映射成<code>ByteBuffer</code>;</li>
+<li><code>read</code>或<code>write</code>方法都有一系列重载形式,这些方法用于从<code>Buffer</code>中读取数据或向<code>Buffer</code>中写入数据。</li>
+</ul>
+<h3 id="FileChannel的map方法"><a href="#FileChannel的map方法" class="headerlink" title="FileChannel的map方法"></a>FileChannel的map方法</h3><p><code>map()</code>方法的方法签名为:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">abstract</span> MappedByteBuffer <span class="title">map</span><span class="params">(FileChannel.MapMode mode, <span class="keyword">long</span> position, <span class="keyword">long</span> size)</span></span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>第一个参数执行映射时的模式,分别有只读、读写等模式</li>
+<li>而第二个、第三个参数用于控制将<code>Channel</code>的哪些数据映射成<code>ByteBuffer</code></li>
+</ul>
+<h2 id="程序-FileChannel示例"><a href="#程序-FileChannel示例" class="headerlink" title="程序 FileChannel示例"></a>程序 FileChannel示例</h2><p>下面程序示范了直接将<code>FileChannel</code>的全部数据映射成<code>ByteBuffer</code>的效果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.channels.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileChannelTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">&quot;FileChannelTest.java&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 创建FileInputStream，以该文件输入流创建FileChannel</span></span><br><span class="line">                FileChannel inChannel = <span class="keyword">new</span> FileInputStream(f).getChannel();</span><br><span class="line">                <span class="comment">// 以文件输出流创建FileBuffer，用以控制输出</span></span><br><span class="line">                FileChannel outChannel = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;a.txt&quot;</span>).getChannel()) &#123;</span><br><span class="line">            <span class="comment">// 将FileChannel里的全部数据映射成ByteBuffer</span></span><br><span class="line">            MappedByteBuffer buffer = </span><br><span class="line">                inChannel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, f.length()); <span class="comment">// ①</span></span><br><span class="line">            <span class="comment">// 使用GBK的字符集来创建解码器</span></span><br><span class="line">            <span class="comment">// Charset charset = Charset.forName(&quot;GBK&quot;);</span></span><br><span class="line">            Charset charset = Charset.forName(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">            <span class="comment">// 直接将buffer里的数据全部输出到outChannel中</span></span><br><span class="line">            outChannel.write(buffer); <span class="comment">// ②</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 再次调用buffer的clear()方法，复原limit、position的位置,准备再次读取Buffer</span></span><br><span class="line">            buffer.clear();</span><br><span class="line">            <span class="comment">// 创建解码器(CharsetDecoder)对象</span></span><br><span class="line">            CharsetDecoder decoder = charset.newDecoder();</span><br><span class="line">            <span class="comment">// 使用解码器将ByteBuffer转换成CharBuffer</span></span><br><span class="line">            CharBuffer charBuffer = decoder.decode(buffer);</span><br><span class="line">            <span class="comment">// CharBuffer的toString方法可以获取对应的字符串</span></span><br><span class="line">            System.out.println(charBuffer);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中分别使用<code>FileInputStream</code>、<code>FileOutputStream</code>来获取<code>FileChannel</code>,虽然<code>FileChannel</code>既可以读取也可以写入,</p>
+<ul>
+<li>但**<code>FileInputStream</code>获取的<code>FileChannel</code>只能读**,</li>
+<li>而**<code>FileOutputStream</code>获取的<code>FileChannel</code>只能写**。</li>
+</ul>
+<p>程序中①号代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MappedByteBuffer buffer = </span><br><span class="line">    inChannel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, f.length()); <span class="comment">// ①</span></span><br></pre></td></tr></table></figure>
+<p>直接将指定<code>Channel</code>中的全部数据映射成<code>ByteBuffer</code>.<br>然后程序中②号代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outChannel.write(buffer); <span class="comment">// ②</span></span><br></pre></td></tr></table></figure>
+<p>直接将整个<code>ByteBuffer</code>的全部数据写入一个输出<code>FileChannel</code>中,这就完成了文件的复制.<br>程序后面部分为了能将<code>FileChannelTest.java</code>文件里的内容打印出来,使用了<code>Charset</code>类和<code>CharsetDecoder</code>类将<code>ByteBuffer</code>转换成<code>CharBuffer</code>关于<code>Charset</code>和<code>CharsetDecoder</code>下一节将会有更详细的介绍。</p>
+<h2 id="程序-RandomAccessFile获取的Channel"><a href="#程序-RandomAccessFile获取的Channel" class="headerlink" title="程序 RandomAccessFile获取的Channel"></a>程序 RandomAccessFile获取的Channel</h2><p>不仅<code>InputStream</code>、<code>OutputStream</code>包含了<code>getChannel()</code>方法,在<code>RandomAccessFile</code>中也包含了一个<code>getChannel()</code>方法,<strong><code>RandomAccessFile</code>返回的<code>FileChannel</code>是只读的还是读写的,则取决于<code>RandomAccessFile</code>打开文件的模式</strong>。<br>例如,下面程序将会对<code>a.txt</code>文件的内容进行复制,追加在该文件后面。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.channels.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomFileChannelTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">&quot;a.txt&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 创建一个RandomAccessFile对象</span></span><br><span class="line">                RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(f, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line">                <span class="comment">// 获取RandomAccessFile对应的Channel</span></span><br><span class="line">                FileChannel randomChannel = raf.getChannel()) &#123;</span><br><span class="line">            <span class="comment">// 将Channel中所有数据映射成ByteBuffer</span></span><br><span class="line">            ByteBuffer buffer = randomChannel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, f.length());</span><br><span class="line">            <span class="comment">// 把Channel的记录指针移动到最后</span></span><br><span class="line">            <span class="comment">// 代码1</span></span><br><span class="line">            randomChannel.position(f.length());</span><br><span class="line">            <span class="comment">// 将buffer中所有数据输出</span></span><br><span class="line">            randomChannel.write(buffer);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的<strong>代码1</strong>:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">randomChannel.position(f.length());</span><br></pre></td></tr></table></figure>
+<p>可以将<code>Channel</code>的记录指针移动到该<code>Channel</code>的最后,从而可以让程序将指定<code>ByteBuffer</code>的数据追加到该<code>Channel</code>的后面。每次运行上面程序,都会把<code>a.txt</code>文件的内容复制份,并将全部内容追加到该文件的后面。</p>
+<h2 id="像传统IO那样使用Channel和Buffer读写文件"><a href="#像传统IO那样使用Channel和Buffer读写文件" class="headerlink" title="像传统IO那样使用Channel和Buffer读写文件"></a>像传统IO那样使用Channel和Buffer读写文件</h2><p>如果读者习惯了传统<code>IO</code>的“用竹筒多次重复取水”的过程,或者担心<code>Channel</code>对应的文件过大,使用<code>map()</code>方法一次将所有的文件内容映射到内存中引起性能下降,也可以使用<code>Channel</code>和<code>Buffer</code>传统的“用竹筒多次重复取水”的方式。<br>如下程序所示。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.channels.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadFile</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 创建文件输入流</span></span><br><span class="line">                FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;ReadFile.java&quot;</span>);</span><br><span class="line">                <span class="comment">// 创建一个FileChannel</span></span><br><span class="line">                FileChannel fcin = fis.getChannel()) &#123;</span><br><span class="line">            <span class="comment">// 定义一个ByteBuffer对象，用于重复取水</span></span><br><span class="line">            ByteBuffer bbuff = ByteBuffer.allocate(<span class="number">256</span>);</span><br><span class="line">            <span class="comment">// 将FileChannel中数据读取到ByteBuffer中</span></span><br><span class="line">            <span class="keyword">while</span> (fcin.read(bbuff) != -<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">// 准备读取Buffer中的数据</span></span><br><span class="line">                bbuff.flip();</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 创建Charset对象</span></span><br><span class="line">                <span class="comment">// Charset charset = Charset.forName(&quot;GBK&quot;);</span></span><br><span class="line">                Charset charset = Charset.forName(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">                <span class="comment">// 创建解码器(CharsetDecoder)对象</span></span><br><span class="line">                CharsetDecoder decoder = charset.newDecoder();</span><br><span class="line">                <span class="comment">// 将ByteBuffer的内容转码</span></span><br><span class="line">                CharBuffer cbuff = decoder.decode(bbuff);</span><br><span class="line">                System.out.print(cbuff);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 将Buffer初始化，为下一次读取数据做准备</span></span><br><span class="line">                bbuff.clear();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码虽然使用<code>FileChannel</code>和<code>Buffer</code>来读取文件,但处理方式和使用<code>InputStream</code>、<code>byte[]</code>来读取文件的方式几乎一样,都是采用“用竹筒多次重复取水”的方式。但因为<code>Buffer</code>提供了<code>fip()</code>和<code>clear()</code>两个方法,所以程序处理起来比较方便</p>
+<h3 id="类似传统方式使用NIO步骤"><a href="#类似传统方式使用NIO步骤" class="headerlink" title="类似传统方式使用NIO步骤"></a>类似传统方式使用NIO步骤</h3><ul>
+<li>读取数据到<code>Buffer</code>中</li>
+<li><strong>每次读取数据后调用<code>fip()</code>方法</strong>将没有数据的区域“封印”起来,避免程序从<code>Buffer</code>中取出<code>null</code>值;</li>
+<li>从<code>Buffer</code>中取出数据</li>
+<li>数据取出后立即调用<code>clear()</code>方法将<code>Buffer</code>的<code>position</code>设0,为下次读取数据做准备。</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/d63ba950/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/d63ba950/" class="post-title-link" itemprop="url">15.9.2 使用Buffer</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-06 04:35:02" itemprop="dateCreated datePublished" datetime="2020-01-06T04:35:02+08:00">2020-01-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-9-NIO/" itemprop="url" rel="index"><span itemprop="name">15.9 NIO</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/d63ba950/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/d63ba950/" data-xid="/JavaReadingNotes/d63ba950/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="15-9-2-使用Buffer"><a href="#15-9-2-使用Buffer" class="headerlink" title="15.9.2 使用Buffer"></a>15.9.2 使用Buffer</h1><p>从内部结构上来看,<code>Buffer</code>就像一个数组,它可以保存多个类型相同的数据。<code>Buffer</code>是一个抽象类,其最常用的子类是<code>ByteBuffer</code>,它可以在底层字节数组上进行<code>get/set</code>操作。除<code>ByteBuffer</code>之外,对应于其他基本数据类型(<code>boolean</code>除外)都有相应的<code>Buffer</code>类:<code>CharBuffer</code>、<code>ShortBuffer</code>、<code>IntBuffer</code>、<code>LongBuffer</code>、<code>FloatBuffer</code>、<code>DoubleBuffer</code>。</p>
+<h2 id="创建Buffer对象"><a href="#创建Buffer对象" class="headerlink" title="创建Buffer对象"></a>创建Buffer对象</h2><p>上面这些<code>Buffer</code>类,除<code>ByteBuffer</code>之外,它们都采用相同或相似的方法来管理数据,只是各自管理的数据类型不同而已。这些<code>Buffer</code>类都没有提供构造器,通过使用如下方法来得到一个<code>Buffer</code>对象。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static XxxBuffer allocate(int capacity)</code></td>
+<td align="left">创建一个容量为<code>capacity</code>的<code>XxX Buffer</code>对象。</td>
+</tr>
+</tbody></table>
+<details><summary>展开/折叠</summary>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static ByteBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new byte buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static ShortBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new short buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static IntBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new int buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static LongBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new long buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static CharBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new char buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static FloatBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new float buffer.</td>
+</tr>
+<tr>
+<td align="left"><code>static DoubleBuffer allocate(int capacity)</code></td>
+<td align="left">Allocates a new double buffer.</td>
+</tr>
+</tbody></table>
+</details>
+
+<p>但实际使用较多的是<code>ByteBuffer</code>和<code>CharBuffer</code>,其他<code>Buffer</code>子类则较少用到。</p>
+<h2 id="MappedByteBuffer"><a href="#MappedByteBuffer" class="headerlink" title="MappedByteBuffer"></a>MappedByteBuffer</h2><p>其中<code>ByteBuffer</code>类还有一个子类:<code>MappedByteBuffer</code>,<strong><code>MappedByteBuffer</code>用于表示<code>Channel</code>将磁盘文件的部分或全部内容映射到内存中后得到的<mark>结果</mark></strong>,通常<code>MappedByteBuffer</code>对象由<code>Channel</code>的<code>map()</code>方法返回。</p>
+<h2 id="容量-界限-位置"><a href="#容量-界限-位置" class="headerlink" title="容量 界限 位置"></a>容量 界限 位置</h2><p>在<code>Buffer</code>中有三个重要的概念:容量(<code>capacity</code>)、界限(<code>limit</code>)和位置(<code>position</code>)</p>
+<ul>
+<li><strong>容量(<code>capacity</code>)</strong>:<ul>
+<li>缓冲区的容量(<code>capacity</code>)表示该<code>Buffer</code>的最大数据容量,即<strong>最多可以存储多少数据</strong>。<strong>缓冲区的容量不可能为负值,创建后不能改变</strong>。</li>
+</ul>
+</li>
+<li><strong>界限(<code>limit</code>)</strong>:<ul>
+<li><strong>第一个不应该被读出或者写入的缓冲区位置索引</strong>。也就是说,<strong>位于<code>limit</code>后的数据既不可被读,也不可被写</strong>。</li>
+</ul>
+</li>
+<li><strong>位置(<code>position</code>)</strong>:<ul>
+<li>用于指明<strong>下一个可以被读出的或者写入的缓冲区位置索引</strong>(类似于<code>IO</code>流中的记录指针)。<strong>当使用<code>Buffer</code>从<code>Channel</code>中读取数据时,<code>position</code>的<mark>值</mark>恰好等于已经读到了多少数据</strong>:</li>
+<li>当刚刚新建一个<code>Buffer</code>对象时,其<code>position</code>为0,也就是<strong>第1个位置的索引为0</strong>;</li>
+<li>如果从<code>Channel</code>中读取了2个数据到该<code>Buffer</code>中,则<code>position</code>为2,指向<code>Buffer</code>中第3个位置</li>
+</ul>
+</li>
+</ul>
+<h2 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h2><p>除此之外,<code>Buffer</code>里还支持一个可选的标记(<code>mark</code>),类似于传统<code>IO</code>流中的<code>mark()</code>,<strong><code>Buffer</code>允许直接将<code>position</code>定位到该<code>mark</code>处</strong>。这些值满足如下关系:<br><strong>0≤mark≤position≤limit≤capacity</strong><br>图15.16显示了某个<code>Buffer</code>读入了一些数据后的示意图<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/1.png" alt="这里有一张图片"></p>
+<h2 id="Buffer的作用"><a href="#Buffer的作用" class="headerlink" title="Buffer的作用"></a>Buffer的作用</h2><p><strong><code>Buffer</code>的主要作用就是装入数据,然后输出数据</strong>(其作用类似于前面介绍的取水的“竹筒”),<strong>开始时<code>Buffer</code>的<code>position</code>为0,<code>limit</code>为<code>capacity</code></strong></p>
+<h2 id="装入数据-put方法"><a href="#装入数据-put方法" class="headerlink" title="装入数据 put方法"></a>装入数据 put方法</h2><p><strong>程序可通过<code>put()</code>方法向<code>Buffer</code>中放入一些数据</strong>(或者从<code>Channel</code>中获取一些数据),<strong>每放入一些数据,<code>Buffer</code>的<code>position</code>相应地向后移动一些位置</strong>。</p>
+<h3 id="ByteBuffer的put方法"><a href="#ByteBuffer的put方法" class="headerlink" title="ByteBuffer的put方法"></a>ByteBuffer的put方法</h3><details><summary>展开/折叠</summary>
+
+<table>
+<thead>
+<tr>
+<th align="left"><code>ByteBuffer</code>的<code>put</code>方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract ByteBuffer put(byte b)</code></td>
+<td align="left">Relative put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>ByteBuffer put(byte[] src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>ByteBuffer put(byte[] src, int offset, int length)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer put(int index, byte b)</code></td>
+<td align="left">Absolute put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>ByteBuffer put(ByteBuffer src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract ByteBuffer putChar(char value)</code></td>
+<td align="left">Relative put method for writing a char value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putChar(int index, char value)</code></td>
+<td align="left">Absolute put method for writing a char value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putDouble(double value)</code></td>
+<td align="left">Relative put method for writing a double value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putDouble(int index, double value)</code></td>
+<td align="left">Absolute put method for writing a double value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putFloat(float value)</code></td>
+<td align="left">Relative put method for writing a float value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putFloat(int index, float value)</code></td>
+<td align="left">Absolute put method for writing a float value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putInt(int value)</code></td>
+<td align="left">Relative put method for writing an int value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putInt(int index, int value)</code></td>
+<td align="left">Absolute put method for writing an int value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putLong(int index, long value)</code></td>
+<td align="left">Absolute put method for writing a long value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putLong(long value)</code></td>
+<td align="left">Relative put method for writing a long value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putShort(int index, short value)</code></td>
+<td align="left">Absolute put method for writing a short value (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract ByteBuffer putShort(short value)</code></td>
+<td align="left">Relative put method for writing a short value (optional operation).</td>
+</tr>
+</tbody></table>
+</details>
+
+<h3 id="CharBuffer的put方法"><a href="#CharBuffer的put方法" class="headerlink" title="CharBuffer的put方法"></a>CharBuffer的put方法</h3><details><summary>展开/折叠</summary>
+
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract CharBuffer put(char c)</code></td>
+<td align="left">Relative put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(char[] src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(char[] src, int offset, int length)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>abstract CharBuffer put(int index, char c)</code></td>
+<td align="left">Absolute put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(String src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(String src, int start, int end)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+<tr>
+<td align="left"><code>CharBuffer put(CharBuffer src)</code></td>
+<td align="left">Relative bulk put method (optional operation).</td>
+</tr>
+</tbody></table>
+</details>
+
+<h2 id="准备输出数据-flip方法"><a href="#准备输出数据-flip方法" class="headerlink" title="准备输出数据 flip方法"></a>准备输出数据 flip方法</h2><p>当<code>Buffer</code>装入数据结束后,调用<code>Buffer</code>的<code>flip()</code>方法,<strong>该方法将<code>limit</code>设置为<code>position</code>所在位置,并将<code>position</code>设为0,这就使得<code>Buffer</code>的读写指针又移到了开始位置。</strong></p>
+<h3 id="需要读取Buffer中的数据时调用flip方法"><a href="#需要读取Buffer中的数据时调用flip方法" class="headerlink" title="需要读取Buffer中的数据时调用flip方法"></a>需要读取Buffer中的数据时调用flip方法</h3><p>也就是说,<strong><code>Buffer</code>调用<code>flip()</code>方法之后,<code>Buffer</code><mark>为输出数据做好了准备</mark></strong>;</p>
+<table>
+<thead>
+<tr>
+<th align="left">Buffer类的flip方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Buffer flip()</code></td>
+<td align="left">Flips this buffer.</td>
+</tr>
+</tbody></table>
+<h2 id="准备再次装入数据-clear方法"><a href="#准备再次装入数据-clear方法" class="headerlink" title="准备再次装入数据 clear方法"></a>准备再次装入数据 clear方法</h2><p>当<code>Buffer</code>输出数据结束后,<code>Buffer</code>调用<code>clear()</code>方法,<code>clear</code>方法不是清空<code>Buffer</code>的数据,它仅仅<strong>将<code>position</code>置为0,将<code>limit</code>置为<code>capacity</code></strong>,这样<strong>为再次向<code>Buffer</code>中装入数据做好准备</strong>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">Buffer类的clear方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>Buffer clear()</code></td>
+<td align="left">Clears this buffer.</td>
+</tr>
+</tbody></table>
+<h2 id="取出flip-再次装入clear"><a href="#取出flip-再次装入clear" class="headerlink" title="取出flip 再次装入clear"></a>取出flip 再次装入clear</h2><p><code>Buffer</code>中包含两个重要的方法,即<code>flip()</code>和<code>clear()</code>,</p>
+<ul>
+<li><code>flip</code>为从<code>Buffer</code>中取出数据做好准备,</li>
+<li><code>clear</code>为再次向<code>Buffer</code>中装入数据做好准备</li>
+</ul>
+<h2 id="Buffer其他常用方法"><a href="#Buffer其他常用方法" class="headerlink" title="Buffer其他常用方法"></a>Buffer其他常用方法</h2><p>除此之外,<code>Buffer</code>还包含如下一些常用的方法。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>int capacity()</code></td>
+<td align="left">返回<code>Buffer</code>的<code>capacity</code>大小。</td>
+</tr>
+<tr>
+<td align="left"><code>boolean hasRemaining()</code></td>
+<td align="left">判断当前位置(<code>position</code>)和界限(<code>limit</code>)之间是否还有元素可供处理</td>
+</tr>
+<tr>
+<td align="left"><code>int limit()</code></td>
+<td align="left">返回<code>Buffer</code>的界限(<code>limit</code>)的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer limit(int newLimit)</code></td>
+<td align="left">重新设置界限(<code>limit</code>)的值,并返回一个具有新的<code>limit</code>的缓冲区对象</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer mark()</code></td>
+<td align="left">设置<code>Buffer</code>的<code>mark</code>位置,它只能在0和位置(<code>position</code>)之间做<code>mark</code>。</td>
+</tr>
+<tr>
+<td align="left"><code>int position()</code></td>
+<td align="left">返回<code>Buffer</code>中的<code>position</code>值</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer position(int newPosition)</code></td>
+<td align="left">设置<code>Buffer</code>的<code>position</code>,并返回<code>position</code>被修改后的<code>Buffer</code>对象</td>
+</tr>
+<tr>
+<td align="left"><code>int remaining()</code></td>
+<td align="left">返回当前位置和界限(<code>limit</code>)之间的元素个数</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer reset()</code></td>
+<td align="left">将位置(<code>position</code>)转到<code>mark</code>所在的位置。</td>
+</tr>
+<tr>
+<td align="left"><code>Buffer rewind()</code></td>
+<td align="left">将位置(<code>position</code>)设置成0,取消设置的<code>mark</code></td>
+</tr>
+</tbody></table>
+<h2 id="放入-取出"><a href="#放入-取出" class="headerlink" title="放入 取出"></a>放入 取出</h2><p>除这些移动<code>position</code>、<code>limit</code>、<code>mark</code>的方法之外,<code>Buffer</code>的所有子类还提供了两个重要的方法:<code>put()</code>和<code>get()</code>方法,用于向<code>Buffer</code>中放入数据和从<code>Buffer</code>中取出数据。<strong>当使用<code>put()</code>和<code>get()</code>方法放入、取出数据时,<code>Buffer</code>既支持对单个数据的访问,也支持对批量数据的访问</strong>(以数组作为参数)。</p>
+<h3 id="相对-绝对"><a href="#相对-绝对" class="headerlink" title="相对 绝对"></a>相对 绝对</h3><p>当使用<code>put()</code>和<code>get()</code>来访问<code>Buffer</code>中的数据时,分为相对和绝对两种。</p>
+<ul>
+<li><strong>相对(<code>Relative</code>)</strong>:<ul>
+<li>从<code>Buffer</code>的当前<code>position</code>处开始读取或写入数据,然后将位置(<code>position</code>)的值按处理元素的个数增加</li>
+</ul>
+</li>
+<li><strong>绝对(<code>Absolute</code>)</strong>:<ul>
+<li>直接**<mark>根据索引</mark>向<code>Buffer</code>中读取或写入数据**,<strong>使用绝对方式访问<code>Buffer</code>里的数据时,并不会影响位置(<code>position</code>)的值</strong>。</li>
+</ul>
+</li>
+</ul>
+<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><p>下面程序示范了<code>Buffer</code>的一些常规操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BufferTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Buffer</span></span><br><span class="line">        CharBuffer buff = CharBuffer.allocate(<span class="number">8</span>); <span class="comment">// ①</span></span><br><span class="line">        System.out.println(<span class="string">&quot;capacity: &quot;</span> + buff.capacity());</span><br><span class="line">        System.out.println(<span class="string">&quot;limit: &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;position: &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 放入元素</span></span><br><span class="line">        buff.put(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">        buff.put(<span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">        buff.put(<span class="string">&#x27;c&#x27;</span>); <span class="comment">// ②</span></span><br><span class="line">        System.out.println(<span class="string">&quot;加入三个元素后，position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 调用flip()方法 准备取出数据</span></span><br><span class="line">        buff.flip(); <span class="comment">// ③</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行flip()后，limit = &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 取出第一个元素</span></span><br><span class="line">        System.out.println(<span class="string">&quot;第一个元素(position=0)：&quot;</span> + buff.get()); <span class="comment">// ④</span></span><br><span class="line">        System.out.println(<span class="string">&quot;取出一个元素后，position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 调用clear方法 准备再次放入数据</span></span><br><span class="line">        buff.clear(); <span class="comment">// ⑤</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，limit = &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，position = &quot;</span> + buff.position());</span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，缓冲区内容并没有被清除：&quot;</span> +</span><br><span class="line">            <span class="string">&quot;第三个元素为：&quot;</span> + buff.get(<span class="number">2</span>)); <span class="comment">// ⑥</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行绝对读取后，position = &quot;</span> + buff.position());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面程序的①号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CharBuffer buff = CharBuffer.allocate(<span class="number">8</span>); <span class="comment">// ①</span></span><br></pre></td></tr></table></figure>
+<p>通过<code>CharBuffer</code>的一个静态方法<code>allocate()</code>创建了一个<code>capacity</code>为8的<code>CharBuffer</code>,此时该<code>Buffer</code>的<code>limit</code>和<code>capacity</code>为8,<code>position</code>为0,如图15.17所示<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/2.png" alt="这里有一张图片"><br>接下来程序执行到②号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">buff.put(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">buff.put(<span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">buff.put(<span class="string">&#x27;c&#x27;</span>); <span class="comment">// ②</span></span><br></pre></td></tr></table></figure>
+<p>程序向<code>CharBuffer</code>中放入3个数值,放入3个数值后的<code>CharBuffer</code>效果如图15.18所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/3.png" alt="这里有一张图片"><br>程序执行到③号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buff.flip(); <span class="comment">// ③</span></span><br></pre></td></tr></table></figure>
+<p>调用了<code>Buffer</code>的<code>flip()</code>方法,该方法将把<code>limit</code>设为<code>position</code>处,把<code>position</code>设为0,如图15.19所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/4.png" alt="这里有一张图片"><br>从图15.19中可以看出,当<code>Buffer</code>调用了<code>flip()</code>方法之后,<code>limit</code>就移到了原来<code>position</code>所在位置,这样<strong>相当于把<code>Buffer</code>中<code>没有数据的存储空间“封印”起来</code>,从而避免读取<code>Buffer</code>数据时读到<code>null</code>值</strong>。</p>
+<h3 id="无参get方法会使得position加一"><a href="#无参get方法会使得position加一" class="headerlink" title="无参get方法会使得position加一"></a>无参get方法会使得position加一</h3><p>接下来程序在④号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;第一个元素(position=0)：&quot;</span> + buff.get()); <span class="comment">// ④</span></span><br></pre></td></tr></table></figure>
+<p>取出一个元素,<strong>取出一个元素后<code>position</code>向后移动一位</strong>,也就是该<code>Buffer</code>的<code>position</code>等于1。<br>程序执行到⑤号代码处:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buff.clear(); <span class="comment">// ⑤</span></span><br></pre></td></tr></table></figure>
+<p><code>Buffer</code>调用<code>clear()</code>方法将<code>position</code>设为0,将<code>limit</code>设为与<code>capacity</code>相等。执行<code>clear()</code>方法后的<code>Buffer</code>示意图如图15.20所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/5.png" alt="这里有一张图片"></p>
+<h3 id="根据索引获取值的get方法不会影响position"><a href="#根据索引获取值的get方法不会影响position" class="headerlink" title="根据索引获取值的get方法不会影响position"></a>根据索引获取值的get方法不会影响position</h3><p>从图15.20中可以看出,对<code>Buffer</code>执行<code>clear</code>方法后,该<code>Buffer</code>对象里的数据依然存在,所以程序在⑥号代码处依然可以取出位置为2的值,也就是字符c。因为⑥号代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;执行clear()后，缓冲区内容并没有被清除：&quot;</span> +</span><br><span class="line">    <span class="string">&quot;第三个元素为：&quot;</span> + buff.get(<span class="number">2</span>)); <span class="comment">// ⑥</span></span><br></pre></td></tr></table></figure>
+<p>采用的是<strong>根据索引来取值的方式</strong>,所以该方法不会影响<code>Buffer</code>的<code>position</code>.</p>
+<h2 id="普通Buffer-直接Buffer"><a href="#普通Buffer-直接Buffer" class="headerlink" title="普通Buffer 直接Buffer"></a>普通Buffer 直接Buffer</h2><p>通过<code>allocate</code>方法创建的<code>Buffer</code>对象是<strong>普通<code>Buffer</code></strong>.<br><code>ByteBuffer</code>还提供了一个<code>allocateDirect()</code>方法来创建<strong>直接<code>Buffer</code><strong>。</strong>直接<code>Buffer</code>的创建成本比普通<code>Buffer</code>的创建成本高,但直接<code>Buffer</code>的读取效率更高</strong>。</p>
+<h3 id="只有在ByteBuffer级别上才能创建直接Buffer"><a href="#只有在ByteBuffer级别上才能创建直接Buffer" class="headerlink" title="只有在ByteBuffer级别上才能创建直接Buffer"></a>只有在<code>ByteBuffer</code>级别上才能创建直接<code>Buffer</code></h3><p>由于直接<code>Buffer</code>的创建成本很高,所以**直接<code>Buffer</code>只适用于长生存期的<code>Buffer</code>,而不适用于短生存期、一次用完就丢弃的<code>Buffer</code><strong>。而且只有<code>ByteBuffer</code>才提供了<code>allocateDirect()</code>方法,所以</strong>只有在<code>ByteBuffer</code>级别上才能创建直接<code>Buffer</code><strong>。如果希望使用其他类型,则应该将该</strong>直接<code>Buffer</code>**转换成其他类型的<code>Buffer</code>。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static ByteBuffer allocateDirect(int capacity)</code></td>
+<td align="left">Allocates a new direct byte buffer.</td>
+</tr>
+</tbody></table>
+<!-- CrazyJavaHandout4/Chapter/15/15.9.2/ -->
 
       
     </div>

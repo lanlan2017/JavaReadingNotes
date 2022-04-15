@@ -225,324 +225,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/c0867e75/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/c0867e75/" class="post-title-link" itemprop="url">1.7 Java9的G1垃圾回收器</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-17 02:52:30" itemprop="dateCreated datePublished" datetime="2020-01-17T02:52:30+08:00">2020-01-17</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+08:00">2020-02-07</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC1%E7%AB%A0-Java%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">第1章 Java语言概述与开发环境</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC1%E7%AB%A0-Java%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/1-7-Java9%E7%9A%84G1%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/" itemprop="url" rel="index"><span itemprop="name">1.7 Java9的G1垃圾回收器</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/c0867e75/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/c0867e75/" data-xid="/JavaReadingNotes/c0867e75/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="1-7-Java9的G1垃圾回收器"><a href="#1-7-Java9的G1垃圾回收器" class="headerlink" title="1.7 Java9的G1垃圾回收器"></a>1.7 Java9的G1垃圾回收器</h1><h2 id="内存泄漏"><a href="#内存泄漏" class="headerlink" title="内存泄漏"></a>内存泄漏</h2><p>传统的<code>C</code>,<code>C++</code>等编程语言,需要程序员负责回收已经分配的内存。显式进行垃圾回收是一件比较困难的事情,因为程序员并不总是知道内存应该何时被释放。<strong>如果一些分配出去的内存得不到及时回收,就会引起系统运行速度下降,甚至导致程序瘫痪,这种现象被称为</strong>内存泄漏****。</p>
-<h2 id="显示垃圾回收缺点"><a href="#显示垃圾回收缺点" class="headerlink" title="显示垃圾回收缺点"></a>显示垃圾回收缺点</h2><p>总体而言,显式进行垃圾回收主要有如下两个缺点:</p>
-<ul>
-<li>程序忘记及时回收无用内存,从而导致内存泄漏,降低系统性能。</li>
-<li>程序错误地回收程序核心类库的内存,从而导致系统崩溃。</li>
-</ul>
-<h2 id="Java垃圾回收机制"><a href="#Java垃圾回收机制" class="headerlink" title="Java垃圾回收机制"></a>Java垃圾回收机制</h2><p>与<code>C</code>,<code>C++</code>程序不同,<code>Java</code>语言不需要程序员直接控制内存回收,<code>Java</code>程序的内存分配和回收都是由<code>JRE</code>在后台自动进行的。<code>JRE</code>会负责回收那些不再使用的内存,这种机制被称为垃圾回收(<code>Garbage Collection,GC</code>)。通常<code>JRE</code>会提供一个后台线程来进行检测和控制,一般都是在<code>CPU</code>空闲或内存不足时自动进行垃圾回收,而程序员无法精确控制垃圾回收的时间和顺序。</p>
-<h3 id="垃圾回收器负责回收堆内存中的对象"><a href="#垃圾回收器负责回收堆内存中的对象" class="headerlink" title="垃圾回收器负责回收堆内存中的对象"></a>垃圾回收器负责回收堆内存中的对象</h3><p><code>Java</code>的<strong>堆内存</strong>是一个运行时数据区,用以<strong>保存类的实例(对象)</strong>,<code>Java</code>虚拟机的堆内存中存储着正在运行的应用程序所建立的所有对象,这些对象不需要程序通过代码来显式地释放。一般来说,<strong>堆内存的回收由垃圾回收器来负责</strong>,所有的<code>JVM</code>实现都有一个由垃圾回收器管理的堆内存。垃圾回收是一种动态存储管理技术,它自动释放不再被程序引用的对象,按照特定的垃圾回收算法来实现内存资源的自动回收功能。<br>在<code>C</code>,<code>C++</code>中,对象所占用的内存不会被自动释放,如果程序没有显式释放对象所占用的内存,对象所占用的内存就不能分配给其他对象,该内存在程序结束运行之前将一直被占用;</p>
-<h3 id="什么是垃圾"><a href="#什么是垃圾" class="headerlink" title="什么是垃圾"></a>什么是垃圾</h3><p>而在<code>Java</code>中,<strong>当没有引用变量指向原先分配给某个对象的内存时,该内存便成为垃圾</strong>。<code>JVM</code>的一个超级线程会自动释放该内存区。垃圾回收意味着程序不再需要的对象是“垃圾信息”,这些信息将被丢弃。</p>
-<p>当一个对象不再被引用时,内存回收它占领的空间,以便空间被后来的新对象使用。事实上,除释放没用的对象外,垃圾回收也可以清除内存记录碎片。由于创建对象和垃圾回收器释放丢弃对象所占的内存空间,内存会出现碎片。<strong>碎片</strong>是分配给<strong>对象的内存块之间的空闲内存区</strong>,碎片整理将所占用的堆内存移到堆的一端,<code>JVM</code>将整理出的内存分配给新的对象</p>
-<h3 id="垃圾回收机制优缺点"><a href="#垃圾回收机制优缺点" class="headerlink" title="垃圾回收机制优缺点"></a>垃圾回收机制优缺点</h3><p>垃圾回收能自动释放内存空间,减轻编程的负担。这使<code>Java</code>虚拟机具有两个显著的优点。</p>
-<ul>
-<li>垃圾回收机制可以很好地提高编程效率。在没有垃圾冋收机制时,可能要花许多时间来解决一个难懂的存储器问题。在用<code>Java</code>语言编程时,依靠垃圾回收机制可大大缩短时间。</li>
-<li>垃圾回收机制保护程序的完整性,垃圾回收是<code>Java</code>语言安全性策略的一个重要部分</li>
-</ul>
-<p>垃圾回收的一个潜在缺点是它的开销影响程序性能。<code>Java</code>虚拟机必须跟踪程序中有用的对象,才可以确定哪些对象是无用的对象,并最终释放这些无用的对象。这个过程需要花费处理器的时间。其次是垃圾回收算法的不完备性,早先采用的某些垃圾回收算法就不能保证100%收集到所有的废弃内存。当然,随着垃圾回收算法的不断改进,以及软硬件运行效率的不断提升,这些问题都可以迎刃而解。<br><code>Java</code>语言规范没有明确地说明<code>JVM</code>使用哪种垃圾回收算法,但是仼何一种垃圾回收算法一般要做两件基本的事情:<strong>发现无用的对象;回收被无用对象占用的内存空间</strong>,使该空间可被程序再次使用。</p>
-<h3 id="垃圾回收特点"><a href="#垃圾回收特点" class="headerlink" title="垃圾回收特点"></a>垃圾回收特点</h3><p>通常,垃圾回收具有如下几个特点:</p>
-<ul>
-<li>垃圾回收器的工作目标是回收无用对象的内存空间,这些内存空间都是<code>JVM</code>堆内存里的内存空间,<strong>垃圾回收器只能回收内存资源</strong>,对其他物理资源,如*<em>数据库连接</em>***、磁盘<code>IO</code>**等资源则无能为力。</li>
-<li>为了更快地让垃圾回收器回收那些不再使用的对象,可以将该对象的<strong>引用变量设置为<code>null</code></strong>,通过这种方式暗示垃圾回收器可以回收该对象</li>
-<li>垃圾回收发生的不可预知性。由于不同<code>JVM</code>采用了不同的垃圾回收机制和不同的垃圾回收算法,因此它有可能是定时发生的,有可能是当<code>CPU</code>空闲时发生的,也有可能和原始的垃圾回收一样,等到内存消耗出现极限时发生,这和垃圾回收实现机制的选择及具体的设置都有关系。虽然程序员可以通过调用<code>Runtime</code>对象的<code>gc()</code>或<code>System.gc()</code>等方法来<strong>建议系统进行垃圾回收</strong>,但这种调用仅仅是建议,依然不能精确控制垃圾回收机制的执行。</li>
-<li>垃圾回收的精确性主要包括两个方面:一是垃圾回收机制能够精确地标记活着的对象;二是垃圾回收器能够精确地定位对象之间的引用关系。前者是完全回收所有废弃对象的前提,否则就可能造成内存泄漏;而后者则是实现归并和复制等算法的必要条件,通过这种引用关系,可以保证所有对象都能被可靠地回收,所有对象都能被重新分配,从而有效地减少内存碎片的产生.</li>
-<li>现在的<code>JVM</code>有多种不同的垃圾回收实现,每种回收机制因其算法差异可能表现各异,有的当垃圾回收开始时就停止应用程序的运行,有的当垃圾回收运行时允许应用程序的线程运行,还有的在同一时间允许垃圾回收多线程运行</li>
-</ul>
-<p>当编写<code>Java</code>程序时,一个基本原则是:对于不再需要的对象,不要引用它们。如果保持对这些对象的引用,垃圾回收机制暂时不会回收该对象,则会导致系统可用内存越来越少;当系统可用内存越来越少时,垃圾回收执行的频率就越来越高,从而导致系统的性能下降。</p>
-<h3 id="Java7-新增的G1垃圾回收器"><a href="#Java7-新增的G1垃圾回收器" class="headerlink" title="Java7 新增的G1垃圾回收器"></a>Java7 新增的G1垃圾回收器</h3><p>2011年7月发布的<code>Java7</code>提供了<code>G1</code>垃圾回收器来代替原有的<strong>并行标记清除垃圾回收器</strong>(简称<code>CMS</code>)</p>
-<h3 id="Java8-使用本地内存-代替-永生代内存"><a href="#Java8-使用本地内存-代替-永生代内存" class="headerlink" title="Java8 使用本地内存 代替 永生代内存"></a>Java8 使用本地内存 代替 永生代内存</h3><p>2014年3月发布的<code>Java8</code>删除了<code>HotSpot JVM</code>中的<strong>永生代内存</strong>(<code>PermGen</code>,永生代内存主要用于存储一些需要常驻内存、通常不会被回收的信息),而是改为使用<strong>本地内存</strong>来存储类的元数据信息,并将之称为:元空间(<code>Metaspace</code>),这意味着以后不会再遇到<code>java.Lang.OutOfMemoryError;``PermGen</code>错误<br>2014年3月发布的<code>Java 8</code>删除了<code>HotSpot JVM</code>中的<strong>永生代内存</strong>(<code>PermGen</code>,永生代内存主要用于存储一些需要常驻内存、通常不会被回收的信息),而是改为使用<strong>本地内存</strong>来存储类的元数据信息,并将之称为:元空间(<code>Metaspace</code>),这意味着以后不会再遇到<code>java.Lang.OutOfMemoryError:PermGen</code>错误</p>
-<h3 id="Java-9后无效的GC相关的JVM设置3"><a href="#Java-9后无效的GC相关的JVM设置3" class="headerlink" title="Java 9后无效的GC相关的JVM设置3"></a><code>Java 9</code>后无效的<code>GC</code>相关的<code>JVM</code>设置3</h3><p>2017年9月发布的<code>Java 9</code>彻底删除了传统的<code>CMS</code>垃圾回收器,因此运行<code>JVM</code>的<code>DefNew+CMSParDew+Serialold</code>、<code>IncrementalCMS</code>等组合全部失效。<code>java</code>命令(该命令负责启用<code>JVM</code>运行<code>Java</code>程序)以前支持的以下<code>GC</code>相关选项全部被删除。</p>
-<ul>
-<li><code>-Xincgc</code></li>
-<li><code>-XX:+CMSIncrementalMode</code></li>
-<li><code>-XX:+UseCMSCompactAtFullCollection</code></li>
-<li><code>-XX:+CMSFullGCsBeforeCompaction</code></li>
-<li><code>-XX:+UseCMSCollectionPassing</code></li>
-</ul>
-<p>此外,<code>-XX:UseGC</code>选项也被标记为过时,将来也会被删除。<br><code>Java 9</code>默认采用低暂停(<code>low-Pause</code>)的<code>G1</code>垃圾回收器,并为<code>Gl</code>垃圾回收器自动确定了几个重要的参数设置,从而保证<code>G1</code>垃圾回收器的可用性、确定性和性能。如果部署项目时为<code>java</code>命令指定了<code>XX:+UseConcMarkSweepGC</code>选项希望启用<code>CMS</code>垃圾回收器,系统会显示警告信息。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/4b11cb80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/4b11cb80/" class="post-title-link" itemprop="url">1.6 JDK9新增的jshell工具</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-16 11:14:00" itemprop="dateCreated datePublished" datetime="2020-01-16T11:14:00+08:00">2020-01-16</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+08:00">2020-02-07</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC1%E7%AB%A0-Java%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/" itemprop="url" rel="index"><span itemprop="name">第1章 Java语言概述与开发环境</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC1%E7%AB%A0-Java%E8%AF%AD%E8%A8%80%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83/1-6-JDK9%E6%96%B0%E5%A2%9E%E7%9A%84jshell%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">1.6 JDK9新增的jshell具</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/4b11cb80/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/4b11cb80/" data-xid="/JavaReadingNotes/4b11cb80/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>3.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="1-6-JDK9新增的jshell具"><a href="#1-6-JDK9新增的jshell具" class="headerlink" title="1.6 JDK9新增的jshell具"></a>1.6 JDK9新增的jshell具</h1><p><code>JDK9</code>工具的一大改进就是提供了<code>jshell</code>工具,它是一个<code>REPL(Read-Eval-Print Loop)</code>工具,该<strong>工具是一个交互式的命令行界面,可用于执行<code>Java</code>语言的变量声明、语句和表达式,而且可以立即看到执行结果</strong>。因此,我们可以使用该工具来快速学习<code>Java</code>或测试<code>Java</code>的新<code>API</code>。<br>在没有<code>jshell</code>时,开发者想要测试某个新功能或新<code>API</code>,通常要先打开<code>IDE</code>工具,然后新建一个测试项目,再新建一个类,最后才可以开始写代码来测试新功能或新<code>API</code>。这显得很麻烦,而<code>jshell</code>的出现解决了这个痛点。</p>
-<p><code>jshell</code>位于<code>JDK</code>安装目录的<code>bin</code>路径下,如果读者按前面介绍的方式配置了<code>PATH</code>环境变量,那么输入<code>shell</code>命令应该即可进入<code>shell</code>交互模式;如果系统提示找不到<code>jshell</code>命令,那么肯定是环境变量配置错误。</p>
-<h2 id="查看jshell帮助信息"><a href="#查看jshell帮助信息" class="headerlink" title="查看jshell帮助信息"></a>查看jshell帮助信息</h2><p>进入<code>shell</code>交互模式后,可执行<code>/help</code>来查看帮助信息:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">jshell&gt; /help</span><br><span class="line">|  键入 Java 语言表达式, 语句或声明。</span><br><span class="line">|  或者键入以下命令之一:</span><br><span class="line">|  /list [&lt;名称或 id&gt;|-all|-start]</span><br><span class="line">|       列出您键入的源</span><br><span class="line">|  /edit &lt;名称或 id&gt;</span><br><span class="line">|       编辑按名称或 id 引用的源条目</span><br><span class="line">|  /drop &lt;名称或 id&gt;</span><br><span class="line">|       删除按名称或 id 引用的源条目</span><br><span class="line">|  /save [-all|-history|-start] &lt;文件&gt;</span><br><span class="line">|       将片段源保存到文件。</span><br><span class="line">|  /open &lt;file&gt;</span><br><span class="line">|       打开文件作为源输入</span><br><span class="line">|  /vars [&lt;名称或 id&gt;|-all|-start]</span><br><span class="line">|       列出已声明变量及其值</span><br><span class="line">|  /methods [&lt;名称或 id&gt;|-all|-start]</span><br><span class="line">|       列出已声明方法及其签名</span><br><span class="line">|  /types [&lt;名称或 id&gt;|-all|-start]</span><br><span class="line">|       列出已声明的类型</span><br><span class="line">|  /imports</span><br><span class="line">|       列出导入的项</span><br><span class="line">|  /exit</span><br><span class="line">|       退出 jshell</span><br><span class="line">|  /env [-class-path &lt;路径&gt;] [-module-path &lt;路径&gt;] [-add-modules &lt;模块&gt;] ...</span><br><span class="line">|       查看或更改评估上下文</span><br><span class="line">|  /reset [-class-path &lt;路径&gt;] [-module-path &lt;路径&gt;] [-add-modules &lt;模块&gt;]...</span><br><span class="line">|       重启 jshell</span><br><span class="line">|  /reload [-restore] [-quiet] [-class-path &lt;路径&gt;] [-module-path &lt;路径&gt;]...</span><br><span class="line">|       重置和重放相关历史记录 -- 当前历史记录或上一个历史记录 (-restore)</span><br><span class="line">|  /history</span><br><span class="line">|       您键入的内容的历史记录</span><br><span class="line">|  /help [&lt;command&gt;|&lt;subject&gt;]</span><br><span class="line">|       获取 jshell 的相关信息</span><br><span class="line">|  /set editor|start|feedback|mode|prompt|truncation|format ...</span><br><span class="line">|       设置 jshell 配置信息</span><br><span class="line">|  /? [&lt;command&gt;|&lt;subject&gt;]</span><br><span class="line">|       获取 jshell 的相关信息</span><br><span class="line">|  /!</span><br><span class="line">|       重新运行上一个片段</span><br><span class="line">|  /&lt;id&gt;</span><br><span class="line">|       按 id 重新运行片段</span><br><span class="line">|  /-&lt;n&gt;</span><br><span class="line">|       重新运行前面的第 n 个片段</span><br><span class="line">|</span><br><span class="line">|  有关详细信息, 请键入 &#x27;/help&#x27;, 后跟</span><br><span class="line">|  命令或主题的名称。</span><br><span class="line">|  例如 &#x27;/help /list&#x27; 或 &#x27;/help intro&#x27;。主题:</span><br><span class="line">|</span><br><span class="line">|  intro</span><br><span class="line">|       jshell 工具的简介</span><br><span class="line">|  shortcuts</span><br><span class="line">|       片段和命令输入提示, 信息访问以及</span><br><span class="line">|       自动代码生成的按键说明</span><br><span class="line">|  context</span><br><span class="line">|       /env /reload 和 /reset 的评估上下文选项</span><br></pre></td></tr></table></figure>
-<h2 id="退出jshell"><a href="#退出jshell" class="headerlink" title="退出jshell"></a>退出jshell</h2><p>也可执行<code>/exit</code>退出<code>jshell</code></p>
-<p>执行你希望测试的<code>Java</code>代码,比如执行<code>System.out.println(&quot;HelloWorld&quot;)</code>,<code>jshell</code>不要求以分号结尾。</p>
-<h2 id="jshell常用命令"><a href="#jshell常用命令" class="headerlink" title="jshell常用命令"></a>jshell常用命令</h2><ul>
-<li><code>/list</code>:列出用户输入的所有源代码。</li>
-<li><code>/edit</code>:编辑用户输入的第几条源代码。比如<code>/edit2</code>表示编辑用户输入的第2条源代码。<code>jshell</code>会启动一个文本编辑界面让用户来编辑第2条源代码</li>
-<li><code>/drop</code>:删除用户输入的第几条源代码。</li>
-<li><code>/save</code>:保存用户输入的源代码。</li>
-<li><code>/vars</code>:列出用户定义的所有变量。</li>
-<li><code>/methods</code>:列出用户定义的全部方法</li>
-<li><code>/types</code>:列出用户定义的全部类型。</li>
-</ul>
-<h2 id="测试jshell"><a href="#测试jshell" class="headerlink" title="测试jshell"></a>测试jshell</h2><p>在<code>jshell</code>界面中输入如下语句:</p>
-<h3 id="定义变量"><a href="#定义变量" class="headerlink" title="定义变量"></a>定义变量</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> a = <span class="number">20</span></span><br></pre></td></tr></table></figure>
-<p>上面语句用于定义一个变量。接下来输入<code>/vars</code>命令,即可看到<code>shell</code>列出了用户定义的全部变量。系统生成如下输出:</p>
-<h3 id="查看变量"><a href="#查看变量" class="headerlink" title="查看变量"></a>查看变量</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jshell&gt; /vars</span><br><span class="line">|    int a = 20</span><br></pre></td></tr></table></figure>
-<h3 id="输出语句"><a href="#输出语句" class="headerlink" title="输出语句"></a>输出语句</h3><p>在<code>shell</code>界面中输入如下语句:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;HelloWorld!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>运行效果如下:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jshell&gt; System.out.println(&quot;HelloWorld!&quot;)</span><br><span class="line">HelloWorld!</span><br></pre></td></tr></table></figure>
-<h3 id="显示所有代码"><a href="#显示所有代码" class="headerlink" title="显示所有代码"></a>显示所有代码</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/list</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">jshell&gt; /list</span><br><span class="line"></span><br><span class="line">   1 : int a = 20;</span><br><span class="line">   2 : System.out.println(&quot;HelloWorld!&quot;)</span><br></pre></td></tr></table></figure>
-<p>这个输出结果又两个,前面的数字是<code>id</code>,这个id是自增的,新增的命令或者修改的命令都会加1</p>
-<h3 id="修改之前的代码"><a href="#修改之前的代码" class="headerlink" title="修改之前的代码"></a>修改之前的代码</h3><figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/edit id</span><br></pre></td></tr></table></figure>
-<p>这里的id例如修改第2行</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/edit <span class="number">2</span></span><br></pre></td></tr></table></figure>
-<p>jshell会启动一个图形化的编辑器让你来编辑这一行,如下图所示:<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter1/1.6/1.png" alt="这里有一张图片"><br>在这个弹出的编辑器中,将上面的代码</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;HelloWorld!&quot;</span>)</span><br></pre></td></tr></table></figure>
-<p>修改为:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(a);</span><br></pre></td></tr></table></figure>
-<p>然后点击<code>Accept</code>按钮,然后点击<code>Exit</code>退出.可以看到如下运行结果:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">jshell&gt; /edit 2</span><br><span class="line">20</span><br></pre></td></tr></table></figure>
-<h3 id="删除某行代码"><a href="#删除某行代码" class="headerlink" title="删除某行代码"></a>删除某行代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/drop id</span><br></pre></td></tr></table></figure>
-<p>例如删除上面的第二行代码:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/drop 2</span><br></pre></td></tr></table></figure>
-<p>运行结果:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">jshell&gt; /drop 2</span><br><span class="line"></span><br><span class="line">jshell&gt; /list</span><br><span class="line"></span><br><span class="line">   1 : int a = 20;</span><br><span class="line">   3 : System.out.println(a);</span><br></pre></td></tr></table></figure>
-<p>可以看到,现在第二行代码,已经被删除掉了,但是前面的id不会</p>
-<h3 id="执行某行代码"><a href="#执行某行代码" class="headerlink" title="执行某行代码"></a>执行某行代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/id</span><br></pre></td></tr></table></figure>
-<p>例如</p>
-<h2 id="cmd中临时使用JDK9"><a href="#cmd中临时使用JDK9" class="headerlink" title="cmd中临时使用JDK9"></a>cmd中临时使用JDK9</h2><h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>我在使用旧版本的java8,但是如果我想使用Java9的新特性,例如jshell.</p>
-<h3 id="使用set命令设置临时的path环境变量"><a href="#使用set命令设置临时的path环境变量" class="headerlink" title="使用set命令设置临时的path环境变量"></a>使用set命令设置临时的path环境变量</h3><p><code>cmd</code>中的<code>set</code>命令用于设置临时的环境变量,所以在<code>path</code>环境变量的<strong>前面</strong>添加<code>JDK9</code>安装路径下的<code>bin</code>路径即可使用<code>jshell</code>:</p>
-<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> <span class="built_in">path</span>=E:\java\java9\jdk-<span class="number">9</span>\bin;<span class="variable">%path%</span></span><br></pre></td></tr></table></figure>
-<p>效果如下:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">G:\Desktop&gt;echo %path%</span><br><span class="line">E:\java\java8\jdk-8u221\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;.........;E:\Program Files\JetBrains\IntelliJ IDEA 2019.3.1\bin;</span><br><span class="line"></span><br><span class="line">G:\Desktop&gt;set path=E:\java\java9\jdk-9\bin;%path%</span><br><span class="line"></span><br><span class="line">G:\Desktop&gt;echo %path%</span><br><span class="line">E:\java\java9\jdk-9\bin;E:\java\java8\jdk-8u221\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;.........;E:\Program Files\JetBrains\IntelliJ IDEA 2019.3.1\bin;</span><br></pre></td></tr></table></figure>
-<p>这样就可以在当前cmd中使用jshell,设置成功效果:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">G:\Desktop&gt;jshell</span><br><span class="line">|  欢迎使用 JShell -- 版本 9</span><br><span class="line">|  要大致了解该版本, 请键入: /help intro</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/26a67427/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1829,6 +1511,338 @@
 <p>上面程序用于完成普通字符串和<code>application/x-www-Form-urlencoded MIME</code>字符串之间的转换。运行上面程序,将看到如下输出:</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">解码后得到:中秋节</span><br><span class="line">编码后得到:%E4%B8%AD%E7%A7%8B%E8%8A%82</span><br><span class="line">true</span><br></pre></td></tr></table></figure>
 <h2 id="哪些字符串需要转换"><a href="#哪些字符串需要转换" class="headerlink" title="哪些字符串需要转换"></a>哪些字符串需要转换</h2><p>只有包含西欧字符的普通字符串和<code>application/x-www-fom-urlencode MIME</code>字符串无须转换,而<strong>包含中文字符的普通字符串则需要转换</strong>,转换方法是<strong>每个中文字符占两个字节</strong>,每个字节可以转换成两个十六进制的数字,所以每个中文字符将转换成“<code>%XX%XX</code>”的形式。当然,采用不同的字符集时,毎个中文字符对应的字节数并不完全相同,所以使用<code>URLEncoder</code>和<code>URLDecoder</code>进行转换时也需要指定字符集。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/94bed61f/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/94bed61f/" class="post-title-link" itemprop="url">17.2 Java的基本网络支持 17.2.1 使用InetAddress</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-14 05:09:53" itemprop="dateCreated datePublished" datetime="2020-01-14T05:09:53+08:00">2020-01-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+08:00">2020-02-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC17%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第17章 网络编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC17%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/17-2-Java%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BD%91%E7%BB%9C%E6%94%AF%E6%8C%81/" itemprop="url" rel="index"><span itemprop="name">17.2 Java的基本网络支持</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/94bed61f/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/94bed61f/" data-xid="/JavaReadingNotes/94bed61f/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="17-2-Java的基本网络支持"><a href="#17-2-Java的基本网络支持" class="headerlink" title="17.2 Java的基本网络支持"></a>17.2 Java的基本网络支持</h1><p><code>Java</code>为网络支持提供了<code>java.net</code>包,该包下的</p>
+<ul>
+<li><code>URL</code>和<code>URLConnection</code>等类提供了以编程方式访问<code>Web</code>服务的功能,</li>
+<li>而<code>URLDecoder</code>和<code>URLEncoder</code>则提供了普通字符串和<code>application/x-www-form-urlencoded MIME</code>字符串相互转换的静态方法.</li>
+</ul>
+<h1 id="17-2-1-使用InetAddress"><a href="#17-2-1-使用InetAddress" class="headerlink" title="17.2.1 使用InetAddress"></a>17.2.1 使用InetAddress</h1><p><code>Java</code>提供了<code>InetAddress</code>类来代表<code>IP</code>地址,<code>InetAddress</code>下还有两个子类:<code>Inet4Address</code>、<code>Inet6Adress</code>它们分别代表<code>Internet Protocol version 4(IPv4)</code>地址和<code>Internet Protocol version 6(IP6)</code>地址。</p>
+<h2 id="InetAddress类"><a href="#InetAddress类" class="headerlink" title="InetAddress类"></a><code>InetAddress</code>类</h2><h3 id="获取InetAddress类对象"><a href="#获取InetAddress类对象" class="headerlink" title="获取InetAddress类对象"></a>获取<code>InetAddress</code>类对象</h3><p><code>InetAddress</code>类没有提供构造器,而是提供了如下两个静态方法来获取<code>InetAddress</code>实例</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>static InetAddress getByName(String host)</code></td>
+<td align="left">根据主机获取对应的<code>InetAddress</code>对象</td>
+</tr>
+<tr>
+<td align="left"><code>static InetAddress getByAddress(byte[] addr)</code></td>
+<td align="left">根据原始<code>IP</code>地址来获取对应的<code>InetAddress</code>对象</td>
+</tr>
+</tbody></table>
+<p>除此之外,<code>InetAddress</code>类还提供了一个<code>getLocalHost()</code>方法来获取<strong>本机<code>IP</code>地址对应的<code>InetAddress</code>实例</strong>。</p>
+<h3 id="读取InetAddress对象的IP地址和主机名"><a href="#读取InetAddress对象的IP地址和主机名" class="headerlink" title="读取InetAddress对象的IP地址和主机名"></a>读取<code>InetAddress</code>对象的IP地址和主机名</h3><p><code>InetAddress</code>还提供了如下三个方法来获取<code>InetAddress</code>实例对应的<code>IP</code>地址和主机名。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>String getCanonicalHostName()</code></td>
+<td align="left">获取此<code>IP</code>地址的全限定域名。</td>
+</tr>
+<tr>
+<td align="left"><code>String getHostAddress()</code></td>
+<td align="left">返回该<code>InetAddress</code>实例对应的<code>IP</code>地址字符串(以字符串形式)。</td>
+</tr>
+<tr>
+<td align="left"><code>String getHostName()</code></td>
+<td align="left">获取此<code>IP</code>地址的主机名</td>
+</tr>
+</tbody></table>
+<h3 id="判断IP地址是否可达"><a href="#判断IP地址是否可达" class="headerlink" title="判断IP地址是否可达"></a>判断IP地址是否可达</h3><p><code>Inetaddress</code>类还提供了一个<code>isReachable()</code>方法,用于测试是否可以到达该地址。该方法将尽最大努力试图到达主机,但防火墙和服务器配置可能阻塞请求,使得它在访问某些特定的端口时处于不可达状态。如果可以获得权限,典型的实现将使用<code>ICMP ECHO REQUEST</code>；否则它将试图在目标主机的<strong>端口7</strong>(<code>Echo</code>)上建立<code>TCP</code>连接。</p>
+<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><p>下面程序测试了<code>InetAddress</code>类的简单用法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.net.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InetAddressTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 根据主机名来获取对应的InetAddress实例</span></span><br><span class="line">        InetAddress ip = InetAddress.getByName(<span class="string">&quot;lanlan2017.github.io&quot;</span>);</span><br><span class="line">        <span class="comment">// 判断是否可达</span></span><br><span class="line">        System.out.println(<span class="string">&quot;lanlan2017.github.io是否可达：&quot;</span> + ip.isReachable(<span class="number">2000</span>));</span><br><span class="line">        <span class="comment">// 获取该InetAddress实例的IP字符串</span></span><br><span class="line">        System.out.println(ip.getHostAddress());</span><br><span class="line">        <span class="comment">// 根据原始IP地址来获取对应的InetAddress实例</span></span><br><span class="line">        InetAddress local = InetAddress.getByAddress(<span class="keyword">new</span> <span class="keyword">byte</span>[] &#123; <span class="number">127</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span> &#125;);</span><br><span class="line">        System.out.println(<span class="string">&quot;本机是否可达：&quot;</span> + local.isReachable(<span class="number">5000</span>));</span><br><span class="line">        <span class="comment">// 获取该InetAddress实例对应的全限定域名</span></span><br><span class="line">        System.out.println(local.getCanonicalHostName());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序简单地示范了<code>Inetaddress</code>类的几个方法的用法,<code>InetAddress</code>类本身并没有提供太多功能,它代表一个<strong>IP地址对象</strong>,是网络通信的基础,在后面介绍中将大量使用该类</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/64a8da7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/64a8da7/" class="post-title-link" itemprop="url">17.1 网络编程的基础知识</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-01-13 08:37:50" itemprop="dateCreated datePublished" datetime="2020-01-13T08:37:50+08:00">2020-01-13</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-02-07 01:34:56" itemprop="dateModified" datetime="2020-02-07T01:34:56+08:00">2020-02-07</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC17%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">第17章 网络编程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC17%E7%AB%A0-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B/17-1-%E7%BD%91%E7%BB%9C%E7%BC%96%E7%A8%8B%E7%9A%84%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" itemprop="url" rel="index"><span itemprop="name">17.1 网络编程的基础知识</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/64a8da7/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/64a8da7/" data-xid="/JavaReadingNotes/64a8da7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="17-1-1-网络基础知识"><a href="#17-1-1-网络基础知识" class="headerlink" title="17.1.1 网络基础知识"></a>17.1.1 网络基础知识</h1><p>所谓计算机网络,就是把分布在不同地理区域的计算机与专门的外部设备用通信线路互连成一个规模大、功能强的网络系统,从而使众多的计算机可以方便地互相传递信息,共享硬件、软件、数据信息等资源<br>计算机网络是现代通信技术与计算机技术相结合的产物,计算机网络可以提供以下一些主要功能。</p>
+<ul>
+<li>资源共享。</li>
+<li>信息传输与集中处理。</li>
+<li>均衡负荷与分布处理</li>
+<li>综合信息服务。</li>
+</ul>
+<p>通过计算机网络可以向全社会提供各种经济信息、科研情报和咨询服务。其中,国际互联网<code>Internet</code>上的全球信息网(<code>WWW,World Wide Web</code>)服务就是一个最典型也是最成功的例子。实际上,今天的网络承载绝大部分大型企业的运转,一个大型的、全球性的企业或组织的日常工作流程都是建立在互联网基础之上的。</p>
+<h2 id="计算机网络分类"><a href="#计算机网络分类" class="headerlink" title="计算机网络分类"></a>计算机网络分类</h2><p>计算机网络的品种很多,根据各种不同的分类原则,可以得到各种不同类型的计算机网络。</p>
+<p>计算机网络通常是<strong>按照规模大小和延伸范围来分类</strong>的,常见的划分为:局域网(<code>LAN</code>)、城域网(<code>MAN</code>)、厂域网(<code>WAN</code>)。<code>Internet</code>可以视为世界上最大的广域网。<br>如果按照网络的拓扑结构来划分,可以分为<strong>星型网络</strong>、<strong>总线型网络</strong>、<strong>环型网络</strong>、<strong>树型网络</strong>、星型环型网络等;</p>
+<h2 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h2><p>如果<strong>按照网络的传输介质来划分</strong>,可以分为双绞线网、同轴电缆网、光纤网和卫星网等。<br>计算机网络中实现通信必须有一些约定,这些约定被称为通信协议。通信协议负责对传输速率、传输代码、代码结构、传输控制步骤、岀错控制等制定处理标准。为了让两个节点之间能进行对话,必须在它们之间建立通信工具,使彼此之间能进行信息交换。</p>
+<h3 id="通信协议组成"><a href="#通信协议组成" class="headerlink" title="通信协议组成"></a>通信协议组成</h3><p><strong>通信协议</strong>通常由三部分组成:</p>
+<ul>
+<li>一是<strong>语义</strong>部分,用于决定双方对话的类型;</li>
+<li>二是<strong>语法</strong>部分,用于决定双方对话的格式;</li>
+<li>三是<strong>变换规则</strong>,用于决定通信双方的应答关系。</li>
+</ul>
+<h2 id="OSI"><a href="#OSI" class="headerlink" title="OSI"></a>OSI</h2><p>国际标准化组织<code>ISO</code>于1978年提出“开放系统互连参考模型”,即著名的<code>OSI(Open System Interconnection)</code>。</p>
+<p>开放系统互连参考模型力求将网络简化,并以模块化的方式来设计网络。<br>开放系统互连参考模型把计算机网络分成</p>
+<ul>
+<li><strong>物理层</strong>、</li>
+<li><strong>数据链路层</strong>、</li>
+<li><strong>网络层</strong>、</li>
+<li><strong>传输层</strong>、</li>
+<li><strong>会话层</strong>、</li>
+<li><strong>表示层</strong>、</li>
+<li><strong>应用层</strong></li>
+</ul>
+<p>这七层</p>
+<p>通过十多年的发展和推进,<code>OSI</code>模式已成为各种计算机网络结构的参考标准<br>图17.1显示了<code>OSI</code>参考模型的推荐分层。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter17/17.1.1/2.png" alt="这里有一张图片"></p>
+<h2 id="IP"><a href="#IP" class="headerlink" title="IP"></a>IP</h2><p>前面介绍过通信协议是网络通信的基础,<code>IP</code>协议则是一种非常重要的通信协议。<code>IP(Internet Protocol)</code>协议又称<strong>互联网协议</strong>,是支持网间互联的数据报协议。它提供网间连接的完善功能,包括<code>IP</code>数据报规定互联网络范围内的地址格式</p>
+<h2 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h2><p>经常与<code>IP</code>协议放在一起的还有<code>TCP(Transmission Control protocol)</code>协议,即<strong>传输控制协议</strong>,它规定一种可靠的数据信息传递服务。虽然<code>IP</code>和<code>TCP</code>这两个协议功能不尽相同,也可以分开单独使用,但它们是在同一个时期作为一个协议来设计的,并且在功能上也是互补的。因此实际使用中常常把这两个协议统称为<code>TCP/IP</code>协议,<code>TCP/IP</code>协议最早出现在<code>UNIX</code>操作系统中,现在几乎所有的操作系统都支持<code>TCPP</code>协议,因此<code>TCP/IP</code>协议也是<code>Internet</code>中最常用的基础协议。</p>
+<h2 id="TCP-IP和OSI分层的关系"><a href="#TCP-IP和OSI分层的关系" class="headerlink" title="TCP/IP和OSI分层的关系"></a>TCP/IP和OSI分层的关系</h2><p>按<code>TCP/IP</code>协议模型,网络通常被分为一个四层模型,这个四层模型和前面的<code>OSI</code>七层模型有大致的对应关系,图17.2显示了<code>TCPP</code>分层模型和<code>OSI</code>分层模型之间的对应关系。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter17/17.1.1/1.png" alt="这里有一张图片"></p>
+<h1 id="17-1-2-IP地址和端口号"><a href="#17-1-2-IP地址和端口号" class="headerlink" title="17.1.2 IP地址和端口号"></a>17.1.2 IP地址和端口号</h1><p><code>IP</code>地址用于唯一地标识网络中的一个通信实体,这个通信实体既可以是一台主机,也可以是一台打印机,或者是路由器的某一个端口。而在基于<code>IP</code>协议网络中传输的数据包,都必须使用P地址来进行标识。<br>就像写一封信,要标明收信人的通信地址和发信人的地址,而邮政工作人员则通过该地址来决定邮件的去向。类似的过程也发生在计算机网络里,每个<strong>被传输的数据包也要包括一个<code>源IP地址</code>和一个<code>目的IP地址</code></strong>,当该数据包在网络中进行传输时,这两个地址要保持不变,以确保网络设备总能根据确定的P地址,将数据包从源通信实体送往指定的目的通信实体。</p>
+<p><code>IP</code>地址是数字型的,IP地址是一个32位(32 bit)整数,但通常为了便于记忆,通常把它分成4个8位的二进制数,每8位之间用圆点隔开,每个8位整数可以转换成一个0~255的<strong>十进制整数</strong>,因此日常看到的<code>IP</code>地址常常是这种形式:<code>202.9.128.88</code>。</p>
+<p><code>NIC</code>(<code>Internet Network Information Center</code>)统一负责全球<code>Internet IP</code>地址的规划、管理,而<code>Inter NIC</code>、 <code>APNIC</code>、<code>RIPE</code>三大网络信息中心具体负责美国及其他地区的<code>IP</code>地址分配。其中<code>APNIC</code>负责亚太地区的IP管理,我国申请<code>IP</code>地址也要通过<code>APNIC</code>,<code>APNIC</code>的总部设在日本东京大学。</p>
+<h2 id="五类IP地址"><a href="#五类IP地址" class="headerlink" title="五类IP地址"></a>五类IP地址</h2><p><code>IP</code>地址被分成了A、B、C、D、E五类,每个类别的网络标识和主机标识各有规则。</p>
+<ul>
+<li>A类:10.0.0.0~10.255.255.255</li>
+<li>B类:172.16.0.0~172.31.255.255</li>
+<li>C类:192.168.0.0~192.168.255.255</li>
+</ul>
+<h2 id="端口"><a href="#端口" class="headerlink" title="端口"></a>端口</h2><p><code>IP</code>地址用于唯一地标识网络上的一个通信实体,但<strong>一个通信实体可以有多个通信程序同时提供网络服务,此时还需要使用端口</strong>。<br>端口是一个<strong>16位的整数</strong>,用于表示数据交给哪个通信程序处理。因此,<strong>端口就是应用程序与外界交流的出入口</strong>,它是一种抽象的软件结构,包括一些数据结构和<code>IO</code>(基本输入输出)缓冲区。<br>不同的应用程序处理不同端口上的数据,<strong>同一台机器上不能有两个程序使用同一个端口</strong>,<strong>端口号可以从0到65535</strong>。</p>
+<h3 id="端口分类"><a href="#端口分类" class="headerlink" title="端口分类"></a>端口分类</h3><p>通常将端口分为如下三类:</p>
+<ul>
+<li>公认端口(<code>Well Known Ports</code>):<strong>从0到1023</strong>,它们紧密绑定(<code>Binding</code>)一些特定的服务</li>
+<li>注册端口(<code>Registered Ports</code>):<strong>从1024到49151</strong>,它们松散地绑定一些服务。应用程序通常应该使用这个范围内的端口.</li>
+<li>动态和或私有端口(<code>Dynamic And/or Private Ports</code>):从49152到65535,这些端口是应用程序使用的动态端口,应用程序一般不会主动使用这些端口</li>
+</ul>
+<p>如果把<code>IP</code>地址理解为某个人所在地方的地址(包括街道和门牌号),但仅有地址还是找不到这个人,还需要知道他所在的房号才可以找到这个人。因此如果把应用程序当作人,把计算机网络当作类似邮递员的角色,当一个程序需要发送数据时,需要指定目的地的<code>IP</code>地址和端口,如果指定了正确的<code>IP</code>地址和端口号,计算机网络就可以将数据送给该<code>IP</code>地址和端口所对应的程序。</p>
+<!-- CrazyJavaHandout4/Chapter17/17.1.1/ -->
 
       
     </div>

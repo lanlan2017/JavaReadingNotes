@@ -225,625 +225,6 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/233df632/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/233df632/" class="post-title-link" itemprop="url">15.9.3 使用Channel</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-06 08:07:48" itemprop="dateCreated datePublished" datetime="2020-01-06T08:07:48+08:00">2020-01-06</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-9-NIO/" itemprop="url" rel="index"><span itemprop="name">15.9 NIO</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/233df632/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/233df632/" data-xid="/JavaReadingNotes/233df632/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>5.2k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="15-9-3-使用Channel"><a href="#15-9-3-使用Channel" class="headerlink" title="15.9.3 使用Channel"></a>15.9.3 使用Channel</h1><h2 id="Channel与流对象的区别"><a href="#Channel与流对象的区别" class="headerlink" title="Channel与流对象的区别"></a>Channel与流对象的区别</h2><p><strong><code>Channel</code>类似于传统的流对象</strong>,但与传统的流对象有两个主要区别。</p>
-<ol>
-<li><strong><code>Channel</code>可以直接将指定文件的部分或全部直接映射成<code>Buffer</code></strong></li>
-<li><strong>程序不能直接访问<code>Channel</code>中的数据</strong>,包括读取、写入都不行,<strong><code>Channel</code>只能与<code>Buffer</code>进行交互</strong>。也就是说:<ul>
-<li><strong>如果要从<code>Channel</code>中取得数据,必须先用<code>Buffer</code>从<code>Channel</code>中取出一些数据,然后让程序从<code>Buffer</code>中取出这些数据</strong>;</li>
-<li><strong>如果要将程序中的数据写入<code>Channel</code>,一样先让程序将数据放入<code>Buffer</code>中,程序再将<code>Buffer</code>里的数据写入<code>Channe</code>中</strong>。</li>
-</ul>
-</li>
-</ol>
-<h2 id="Channel分类"><a href="#Channel分类" class="headerlink" title="Channel分类"></a>Channel分类</h2><p><code>Java</code>为<code>Channel</code>接口提供了<code>DatagramChannel</code>、<code>FileChannel</code>、<code>Pipe.SinkChannel</code>、<code>Pipe.SourceChannel</code>、<code>SelectableChannel</code>、<code>ServerSocketChannel</code>、<code>SocketChannel</code>等实现类,本节主要介绍<code>FileChannel</code>的用法。<br><strong>根据这些<code>Channel</code>的名字不难发现,新<code>IO</code>里的<code>Channel</code>是按功能来划分的</strong>,例如</p>
-<ul>
-<li><code>Pipe.SinkChannel</code>、<code>Pipe.SourceChannel</code>是用于支持<strong>线程之间通信</strong>的管道<code>Channel</code>;</li>
-<li><code>ServerSocketChannel</code>、<code>SocketChannel</code>是用于支持**<code>TCP</code>网络通信**的<code>Channel</code>;</li>
-<li><code>DatagramChannel</code>则是用于支持**<code>UDP</code>网络通信**的<code>Channel</code></li>
-</ul>
-<p>本书将会在第17章介绍网络通信编程的详细内容,如果需要掌握<code>ServerSocketChannel</code>,<code>SocketChannel</code>等<code>Channel</code>的用法,可以参考本书第17章。</p>
-<h2 id="如何创建Channel"><a href="#如何创建Channel" class="headerlink" title="如何创建Channel"></a>如何创建Channel</h2><p><strong>所有的<code>Channel</code>都不应该通过构造器来直接创建,而是通过传统的节点<code>InputStream</code>、<code>OutputStream</code>的<code>getChannel()</code>方法来返回对应的<code>Channel</code></strong>,不同的节点流获得的<code>Channel</code>不一样。例如:</p>
-<ul>
-<li><code>FileInputStream</code>、<code>FileOutputStream</code>的<code>getChannel()</code>方法返回的是<code>FileChannel</code>,</li>
-<li><code>PipedInputStream</code>和<code>PipedOutputStream</code>的<code>getChannel()</code>方法返回的是<code>Pipe.SinkChannel</code>、<code>Pipe.SourceChannel</code></li>
-</ul>
-<h2 id="Channel常用方法"><a href="#Channel常用方法" class="headerlink" title="Channel常用方法"></a>Channel常用方法</h2><p><code>Channel</code>中最常用的三类方法是<code>map()</code>、<code>read()</code>和<code>write()</code>,其中</p>
-<ul>
-<li><code>map()</code>方法用于将<code>Channel</code>对应的部分或全部数据映射成<code>ByteBuffer</code>;</li>
-<li><code>read</code>或<code>write</code>方法都有一系列重载形式,这些方法用于从<code>Buffer</code>中读取数据或向<code>Buffer</code>中写入数据。</li>
-</ul>
-<h3 id="FileChannel的map方法"><a href="#FileChannel的map方法" class="headerlink" title="FileChannel的map方法"></a>FileChannel的map方法</h3><p><code>map()</code>方法的方法签名为:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">abstract</span> MappedByteBuffer <span class="title">map</span><span class="params">(FileChannel.MapMode mode, <span class="keyword">long</span> position, <span class="keyword">long</span> size)</span></span></span><br></pre></td></tr></table></figure>
-<ul>
-<li>第一个参数执行映射时的模式,分别有只读、读写等模式</li>
-<li>而第二个、第三个参数用于控制将<code>Channel</code>的哪些数据映射成<code>ByteBuffer</code></li>
-</ul>
-<h2 id="程序-FileChannel示例"><a href="#程序-FileChannel示例" class="headerlink" title="程序 FileChannel示例"></a>程序 FileChannel示例</h2><p>下面程序示范了直接将<code>FileChannel</code>的全部数据映射成<code>ByteBuffer</code>的效果。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.channels.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FileChannelTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">&quot;FileChannelTest.java&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 创建FileInputStream，以该文件输入流创建FileChannel</span></span><br><span class="line">                FileChannel inChannel = <span class="keyword">new</span> FileInputStream(f).getChannel();</span><br><span class="line">                <span class="comment">// 以文件输出流创建FileBuffer，用以控制输出</span></span><br><span class="line">                FileChannel outChannel = <span class="keyword">new</span> FileOutputStream(<span class="string">&quot;a.txt&quot;</span>).getChannel()) &#123;</span><br><span class="line">            <span class="comment">// 将FileChannel里的全部数据映射成ByteBuffer</span></span><br><span class="line">            MappedByteBuffer buffer = </span><br><span class="line">                inChannel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, f.length()); <span class="comment">// ①</span></span><br><span class="line">            <span class="comment">// 使用GBK的字符集来创建解码器</span></span><br><span class="line">            <span class="comment">// Charset charset = Charset.forName(&quot;GBK&quot;);</span></span><br><span class="line">            Charset charset = Charset.forName(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">            <span class="comment">// 直接将buffer里的数据全部输出到outChannel中</span></span><br><span class="line">            outChannel.write(buffer); <span class="comment">// ②</span></span><br><span class="line"></span><br><span class="line">            <span class="comment">// 再次调用buffer的clear()方法，复原limit、position的位置,准备再次读取Buffer</span></span><br><span class="line">            buffer.clear();</span><br><span class="line">            <span class="comment">// 创建解码器(CharsetDecoder)对象</span></span><br><span class="line">            CharsetDecoder decoder = charset.newDecoder();</span><br><span class="line">            <span class="comment">// 使用解码器将ByteBuffer转换成CharBuffer</span></span><br><span class="line">            CharBuffer charBuffer = decoder.decode(buffer);</span><br><span class="line">            <span class="comment">// CharBuffer的toString方法可以获取对应的字符串</span></span><br><span class="line">            System.out.println(charBuffer);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面程序中分别使用<code>FileInputStream</code>、<code>FileOutputStream</code>来获取<code>FileChannel</code>,虽然<code>FileChannel</code>既可以读取也可以写入,</p>
-<ul>
-<li>但**<code>FileInputStream</code>获取的<code>FileChannel</code>只能读**,</li>
-<li>而**<code>FileOutputStream</code>获取的<code>FileChannel</code>只能写**。</li>
-</ul>
-<p>程序中①号代码:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MappedByteBuffer buffer = </span><br><span class="line">    inChannel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, f.length()); <span class="comment">// ①</span></span><br></pre></td></tr></table></figure>
-<p>直接将指定<code>Channel</code>中的全部数据映射成<code>ByteBuffer</code>.<br>然后程序中②号代码:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outChannel.write(buffer); <span class="comment">// ②</span></span><br></pre></td></tr></table></figure>
-<p>直接将整个<code>ByteBuffer</code>的全部数据写入一个输出<code>FileChannel</code>中,这就完成了文件的复制.<br>程序后面部分为了能将<code>FileChannelTest.java</code>文件里的内容打印出来,使用了<code>Charset</code>类和<code>CharsetDecoder</code>类将<code>ByteBuffer</code>转换成<code>CharBuffer</code>关于<code>Charset</code>和<code>CharsetDecoder</code>下一节将会有更详细的介绍。</p>
-<h2 id="程序-RandomAccessFile获取的Channel"><a href="#程序-RandomAccessFile获取的Channel" class="headerlink" title="程序 RandomAccessFile获取的Channel"></a>程序 RandomAccessFile获取的Channel</h2><p>不仅<code>InputStream</code>、<code>OutputStream</code>包含了<code>getChannel()</code>方法,在<code>RandomAccessFile</code>中也包含了一个<code>getChannel()</code>方法,<strong><code>RandomAccessFile</code>返回的<code>FileChannel</code>是只读的还是读写的,则取决于<code>RandomAccessFile</code>打开文件的模式</strong>。<br>例如,下面程序将会对<code>a.txt</code>文件的内容进行复制,追加在该文件后面。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.channels.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomFileChannelTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        File f = <span class="keyword">new</span> File(<span class="string">&quot;a.txt&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 创建一个RandomAccessFile对象</span></span><br><span class="line">                RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(f, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line">                <span class="comment">// 获取RandomAccessFile对应的Channel</span></span><br><span class="line">                FileChannel randomChannel = raf.getChannel()) &#123;</span><br><span class="line">            <span class="comment">// 将Channel中所有数据映射成ByteBuffer</span></span><br><span class="line">            ByteBuffer buffer = randomChannel.map(FileChannel.MapMode.READ_ONLY, <span class="number">0</span>, f.length());</span><br><span class="line">            <span class="comment">// 把Channel的记录指针移动到最后</span></span><br><span class="line">            <span class="comment">// 代码1</span></span><br><span class="line">            randomChannel.position(f.length());</span><br><span class="line">            <span class="comment">// 将buffer中所有数据输出</span></span><br><span class="line">            randomChannel.write(buffer);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面程序中的<strong>代码1</strong>:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">randomChannel.position(f.length());</span><br></pre></td></tr></table></figure>
-<p>可以将<code>Channel</code>的记录指针移动到该<code>Channel</code>的最后,从而可以让程序将指定<code>ByteBuffer</code>的数据追加到该<code>Channel</code>的后面。每次运行上面程序,都会把<code>a.txt</code>文件的内容复制份,并将全部内容追加到该文件的后面。</p>
-<h2 id="像传统IO那样使用Channel和Buffer读写文件"><a href="#像传统IO那样使用Channel和Buffer读写文件" class="headerlink" title="像传统IO那样使用Channel和Buffer读写文件"></a>像传统IO那样使用Channel和Buffer读写文件</h2><p>如果读者习惯了传统<code>IO</code>的“用竹筒多次重复取水”的过程,或者担心<code>Channel</code>对应的文件过大,使用<code>map()</code>方法一次将所有的文件内容映射到内存中引起性能下降,也可以使用<code>Channel</code>和<code>Buffer</code>传统的“用竹筒多次重复取水”的方式。<br>如下程序所示。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.channels.*;</span><br><span class="line"><span class="keyword">import</span> java.nio.charset.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadFile</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 创建文件输入流</span></span><br><span class="line">                FileInputStream fis = <span class="keyword">new</span> FileInputStream(<span class="string">&quot;ReadFile.java&quot;</span>);</span><br><span class="line">                <span class="comment">// 创建一个FileChannel</span></span><br><span class="line">                FileChannel fcin = fis.getChannel()) &#123;</span><br><span class="line">            <span class="comment">// 定义一个ByteBuffer对象，用于重复取水</span></span><br><span class="line">            ByteBuffer bbuff = ByteBuffer.allocate(<span class="number">256</span>);</span><br><span class="line">            <span class="comment">// 将FileChannel中数据读取到ByteBuffer中</span></span><br><span class="line">            <span class="keyword">while</span> (fcin.read(bbuff) != -<span class="number">1</span>) &#123;</span><br><span class="line">                <span class="comment">// 准备读取Buffer中的数据</span></span><br><span class="line">                bbuff.flip();</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 创建Charset对象</span></span><br><span class="line">                <span class="comment">// Charset charset = Charset.forName(&quot;GBK&quot;);</span></span><br><span class="line">                Charset charset = Charset.forName(<span class="string">&quot;utf-8&quot;</span>);</span><br><span class="line">                <span class="comment">// 创建解码器(CharsetDecoder)对象</span></span><br><span class="line">                CharsetDecoder decoder = charset.newDecoder();</span><br><span class="line">                <span class="comment">// 将ByteBuffer的内容转码</span></span><br><span class="line">                CharBuffer cbuff = decoder.decode(bbuff);</span><br><span class="line">                System.out.print(cbuff);</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 将Buffer初始化，为下一次读取数据做准备</span></span><br><span class="line">                bbuff.clear();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面代码虽然使用<code>FileChannel</code>和<code>Buffer</code>来读取文件,但处理方式和使用<code>InputStream</code>、<code>byte[]</code>来读取文件的方式几乎一样,都是采用“用竹筒多次重复取水”的方式。但因为<code>Buffer</code>提供了<code>fip()</code>和<code>clear()</code>两个方法,所以程序处理起来比较方便</p>
-<h3 id="类似传统方式使用NIO步骤"><a href="#类似传统方式使用NIO步骤" class="headerlink" title="类似传统方式使用NIO步骤"></a>类似传统方式使用NIO步骤</h3><ul>
-<li>读取数据到<code>Buffer</code>中</li>
-<li><strong>每次读取数据后调用<code>fip()</code>方法</strong>将没有数据的区域“封印”起来,避免程序从<code>Buffer</code>中取出<code>null</code>值;</li>
-<li>从<code>Buffer</code>中取出数据</li>
-<li>数据取出后立即调用<code>clear()</code>方法将<code>Buffer</code>的<code>position</code>设0,为下次读取数据做准备。</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/d63ba950/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
-      <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="蓝蓝站点">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/JavaReadingNotes/d63ba950/" class="post-title-link" itemprop="url">15.9.2 使用Buffer</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-01-06 04:35:02" itemprop="dateCreated datePublished" datetime="2020-01-06T04:35:02+08:00">2020-01-06</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-9-NIO/" itemprop="url" rel="index"><span itemprop="name">15.9 NIO</span></a>
-        </span>
-    </span>
-
-  
-  
-  <span class="post-meta-item">
-    
-    <span class="post-meta-item-icon">
-      <i class="far fa-comment"></i>
-    </span>
-    <span class="post-meta-item-text">Waline：</span>
-  
-    <a title="waline" href="/JavaReadingNotes/d63ba950/#waline-comments" itemprop="discussionUrl">
-      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/d63ba950/" data-xid="/JavaReadingNotes/d63ba950/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-    <span class="post-meta-break"></span>
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>7.8k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="15-9-2-使用Buffer"><a href="#15-9-2-使用Buffer" class="headerlink" title="15.9.2 使用Buffer"></a>15.9.2 使用Buffer</h1><p>从内部结构上来看,<code>Buffer</code>就像一个数组,它可以保存多个类型相同的数据。<code>Buffer</code>是一个抽象类,其最常用的子类是<code>ByteBuffer</code>,它可以在底层字节数组上进行<code>get/set</code>操作。除<code>ByteBuffer</code>之外,对应于其他基本数据类型(<code>boolean</code>除外)都有相应的<code>Buffer</code>类:<code>CharBuffer</code>、<code>ShortBuffer</code>、<code>IntBuffer</code>、<code>LongBuffer</code>、<code>FloatBuffer</code>、<code>DoubleBuffer</code>。</p>
-<h2 id="创建Buffer对象"><a href="#创建Buffer对象" class="headerlink" title="创建Buffer对象"></a>创建Buffer对象</h2><p>上面这些<code>Buffer</code>类,除<code>ByteBuffer</code>之外,它们都采用相同或相似的方法来管理数据,只是各自管理的数据类型不同而已。这些<code>Buffer</code>类都没有提供构造器,通过使用如下方法来得到一个<code>Buffer</code>对象。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>static XxxBuffer allocate(int capacity)</code></td>
-<td align="left">创建一个容量为<code>capacity</code>的<code>XxX Buffer</code>对象。</td>
-</tr>
-</tbody></table>
-<details><summary>展开/折叠</summary>
-
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>static ByteBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new byte buffer.</td>
-</tr>
-<tr>
-<td align="left"><code>static ShortBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new short buffer.</td>
-</tr>
-<tr>
-<td align="left"><code>static IntBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new int buffer.</td>
-</tr>
-<tr>
-<td align="left"><code>static LongBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new long buffer.</td>
-</tr>
-<tr>
-<td align="left"><code>static CharBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new char buffer.</td>
-</tr>
-<tr>
-<td align="left"><code>static FloatBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new float buffer.</td>
-</tr>
-<tr>
-<td align="left"><code>static DoubleBuffer allocate(int capacity)</code></td>
-<td align="left">Allocates a new double buffer.</td>
-</tr>
-</tbody></table>
-</details>
-
-<p>但实际使用较多的是<code>ByteBuffer</code>和<code>CharBuffer</code>,其他<code>Buffer</code>子类则较少用到。</p>
-<h2 id="MappedByteBuffer"><a href="#MappedByteBuffer" class="headerlink" title="MappedByteBuffer"></a>MappedByteBuffer</h2><p>其中<code>ByteBuffer</code>类还有一个子类:<code>MappedByteBuffer</code>,<strong><code>MappedByteBuffer</code>用于表示<code>Channel</code>将磁盘文件的部分或全部内容映射到内存中后得到的<mark>结果</mark></strong>,通常<code>MappedByteBuffer</code>对象由<code>Channel</code>的<code>map()</code>方法返回。</p>
-<h2 id="容量-界限-位置"><a href="#容量-界限-位置" class="headerlink" title="容量 界限 位置"></a>容量 界限 位置</h2><p>在<code>Buffer</code>中有三个重要的概念:容量(<code>capacity</code>)、界限(<code>limit</code>)和位置(<code>position</code>)</p>
-<ul>
-<li><strong>容量(<code>capacity</code>)</strong>:<ul>
-<li>缓冲区的容量(<code>capacity</code>)表示该<code>Buffer</code>的最大数据容量,即<strong>最多可以存储多少数据</strong>。<strong>缓冲区的容量不可能为负值,创建后不能改变</strong>。</li>
-</ul>
-</li>
-<li><strong>界限(<code>limit</code>)</strong>:<ul>
-<li><strong>第一个不应该被读出或者写入的缓冲区位置索引</strong>。也就是说,<strong>位于<code>limit</code>后的数据既不可被读,也不可被写</strong>。</li>
-</ul>
-</li>
-<li><strong>位置(<code>position</code>)</strong>:<ul>
-<li>用于指明<strong>下一个可以被读出的或者写入的缓冲区位置索引</strong>(类似于<code>IO</code>流中的记录指针)。<strong>当使用<code>Buffer</code>从<code>Channel</code>中读取数据时,<code>position</code>的<mark>值</mark>恰好等于已经读到了多少数据</strong>:</li>
-<li>当刚刚新建一个<code>Buffer</code>对象时,其<code>position</code>为0,也就是<strong>第1个位置的索引为0</strong>;</li>
-<li>如果从<code>Channel</code>中读取了2个数据到该<code>Buffer</code>中,则<code>position</code>为2,指向<code>Buffer</code>中第3个位置</li>
-</ul>
-</li>
-</ul>
-<h2 id="标记"><a href="#标记" class="headerlink" title="标记"></a>标记</h2><p>除此之外,<code>Buffer</code>里还支持一个可选的标记(<code>mark</code>),类似于传统<code>IO</code>流中的<code>mark()</code>,<strong><code>Buffer</code>允许直接将<code>position</code>定位到该<code>mark</code>处</strong>。这些值满足如下关系:<br><strong>0≤mark≤position≤limit≤capacity</strong><br>图15.16显示了某个<code>Buffer</code>读入了一些数据后的示意图<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/1.png" alt="这里有一张图片"></p>
-<h2 id="Buffer的作用"><a href="#Buffer的作用" class="headerlink" title="Buffer的作用"></a>Buffer的作用</h2><p><strong><code>Buffer</code>的主要作用就是装入数据,然后输出数据</strong>(其作用类似于前面介绍的取水的“竹筒”),<strong>开始时<code>Buffer</code>的<code>position</code>为0,<code>limit</code>为<code>capacity</code></strong></p>
-<h2 id="装入数据-put方法"><a href="#装入数据-put方法" class="headerlink" title="装入数据 put方法"></a>装入数据 put方法</h2><p><strong>程序可通过<code>put()</code>方法向<code>Buffer</code>中放入一些数据</strong>(或者从<code>Channel</code>中获取一些数据),<strong>每放入一些数据,<code>Buffer</code>的<code>position</code>相应地向后移动一些位置</strong>。</p>
-<h3 id="ByteBuffer的put方法"><a href="#ByteBuffer的put方法" class="headerlink" title="ByteBuffer的put方法"></a>ByteBuffer的put方法</h3><details><summary>展开/折叠</summary>
-
-<table>
-<thead>
-<tr>
-<th align="left"><code>ByteBuffer</code>的<code>put</code>方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>abstract ByteBuffer put(byte b)</code></td>
-<td align="left">Relative put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>ByteBuffer put(byte[] src)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>ByteBuffer put(byte[] src, int offset, int length)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer put(int index, byte b)</code></td>
-<td align="left">Absolute put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>ByteBuffer put(ByteBuffer src)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>abstract ByteBuffer putChar(char value)</code></td>
-<td align="left">Relative put method for writing a char value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putChar(int index, char value)</code></td>
-<td align="left">Absolute put method for writing a char value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putDouble(double value)</code></td>
-<td align="left">Relative put method for writing a double value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putDouble(int index, double value)</code></td>
-<td align="left">Absolute put method for writing a double value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putFloat(float value)</code></td>
-<td align="left">Relative put method for writing a float value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putFloat(int index, float value)</code></td>
-<td align="left">Absolute put method for writing a float value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putInt(int value)</code></td>
-<td align="left">Relative put method for writing an int value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putInt(int index, int value)</code></td>
-<td align="left">Absolute put method for writing an int value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putLong(int index, long value)</code></td>
-<td align="left">Absolute put method for writing a long value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putLong(long value)</code></td>
-<td align="left">Relative put method for writing a long value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putShort(int index, short value)</code></td>
-<td align="left">Absolute put method for writing a short value (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract ByteBuffer putShort(short value)</code></td>
-<td align="left">Relative put method for writing a short value (optional operation).</td>
-</tr>
-</tbody></table>
-</details>
-
-<h3 id="CharBuffer的put方法"><a href="#CharBuffer的put方法" class="headerlink" title="CharBuffer的put方法"></a>CharBuffer的put方法</h3><details><summary>展开/折叠</summary>
-
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>abstract CharBuffer put(char c)</code></td>
-<td align="left">Relative put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>CharBuffer put(char[] src)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>CharBuffer put(char[] src, int offset, int length)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>abstract CharBuffer put(int index, char c)</code></td>
-<td align="left">Absolute put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>CharBuffer put(String src)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>CharBuffer put(String src, int start, int end)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-<tr>
-<td align="left"><code>CharBuffer put(CharBuffer src)</code></td>
-<td align="left">Relative bulk put method (optional operation).</td>
-</tr>
-</tbody></table>
-</details>
-
-<h2 id="准备输出数据-flip方法"><a href="#准备输出数据-flip方法" class="headerlink" title="准备输出数据 flip方法"></a>准备输出数据 flip方法</h2><p>当<code>Buffer</code>装入数据结束后,调用<code>Buffer</code>的<code>flip()</code>方法,<strong>该方法将<code>limit</code>设置为<code>position</code>所在位置,并将<code>position</code>设为0,这就使得<code>Buffer</code>的读写指针又移到了开始位置。</strong></p>
-<h3 id="需要读取Buffer中的数据时调用flip方法"><a href="#需要读取Buffer中的数据时调用flip方法" class="headerlink" title="需要读取Buffer中的数据时调用flip方法"></a>需要读取Buffer中的数据时调用flip方法</h3><p>也就是说,<strong><code>Buffer</code>调用<code>flip()</code>方法之后,<code>Buffer</code><mark>为输出数据做好了准备</mark></strong>;</p>
-<table>
-<thead>
-<tr>
-<th align="left">Buffer类的flip方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>Buffer flip()</code></td>
-<td align="left">Flips this buffer.</td>
-</tr>
-</tbody></table>
-<h2 id="准备再次装入数据-clear方法"><a href="#准备再次装入数据-clear方法" class="headerlink" title="准备再次装入数据 clear方法"></a>准备再次装入数据 clear方法</h2><p>当<code>Buffer</code>输出数据结束后,<code>Buffer</code>调用<code>clear()</code>方法,<code>clear</code>方法不是清空<code>Buffer</code>的数据,它仅仅<strong>将<code>position</code>置为0,将<code>limit</code>置为<code>capacity</code></strong>,这样<strong>为再次向<code>Buffer</code>中装入数据做好准备</strong>。</p>
-<table>
-<thead>
-<tr>
-<th align="left">Buffer类的clear方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>Buffer clear()</code></td>
-<td align="left">Clears this buffer.</td>
-</tr>
-</tbody></table>
-<h2 id="取出flip-再次装入clear"><a href="#取出flip-再次装入clear" class="headerlink" title="取出flip 再次装入clear"></a>取出flip 再次装入clear</h2><p><code>Buffer</code>中包含两个重要的方法,即<code>flip()</code>和<code>clear()</code>,</p>
-<ul>
-<li><code>flip</code>为从<code>Buffer</code>中取出数据做好准备,</li>
-<li><code>clear</code>为再次向<code>Buffer</code>中装入数据做好准备</li>
-</ul>
-<h2 id="Buffer其他常用方法"><a href="#Buffer其他常用方法" class="headerlink" title="Buffer其他常用方法"></a>Buffer其他常用方法</h2><p>除此之外,<code>Buffer</code>还包含如下一些常用的方法。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>int capacity()</code></td>
-<td align="left">返回<code>Buffer</code>的<code>capacity</code>大小。</td>
-</tr>
-<tr>
-<td align="left"><code>boolean hasRemaining()</code></td>
-<td align="left">判断当前位置(<code>position</code>)和界限(<code>limit</code>)之间是否还有元素可供处理</td>
-</tr>
-<tr>
-<td align="left"><code>int limit()</code></td>
-<td align="left">返回<code>Buffer</code>的界限(<code>limit</code>)的位置。</td>
-</tr>
-<tr>
-<td align="left"><code>Buffer limit(int newLimit)</code></td>
-<td align="left">重新设置界限(<code>limit</code>)的值,并返回一个具有新的<code>limit</code>的缓冲区对象</td>
-</tr>
-<tr>
-<td align="left"><code>Buffer mark()</code></td>
-<td align="left">设置<code>Buffer</code>的<code>mark</code>位置,它只能在0和位置(<code>position</code>)之间做<code>mark</code>。</td>
-</tr>
-<tr>
-<td align="left"><code>int position()</code></td>
-<td align="left">返回<code>Buffer</code>中的<code>position</code>值</td>
-</tr>
-<tr>
-<td align="left"><code>Buffer position(int newPosition)</code></td>
-<td align="left">设置<code>Buffer</code>的<code>position</code>,并返回<code>position</code>被修改后的<code>Buffer</code>对象</td>
-</tr>
-<tr>
-<td align="left"><code>int remaining()</code></td>
-<td align="left">返回当前位置和界限(<code>limit</code>)之间的元素个数</td>
-</tr>
-<tr>
-<td align="left"><code>Buffer reset()</code></td>
-<td align="left">将位置(<code>position</code>)转到<code>mark</code>所在的位置。</td>
-</tr>
-<tr>
-<td align="left"><code>Buffer rewind()</code></td>
-<td align="left">将位置(<code>position</code>)设置成0,取消设置的<code>mark</code></td>
-</tr>
-</tbody></table>
-<h2 id="放入-取出"><a href="#放入-取出" class="headerlink" title="放入 取出"></a>放入 取出</h2><p>除这些移动<code>position</code>、<code>limit</code>、<code>mark</code>的方法之外,<code>Buffer</code>的所有子类还提供了两个重要的方法:<code>put()</code>和<code>get()</code>方法,用于向<code>Buffer</code>中放入数据和从<code>Buffer</code>中取出数据。<strong>当使用<code>put()</code>和<code>get()</code>方法放入、取出数据时,<code>Buffer</code>既支持对单个数据的访问,也支持对批量数据的访问</strong>(以数组作为参数)。</p>
-<h3 id="相对-绝对"><a href="#相对-绝对" class="headerlink" title="相对 绝对"></a>相对 绝对</h3><p>当使用<code>put()</code>和<code>get()</code>来访问<code>Buffer</code>中的数据时,分为相对和绝对两种。</p>
-<ul>
-<li><strong>相对(<code>Relative</code>)</strong>:<ul>
-<li>从<code>Buffer</code>的当前<code>position</code>处开始读取或写入数据,然后将位置(<code>position</code>)的值按处理元素的个数增加</li>
-</ul>
-</li>
-<li><strong>绝对(<code>Absolute</code>)</strong>:<ul>
-<li>直接**<mark>根据索引</mark>向<code>Buffer</code>中读取或写入数据**,<strong>使用绝对方式访问<code>Buffer</code>里的数据时,并不会影响位置(<code>position</code>)的值</strong>。</li>
-</ul>
-</li>
-</ul>
-<h2 id="程序示例"><a href="#程序示例" class="headerlink" title="程序示例"></a>程序示例</h2><p>下面程序示范了<code>Buffer</code>的一些常规操作。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.nio.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BufferTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 创建Buffer</span></span><br><span class="line">        CharBuffer buff = CharBuffer.allocate(<span class="number">8</span>); <span class="comment">// ①</span></span><br><span class="line">        System.out.println(<span class="string">&quot;capacity: &quot;</span> + buff.capacity());</span><br><span class="line">        System.out.println(<span class="string">&quot;limit: &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;position: &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 放入元素</span></span><br><span class="line">        buff.put(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">        buff.put(<span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">        buff.put(<span class="string">&#x27;c&#x27;</span>); <span class="comment">// ②</span></span><br><span class="line">        System.out.println(<span class="string">&quot;加入三个元素后，position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 调用flip()方法 准备取出数据</span></span><br><span class="line">        buff.flip(); <span class="comment">// ③</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行flip()后，limit = &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 取出第一个元素</span></span><br><span class="line">        System.out.println(<span class="string">&quot;第一个元素(position=0)：&quot;</span> + buff.get()); <span class="comment">// ④</span></span><br><span class="line">        System.out.println(<span class="string">&quot;取出一个元素后，position = &quot;</span> + buff.position());</span><br><span class="line">        <span class="comment">// 调用clear方法 准备再次放入数据</span></span><br><span class="line">        buff.clear(); <span class="comment">// ⑤</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，limit = &quot;</span> + buff.limit());</span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，position = &quot;</span> + buff.position());</span><br><span class="line">        System.out.println(<span class="string">&quot;执行clear()后，缓冲区内容并没有被清除：&quot;</span> +</span><br><span class="line">            <span class="string">&quot;第三个元素为：&quot;</span> + buff.get(<span class="number">2</span>)); <span class="comment">// ⑥</span></span><br><span class="line">        System.out.println(<span class="string">&quot;执行绝对读取后，position = &quot;</span> + buff.position());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>在上面程序的①号代码处:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CharBuffer buff = CharBuffer.allocate(<span class="number">8</span>); <span class="comment">// ①</span></span><br></pre></td></tr></table></figure>
-<p>通过<code>CharBuffer</code>的一个静态方法<code>allocate()</code>创建了一个<code>capacity</code>为8的<code>CharBuffer</code>,此时该<code>Buffer</code>的<code>limit</code>和<code>capacity</code>为8,<code>position</code>为0,如图15.17所示<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/2.png" alt="这里有一张图片"><br>接下来程序执行到②号代码处:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">buff.put(<span class="string">&#x27;a&#x27;</span>);</span><br><span class="line">buff.put(<span class="string">&#x27;b&#x27;</span>);</span><br><span class="line">buff.put(<span class="string">&#x27;c&#x27;</span>); <span class="comment">// ②</span></span><br></pre></td></tr></table></figure>
-<p>程序向<code>CharBuffer</code>中放入3个数值,放入3个数值后的<code>CharBuffer</code>效果如图15.18所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/3.png" alt="这里有一张图片"><br>程序执行到③号代码处:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buff.flip(); <span class="comment">// ③</span></span><br></pre></td></tr></table></figure>
-<p>调用了<code>Buffer</code>的<code>flip()</code>方法,该方法将把<code>limit</code>设为<code>position</code>处,把<code>position</code>设为0,如图15.19所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/4.png" alt="这里有一张图片"><br>从图15.19中可以看出,当<code>Buffer</code>调用了<code>flip()</code>方法之后,<code>limit</code>就移到了原来<code>position</code>所在位置,这样<strong>相当于把<code>Buffer</code>中<code>没有数据的存储空间“封印”起来</code>,从而避免读取<code>Buffer</code>数据时读到<code>null</code>值</strong>。</p>
-<h3 id="无参get方法会使得position加一"><a href="#无参get方法会使得position加一" class="headerlink" title="无参get方法会使得position加一"></a>无参get方法会使得position加一</h3><p>接下来程序在④号代码处:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;第一个元素(position=0)：&quot;</span> + buff.get()); <span class="comment">// ④</span></span><br></pre></td></tr></table></figure>
-<p>取出一个元素,<strong>取出一个元素后<code>position</code>向后移动一位</strong>,也就是该<code>Buffer</code>的<code>position</code>等于1。<br>程序执行到⑤号代码处:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">buff.clear(); <span class="comment">// ⑤</span></span><br></pre></td></tr></table></figure>
-<p><code>Buffer</code>调用<code>clear()</code>方法将<code>position</code>设为0,将<code>limit</code>设为与<code>capacity</code>相等。执行<code>clear()</code>方法后的<code>Buffer</code>示意图如图15.20所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/CrazyJavaHandout4/Chapter/15/15.9.2/5.png" alt="这里有一张图片"></p>
-<h3 id="根据索引获取值的get方法不会影响position"><a href="#根据索引获取值的get方法不会影响position" class="headerlink" title="根据索引获取值的get方法不会影响position"></a>根据索引获取值的get方法不会影响position</h3><p>从图15.20中可以看出,对<code>Buffer</code>执行<code>clear</code>方法后,该<code>Buffer</code>对象里的数据依然存在,所以程序在⑥号代码处依然可以取出位置为2的值,也就是字符c。因为⑥号代码:</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">System.out.println(<span class="string">&quot;执行clear()后，缓冲区内容并没有被清除：&quot;</span> +</span><br><span class="line">    <span class="string">&quot;第三个元素为：&quot;</span> + buff.get(<span class="number">2</span>)); <span class="comment">// ⑥</span></span><br></pre></td></tr></table></figure>
-<p>采用的是<strong>根据索引来取值的方式</strong>,所以该方法不会影响<code>Buffer</code>的<code>position</code>.</p>
-<h2 id="普通Buffer-直接Buffer"><a href="#普通Buffer-直接Buffer" class="headerlink" title="普通Buffer 直接Buffer"></a>普通Buffer 直接Buffer</h2><p>通过<code>allocate</code>方法创建的<code>Buffer</code>对象是<strong>普通<code>Buffer</code></strong>.<br><code>ByteBuffer</code>还提供了一个<code>allocateDirect()</code>方法来创建<strong>直接<code>Buffer</code><strong>。</strong>直接<code>Buffer</code>的创建成本比普通<code>Buffer</code>的创建成本高,但直接<code>Buffer</code>的读取效率更高</strong>。</p>
-<h3 id="只有在ByteBuffer级别上才能创建直接Buffer"><a href="#只有在ByteBuffer级别上才能创建直接Buffer" class="headerlink" title="只有在ByteBuffer级别上才能创建直接Buffer"></a>只有在<code>ByteBuffer</code>级别上才能创建直接<code>Buffer</code></h3><p>由于直接<code>Buffer</code>的创建成本很高,所以**直接<code>Buffer</code>只适用于长生存期的<code>Buffer</code>,而不适用于短生存期、一次用完就丢弃的<code>Buffer</code><strong>。而且只有<code>ByteBuffer</code>才提供了<code>allocateDirect()</code>方法,所以</strong>只有在<code>ByteBuffer</code>级别上才能创建直接<code>Buffer</code><strong>。如果希望使用其他类型,则应该将该</strong>直接<code>Buffer</code>**转换成其他类型的<code>Buffer</code>。</p>
-<table>
-<thead>
-<tr>
-<th align="left">方法</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>static ByteBuffer allocateDirect(int capacity)</code></td>
-<td align="left">Allocates a new direct byte buffer.</td>
-</tr>
-</tbody></table>
-<!-- CrazyJavaHandout4/Chapter/15/15.9.2/ -->
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/32004866/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2087,6 +1468,541 @@
 <h2 id="无须实现Serializable接口方法"><a href="#无须实现Serializable接口方法" class="headerlink" title="无须实现Serializable接口方法"></a>无须实现Serializable接口方法</h2><p><code>Java</code>的很多类已经实现了<code>Serializable</code>,该接口是一个标记接口,<strong>实现该接口无须实现任何方法</strong>,它只是表明该类的实例是可序列化的。</p>
 <h2 id="可序列化的类才可以保存到磁盘中-才可以在网络上传输"><a href="#可序列化的类才可以保存到磁盘中-才可以在网络上传输" class="headerlink" title="可序列化的类才可以保存到磁盘中 才可以在网络上传输"></a>可序列化的类才可以保存到磁盘中 才可以在网络上传输</h2><p><strong>所有可能在网络上传输的对象的类都应该是可序列化的</strong>,否则程序将会出现异常,比如<code>RMI</code>(<code>Remote method Invoke</code>,即远程方法调用,是<code>Java EE</code>的基础)过程中的参数和返回值;<br><strong>所有需要保存到磁盘里的对象的类都必须可序列化</strong>,比如<code>Web</code>应用中需要保存到<code>HttpSession</code>或<code>ServletContext</code>属性的<code>Java</code>对象。</p>
 <h2 id="建议每个JavaBean类都实现Serializable"><a href="#建议每个JavaBean类都实现Serializable" class="headerlink" title="建议每个JavaBean类都实现Serializable"></a>建议每个JavaBean类都实现Serializable</h2><p>因为序列化是<code>RMI</code>过程的参数和返回值都必须实现的机制,而<code>RMI</code>又是<code>Java EE</code>技术的基础所有的分布式应用常常需要跨平台、跨网络,所以要求所有传递的参数、返回值必须实现序列化。因此序列化机制是<code>Java EE</code>平台的基础。通常建议:<strong>程序创建的每个<code>JavaBean</code>类都实现<code>Serializable</code></strong></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/8c3461a8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/8c3461a8/" class="post-title-link" itemprop="url">15.7 RandomAccessFile</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-28 09:24:23" itemprop="dateCreated datePublished" datetime="2019-12-28T09:24:23+08:00">2019-12-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-7-RandomAccessFile/" itemprop="url" rel="index"><span itemprop="name">15.7 RandomAccessFile</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/8c3461a8/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/8c3461a8/" data-xid="/JavaReadingNotes/8c3461a8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="15-7-RandomAccessFile"><a href="#15-7-RandomAccessFile" class="headerlink" title="15.7 RandomAccessFile"></a>15.7 RandomAccessFile</h1><h2 id="RandomAccessFile可读可写"><a href="#RandomAccessFile可读可写" class="headerlink" title="RandomAccessFile可读可写"></a>RandomAccessFile可读可写</h2><p><code>RandomAccessFile</code>是<code>Java</code>输入输出流体系中功能最丰富的文件内容访问类,它提供了众多的方法来访问文件内容,<strong>它既可以读取文件内容,也可以向文件输出数据</strong>。</p>
+<h2 id="随机访问"><a href="#随机访问" class="headerlink" title="随机访问"></a>随机访问</h2><p>与普通的输入/输出流不同的是,<strong><code>RandomAccessFile</code>支持“随机访问”的方式,程序可以直接跳转到文件的任意地方来读写数据</strong>。<br>由于<code>RandomAccessFile</code>可以自由访问文件的任意位置,所以<strong>如果只需要访问文件部分内容,而不是把文件从头读到尾,使用<code>RandomAccessFile</code>将是更好的选择</strong>。<br>与<code>OutputStream</code>、<code>Writer</code>等输出流不同的是,<code>RandomAccessFile</code>允许自由定位文件记录指针,<code>RandomAccessFile</code>可以不从开始的地方开始输出,因此<code>RandomAccessFile</code>可以向已存在的文件后追加内容。<strong>如果程序需要向已存在的文件后追加内容,则应该使用<code>RandomAccessFile</code></strong></p>
+<h2 id="只能读写文件"><a href="#只能读写文件" class="headerlink" title="只能读写文件"></a>只能读写文件</h2><p><code>RandomAccessFile</code>的方法虽然多,但它有一个最大的局限,就是<strong>只能读写<code>文件</code>,不能读写其他<code>IO</code>节点</strong>。</p>
+<h2 id="文件记录指针"><a href="#文件记录指针" class="headerlink" title="文件记录指针"></a>文件记录指针</h2><p><code>RandomAccessFile</code>对象也包含了一个记录指针,用以标识当前读写处的位置,当程序新创建一个<code>RandomAccessFile</code>对象时,该对象的文件记录指针位于<strong>文件头</strong>(也就是0处),当读写了n个字节后,文件记录指针将会向后移动n个字节。</p>
+<h2 id="方法"><a href="#方法" class="headerlink" title="方法"></a>方法</h2><h3 id="移动记录指针的方法"><a href="#移动记录指针的方法" class="headerlink" title="移动记录指针的方法"></a>移动记录指针的方法</h3><p>除此之外,<code>RandomAccessFile</code>可以自由移动该记录指针,既可以向前移动,也可以向后移动。<code>RandomAccessFile</code>包含了如下两个方法来操作文件记录指针。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>long getFilePointer()</code></td>
+<td align="left">返回文件记录指针的当前位置。</td>
+</tr>
+<tr>
+<td align="left"><code>void seek(long pos)</code></td>
+<td align="left">将文件记录指针定位到<code>pos</code>位置</td>
+</tr>
+</tbody></table>
+<h3 id="read方法"><a href="#read方法" class="headerlink" title="read方法"></a>read方法</h3><p><code>RandomAccessFile</code>既可以读文件,也可以写,所以它既包含了完全类似于<code>InputStream</code>的三个<code>read()</code>方法,其用法和<code>InputStream</code>的三个<code>read()</code>方法完全一样;<br>也包含了完全类似于<code>OutputStream</code>的三个<code>write</code>方法,其用法和<code>OutputStream</code>的三个<code>write</code>方法完全一样。<br>除此之外,<code>RandomAccessFile</code>还包含了系列的<code>readXxx()</code>和<code>writeXxx()</code>方法来完成输入、输出。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>int read()</code></td>
+<td align="left">Reads a byte of data from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>int read(byte[] b)</code></td>
+<td align="left">Reads up to b.length bytes of data from this file into an array of bytes.</td>
+</tr>
+<tr>
+<td align="left"><code>int read(byte[] b, int off, int len)</code></td>
+<td align="left">Reads up to len bytes of data from this file into an array of bytes.</td>
+</tr>
+</tbody></table>
+<h3 id="write方法"><a href="#write方法" class="headerlink" title="write方法"></a>write方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void write(int b)</code></td>
+<td align="left">Writes the specified byte to this file.</td>
+</tr>
+<tr>
+<td align="left"><code>void write(byte[] b)</code></td>
+<td align="left">Writes b.length bytes from the specified byte array to this file, starting at the current file pointer.</td>
+</tr>
+<tr>
+<td align="left"><code>void write(byte[] b, int off, int len)</code></td>
+<td align="left">Writes len bytes from the specified byte array starting at offset off to this file.</td>
+</tr>
+</tbody></table>
+<h3 id="readXxx方法"><a href="#readXxx方法" class="headerlink" title="readXxx方法"></a>readXxx方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>boolean readBoolean()</code></td>
+<td align="left">Reads a boolean from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>byte readByte()</code></td>
+<td align="left">Reads a signed eight-bit value from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>char readChar()</code></td>
+<td align="left">Reads a character from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>double readDouble()</code></td>
+<td align="left">Reads a double from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>float readFloat()</code></td>
+<td align="left">Reads a float from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>void readFully(byte[] b)</code></td>
+<td align="left">Reads b.length bytes from this file into the byte array, starting at the current file pointer.</td>
+</tr>
+<tr>
+<td align="left"><code>void readFully(byte[] b, int off, int len)</code></td>
+<td align="left">Reads exactly len bytes from this file into the byte array, starting at the current file pointer.</td>
+</tr>
+<tr>
+<td align="left"><code>int readInt()</code></td>
+<td align="left">Reads a signed 32-bit integer from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>String readLine()</code></td>
+<td align="left">Reads the next line of text from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>long readLong()</code></td>
+<td align="left">Reads a signed 64-bit integer from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>short readShort()</code></td>
+<td align="left">Reads a signed 16-bit number from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>int readUnsignedByte()</code></td>
+<td align="left">Reads an unsigned eight-bit number from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>int readUnsignedShort()</code></td>
+<td align="left">Reads an unsigned 16-bit number from this file.</td>
+</tr>
+<tr>
+<td align="left"><code>String readUTF()</code></td>
+<td align="left">Reads in a string from this file.</td>
+</tr>
+</tbody></table>
+<h3 id="writeXxx方法"><a href="#writeXxx方法" class="headerlink" title="writeXxx方法"></a>writeXxx方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void writeBoolean(boolean v)</code></td>
+<td align="left">Writes a boolean to the file as a one-byte value.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeByte(int v)</code></td>
+<td align="left">Writes a byte to the file as a one-byte value.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeBytes(String s)</code></td>
+<td align="left">Writes the string to the file as a sequence of bytes.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeChar(int v)</code></td>
+<td align="left">Writes a char to the file as a two-byte value, high byte first.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeChars(String s)</code></td>
+<td align="left">Writes a string to the file as a sequence of characters.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeDouble(double v)</code></td>
+<td align="left">Converts the double argument to a long using the doubleToLongBits method in class Double, and then writes that long value to the file as an eight-byte quantity, high byte first.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeFloat(float v)</code></td>
+<td align="left">Converts the float argument to an int using the floatToIntBits method in class Float, and then writes that int value to the file as a four-byte quantity, high byte first.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeInt(int v)</code></td>
+<td align="left">Writes an int to the file as four bytes, high byte first.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeLong(long v)</code></td>
+<td align="left">Writes a long to the file as eight bytes, high byte first.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeShort(int v)</code></td>
+<td align="left">Writes a short to the file as two bytes, high byte first.</td>
+</tr>
+<tr>
+<td align="left"><code>void writeUTF(String str)</code></td>
+<td align="left">Writes a string to the file using modified UTF-8 encoding in a machine-independent manner.</td>
+</tr>
+</tbody></table>
+<h3 id="其他方法"><a href="#其他方法" class="headerlink" title="其他方法"></a>其他方法</h3><table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>void close()</code></td>
+<td align="left">Closes this random access file stream and releases any system resources associated with the stream.</td>
+</tr>
+<tr>
+<td align="left"><code>FileChannel getChannel()</code></td>
+<td align="left">Returns the unique FileChannel object associated with this file.</td>
+</tr>
+<tr>
+<td align="left"><code>FileDescriptor getFD()</code></td>
+<td align="left">Returns the opaque file descriptor object associated with this stream.</td>
+</tr>
+<tr>
+<td align="left"><code>long length()</code></td>
+<td align="left">Returns the length of this file.</td>
+</tr>
+<tr>
+<td align="left"><code>void setLength(long newLength)</code></td>
+<td align="left">Sets the length of this file.</td>
+</tr>
+<tr>
+<td align="left"><code>int skipBytes(int n)</code></td>
+<td align="left">Attempts to skip over n bytes of input discarding the skipped bytes.</td>
+</tr>
+</tbody></table>
+<h2 id="随机访问翻译不对"><a href="#随机访问翻译不对" class="headerlink" title="随机访问翻译不对"></a>随机访问翻译不对</h2><p><code>RandomAccessFile</code>的含义是可以自由访问文件的任意地方(与<code>InputStream</code>、<code>Reader</code>需要依次向后读取相区分),所以<code>Random Access File</code>的含义决不是“随机访问”,而应该是“<strong>任意访问</strong>”。</p>
+<h2 id="构造器"><a href="#构造器" class="headerlink" title="构造器"></a>构造器</h2><p><code>RandomAccessFile</code>类有两个构造器,其实这两个构造器基本相同,只是指定文件的形式不同而已个使用<code>String</code>参数来指定文件名,一个使用<code>File</code>参数来指定文件本身。</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>RandomAccessFile(File file, String mode)</code></td>
+<td align="left">Creates a random access file stream to read from, and optionally to write to, the file specified by the File argument.</td>
+</tr>
+<tr>
+<td align="left"><code>RandomAccessFile(String name, String mode)</code></td>
+<td align="left">Creates a random access file stream to read from, and optionally to write to, a file with the specified name.</td>
+</tr>
+</tbody></table>
+<h3 id="mode参数"><a href="#mode参数" class="headerlink" title="mode参数"></a>mode参数</h3><p>除此之外,创建<code>RandomAccessFile</code>对象时还需要指定一个<code>mode</code>参数,该参数指定<code>RandomAccessfile</code>的访问模式,该参数有如下4个值。</p>
+<table>
+<thead>
+<tr>
+<th align="left"><code>mode</code>参数值</th>
+<th align="left">意义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">“r”</td>
+<td align="left">以<strong>只读</strong>方式打开指定文件。如果试图对该<code>RandomAccessFile</code>执行写入方法,都将抛出<code>IOException</code>异常</td>
+</tr>
+<tr>
+<td align="left">“rw”</td>
+<td align="left">以<strong>读、写</strong>方式打开指定文件。如果该文件尚不存在,则尝试创建该文件。</td>
+</tr>
+<tr>
+<td align="left">“rwd”</td>
+<td align="left">以<strong>读、写</strong>方式打开指定文件。相对于”<code>rw</code>“模式,还要求对<strong>文件<mark>内容</mark>的每个更新都同步写入到底层存储设备</strong>。</td>
+</tr>
+<tr>
+<td align="left">“rws”</td>
+<td align="left">以<strong>读、写</strong>方式打开指定文件。相对于”<code>rw</code>“模式,还要求<strong>对文件的<mark>内容</mark>或<mark>元数据</mark>的每个更新都同步写入到底层存储设备</strong>。</td>
+</tr>
+</tbody></table>
+<h2 id="程序-从文件中间读取"><a href="#程序-从文件中间读取" class="headerlink" title="程序 从文件中间读取"></a>程序 从文件中间读取</h2><p>下面程序使用了<code>RandomAccessFile</code>来访问指定的中间部分数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RandomAccessFileTest</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(<span class="string">&quot;RandomAccessFileTest.java&quot;</span>, <span class="string">&quot;r&quot;</span>)<span class="comment">// 代码1</span></span><br><span class="line">        ) &#123;</span><br><span class="line">            <span class="comment">// 获取RandomAccessFile对象文件指针的位置，初始位置是0</span></span><br><span class="line">            System.out.println(<span class="string">&quot;RandomAccessFile的文件指针的初始位置：&quot;</span> + raf.getFilePointer());</span><br><span class="line">            <span class="comment">// 移动raf的文件记录指针的位置</span></span><br><span class="line">            raf.seek(<span class="number">300</span>);<span class="comment">// 代码2</span></span><br><span class="line">            <span class="keyword">byte</span>[] bbuf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="comment">// 用于保存实际读取的字节数</span></span><br><span class="line">            <span class="keyword">int</span> hasRead = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// 使用循环来重复“取水”过程</span></span><br><span class="line">            <span class="keyword">while</span> ((hasRead = raf.read(bbuf)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 取出“竹筒”中水滴（字节），将字节数组转换成字符串输入！</span></span><br><span class="line">                System.out.print(<span class="keyword">new</span> String(bbuf, <span class="number">0</span>, hasRead));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的<strong>代码1</strong>创建了一个<code>RandomAccessFile</code>对象,该对象以只读方式打开了<code>RandomAccessFileTest.java</code>文件,这意味着该<code>RandomAccessFile</code>对象只能读取文件内容,不能执行写入。<br>程序中<strong>代码2</strong>将文件记录指针定位到300处,也就是说,<strong>程序将从300字节处开始读、写</strong>,程序<strong>接下来的部分与使用<code>InputStream</code>读取并没有太大的区别</strong>。<br>运行上面程序,将看到程序只读取后面部分的效果。</p>
+<h2 id="程序-在文件末尾追加内容"><a href="#程序-在文件末尾追加内容" class="headerlink" title="程序 在文件末尾追加内容"></a>程序 在文件末尾追加内容</h2><p>下面程序示范了如何向指定文件后追加内容,为了追加内容,程序应该<strong>先将记录指针移动到文件最后,然后开始向文件中输出内容</strong>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppendContent</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 以读、写方式打开一个RandomAccessFile对象</span></span><br><span class="line">                RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(<span class="string">&quot;out.txt&quot;</span>, <span class="string">&quot;rw&quot;</span>)) &#123;</span><br><span class="line">            <span class="comment">// 将记录指针移动到out.txt文件的最后</span></span><br><span class="line">            raf.seek(raf.length());</span><br><span class="line">            raf.write(<span class="string">&quot;追加的内容！\r\n&quot;</span>.getBytes());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ex) &#123;</span><br><span class="line">            ex.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中先以读、写方式创建了一个<code>RandomAccessFile</code>对象,然后将<code>RandomAccessFile</code>对象的记录指针移动到最后;接下来使用<code>RandomAccessfile</code>执行输出,与使用<code>OutputStream</code>或<code>Writer</code>执行输出并没有太大区别。<br>每运行上面程序一次,都可以看到<code>out.txt</code>件中多一行“追加的内容!”字符串,程序在该字符串后使用“<code>\r\n</code>”是为了控制换行。</p>
+<h2 id="在文件中间插入内容"><a href="#在文件中间插入内容" class="headerlink" title="在文件中间插入内容"></a>在文件中间插入内容</h2><h3 id="直接在中间位置插入内容-会丢失原来中间之后的内容"><a href="#直接在中间位置插入内容-会丢失原来中间之后的内容" class="headerlink" title="直接在中间位置插入内容 会丢失原来中间之后的内容"></a>直接在中间位置插入内容 会丢失原来中间之后的内容</h3><p><code>RandomAccessFile</code>依然不能向文件的指定位置插入内容,<strong>如果直接将文件记录指针移动到中间某位置后开始输出,则新输岀的内容会覆盖文件中原有的内容</strong>。</p>
+<h3 id="先缓存中间之后的内容-再插入新内容-最后插入原来中间的内容"><a href="#先缓存中间之后的内容-再插入新内容-最后插入原来中间的内容" class="headerlink" title="先缓存中间之后的内容 再插入新内容 最后插入原来中间的内容"></a>先缓存中间之后的内容 再插入新内容 最后插入原来中间的内容</h3><p>如果需要向指定位置插入内容,程序需要<strong>先把插入点后面的内容读入缓冲区,等把需要插入的数据写入文件后,再将缓冲区的内容追加到文件后面</strong>。</p>
+<h3 id="程序-在文件中间插入内容"><a href="#程序-在文件中间插入内容" class="headerlink" title="程序 在文件中间插入内容"></a>程序 在文件中间插入内容</h3><p>下面程序实现了向指定文件、指定位置插入内容的功能。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">InsertContent</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">insert</span><span class="params">(String fileName, <span class="keyword">long</span> pos, String insertContent)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        File tmp = File.createTempFile(<span class="string">&quot;tmp&quot;</span>, <span class="keyword">null</span>);</span><br><span class="line">        tmp.deleteOnExit();</span><br><span class="line">        <span class="keyword">try</span> (RandomAccessFile raf = <span class="keyword">new</span> RandomAccessFile(fileName, <span class="string">&quot;rw&quot;</span>);</span><br><span class="line">                <span class="comment">// 使用临时文件来保存插入点后的数据</span></span><br><span class="line">                FileOutputStream tmpOut = <span class="keyword">new</span> FileOutputStream(tmp);</span><br><span class="line">                FileInputStream tmpIn = <span class="keyword">new</span> FileInputStream(tmp)) &#123;</span><br><span class="line">            raf.seek(pos);</span><br><span class="line">            <span class="comment">// ------下面代码将插入点后的内容读入临时文件中保存------</span></span><br><span class="line">            <span class="keyword">byte</span>[] bbuf = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">64</span>];</span><br><span class="line">            <span class="comment">// 用于保存实际读取的字节数</span></span><br><span class="line">            <span class="keyword">int</span> hasRead = <span class="number">0</span>;</span><br><span class="line">            <span class="comment">// 使用循环方式读取插入点后的数据</span></span><br><span class="line">            <span class="keyword">while</span> ((hasRead = raf.read(bbuf)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                <span class="comment">// 将读取的数据写入临时文件</span></span><br><span class="line">                tmpOut.write(bbuf, <span class="number">0</span>, hasRead);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// ----------下面代码插入内容----------</span></span><br><span class="line">            <span class="comment">// 把文件记录指针重新定位到pos位置</span></span><br><span class="line">            raf.seek(pos);</span><br><span class="line">            <span class="comment">// 追加需要插入的内容,会覆盖插入点后的内容</span></span><br><span class="line">            raf.write(insertContent.getBytes());</span><br><span class="line">            <span class="comment">// 重新读入被覆盖的内容,追加临时文件中的内容</span></span><br><span class="line">            <span class="keyword">while</span> ((hasRead = tmpIn.read(bbuf)) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">                raf.write(bbuf, <span class="number">0</span>, hasRead);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        insert(<span class="string">&quot;InsertContent.java&quot;</span>, <span class="number">45</span>, <span class="string">&quot;插入的内容\r\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中使用<code>File</code>的<code>createTempFile(String prefix, String suffix)</code>方法创建了一个临时文件(该临时文件将在<code>JVM</code>退出时被删除),用以保存被插入文件的插入点后面的内容。程序先将文件中插入点后的内容读入临时文件中,然后重新定位到插入点,将需要插入的内容添加到文件后面,最后将临时文件的内容添加到文件后面。<br>这样就可以向指定文件、指定位置插入内容。</p>
+<h2 id="实现多线程断点传输工具"><a href="#实现多线程断点传输工具" class="headerlink" title="实现多线程断点传输工具"></a>实现多线程断点传输工具</h2><p>多线程断点的网络下载工具(如<code>FlashGet</code>等)就可通过<code>RandomAccessFile</code>类来实现.<br>所有的下载工具在下载开始时都会建立两个文件:</p>
+<ul>
+<li>一个是与被下载文件大小相同的空文件，</li>
+<li>一个是记录文件指针的位置文件</li>
+</ul>
+<p>下载工具用多条线程启动输入流来读取网络数据,并使用<code>RandomAccessFile</code>将从网络上读取的数据写入前面建立的空文件中,每写一些数据后,记录文件指针的文件就分别记下每个<code>RandomAccessFile</code>当前的文件指针位置——网络断开后,再次开始下载时,每个<code>RandomAccessFile</code>都根据记录文件指针的文件中记录的位置继续向下写数据。</p>
+<p>本书将会在介绍多线程和网络知识之后,更加详细地介绍如何开发类似于<code>FlashGet</code>的多线程断点传输工具。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://lanlan2017.github.io/JavaReadingNotes/fa2b9d19/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
+      <meta itemprop="name" content="蓝蓝">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="蓝蓝站点">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/JavaReadingNotes/fa2b9d19/" class="post-title-link" itemprop="url">15.6 Java虚拟机读写其他进程的数据</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-12-28 04:56:08" itemprop="dateCreated datePublished" datetime="2019-12-28T04:56:08+08:00">2019-12-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-03-15 08:15:12" itemprop="dateModified" datetime="2020-03-15T08:15:12+08:00">2020-03-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/" itemprop="url" rel="index"><span itemprop="name">1 疯狂Java讲义 (第4版)</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/" itemprop="url" rel="index"><span itemprop="name">第15章 输入输出</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/JavaReadingNotes/categories/1-%E7%96%AF%E7%8B%82Java%E8%AE%B2%E4%B9%89-%E7%AC%AC4%E7%89%88/%E7%AC%AC15%E7%AB%A0-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA/15-6-Java%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%AF%BB%E5%86%99%E5%85%B6%E4%BB%96%E8%BF%9B%E7%A8%8B%E7%9A%84%E6%95%B0%E6%8D%AE/" itemprop="url" rel="index"><span itemprop="name">15.6 Java虚拟机读写其他进程的数据</span></a>
+        </span>
+    </span>
+
+  
+  
+  <span class="post-meta-item">
+    
+    <span class="post-meta-item-icon">
+      <i class="far fa-comment"></i>
+    </span>
+    <span class="post-meta-item-text">Waline：</span>
+  
+    <a title="waline" href="/JavaReadingNotes/fa2b9d19/#waline-comments" itemprop="discussionUrl">
+      <span class="post-comments-count waline-comment-count" id="/JavaReadingNotes/fa2b9d19/" data-xid="/JavaReadingNotes/fa2b9d19/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="15-6-Java虚拟机读写其他进程的数据"><a href="#15-6-Java虚拟机读写其他进程的数据" class="headerlink" title="15.6 Java虚拟机读写其他进程的数据"></a>15.6 Java虚拟机读写其他进程的数据</h1><p>在第7章已经介绍过,使用<code>Runtime</code>对象的<code>exec()</code>方法可以运行平台上的其他程序,该方法产生个<code>Process</code>对象,<strong><code>Process</code>对象代表由该<code>Java</code>程序启动的子进程</strong>。</p>
+<p><code>Process</code>类提供了如下三个方法,用于让程序和其子讲程讲行通信</p>
+<table>
+<thead>
+<tr>
+<th align="left">方法</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><code>abstract InputStream getErrorStream()</code></td>
+<td align="left">获取子进程的错误流。</td>
+</tr>
+<tr>
+<td align="left"><code>abstract InputStream getInputStream()</code></td>
+<td align="left">获取子进程的输入流。</td>
+</tr>
+<tr>
+<td align="left"><code>abstract OutputStream getOutputStream()</code></td>
+<td align="left">获取子进程的输出流。</td>
+</tr>
+</tbody></table>
+<h2 id="要从java程序的角度来看输入输出流"><a href="#要从java程序的角度来看输入输出流" class="headerlink" title="要从java程序的角度来看输入输出流"></a>要从java程序的角度来看输入输出流</h2><p>此处的输入流、输出流非常容易混淆,<strong>如果试图让子进程读取程序中的数据,那么应该用<code>输岀流</code><strong>。<br>要站在<code>Java</code>程序的角度来看问题,而不是从子进程的角度来看问题:<br><strong>子进程读取<code>Java</code>程序的数据,就是让<code>Java</code>程序把数据<mark>输岀</mark>到子进程中</strong>。<br>这就像<code>Java</code>程序把数据输出到<code>文件</code>中一样,只是现在由子进程节点代替了文件节点,所以</strong>子进程要读取java程序的内容应该使用输出流</strong>。</p>
+<h2 id="程序-java读取子进程的错误输出"><a href="#程序-java读取子进程的错误输出" class="headerlink" title="程序 java读取子进程的错误输出"></a>程序 java读取子进程的错误输出</h2><p>下面程序示范了读取其他进程的输出信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadFromProcess</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 运行javac命令，返回运行该命令的子进程</span></span><br><span class="line">        Process p = Runtime.getRuntime().exec(<span class="string">&quot;javac&quot;</span>);<span class="comment">// 代码1</span></span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 以p进程的错误流创建BufferedReader对象</span></span><br><span class="line">                <span class="comment">// 这个错误流对本程序是输入流，对p进程则是输出流</span></span><br><span class="line">                BufferedReader br = <span class="keyword">new</span> BufferedReader(<span class="keyword">new</span> InputStreamReader(p.getErrorStream()))<span class="comment">// 代码2</span></span><br><span class="line">        ) &#123;</span><br><span class="line">            String buff = <span class="keyword">null</span>;</span><br><span class="line">            <span class="comment">// 采取循环方式来读取p进程的错误输出</span></span><br><span class="line">            <span class="keyword">while</span> ((buff = br.readLine()) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;子程序的错误输出:&quot;</span>+buff);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的<strong>代码1</strong>使用<code>Runtime</code>启动了<code>Javac</code>程序,获得了运行该程序对应的子进程,<br><strong>代码2</strong>以p进程的错误输入流创建了<code>BufferedReader</code>,这个输入流的流向如图15.11所示。<br><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/JavaReadingNotes/CrazyJavaLecture4/Chapter15IO/15.6/1.png" alt="这里有一张图片"><br>如图15.11所示的数据流对p进程(<code>Javac</code>进程)而言,它是输出流;但对本程序(<code>ReadFromProcess</code>)而言,它是输入流。<br><strong>衡量输入、输出时总是站在运行本程序所在内存的角度,所以该数据流应该是输入流</strong><br>运行上面程序,会看到如下信息:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">G:\Desktop\随书源码\疯狂Java讲义(第4版)光盘\codes\15\15.6&gt;javac -encoding utf-8 ReadFromProcess.java</span><br><span class="line"></span><br><span class="line">G:\Desktop\随书源码\疯狂Java讲义(第4版)光盘\codes\15\15.6&gt;java ReadFromProcess</span><br><span class="line">子程序的错误输出:用法: javac &lt;options&gt; &lt;source files&gt;</span><br><span class="line">子程序的错误输出:其中, 可能的选项包括:</span><br><span class="line">子程序的错误输出:  -g                         生成所有调试信息</span><br><span class="line">子程序的错误输出:  -g:none                    不生成任何调试信息</span><br><span class="line">子程序的错误输出:  -g:&#123;lines,vars,source&#125;     只生成某些调试信息</span><br><span class="line">子程序的错误输出:  -nowarn                    不生成任何警告</span><br><span class="line">子程序的错误输出:  -verbose                   输出有关编译器正在执行的操作的消息</span><br><span class="line">子程序的错误输出:  -deprecation               输出使用已过时的 API 的源位置</span><br><span class="line">子程序的错误输出:  -classpath &lt;路径&gt;            指定查找用户类文件和注释处理程序的位置</span><br><span class="line">子程序的错误输出:  -cp &lt;路径&gt;                   指定查找用户类文件和注释处理程序的位置</span><br><span class="line">子程序的错误输出:  -sourcepath &lt;路径&gt;           指定查找输入源文件的位置</span><br><span class="line">子程序的错误输出:  -bootclasspath &lt;路径&gt;        覆盖引导类文件的位置</span><br><span class="line">子程序的错误输出:  -extdirs &lt;目录&gt;              覆盖所安装扩展的位置</span><br><span class="line">子程序的错误输出:  -endorseddirs &lt;目录&gt;         覆盖签名的标准路径的位置</span><br><span class="line">子程序的错误输出:  -proc:&#123;none,only&#125;          控制是否执行注释处理和/或编译。</span><br><span class="line">子程序的错误输出:  -processor &lt;class1&gt;[,&lt;class2&gt;,&lt;class3&gt;...] 要运行的注释处理程序的名称; 绕过默认的搜索进程</span><br><span class="line">子程序的错误输出:  -processorpath &lt;路径&gt;        指定查找注释处理程序的位置</span><br><span class="line">子程序的错误输出:  -parameters                生成元数据以用于方法参数的反射</span><br><span class="line">子程序的错误输出:  -d &lt;目录&gt;                    指定放置生成的类文件的位置</span><br><span class="line">子程序的错误输出:  -s &lt;目录&gt;                    指定放置生成的源文件的位置</span><br><span class="line">子程序的错误输出:  -h &lt;目录&gt;                    指定放置生成的本机标头文件的位置</span><br><span class="line">子程序的错误输出:  -implicit:&#123;none,class&#125;     指定是否为隐式引用文件生成类文件</span><br><span class="line">子程序的错误输出:  -encoding &lt;编码&gt;             指定源文件使用的字符编码</span><br><span class="line">子程序的错误输出:  -source &lt;发行版&gt;              提供与指定发行版的源兼容性</span><br><span class="line">子程序的错误输出:  -target &lt;发行版&gt;              生成特定 VM 版本的类文件</span><br><span class="line">子程序的错误输出:  -profile &lt;配置文件&gt;            请确保使用的 API 在指定的配置文件中可用</span><br><span class="line">子程序的错误输出:  -version                   版本信息</span><br><span class="line">子程序的错误输出:  -help                      输出标准选项的提要</span><br><span class="line">子程序的错误输出:  -A关键字[=值]                  传递给注释处理程序的选项</span><br><span class="line">子程序的错误输出:  -X                         输出非标准选项的提要</span><br><span class="line">子程序的错误输出:  -J&lt;标记&gt;                     直接将 &lt;标记&gt; 传递给运行时系统</span><br><span class="line">子程序的错误输出:  -Werror                    出现警告时终止编译</span><br><span class="line">子程序的错误输出:  @&lt;文件名&gt;                     从文件读取选项和文件名</span><br><span class="line">子程序的错误输出:</span><br></pre></td></tr></table></figure>
+<h2 id="程序-java输出数据到子进程"><a href="#程序-java输出数据到子进程" class="headerlink" title="程序 java输出数据到子进程"></a>程序 java输出数据到子进程</h2><p>不仅如此,也可以通过<code>Process</code>的<code>getOutputStream</code>方法获得向子进程输入数据的流(该流对<code>Java</code>程序来说是输出流,对子进程来说是输入流),如下程序实现了在<code>Java</code>程序中启动<code>Java</code>虚拟机运行另一个<code>Java</code>程序,并向另一个<code>Java</code>程序中输入数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.util.*;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WriteToProcess</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 运行java ReadStandard命令，返回运行该命令的子进程</span></span><br><span class="line">        Process p = Runtime.getRuntime().exec(<span class="string">&quot;java ReadStandard&quot;</span>);<span class="comment">// 代码1</span></span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 以p进程的输出流创建PrintStream对象</span></span><br><span class="line">                <span class="comment">// 这个输出流对本程序是输出流，对p进程则是输入流</span></span><br><span class="line">                PrintStream ps = <span class="keyword">new</span> PrintStream(p.getOutputStream())<span class="comment">// 代码2</span></span><br><span class="line">        ) &#123;</span><br><span class="line">            <span class="comment">// 向ReadStandard程序写入内容，这些内容将被ReadStandard读取</span></span><br><span class="line">            ps.println(<span class="string">&quot;普通字符串&quot;</span>);</span><br><span class="line">            ps.println(<span class="keyword">new</span> WriteToProcess());</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个ReadStandard类，该类可以接受标准输入，</span></span><br><span class="line"><span class="comment">// 并将标准输入写入out.txt文件。</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ReadStandard</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> (</span><br><span class="line">                <span class="comment">// 使用System.in创建Scanner对象，用于获取标准输入</span></span><br><span class="line">                Scanner sc = <span class="keyword">new</span> Scanner(System.in);</span><br><span class="line">                PrintStream ps = <span class="keyword">new</span> PrintStream(<span class="keyword">new</span> FileOutputStream(<span class="string">&quot;out.txt&quot;</span>))) &#123;</span><br><span class="line">            <span class="comment">// 增加下面一行将只把回车作为分隔符</span></span><br><span class="line">            sc.useDelimiter(<span class="string">&quot;\n&quot;</span>);</span><br><span class="line">            <span class="comment">// 判断是否还有下一个输入项</span></span><br><span class="line">            <span class="keyword">while</span> (sc.hasNext()) &#123;</span><br><span class="line">                <span class="comment">// 输出输入项</span></span><br><span class="line">                ps.println(<span class="string">&quot;键盘输入的内容是：&quot;</span> + sc.next());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException ioe) &#123;</span><br><span class="line">            ioe.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面程序中的<code>ReadStandard</code>是一个使用<code>Scanner</code>获取标准输入的类,该类提供了<code>main()</code>方法,可以被运行,但此处不打算直接运行该类,而是由<code>WriteToProcess</code>类来运行<code>ReadStandard</code>类。</p>
+<p>在程序的<strong>代码1</strong>中,程序使用<code>Runtime</code>的<code>exec()</code>方法运行了<code>java Readstandard</code>命令,该命令将运行<code>ReadStandard</code>类,并返回运行该程序的子进程;<br>程序的<strong>代码2</strong>获得当前程序对进程p的输出流:<br>程序通过该输出流向进程p(也就是<code>ReadStandard</code>程序)输出数据,这些数据将被<code>ReadStandard</code>类读到。<br>运行上面的<code>WriteToProcess</code>类,程序运行结束将看到产生了一个<code>out.txt</code>文件,该文件由<code>ReadStandard</code>类产生,该文件的内容由<code>WriteToProcess</code>类写入<code>ReadStandard</code>进程里,并由<code>ReadStandard</code>读取这些数据,并将这些数据保存到<code>out.txt</code>文件中.</p>
+<!-- JavaReadingNotes/CrazyJavaLecture4/Chapter15IO/15.6/ -->
 
       
     </div>
