@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
@@ -20,14 +19,15 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
-<meta name="description" content="1.7 函数调用的基本原理在介绍递归函数的时候，我们看到了一个系统错误：java.lang.StackOverflowError，理解这个错误，需要理解函数调用的实现机制。下面，我们先来了解一个重要的概念：栈，然后再通过一些例子来仔细分析函数调用的过程。 1.7.1 栈的概念我们之前谈过程序执行的基本原理：CPU有一个指令指示器，指向下一条要执行的指令，要么顺序执行，要么进行跳转（条件跳转或无条件">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+
+    <meta name="description" content="1.7 函数调用的基本原理在介绍递归函数的时候，我们看到了一个系统错误：java.lang.StackOverflowError，理解这个错误，需要理解函数调用的实现机制。下面，我们先来了解一个重要的概念：栈，然后再通过一些例子来仔细分析函数调用的过程。 1.7.1 栈的概念我们之前谈过程序执行的基本原理：CPU有一个指令指示器，指向下一条要执行的指令，要么顺序执行，要么进行跳转（条件跳转或无条件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="1.7 函数调用的基本原理">
 <meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/36e750aa/index.html">
@@ -59,6 +59,7 @@
 
   <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
 
 
 <link rel="dns-prefetch" href="https://waline-test-lanlan2017.vercel.app">
@@ -101,12 +102,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
-        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li><li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -241,11 +237,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
       <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="蓝蓝站点">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="1.7 函数调用的基本原理 | 蓝蓝站点">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -262,13 +263,13 @@
 
       <time title="创建时间：2021-12-01 19:33:23" itemprop="dateCreated datePublished" datetime="2021-12-01T19:33:23+08:00">2021-12-01</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-07 12:07:07" itemprop="dateModified" datetime="2021-12-07T12:07:07+08:00">2021-12-07</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-07 12:07:07" itemprop="dateModified" datetime="2021-12-07T12:07:07+08:00">2021-12-07</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -329,7 +330,7 @@
         <h1 id="1-7-函数调用的基本原理"><a href="#1-7-函数调用的基本原理" class="headerlink" title="1.7 函数调用的基本原理"></a>1.7 函数调用的基本原理</h1><p>在介绍递归函数的时候，我们看到了一个系统错误：java.lang.StackOverflowError，理解这个错误，需要理解函数调用的实现机制。下面，我们先来了解一个重要的概念：栈，然后再通过一些例子来仔细分析函数调用的过程。</p>
 <h2 id="1-7-1-栈的概念"><a href="#1-7-1-栈的概念" class="headerlink" title="1.7.1 栈的概念"></a>1.7.1 栈的概念</h2><p>我们之前谈过程序执行的基本原理：CPU有一个指令指示器，指向下一条要执行的指令，要么顺序执行，要么进行跳转（条件跳转或无条件跳转）。</p>
 <p>基本上，这依然是成立的，程序从main函数开始顺序执行，函数调用可以看作一个无条件跳转，跳转到对应函数的指令处开始执行，碰到return语句或者函数结尾的时候，再执行一次无条件跳转，跳转回调用方，执行调用函数后的下一条指令。</p>
-<p>但这里面有几个问题。<br>1）参数如何传递？<br>2）函数如何知道返回到什么地方？在if/else、for中，跳转的地址都是确定的，但函数自己并不知道会被谁调用，而且可能会被很多地方调用，它并不能提前知道执行结束后返回哪里。<br>3）函数结果如何传给调用方？</p>
+<p>但这里面有几个问题。<br>1）参数如何传递？<br>2）函数如何知道返回到什么地方？在if&#x2F;else、for中，跳转的地址都是确定的，但函数自己并不知道会被谁调用，而且可能会被很多地方调用，它并不能提前知道执行结束后返回哪里。<br>3）函数结果如何传给调用方？</p>
 <p>解决思路是使用内存来存放这些数据，函数调用方和函数自己就如何存放和使用这些数据达成一个一致的协议或约定。这个约定在各种计算机系统中都是类似的，存放这些数据的内存有一个相同的名字，叫<strong>栈</strong>。</p>
 <p>栈是一块内存，但它的使用有特别的约定，一般是先进后出，类似于一个桶，往栈里放数据称为入栈，最下面的称为栈底，最上面的称为栈顶，从栈顶拿出数据通常称为出栈。栈一般是从高位地址向低位地址扩展，换句话说，栈底的内存地址是最高的，栈顶的是最低的。</p>
 <p>计算机系统主要使用栈来存放函数调用过程中需要的数据，包括参数、返回地址，以及函数内定义的局部变量。计算机系统就如何在栈中存放这些数据，调用者和函数如何协作做了约定。返回值不太一样，它可能放在栈中，但它使用的栈和局部变量不完全一样，有的系统使用CPU内的一个存储器存储返回值，我们可以简单认为存在一个专门的返回值存储器。main函数的相关数据放在栈的最下面，每调用一次函数，都会将相关函数的数据入栈，调用结束会出栈。</p>
@@ -352,7 +353,7 @@
 <p>我们在1.1节的时候说过，定义一个变量就会分配一块内存，但我们并没有具体谈什么时候分配内存，具体分配在哪里，什么时候释放内存。</p>
 <p>从以上关于栈的描述我们可以看出，函数中的参数和函数内定义的变量，都分配在栈中，这些变量只有在函数被调用的时候才分配，而且在调用结束后就被释放了。但这个说法主要针对基本数据类型，接下来我们介绍数组和对象。</p>
 <h2 id="1-7-3-数组和对象的内存分配"><a href="#1-7-3-数组和对象的内存分配" class="headerlink" title="1.7.3 数组和对象的内存分配"></a>1.7.3 数组和对象的内存分配</h2><p>对于数组和对象类型，我们介绍过，它们都有两块内存，一块存放实际的内容，一块存放实际内容的地址，实际的内容空间一般不是分配在栈上的，而是分配在堆（也是内存的一部分，后续章节会进一步介绍）中，但存放地址的空间是分配在栈上的。我们来看个例子：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayMax</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">max</span><span class="params">(<span class="keyword">int</span> min, <span class="keyword">int</span>[] arr)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> max = min;</span><br><span class="line">        <span class="keyword">for</span>(<span class="keyword">int</span> a : arr)&#123;</span><br><span class="line">            <span class="keyword">if</span>(a&gt;max)&#123;</span><br><span class="line">                max = a;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span>[] arr = <span class="keyword">new</span> <span class="keyword">int</span>[]&#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">        <span class="keyword">int</span> ret = max(<span class="number">0</span>, arr);</span><br><span class="line">        System.out.println(ret);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ArrayMax</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">max</span><span class="params">(<span class="type">int</span> min, <span class="type">int</span>[] arr)</span> &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">max</span> <span class="operator">=</span> min;</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> a : arr)&#123;</span><br><span class="line">            <span class="keyword">if</span>(a&gt;max)&#123;</span><br><span class="line">                max = a;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> max;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        <span class="type">int</span>[] arr = <span class="keyword">new</span> <span class="title class_">int</span>[]&#123;<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>&#125;;</span><br><span class="line">        <span class="type">int</span> <span class="variable">ret</span> <span class="operator">=</span> max(<span class="number">0</span>, arr);</span><br><span class="line">        System.out.println(ret);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这个程序也很简单，main函数新建了一个数组，然后调用函数max计算0和数组中元素的最大值，在程序执行到max函数的return语句之前的时候，内存中栈和堆的情况如图1-3所示。</p>
 <p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211201221610.jpeg" alt="epub_923038_14"></p>
@@ -361,7 +362,7 @@
 <p>对于数组arr，在栈中存放的是实际内容的地址0x1000，存放地址的栈空间会随着入栈分配，出栈释放，但存放实际内容的堆空间不受影响。</p>
 <p>但说堆空间完全不受影响是不正确的，在这个例子中，当main函数执行结束，栈空间没有变量指向它的时候，Java系统会自动进行垃圾回收，从而释放这块空间。</p>
 <h2 id="1-7-4-递归调用的原理"><a href="#1-7-4-递归调用的原理" class="headerlink" title="1.7.4 递归调用的原理"></a>1.7.4 递归调用的原理</h2><p>我们再通过栈的角度来理解一下递归函数的调用过程，代码如下：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">factorial</span><span class="params">(<span class="keyword">int</span> n)</span></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(n==<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n＊factorial(n-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> ret = factorial(<span class="number">4</span>);</span><br><span class="line">    System.out.println(ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">int</span> <span class="title function_">factorial</span><span class="params">(<span class="type">int</span> n)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(n==<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> n＊factorial(n-<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">ret</span> <span class="operator">=</span> factorial(<span class="number">4</span>);</span><br><span class="line">    System.out.println(ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>在factorial第一次被调用的时候，n是4，在执行到n<em>factorial(n-1)，即4</em>factorial(3)之前的时候，栈的情况大概如图1-4所示。</p>
 <p><img data-src="https://raw.githubusercontent.com/lanlan2017/images/master/Blog/2021/12/20211201221645.jpeg" alt="epub_923038_15"></p>
@@ -472,7 +473,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">88:01</span>
+    <span title="站点阅读时长">88:07</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动

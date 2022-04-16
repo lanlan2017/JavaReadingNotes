@@ -4,8 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
 <meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)">
-<meta name="generator" content="Hexo 5.4.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.1.0">
 
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="apple-touch-icon" sizes="180x180" href="/JavaReadingNotes/images/apple-touch-icon-next.png">
@@ -20,14 +19,15 @@
 
 
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" integrity="sha256-mUZM63G8m73Mcidfrv5E+Y61y7a12O5mW4ezU3bxqW4=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/themes/blue/pace-theme-minimal.css">
   <script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js" integrity="sha256-gqd7YTjg/BtfqWSwsJOvndl0Bxc8gFImLEkXQT8+qj0=" crossorigin="anonymous"></script>
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.8.2","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
-<meta name="description" content="10.5 剖析TreeSet在介绍HashSet时，我们提到，HashSet有一个重要局限，元素之间没有特定的顺序，我们还提到，Set接口还有另一个重要的实现类TreeSet，它是有序的，与HashSet和HashMap的关系一样，TreeSet是基于TreeMap的，本节我们来详细讨论TreeSet。下面，我们先介绍TreeSet的用法，然后介绍实现原理，最后总结分析TreeSet的特点。 10">
+<script class="next-config" data-name="main" type="application/json">{"hostname":"lanlan2017.github.io","root":"/JavaReadingNotes/","images":"/JavaReadingNotes/images","scheme":"Gemini","darkmode":true,"version":"8.11.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/JavaReadingNotes/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/JavaReadingNotes/js/config.js"></script>
+
+    <meta name="description" content="10.5 剖析TreeSet在介绍HashSet时，我们提到，HashSet有一个重要局限，元素之间没有特定的顺序，我们还提到，Set接口还有另一个重要的实现类TreeSet，它是有序的，与HashSet和HashMap的关系一样，TreeSet是基于TreeMap的，本节我们来详细讨论TreeSet。下面，我们先介绍TreeSet的用法，然后介绍实现原理，最后总结分析TreeSet的特点。 10">
 <meta property="og:type" content="article">
 <meta property="og:title" content="10.5 剖析TreeSet">
 <meta property="og:url" content="https://lanlan2017.github.io/JavaReadingNotes/42b48a4c/index.html">
@@ -52,6 +52,7 @@
 
   <script src="/JavaReadingNotes/js/third-party/analytics/baidu-analytics.js"></script>
   <script async src="https://hm.baidu.com/hm.js?dadeb188eb14ccde0b25a19230c429b5"></script>
+
 
 
 <link rel="dns-prefetch" href="https://waline-test-lanlan2017.vercel.app">
@@ -94,12 +95,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu">
-        <li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li>
-        <li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li>
-        <li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
-        <li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
-        <li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/JavaReadingNotes/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-dir"><a href="/JavaReadingNotes/dir/" rel="section"><i class="fa fa-sitemap fa-fw"></i>目录</a></li><li class="menu-item menu-item-categories"><a href="/JavaReadingNotes/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/JavaReadingNotes/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-tags"><a href="/JavaReadingNotes/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
         </a>
@@ -234,11 +230,16 @@
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/JavaReadingNotes/images/avatar.gif">
       <meta itemprop="name" content="蓝蓝">
-      <meta itemprop="description" content="好好学习，天天向上">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
       <meta itemprop="name" content="蓝蓝站点">
+      <meta itemprop="description" content="好好学习，天天向上">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="10.5 剖析TreeSet | 蓝蓝站点">
+      <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -255,13 +256,13 @@
 
       <time title="创建时间：2021-12-05 11:47:02" itemprop="dateCreated datePublished" datetime="2021-12-05T11:47:02+08:00">2021-12-05</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-07 12:07:08" itemprop="dateModified" datetime="2021-12-07T12:07:08+08:00">2021-12-07</time>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
       </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-12-07 12:07:08" itemprop="dateModified" datetime="2021-12-07T12:07:08+08:00">2021-12-07</time>
+    </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -321,16 +322,16 @@
     <div class="post-body" itemprop="articleBody">
         <h1 id="10-5-剖析TreeSet"><a href="#10-5-剖析TreeSet" class="headerlink" title="10.5 剖析TreeSet"></a>10.5 剖析TreeSet</h1><p>在介绍HashSet时，我们提到，HashSet有一个重要局限，元素之间没有特定的顺序，我们还提到，Set接口还有另一个重要的实现类TreeSet，它是有序的，与HashSet和HashMap的关系一样，TreeSet是基于TreeMap的，本节我们来详细讨论TreeSet。下面，我们先介绍TreeSet的用法，然后介绍实现原理，最后总结分析TreeSet的特点。</p>
 <h2 id="10-5-1-基本用法"><a href="#10-5-1-基本用法" class="headerlink" title="10.5.1 基本用法"></a>10.5.1 基本用法</h2><p>TreeSet的基本构造方法有两个：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">TreeSet</span><span class="params">()</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">TreeSet</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> E&gt; comparator)</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="title function_">TreeSet</span><span class="params">()</span></span><br><span class="line"><span class="keyword">public</span> <span class="title function_">TreeSet</span><span class="params">(Comparator&lt;? <span class="built_in">super</span> E&gt; comparator)</span></span><br></pre></td></tr></table></figure>
 
 <p>第一个是默认构造方法，假定元素实现了Comparable接口；第二个使用传入的比较器，不要求元素实现Comparable。TreeSet经常也只是当作Set使用，只是希望迭代输出有序，如下面代码所示：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;String&gt; words = <span class="keyword">new</span> TreeSet&lt;String&gt;();</span><br><span class="line">words.addAll(Arrays.asList(<span class="keyword">new</span> String[]&#123;</span><br><span class="line">    <span class="string">&quot;tree&quot;</span>, <span class="string">&quot;map&quot;</span>, <span class="string">&quot;hash&quot;</span>, <span class="string">&quot;map&quot;</span>,</span><br><span class="line">&#125;));</span><br><span class="line"><span class="keyword">for</span>(String w : words)&#123;</span><br><span class="line">    System.out.print(w+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;String&gt; words = <span class="keyword">new</span> <span class="title class_">TreeSet</span>&lt;String&gt;();</span><br><span class="line">words.addAll(Arrays.asList(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;</span><br><span class="line">    <span class="string">&quot;tree&quot;</span>, <span class="string">&quot;map&quot;</span>, <span class="string">&quot;hash&quot;</span>, <span class="string">&quot;map&quot;</span>,</span><br><span class="line">&#125;));</span><br><span class="line"><span class="keyword">for</span>(String w : words)&#123;</span><br><span class="line">    System.out.print(w+<span class="string">&quot; &quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>输出为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hash map tree</span><br></pre></td></tr></table></figure>
 
 <p>TreeSet实现了两点：<strong>排重和有序</strong>。如果希望不同的排序，可以传递一个Comparator，比如：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;String&gt; words = <span class="keyword">new</span> TreeSet&lt;String&gt;(<span class="keyword">new</span> Comparator&lt;String&gt;()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(String o1, String o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o1.compareToIgnoreCase(o2);</span><br><span class="line">    &#125;&#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">words.addAll(Arrays.asList(<span class="keyword">new</span> String[]&#123;</span><br><span class="line">    <span class="string">&quot;tree&quot;</span>, <span class="string">&quot;map&quot;</span>, <span class="string">&quot;hash&quot;</span>, <span class="string">&quot;Map&quot;</span>,</span><br><span class="line">&#125;));</span><br><span class="line">System.out.println(words);</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;String&gt; words = <span class="keyword">new</span> <span class="title class_">TreeSet</span>&lt;String&gt;(<span class="keyword">new</span> <span class="title class_">Comparator</span>&lt;String&gt;()&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">compare</span><span class="params">(String o1, String o2)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> o1.compareToIgnoreCase(o2);</span><br><span class="line">    &#125;&#125;</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line">words.addAll(Arrays.asList(<span class="keyword">new</span> <span class="title class_">String</span>[]&#123;</span><br><span class="line">    <span class="string">&quot;tree&quot;</span>, <span class="string">&quot;map&quot;</span>, <span class="string">&quot;hash&quot;</span>, <span class="string">&quot;Map&quot;</span>,</span><br><span class="line">&#125;));</span><br><span class="line">System.out.println(words);</span><br></pre></td></tr></table></figure>
 
 <p>忽略大小写进行比较，输出为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[hash, map, tree]</span><br></pre></td></tr></table></figure>
@@ -339,20 +340,20 @@
 <p>以上就是TreeSet的基本用法，简单易用。因为有序，TreeSet还实现了NavigableSet和SortedSet接口，NavigableSet扩展了SortedSet，可以方便地根据顺序进行查找和操作，如第一个、最后一个、某一取值范围、某一值的邻近元素等，限于篇幅，我们就不介绍了，具体可参见API文档。</p>
 <h2 id="10-5-2-实现原理"><a href="#10-5-2-实现原理" class="headerlink" title="10.5.2 实现原理"></a>10.5.2 实现原理</h2><p>之前章节介绍过，HashSet是基于HashMap实现的，元素就是HashMap中的键，值是一个固定的值，TreeSet是类似的，它是基于TreeMap实现的。我们具体来看一下代码，先看其内部组成。</p>
 <p>TreeSet的内部有如下成员：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> NavigableMap&lt;E, Object&gt; m;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> Object PRESENT = <span class="keyword">new</span> Object();</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">transient</span> NavigableMap&lt;E, Object&gt; m;</span><br><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">Object</span> <span class="variable">PRESENT</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Object</span>();</span><br></pre></td></tr></table></figure>
 
 <p>m就是背后的那个TreeMap，这里用的是更为通用的接口类型NavigableMap,PRESENT就是那个固定的共享值。TreeSet的方法实现主要就是调用m的方法，我们具体来看下。</p>
 <p>默认构造方法的代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TreeSet(NavigableMap&lt;E, Object&gt; m) &#123;</span><br><span class="line">    <span class="keyword">this</span>.m = m;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">TreeSet</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(<span class="keyword">new</span> TreeMap&lt;E, Object&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TreeSet(NavigableMap&lt;E, Object&gt; m) &#123;</span><br><span class="line">    <span class="built_in">this</span>.m = m;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="title function_">TreeSet</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="built_in">this</span>(<span class="keyword">new</span> <span class="title class_">TreeMap</span>&lt;E, Object&gt;());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>代码都比较简单，就不解释了。添加元素，add方法的代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">add</span><span class="params">(E e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> m.put(e, PRESENT)==<span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">add</span><span class="params">(E e)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> m.put(e, PRESENT)==<span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>就是调用map的put方法，元素e用作键，值就是固定值PRESENT, put返回null表示原来没有对应的键，添加成功了。检查是否包含元素，代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">contains</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> m.containsKey(o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">contains</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> m.containsKey(o);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>就是检查map中是否包含对应的键。删除元素，代码为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">remove</span><span class="params">(Object o)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> m.remove(o)==PRESENT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">remove</span><span class="params">(Object o)</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> m.remove(o)==PRESENT;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>就是调用map的remove方法，返回值为PRESENT表示原来有对应的键且删除成功了。</p>
 <p>TreeSet的实现代码都比较简单，主要就是调用内部NavigatableMap的方法。</p>
@@ -449,7 +450,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">88:01</span>
+    <span title="站点阅读时长">88:07</span>
   </span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
