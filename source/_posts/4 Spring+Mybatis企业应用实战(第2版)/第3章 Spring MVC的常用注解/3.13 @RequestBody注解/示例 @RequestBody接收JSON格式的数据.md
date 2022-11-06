@@ -14,7 +14,7 @@ abbrlink: 78f2a207
 <details><summary>展开/折叠</summary>
 
 ```
-G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\ResponseBodyTest
+D:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\RequestBodyTest
 ├─src\
 │ └─org\
 │   └─fkit\
@@ -65,7 +65,7 @@ G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\Respo
 </details>
 
 ## index.jsp
-```jsp
+```jsp RequestBodyTest\WebContent\index.jsp
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -179,7 +179,7 @@ public class BookController
 向前台`JSP`页面的`JSON`数据中传入了`id`和`name`,为了测试接收数据,使用`System.out.println(mapper.writeValueAsString(book));`代码将接收到的`JSON`数据中的`book`对象打印在控制台上。
 为了测试传递数据到`JSP`页面,在该方法中还给`book`对象的`author`对象设置了个值,并将其写出到客户端.
 ## Book.java
-```java
+```java RequestBodyTest\src\org\fkit\domain\Book.java
 package org.fkit.domain;
 
 import java.io.Serializable;
@@ -222,7 +222,9 @@ public class Book implements Serializable
 }
 ```
 在`Book`类中定义了3个属性:`id`、`name`和`author`,用于接收向`JSP`页面传入的`JSON`数据`toString`方法用来输出获取的数据对象信息.
-```xml
+
+## springmvc-config.xml
+```xml RequestBodyTest\WebContent\WEB-INF\springmvc-config.xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -248,6 +250,7 @@ public class Book implements Serializable
 </beans>
 ```
 在引入静态文件,例如`jQuery.js`时,需要加入`<mvc:default-servlet-handler />`从而使用默认的`Servlet`来响应静态文件。如果没有加入该配置,则执行时页面会报404错误,而控制台会提出警告:
+
 ## 测试
 部署`RequestBodyTest`这个`Web`应用,在浏览器中输入如下`URL`来测试应用:
 ```

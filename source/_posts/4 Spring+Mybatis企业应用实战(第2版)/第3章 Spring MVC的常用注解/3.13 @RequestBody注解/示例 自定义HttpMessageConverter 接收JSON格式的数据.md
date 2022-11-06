@@ -10,13 +10,16 @@ abbrlink: 6ba634ae
 ---
 # 示例 自定义HttpMessageConverter 接收JSON格式的数据
 `Spring`默认使用`Jackson`处理`JSON`数据。在实际开发中,开发者也可以选择使用其他开源框架处理`JSON`数据。那么,如果使用其他的开源框架处理`JSON`数据,该如何配置`HttpMessageConverter`呢?接下来,我们就使用在业界非常受欢迎的`Fastjson`来接收`JSON`数据。
+
 ## 下载Fastjson
 本书成书时`Fastjson`开源框架的最新版本是1.2.9。`jar`包只有1个:`fastjson-1.2.9.jar`。建议读者[进入该地址](http://mvnrepository.com/artifact/com.alibaba/fastjson)下载该版本或者更高版本进行测试。
+
 # 项目示例
 创建一个`FastjsonTest`项目,在`WebContent`目录下创建一个`js`目录,加入`jQuery`和`json2`的`js`文件,在`WEB-INF/lib`目录中加入`Fastjson`的`jar`文件。
+
 ## 项目结构
 <details><summary>展开/折叠</summary><pre>
-G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\FastjsonTest
+D:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\FastjsonTest
 ├─src\
 │ └─org\
 │   └─fkit\
@@ -63,6 +66,7 @@ G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\03\Fastj
 </pre></details>
 
 ## BookController.java
+
 ```java
 package org.fkit.controller;
 
@@ -92,6 +96,7 @@ public class BookController
     }
 }
 ```
+
 ## springmvc-config.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -153,6 +158,7 @@ public class BookController
 
 </beans>
 ```
+
 以上配置文件和之前的配置文件主要的区别在于:
 - 之前使用的是`Spring`中默认的`MappingJackson2HttpMessageConverter`,这样只需要配置默认的`<mvc:annotation-driven/>`就可以了。
 - 而现在使用第三方的开源框架`Fastjson`处理`JSON`数据,则需要另行配置`HttpMessageConverter`。
@@ -163,6 +169,7 @@ public class BookController
 Handler execution resulted in exception: Content type application/json;charset=UTF-8 not supported
 ```
 此外,其他`JSP`和`Java`文件和之前项目的一致,并且还需要在`web.xml`文件中配置`Spring MVC`的前端控制器`DispatcherServlet`,因为每次配置基本一致,此处不再赘述读者可自行配置.
+
 ## 测试
 部署`FastjsonTest`这个`Web`应用,在浏览器中输入如下`URL`来测试应用:
 ```

@@ -10,7 +10,7 @@ abbrlink: 3447f8a3
 ---
 # 示例1:基于Controller接口的控制器
 ## 1.增加Spring的支持
-首先,使用`Eclipse`新建一个`Dynamic Web Pro ject`,也就是新建一个动态`Web`项目,命名为`SpringMVCTest`。
+首先,使用`Eclipse`新建一个`Dynamic Web Project`,也就是新建一个动态`Web`项目,命名为`SpringMVCTest`。
 ### 项目结构
 <details><summary>展开/折叠</summary><pre>
 G:\Desktop\随书源码\Spring+Mybatis企业应用实战(第2版)\codes\02\SpringMVCTest
@@ -126,7 +126,7 @@ E:\workspace_shizhan\SpringMVCTest\WebContent\WEB-INF\lib
 这样该`Web`应用已经加入了`Spring`的必需类库。但还需要修改`web.xml`文件,让该文件负责加载`Spring`框架。
 ## 2. 配置前端控制器DispatcherServlet
 ### eclipse生成web.xml
-进入`WebContent\WEB-INF`目录,打开`web.xml`文件,如果没有`web.xml`文件,可以在项目上右键,选择`Java EE Tools`,然后选择`Generate Deployment Descriptor Stub`即可生成`web.xml`文件.
+进入`WebContent\WEB-INF`目录,打开`web.xml`文件,如果没有`web.xml`文件,可以**在项目上右键**,选择`Java EE Tools`,然后选择`Generate Deployment Descriptor Stub`即可生成`web.xml`文件.
 ### web.xml中配置前段控制器
 在人在该文件中配置`Spring MVC`的前端控制器`DispatcherServlet`,如下所示:
 ```xml
