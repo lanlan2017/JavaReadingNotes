@@ -128,6 +128,8 @@ comments: false
 - [11.7 在AWT中绘图](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第11章-AWT编程/11-7-在AWT中绘图)
 - [11.8 处理位图](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第11章-AWT编程/11-8-处理位图)
 - [11.9 剪贴板](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第11章-AWT编程/11-9-剪贴板)
+- [11.10  拖放功能](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第11章-AWT编程/11-10-拖放功能)
+- [11.11 本章小结](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第11章-AWT编程/11-11-本章小结)
 
 ## [第12章 Swing编程](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第12章-Swing编程)
 - [12.0 本章概述](/JavaReadingNotes/categories/1-疯狂Java讲义-第4版/第12章-Swing编程/12-0-本章概述)
